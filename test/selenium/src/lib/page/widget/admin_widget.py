@@ -2,6 +2,7 @@
 # Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
 """Module for widgets on Admin Dashboard page."""
 # pylint: disable=too-few-public-methods
+
 from lib import base
 from lib import environment
 from lib import exception
@@ -43,7 +44,7 @@ class People(Widget):
 
 
 class Roles(Widget):
-  """Model for the widget admin roles on admin dashboard"""
+  """Model for the widget admin roles on admin dashboard."""
   _locator = locator.WidgetAdminRoles
 
   URL = environment.APP_URL \
@@ -52,12 +53,13 @@ class Roles(Widget):
 
   def __init__(self, driver):
     super(Roles, self).__init__(driver)
-    self.tree_view_items = base.selenium_utils.get_when_all_visible(
-        driver, self._locator.ROLES_TREE_VIEW_ITEMS)
+    self.roles_tree_view = base.TreeView(
+        self._driver, obj_name=self._locator.widget_name)
 
   def get_role_scopes_text_as_dict(self):
-    """Get dictionary of labels that displayed in tree view at Event widget"""
-    return dict([item.text.splitlines() for item in self.tree_view_items])
+    """Get dictionary of labels that displayed in tree view at Event widget."""
+    tree_view_items = self.roles_tree_view.tree_view_items_elements()
+    return dict([item.text.splitlines() for item in tree_view_items])
 
 
 class CustomAttributes(widget_base.WidgetAdminCustomAttributes):
@@ -70,7 +72,7 @@ class CustomAttributes(widget_base.WidgetAdminCustomAttributes):
   def __init__(self, driver):
     super(CustomAttributes, self).__init__(driver)
     self.ca_tree_view = base.TreeView(
-        self._driver, object_name=self._locator.base_locator)
+        self._driver, obj_name=self._locator.widget_name)
 
   def expand_collapse_group(self, item_title, expand=True):
     """Expand/collapse 2-nd tier of tree-view item."""

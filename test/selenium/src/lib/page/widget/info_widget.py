@@ -1,8 +1,6 @@
 # Copyright (C) 2017 Google Inc.
 # Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
-
 """Page object models for the info widget of the object"""
-
 
 from lib import base
 from lib.constants import locator
@@ -70,6 +68,7 @@ class DashboardInfo(Widget):
 
 class Programs(Widget):
   """Model for program object info widget"""
+  # pylint: disable=too-many-instance-attributes
   _locator = locator.WidgetInfoProgram
   _dropdown_settings_cls = widget_info.Programs
 
@@ -139,6 +138,11 @@ class Audits(Widget):
 class Assessments(Widget):
   """Model for assessment object info widget"""
   _locator = locator.WidgetInfoAssessment
+
+
+class AssessmentTemplates(Widget):
+  """Model for assessment template object info widget."""
+  _locator = locator.WidgetInfoAssessmentTemplate
 
 
 class Issues(Widget):

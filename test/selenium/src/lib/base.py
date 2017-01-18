@@ -1,19 +1,15 @@
 # Copyright (C) 2017 Google Inc.
 # Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
 """Module for base classes"""
+# pylint: disable=too-few-public-methods
 
 import re
-
 from selenium import webdriver
 from selenium.webdriver.common import keys
 from selenium.webdriver.common.by import By
 
-from lib import constants
-from lib import exception
-from lib import meta
-from lib import mixin
+from lib import constants, exception, meta, mixin
 from lib.utils import selenium_utils
-# pylint: disable=too-few-public-methods
 
 
 class InstanceRepresentation(object):
@@ -133,7 +129,7 @@ class TextInputField(RichTextInputField):
 
 class TextFilterDropdown(Element):
   """Model for elements which are using autocomplete in a text field with a
-  dropdown list of found results
+  dropdown list of found results and static dropdown list of text elements.
   """
 
   def __init__(self, driver, textbox_locator, dropdown_locator):
@@ -143,25 +139,30 @@ class TextFilterDropdown(Element):
     self.text_to_filter = None
 
   def _filter_results(self, text):
+    """Filter results used text."""
     self.text_to_filter = text
-
     self.element.click()
     self.element.clear()
     self._driver.find_element(*self._locator).send_keys(text)
 
   def _select_first_result(self):
-    # wait that it appears
+    """Wait that it appears and select first result."""
     selenium_utils.get_when_visible(self._driver, self._locator_dropdown)
     dropdown_elements = self._driver.find_elements(
         *self._locator_dropdown)
-
     self.text = dropdown_elements[0].text
     dropdown_elements[0].click()
     selenium_utils.get_when_invisible(self._driver, self._locator_dropdown)
 
   def filter_and_select_first(self, text):
+    """Filter and select first text element."""
     self._filter_results(text)
     self._select_first_result()
+
+  def find_and_select_first(self, text):
+    """Find and select first text element."""
+    self.text_to_filter = text
+    self.element.click()
 
 
 class Iframe(Element):
@@ -503,39 +504,74 @@ class Widget(AbstractPage):
 
 class TreeView(Component):
   """Common class for representing tree-view list with several objects."""
-  _locator = constants.locator.TreeViewCommon
+  _locators = constants.locator.TreeView
 
-  def __init__(self, driver, object_name):
+  def __init__(self, driver, obj_name):
     """
     Args:
         driver (CustomDriver)
     """
     super(TreeView, self).__init__(driver)
-    self.object_name = object_name
+    self.obj_name = obj_name
+    self._tree_view_header_elements = []
+    self._tree_view_items_elements = []
     self._tree_view_items = []
 
-  def _set_tree_view_items(self):
-    """Set tree view items list with TreeViewItem objects from the current
+  def get_tree_view_header_elements(self):
+    """Get tree view header as list of WebElements from the current
     widget.
     """
-    items_locator = (
-        By.CSS_SELECTOR, self._locator.ITEMS.format(self.object_name))
-    selenium_utils.get_when_invisible(self._driver, self._locator.SPINNER)
+    _locator_header = (By.CSS_SELECTOR,
+                       self._locators.HEADER.format(self.obj_name))
+    self._tree_view_header_elements = selenium_utils.get_when_all_visible(
+        self._driver, _locator_header)
+
+  def get_tree_view_items_elements(self):
+    """Get tree view items as list of WebElements from the current
+    widget.
+    """
+    _locator_items = (By.CSS_SELECTOR,
+                      self._locators.ITEMS.format(self.obj_name))
+    selenium_utils.get_when_invisible(self._driver, self._locators.SPINNER)
     selenium_utils.wait_until_not_present(
-        self._driver, self._locator.ITEM_LOADING
-    )
-    elements = selenium_utils.get_when_all_visible(self._driver, items_locator)
+        self._driver, self._locators.ITEM_LOADING)
+    self._tree_view_items_elements = selenium_utils.get_when_all_visible(
+        self._driver, _locator_items)
+
+  def set_tree_view_items(self):
+    """Set tree view items as list of TreeViewItem objects from the current
+    widget.
+    """
+    self.get_tree_view_items_elements()
     self._tree_view_items = [TreeViewItem(
         driver=self._driver,
         text=el.text,
-        expand_btn=el.find_element(
-            By.CSS_SELECTOR, self._locator.ITEM_EXPAND_BUTTON)
-    ) for el in elements]
+        expand_btn=el.find_element(By.CSS_SELECTOR,
+                                   self._locators.ITEM_EXPAND_BUTTON))
+                             for el in self._tree_view_items_elements]
+
+  def tree_view_header_elements(self):
+    """Return tree view header as list of WebElements from the current
+    widget.
+    """
+    if not self._tree_view_header_elements:
+      self.get_tree_view_header_elements()
+    return self._tree_view_header_elements
+
+  def tree_view_items_elements(self):
+    """Return tree view items as list of WebElements from the current
+    widget.
+    """
+    if not self._tree_view_items_elements:
+      self.get_tree_view_items_elements()
+    return self._tree_view_items_elements
 
   def tree_view_items(self):
-    """Return list of TreeViewItem objects."""
+    """Return tree view items as list of TreeViewItem objects from the current
+    widget.
+    """
     if not self._tree_view_items:
-      self._set_tree_view_items()
+      self.set_tree_view_items()
     return self._tree_view_items
 
 
@@ -563,3 +599,37 @@ class TreeViewItem(Component):
   @property
   def is_expanded(self):
     return selenium_utils.is_value_in_attr(self.expand_btn)
+
+
+class Checkboxes(Component):
+  """A generic checkboxes elements."""
+
+  def __init__(self, driver, titles_locator, checkboxes_locator):
+    super(Checkboxes, self).__init__(driver)
+    self.locator_of_titles = titles_locator
+    self.locator_of_checkboxes = checkboxes_locator
+
+  @staticmethod
+  def _unselect_unnecessary(objs, list_of_titles):
+    """Unselect unnecessary elements according objs (titles ans checkboxes
+    elements) and list of titles"""
+    unselect = [obj[1].click() for obj in objs
+                if obj[0].text not in list_of_titles if obj[1].is_selected()]
+    return unselect
+
+  @staticmethod
+  def _select_necessary(objs, list_of_titles):
+    """Select necessary elements according objs (titles ans checkboxes
+    elements) and list of titles"""
+    select = [obj[1].click() for obj in objs
+              if obj[0].text in list_of_titles if not obj[1].is_selected()]
+    return select
+
+  def select_by_titles(self, list_of_titles):
+    """Select checkboxes according titles."""
+    selenium_utils.get_when_all_visible(self._driver, self.locator_of_titles)
+    objs_titles = self._driver.find_elements(*self.locator_of_titles)
+    objs_checkboxes = self._driver.find_elements(*self.locator_of_checkboxes)
+    objs = zip(objs_titles, objs_checkboxes)
+    self._unselect_unnecessary(objs, list_of_titles)
+    self._select_necessary(objs, list_of_titles)
