@@ -1,0 +1,21 @@
+{
+  "title": null,
+  "audit_title": null,
+  "people_values": null,
+  "assessorsList": null,
+  "verifiersList": null,
+  "default_people":{
+    "assessors":"Object Owners",
+    "verifiers":"Object Owners"
+  },
+  "template_object_type": "Control",
+  "assessorsListDisable": true,
+  "verifiersListDisable": true,
+  "ignore_ca_errors": true,
+  "test_plan_procedure": false,
+  "custom_attribute_definitions": [],
+  "custom_attributes": {},
+  "slug": "",
+  "audit": null,
+  "context": null
+}
