@@ -1,28 +1,28 @@
 # Copyright (C) 2017 Google Inc.
 # Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
-
 """Admin dashboard page smoke tests"""
 # pylint: disable=no-self-use
 # pylint: disable=invalid-name
 # pylint: disable=too-few-public-methods
 # pylint: disable=protected-access
 
-import re
 import random
+
 import pytest
-from lib import base
-from lib import constants
-from lib.page import dashboard
-from lib.entities.entities_factory import CAFactory
+import re
+
+from lib import base, constants
 from lib.constants import objects
-from lib.constants.element import AttributesTypes
+from lib.constants.element import AdminWidgetCustomAttrs
+from lib.entities.entities_factory import CAFactory
+from lib.page import dashboard
 
 
 class TestAdminDashboardPage(base.Test):
   """Tests for the admin dashboard page."""
-  _role_el = constants.element.AdminRolesWidget
-  _event_el = constants.element.AdminEventsWidget
-  err_msg_format = "Expected: '{}', Got: '{}'"
+  _role_el = constants.element.AdminWidgetRoles
+  _event_el = constants.element.AdminWidgetEvents
+  err_msg_format = constants.messages.ERR_MSG_FORMAT
 
   @pytest.fixture(scope="function")
   def admin_dashboard(self, selenium):
@@ -61,14 +61,15 @@ class TestAdminDashboardPage(base.Test):
     ca_widget = admin_dashboard.select_custom_attributes()
     act_ca_groups_set = set([item.text for item in ca_widget.get_items_list()])
     exp_ca_groups_set = set([objects.get_normal_form(item) for item in
-                             objects.all_objects])
+                             objects.ALL_CA_OBJECTS])
     assert exp_ca_groups_set == act_ca_groups_set, self.err_msg_format.format(
         exp_ca_groups_set, act_ca_groups_set)
 
   @pytest.mark.smoke_tests
   @pytest.mark.parametrize("ca_type, def_type",
-                           [(ca_type_item, random.choice(objects.all_objects))
-                            for ca_type_item in AttributesTypes.ALL_TYPES])
+                           [(ca_type_item, random.choice(objects.ALL_CA_OBJECTS))
+                            for ca_type_item in
+                            AdminWidgetCustomAttrs.ALL_ATTRS_TYPES])
   def test_add_global_ca(self, admin_dashboard, ca_type, def_type):
     """Create different types of Custom Attribute on Admin Dashboard."""
     exp_custom_attribute = CAFactory().create(

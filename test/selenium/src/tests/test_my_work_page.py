@@ -1,27 +1,25 @@
 # Copyright (C) 2017 Google Inc.
 # Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
-
-"""All smoke tests relevant to my work page"""
+"""All smoke tests relevant to my work page."""
 # pylint: disable=no-self-use
 # pylint: disable=invalid-name
 # pylint: disable=too-few-public-methods
 # pylint: disable=unused-argument
 
 import pytest    # pylint: disable=import-error
+
 from lib import base
-from lib.page import dashboard
-from lib.page import lhn
+from lib.page import dashboard, lhn
 from lib.page.widget import generic_widget
-from lib.utils import conftest_utils
-from lib.utils import selenium_utils
+from lib.utils import conftest_utils, selenium_utils
 
 
 class TestMyWorkPage(base.Test):
   """Tests the my work page, a part of smoke tests, section 2"""
 
   @pytest.mark.smoke_tests
-  def test_horizontal_nav_bar_tabs(self, selenium, battery_of_controls_rest):
-    """Tests that several objects in a widget can be deleted sequentially"""
+  def test_horizontal_nav_bar_tabs(self, selenium, new_controls_rest):
+    """Tests that several objects in a widget can be deleted sequentially."""
     selenium.get(dashboard.Dashboard.URL)
     controls_widget = dashboard\
         .Dashboard(selenium)\
