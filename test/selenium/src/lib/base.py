@@ -198,7 +198,7 @@ class DatePicker(Element):
     self._locator_datepcker = date_picker_locator
     self._element_datepicker = None
 
-  def _get_datepicker_elements_for_current_month(self):
+  def get_day_els_current_month(self):
     """Gets day elements for current month.
 
     Returns:
@@ -209,14 +209,14 @@ class DatePicker(Element):
     return elements
 
   def select_day_in_current_month(self, day):
-    """Selects a day - a sequential element from datepicker. Days go from 0 to
+    """Selects a day - a sequential element from date picker. Days go from 0 to
     28,29 or 30, depending on current month. Since we're selecting an element
     from a list, we can pass e.g. -1 to select the last day in month.
 
     Args:
       day (int)
     """
-    elements = self._get_datepicker_elements_for_current_month()
+    elements = self.get_day_els_current_month()
     elements[day].click()
 
     # wait for fadeout in case we're above some other element
@@ -225,7 +225,7 @@ class DatePicker(Element):
 
   def select_month_end(self):
     """Selects the last day of current month"""
-    elements = self._get_datepicker_elements_for_current_month()
+    elements = self.get_day_els_current_month()
     elements[-1].click()
 
     # wait for fadeout in case we're above some other element
@@ -234,7 +234,7 @@ class DatePicker(Element):
 
   def select_month_start(self):
     """Selects the first day of current month"""
-    elements = self._get_datepicker_elements_for_current_month()
+    elements = self.get_day_els_current_month()
     elements[0].click()
 
     # wait for fadeout in case we're above some other element
@@ -282,16 +282,16 @@ class Toggle(Element):
   def get_element(self):
     return selenium_utils.get_when_clickable(self._driver, self._locator)
 
-  def toggle(self, on=True):
+  def toggle(self, on_el=True):
     """Clicks on an element based on the is_active status and the "on" arg
 
     Args:
-        on (bool)
+        on_el (bool)
     """
-    if on and not self.is_activated:
+    if on_el and not self.is_activated:
       self.element.click()
       self.is_activated = True
-    elif not on and self.is_activated:
+    elif not on_el and self.is_activated:
       self.element.click()
       self.is_activated = False
 

@@ -1,8 +1,9 @@
 # Copyright (C) 2017 Google Inc.
 # Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
 """PyTest fixtures."""
+# pylint: disable=invalid-name
 
-import pytest   # pylint: disable=import-error
+import pytest
 
 from lib import constants
 from lib.constants.test import batch
@@ -60,6 +61,7 @@ def new_program(selenium, new_control):
   """Creates a new program object and returns the program info page with the
   saved modal"""
   # pylint: disable=redefined-outer-name
+  # pylint: disable=unused-argument
   modal = conftest_utils.get_lhn_accordion(
       selenium, constants.element.Lhn.PROGRAMS)\
       .create_new()
@@ -209,7 +211,7 @@ def new_asmt_rest(new_audit_rest):
   Return the list of objects: [Assessment, Object, Audit]
   """
   yield (AssessmentsService().create(
-      count=1, object=new_audit_rest[1],
+      count=1, obj=new_audit_rest[1],
       audit=new_audit_rest[0])[0], new_audit_rest[1], new_audit_rest[0])
 
 
@@ -242,15 +244,16 @@ def update_control_rest(new_control_rest):
 
 
 @pytest.yield_fixture(scope="function")
-def new_controls_rest_to_new_program_rest(new_program_rest, new_controls_rest):
+def map_program_to_controls_rest(new_program_rest, new_controls_rest):
   """Create a new business objects Program and Controls via REST API.
   Create relationship (map) Controls to Program via REST API.
   """
   yield RelationshipsService().create(src_obj=new_program_rest,
                                       dest_objs=new_controls_rest)
 
+
 @pytest.yield_fixture(scope="function")
-def new_control_rest_to_new_program_rest(new_program_rest, new_control_rest):
+def map_program_to_control_rest(new_program_rest, new_control_rest):
   """Create a new business objects Program and Control via REST API.
   Create relationship (map) Control to Program via REST API.
   """

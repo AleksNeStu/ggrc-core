@@ -15,7 +15,7 @@ class BaseWebUiService(object):
     self.driver = driver
 
   @staticmethod
-  def dict_map_ui_elements_to_obj_attrs():
+  def ui_elements_to_obj_attrs():
     """Get transformation dictionary {OLD KEY: NEW KEY}, where
     'OLD KEY' - UI elements correspond to the 'NEW KEY' - objects attributes.
     """
@@ -42,11 +42,11 @@ class BaseWebUiService(object):
     """
     objs = [factory.create() for _ in xrange(len(list_of_scopes))]
     list_of_scopes_remaped = self.remap_keys_for_list_dicts(
-        transform_dict=self.dict_map_ui_elements_to_obj_attrs(),
+        transform_dict=self.ui_elements_to_obj_attrs(),
         list_old_dicts=list_of_scopes)
     return [EntitiesFactory.update_obj_attrs_values(
         obj=obj, **scope_remaped) for
-            scope_remaped, obj in zip(list_of_scopes_remaped, objs)]
+        scope_remaped, obj in zip(list_of_scopes_remaped, objs)]
 
 
 class AuditService(BaseWebUiService):
@@ -79,7 +79,7 @@ class AuditService(BaseWebUiService):
     gen_widget(self.driver).navigate_to(gen_widget.URL.format(audit.id))
     return gen_widget(self.driver).member_count
 
-  def get_list_of_scopes_from_tree_view(self, audit, gen_widget):
+  def get_list_of_objs_scopes(self, audit, gen_widget):
     """Navigate to objects widget, set visible fields and get list of objects
     scopes as dicts from header (keys) and items (values) that displayed
     in tree view.
@@ -104,7 +104,7 @@ class AsmtTmplService(AuditService):
   def get_list_of_objs(self, audit):
     """Get list of assessment templates objects from list of scopes
     (list of dicts) which was got from tree view."""
-    list_of_scopes = self.get_list_of_scopes_from_tree_view(
+    list_of_scopes = self.get_list_of_objs_scopes(
         audit=audit, gen_widget=AsmtTmpls)
     return self.create_objs(
         factory=AsmtTmplFactory(), list_of_scopes=list_of_scopes)
@@ -131,7 +131,7 @@ class AsmtService(AuditService):
   def get_list_of_objs(self, audit):
     """Get list of assessments objects from list of scopes (list of dicts)
     which was got from tree view."""
-    list_of_scopes = self.get_list_of_scopes_from_tree_view(
+    list_of_scopes = self.get_list_of_objs_scopes(
         audit=audit, gen_widget=Asmts)
     return self.create_objs(
         factory=AsmtFactory(), list_of_scopes=list_of_scopes)

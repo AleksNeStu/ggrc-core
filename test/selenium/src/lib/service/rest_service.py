@@ -18,6 +18,7 @@ from lib.service.rest.client import RestClient
 
 class BaseService(object):
   """Base class for business layer's services objects."""
+
   def __init__(self):
     self.client = RestClient(self.ENDPOINT)
 
@@ -34,12 +35,12 @@ class BaseService(object):
     return [self.set_obj_attrs(attrs, obj, **kwargs) for
             attrs, obj in zip(list_of_attrs, objs)]
 
-
   @staticmethod
   def get_list_of_obj_attributes(response):
     """Form the list of dicts with business object's attributes (dict's items)
     from server response.
     """
+
     def minimize(object_element):
       """Minimize response json data to request ready format."""
       obj = object_element[1].values()[0]
@@ -47,8 +48,8 @@ class BaseService(object):
               "title": obj["title"],
               "url": environment.APP_URL + obj["viewLink"][1:],
               "name": re.search(r"\/([a-z_]*)\/", obj["viewLink"]).group(1)}
-    return [minimize(object_element=x) for x in json.loads(response.text)][0]
 
+    return [minimize(object_element=x) for x in json.loads(response.text)][0]
 
   @staticmethod
   def set_obj_attrs(attrs, obj, **kwargs):
@@ -76,7 +77,8 @@ class ControlsService(BaseService):
   def create(self, count):
     return self.create_objs(count=count, factory=ControlFactory())
 
-  def update(self, objs):
+  @staticmethod
+  def update(objs):
     return [objs.__dict__]
 
 
@@ -112,9 +114,9 @@ class AssessmentsService(BaseService):
   """Encapsulates logic for working with business entity Assessment."""
   ENDPOINT = url.ASSESSMENTS
 
-  def create(self, count, object, audit):
+  def create(self, count, obj, audit):
     return self.create_objs(count=count, factory=AsmtFactory(),
-                            object=object.__dict__, audit=audit.__dict__)
+                            object=obj.__dict__, audit=audit.__dict__)
 
 
 class RelationshipsService(BaseService):

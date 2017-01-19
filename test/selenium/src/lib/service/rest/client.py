@@ -48,6 +48,7 @@ class RestClient(object):
     response = requests.post(url=self.url, data=request_body, headers=headers)
     return response
 
+
 def generate_body_by_template(template_name, title, title_postfix, **kwargs):
   """Generate object based on object type or relationships between
   objects. Object type can be assessment, control, etc from JSON templates.

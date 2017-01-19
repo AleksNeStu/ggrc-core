@@ -26,11 +26,11 @@ class EntitiesFactory(object):
   _obj_asmt_tmpl = objects.get_singular(objects.ASSESSMENT_TEMPLATES)
   _obj_asmt = objects.get_singular(objects.ASSESSMENTS)
 
-  all_objs_attrs_names =entity.Entity().attrs_names_of_all_entities()
+  all_objs_attrs_names = tuple(entity.Entity().attrs_names_of_all_entities())
 
   @classmethod
-  def update_obj_attrs_values(
-      cls, obj, attrs_names=all_objs_attrs_names, **arguments):
+  def update_obj_attrs_values(cls, obj, attrs_names=all_objs_attrs_names,
+                              **arguments):
     """Update the object's (obj) attributes values according to the list of
     unique possible objects' names and dictionary of arguments (key = value).
     """
@@ -51,14 +51,16 @@ class EntitiesFactory(object):
     """Generate email according domain."""
     return prepend_random_string("@" + domain)
 
+
 class PersonFactory(EntitiesFactory):
   """Factory class for Person entity."""
 
   @classmethod
   def default(cls):
     """Create default system Person object."""
-    return cls.create(title=roles.DEFAULT_USER, id=1, href=url.DEFAULT_URL_USER_API,
-                      email=url.DEFAULT_EMAIL, authorizations=roles.SUPERUSER)
+    return cls.create(title=roles.DEFAULT_USER, id=1,
+                      href=url.DEFAULT_URL_USER_API, email=url.DEFAULT_EMAIL,
+                      authorizations=roles.SUPERUSER)
 
   @classmethod
   def create(cls, title=None, id=None, href=None, type=None, email=None,
@@ -104,11 +106,11 @@ class CAFactory(EntitiesFactory):
     multi_choice_options if they are None.
     """
     ca_entity = cls._create_random_ca()
-    ca_entity = cls._fill_ca_entity_fields(ca_entity, title=title,
+    ca_entity = cls._fill_ca_entity_fields(
+        ca_entity, title=title,
         ca_type=ca_type, definition_type=definition_type, helptext=helptext,
         placeholder=placeholder, multi_choice_options=multi_choice_options,
-        is_mandatory=is_mandatory, ca_global=ca_global
-    )
+        is_mandatory=is_mandatory, ca_global=ca_global)
     ca_entity = cls._normalize_ca_definition_type(ca_entity)
     return ca_entity
 
@@ -191,6 +193,7 @@ class ProgramFactory(EntitiesFactory):
   @classmethod
   def _create_random_program(cls):
     """Create Program entity with randomly and predictably filled fields."""
+    # pylint: disable=protected-access
     random_program = entity.Program()
     random_program.title = cls._generate_title(cls._obj_program)
     random_program.type = cls._obj_program
@@ -226,6 +229,7 @@ class ControlFactory(EntitiesFactory):
   @classmethod
   def _create_random_control(cls):
     """Create Control entity with randomly and predictably filled fields."""
+    # pylint: disable=protected-access
     random_control = entity.Control()
     random_control.title = cls._generate_title(cls._obj_control)
     random_control.type = cls._obj_control
@@ -253,15 +257,15 @@ class AuditFactory(EntitiesFactory):
     """
     audit_entity = cls._create_random_audit()
     audit_entity = cls._fill_audit_entity_fields(
-        audit_entity, title=title, id=id, href=href, type=type, program=program,
-        audit_lead=audit_lead, code=code, status=status,
-        last_update=last_update
-    )
+        audit_entity, title=title, id=id, href=href, type=type,
+        program=program, audit_lead=audit_lead, code=code, status=status,
+        last_update=last_update)
     return audit_entity
 
   @classmethod
   def _create_random_audit(cls):
     """Create Audit entity with randomly and predictably filled fields."""
+    # pylint: disable=protected-access
     random_audit = entity.Audit()
     random_audit.title = cls._generate_title(cls._obj_audit)
     random_audit.type = cls._obj_audit
@@ -290,10 +294,9 @@ class AsmtTmplFactory(EntitiesFactory):
     """
     asmt_tmpl_entity = cls._create_random_asmt_tmpl()
     asmt_tmpl_entity = cls._fill_asmt_tmpl_entity_fields(
-        asmt_tmpl_entity, title=title, id=id, href=href, type=type, audit=audit,
-        asmt_objects=asmt_objects, def_assessors=def_assessors,
-        def_verifiers=def_verifiers, code=code, last_update=last_update
-    )
+        asmt_tmpl_entity, title=title, id=id, href=href, type=type,
+        audit=audit, asmt_objects=asmt_objects, def_assessors=def_assessors,
+        def_verifiers=def_verifiers, code=code, last_update=last_update)
     return asmt_tmpl_entity
 
   @classmethod
@@ -310,7 +313,8 @@ class AsmtTmplFactory(EntitiesFactory):
     return random_asmt_tmpl
 
   @classmethod
-  def _fill_asmt_tmpl_entity_fields(cls, asmt_tmpl_obj, **asmt_tmpl_obj_fields):
+  def _fill_asmt_tmpl_entity_fields(cls, asmt_tmpl_obj,
+                                    **asmt_tmpl_obj_fields):
     """Set the Assessment Templates object's attributes."""
     return cls.update_obj_attrs_values(obj=asmt_tmpl_obj,
                                        **asmt_tmpl_obj_fields)

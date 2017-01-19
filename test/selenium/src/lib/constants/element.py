@@ -2,6 +2,7 @@
 # Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
 """Module containing elements' labels and properties for GGRC's objects."""
 # pylint: disable=too-few-public-methods
+# pylint: disable=invalid-name
 
 from lib.constants import objects
 from lib.constants import roles
@@ -48,6 +49,7 @@ class Lhn(object):
 class WidgetBar(object):
   """Elements' labels and properties for the generic widget bar."""
   INFO = "Info"
+
   class __metaclass__(type):
     def __init__(self, *args):
       for object_ in objects.ALL_PLURAL:
@@ -146,6 +148,7 @@ class CommonModalSetVisibleFields(object):
 
 class CommonProgram(object):
   """Common elements' labels and properties for the Program object."""
+  # pylint: disable=too-many-instance-attributes
   def __init__(self):
     super(CommonProgram, self).__init__()
     self.MANAGER = "Manager"
@@ -162,6 +165,7 @@ class CommonProgram(object):
 
 class CommonStates(object):
   """Elements' labels and properties for objects' states."""
+  # pylint: disable=too-many-instance-attributes
   def __init__(self):
     super(CommonStates, self).__init__()
     self._DRAFT = "Draft"
@@ -227,6 +231,7 @@ class AsmtTmplModalSetVisibleFields(CommonModalSetVisibleFields):
   """Common elements' labels and properties for the Modal to set visible
   fields for Assessment Template.
   """
+  # pylint: disable=too-many-instance-attributes
   def __init__(self):
     super(AsmtTmplModalSetVisibleFields, self).__init__()
     self.MODAL_HEADER = "Set visible fields for Assessment Template"
@@ -247,6 +252,7 @@ class AsmtModalSetVisibleFields(CommonModalSetVisibleFields):
   """Common elements' labels and properties for the Modal to set visible
   fields for Assessment.
   """
+  # pylint: disable=too-many-instance-attributes
   def __init__(self):
     super(AsmtModalSetVisibleFields, self).__init__()
     self.MODAL_HEADER = "Set visible fields for Assessment"
@@ -268,8 +274,5 @@ class AsmtModalSetVisibleFields(CommonModalSetVisibleFields):
         "VERIFIED_DATE": self.VERIFIED_DATE, "URL": self.URL,
         "REFERENCE_URL": self.REFERENCE_URL, "TYPE": self.TYPE
     }
-    self.DEFAULT_SET_FIELDS = (self.TITLE, self.CODE, self.STATE, self.VERIFIED,
-                               self.LAST_UPDATED)
-
-
-
+    self.DEFAULT_SET_FIELDS = (self.TITLE, self.CODE, self.STATE,
+                               self.VERIFIED, self.LAST_UPDATED)

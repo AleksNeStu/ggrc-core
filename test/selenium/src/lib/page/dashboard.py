@@ -118,7 +118,7 @@ class Header(base.Component):
         LhnMenu
     """
     try:
-      self.toggle_lhn_menu.toggle(on=False)
+      self.toggle_lhn_menu.toggle(on_el=False)
     except exceptions.WebDriverException:
       self._refresh_elements()
       self.close_lhn_menu()

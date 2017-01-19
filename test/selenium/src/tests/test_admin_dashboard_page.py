@@ -5,11 +5,10 @@
 # pylint: disable=invalid-name
 # pylint: disable=too-few-public-methods
 # pylint: disable=protected-access
-
 import random
+import re
 
 import pytest
-import re
 
 from lib import base, constants
 from lib.constants import objects
@@ -67,8 +66,8 @@ class TestAdminDashboardPage(base.Test):
 
   @pytest.mark.smoke_tests
   @pytest.mark.parametrize("ca_type, def_type",
-                           [(ca_type_item, random.choice(objects.ALL_CA_OBJECTS))
-                            for ca_type_item in
+                           [(type_item, random.choice(objects.ALL_CA_OBJECTS))
+                            for type_item in
                             AdminWidgetCustomAttrs.ALL_ATTRS_TYPES])
   def test_add_global_ca(self, admin_dashboard, ca_type, def_type):
     """Create different types of Custom Attribute on Admin Dashboard."""

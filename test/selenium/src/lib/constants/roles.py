@@ -35,5 +35,3 @@ SYSTEM = "System"
 PRIVATE_PROGRAM = "Private Program"
 WORKFLOW = "Workflow"
 SUPERUSER = "Superuser"
-
-

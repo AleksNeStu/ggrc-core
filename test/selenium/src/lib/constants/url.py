@@ -44,6 +44,7 @@ DEFAULT_EMAIL_DOMAIN = "example.com"
 DEFAULT_EMAIL = "user@" + DEFAULT_EMAIL_DOMAIN
 DEFAULT_URL_USER_API = "/".join([API, objects.PEOPLE, str(1)])
 
+
 class Widget(object):
   """URL's parts for widgets."""
 
