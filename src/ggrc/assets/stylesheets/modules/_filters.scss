@@ -75,7 +75,6 @@
   &__input-wrap {
     width: auto;
     margin-right: 164px;
-    margin-left: 45px;
   }
   &__expression-holder {
     position: relative;
@@ -162,17 +161,29 @@
   &.tree-filter_paging {
     .tree-filter {
       &__input-wrap {
-        margin-right: 594px;
+        margin-right: 760px;
       }
       &__button-wrap {
-        right: 440px;
+        right: 600px;
       }
       &__paging-wrap {
         display: block;
         position: absolute;
-        width: 440px;
+        width: 400px;
         right: 0;
         top: 0;
+      }
+      &__status-wrap {
+        right: 400px;
+        display: block;
+        position: absolute;
+        top: 0;
+        font-size: 12px;
+        label {
+          text-transform: none;
+          cursor: pointer;
+          padding-right: 5px;
+        }
       }
     }
   }

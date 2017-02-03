@@ -33,7 +33,8 @@
         if (binding.instance.workflow_people) {
           result = CMS.Models.Person
             .getPersonMappings(binding.instance, instance, 'workflow_people');
-        } else if (binding.instance.object_people.length) {
+        } else if (binding.instance.object_people &&
+          binding.instance.object_people.length) {
           result = CMS.Models.Person
             .getPersonMappings(binding.instance, instance, 'object_people');
         } else {

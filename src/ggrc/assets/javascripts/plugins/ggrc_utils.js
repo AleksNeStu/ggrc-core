@@ -980,4 +980,54 @@
       setAttrs: setAttrs
     };
   })();
+
+  /**
+   * Utils for state.
+   */
+  GGRC.Utils.State = (function () {
+    function isAssignable(model) {
+      return GGRC.Utils.State.assignableModels.indexOf(model) > -1;
+    }
+
+    function hasState(model) {
+      return GGRC.Utils.State.stateModels.indexOf(model) > -1;
+    }
+
+    function hasFilter(model) {
+      return GGRC.Utils.State.notFilterableModels.indexOf(model) < 0;
+    }
+
+    function statusFilter(statuses, filterString) {
+      var filter = statuses
+        .map(function (item) {
+          return 'Status=' + item;
+        }).join(' Or ');
+
+      filterString = filterString || '';
+      if (filter !== '') {
+        if (filterString !== '') {
+          return filterString + ' And ' + filter;
+        }
+        return filter;
+      }
+
+      return filterString;
+    }
+
+    return {
+      assignableModels: ['Assessment', 'Workflow'],
+      stateModels: ['AccessGroup', 'Clause', 'Contract',
+       'Control', 'DataAsset', 'Facility', 'Issue', 'Market',
+       'Objective', 'OrgGroup', 'Policy', 'Process', 'Product', 'Program',
+       'Project', 'Regulation', 'Risk', 'Section', 'Standard', 'System',
+       'Threat', 'Vendor'],
+      notFilterableModels: ['Person', 'AssessmentTemplate', 'Workflow',
+        'TaskGroup', 'Cycle', 'CycleTaskGroupObjectTask'],
+      isAssignable: isAssignable,
+      hasState: hasState,
+      hasFilter: hasFilter,
+      statusFilter: statusFilter
+    };
+  })();
+
 })(jQuery, window.GGRC = window.GGRC || {}, window.moment, window.Permission);

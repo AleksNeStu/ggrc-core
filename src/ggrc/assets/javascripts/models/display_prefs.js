@@ -20,6 +20,7 @@ var COLLAPSE = "collapse"
 , TOP_NAV = "top_nav"
 , FILTER_WIDGET = "filter_widget"
 , TREE_VIEW_HEADERS = "tree_view_headers"
+, TREE_VIEW_STATES = "tree_view_states"
 , TREE_VIEW = "tree_view"
 , CHILD_TREE_DISPLAY_LIST = "child_tree_display_list"
 , MODAL_STATE = "modal_state"
@@ -210,6 +211,28 @@ can.Model.LocalStorage("CMS.Models.DisplayPrefs", {
     }
 
     return value[model_name].display_list;
+  }
+
+  , setTreeViewStates: function (model_name, status_list) {
+    var hdr = this.getObject(path, TREE_VIEW_STATES), obj = {};
+    if (!hdr) {
+      hdr = this.makeObject(path, TREE_VIEW_STATES);
+    }
+    obj.status_list = status_list;
+    hdr.attr(model_name, obj);
+
+    this.autoupdate && this.save();
+    return this;
+  }
+
+  , getTreeViewStates : function (model_name) {
+    var value = this.getObject(path, TREE_VIEW_STATES);
+
+    if (!value || !value[model_name]) {
+      return ['Active'];
+    }
+
+    return value[model_name].status_list;
   }
 
   , setModalState : function (model_name, display_state) {

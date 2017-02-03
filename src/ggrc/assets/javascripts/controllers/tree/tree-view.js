@@ -207,6 +207,9 @@
       // Get the display attr_list from local storage
       savedAttrList = this.display_prefs.getTreeViewHeaders(modelName);
 
+      this.load_tree_states(modelName);
+      this.options.statusFilterVisible = GGRC.Utils.State.hasFilter(modelName);
+
       if (!savedAttrList.length) {
         // Initialize the display status, Get display_attr_names for model
         displayAttrNames = model.tree_view_options.display_attr_names ?
@@ -340,6 +343,7 @@
       var self = this;
       var dfds = [];
       var optionsDfd;
+      var statusControl;
 
       if (this.options.header_view && this.options.show_header) {
         optionsDfd = $.when(this.options).then(function (options) {
@@ -372,6 +376,24 @@
               can.bind.call(this.element.parent().find('.set-tree-attrs'),
                 'click',
                 this.set_tree_attrs.bind(this)
+              );
+
+              statusControl = this.element.parent()
+                .find('.tree-filter__status-wrap');
+              // set state filter (checkboxes)
+              can.bind.call(statusControl.ready(function () {
+                this.element.parent()
+                  .find('.attr-status').each(function (i, e) {
+                    if (this.options.attr('select_state_list')
+                      .indexOf(e.value) > -1) {
+                      e.checked = true;
+                    }
+                  });
+              }.bind(this)));
+              // listen to changes in the state filter
+              can.bind.call(statusControl.find('input[type=checkbox]'),
+                'click',
+                this.save_tree_states.bind(this)
               );
             }.bind(this))));
       }
@@ -1118,7 +1140,23 @@
       this.display_prefs.setFilterHidden(false);
       this.display_prefs.save();
     },
-
+    load_tree_states: function (modelName) {
+      // Get the status list from local storage
+      var savedStateList;
+      savedStateList = this.display_prefs.getTreeViewStates(modelName);
+      this.options.attr('select_state_list', savedStateList);
+    },
+    save_tree_states: function () {
+      var $checkState = this.element.parent().find('.attr-status');
+      var $selectedState = $checkState.filter(':checked');
+      var stateToSave = [];
+      $selectedState.each(function () {
+        stateToSave.push(this.value);
+      });
+      this.options.attr('select_state_list', stateToSave);
+      this.display_prefs.setTreeViewStates(this.options.model.model_singular,
+        stateToSave);
+    },
     /* Update the tree attributes as selected by the user CORE-1546
      */
     set_tree_attrs: function () {
@@ -1244,7 +1282,11 @@
       };
       var current = GGRC.page_instance();
       var addFilter;
+      var states = parentCtrl.options.attr('select_state_list');
+      var statesFilter = GGRC.Utils.State.statusFilter(states, '');
+      var statesQuery = GGRC.query_parser.parse(statesFilter);
       var reqParams;
+      var filter;
 
       if (!allRelatedToParent) {
         addFilter = {
@@ -1260,7 +1302,14 @@
       displayModels = _.map(displayModels, 'model_name');
       displayModels = _.intersection(originalOrder, displayModels);
       reqParams = displayModels.map(function (model) {
-        return queryAPI.buildParam(model, {}, relevant, null, addFilter);
+        if (!GGRC.Utils.State.hasState(model)) {
+          filter = addFilter;
+        } else {
+          filter = !addFilter ?
+            statesQuery :
+            [addFilter, statesQuery];
+        }
+        return queryAPI.buildParam(model, {}, relevant, null, filter);
       });
 
       return this.page_loader.load({data: reqParams}, displayModels);
@@ -1270,13 +1319,22 @@
       var options = this.options;
       var queryAPI = GGRC.Utils.QueryAPI;
       var modelName = options.model.shortName;
+      var states = options.attr('select_state_list');
+      var statesFilter = GGRC.Utils.State.statusFilter(states, '');
+      var isStateQuery = statesFilter !== '';
+      var additionalFilter = options.additional_filter ?
+        [options.additional_filter, statesFilter] :
+        statesFilter;
+      var filter = !GGRC.Utils.State.hasState(modelName) ?
+        options.additional_filter :
+        GGRC.query_parser.parse(additionalFilter);
       var params = queryAPI.buildParam(
         modelName,
         options.paging,
         queryAPI.makeExpression(modelName, options.parent_instance.type,
           options.parent_instance.id),
         undefined,
-        options.additional_filter
+        filter
       );
 
       this._draw_list_deferred = false;
@@ -1288,7 +1346,7 @@
           this.options.attr('paging.count',
             Math.ceil(data.total / this.options.paging.pageSize));
 
-          if (!this.options.paging.filter &&
+          if (!this.options.paging.filter && !isStateQuery &&
             total !== queryAPI.getCounts().attr(countsName)) {
             queryAPI.getCounts().attr(countsName, total);
           }
