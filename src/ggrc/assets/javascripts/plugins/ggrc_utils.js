@@ -985,16 +985,25 @@
    * Utils for state.
    */
   GGRC.Utils.State = (function () {
+    var assignableModels = ['Assessment', 'Workflow'];
+    var stateModels = ['AccessGroup', 'Clause', 'Contract',
+       'Control', 'DataAsset', 'Facility', 'Issue', 'Market',
+       'Objective', 'OrgGroup', 'Policy', 'Process', 'Product', 'Program',
+       'Project', 'Regulation', 'Risk', 'Section', 'Standard', 'System',
+       'Threat', 'Vendor'];
+    var notFilterableModels = ['Person', 'AssessmentTemplate', 'Workflow',
+        'TaskGroup', 'Cycle', 'CycleTaskGroupObjectTask'];
+
     function isAssignable(model) {
-      return GGRC.Utils.State.assignableModels.indexOf(model) > -1;
+      return assignableModels.indexOf(model) > -1;
     }
 
     function hasState(model) {
-      return GGRC.Utils.State.stateModels.indexOf(model) > -1;
+      return stateModels.indexOf(model) > -1;
     }
 
     function hasFilter(model) {
-      return GGRC.Utils.State.notFilterableModels.indexOf(model) < 0;
+      return notFilterableModels.indexOf(model) < 0;
     }
 
     function statusFilter(statuses, filterString) {
@@ -1015,14 +1024,6 @@
     }
 
     return {
-      assignableModels: ['Assessment', 'Workflow'],
-      stateModels: ['AccessGroup', 'Clause', 'Contract',
-       'Control', 'DataAsset', 'Facility', 'Issue', 'Market',
-       'Objective', 'OrgGroup', 'Policy', 'Process', 'Product', 'Program',
-       'Project', 'Regulation', 'Risk', 'Section', 'Standard', 'System',
-       'Threat', 'Vendor'],
-      notFilterableModels: ['Person', 'AssessmentTemplate', 'Workflow',
-        'TaskGroup', 'Cycle', 'CycleTaskGroupObjectTask'],
       isAssignable: isAssignable,
       hasState: hasState,
       hasFilter: hasFilter,

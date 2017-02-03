@@ -207,7 +207,7 @@
       // Get the display attr_list from local storage
       savedAttrList = this.display_prefs.getTreeViewHeaders(modelName);
 
-      this.load_tree_states(modelName);
+      this.loadTreeStates(modelName);
       this.options.statusFilterVisible = GGRC.Utils.State.hasFilter(modelName);
 
       if (!savedAttrList.length) {
@@ -382,18 +382,18 @@
                 .find('.tree-filter__status-wrap');
               // set state filter (checkboxes)
               can.bind.call(statusControl.ready(function () {
-                this.element.parent()
+                self.element.parent()
                   .find('.attr-status').each(function (i, e) {
-                    if (this.options.attr('select_state_list')
+                    if (self.options.attr('select_state_list')
                       .indexOf(e.value) > -1) {
                       e.checked = true;
                     }
                   });
-              }.bind(this)));
+              }));
               // listen to changes in the state filter
               can.bind.call(statusControl.find('input[type=checkbox]'),
                 'click',
-                this.save_tree_states.bind(this)
+                this.saveTreeStates.bind(this)
               );
             }.bind(this))));
       }
@@ -1140,13 +1140,13 @@
       this.display_prefs.setFilterHidden(false);
       this.display_prefs.save();
     },
-    load_tree_states: function (modelName) {
+    loadTreeStates: function (modelName) {
       // Get the status list from local storage
       var savedStateList;
       savedStateList = this.display_prefs.getTreeViewStates(modelName);
       this.options.attr('select_state_list', savedStateList);
     },
-    save_tree_states: function () {
+    saveTreeStates: function () {
       var $checkState = this.element.parent().find('.attr-status');
       var $selectedState = $checkState.filter(':checked');
       var stateToSave = [];
