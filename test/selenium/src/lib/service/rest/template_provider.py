@@ -7,10 +7,9 @@
 
 import copy
 import json
-
 import os
 
-from lib.constants import url, objects
+from lib.constants import objects, url
 
 
 class TemplateProvider(object):
@@ -18,32 +17,32 @@ class TemplateProvider(object):
   RELATIVE_PATH_TEMPLATE = "template/{0}.json"
   parsed_data = dict()
 
-  @staticmethod
-  def get_template_as_dict(type, **kwargs):
+  @classmethod
+  def get_template_as_dict(cls, obj_type, **kwargs):
     """Return object representation based on JSON template."""
     try:
-      obj = copy.deepcopy(TemplateProvider.parsed_data[type])
+      obj = copy.deepcopy(cls.parsed_data[obj_type])
     except KeyError:
       path = os.path.join(
           os.path.dirname(__file__),
-          TemplateProvider.RELATIVE_PATH_TEMPLATE.format(type))
+          cls.RELATIVE_PATH_TEMPLATE.format(obj_type))
       with open(path) as json_file:
         json_data = json_file.read()
       data = json.loads(json_data)
-      TemplateProvider.parsed_data[type] = data
+      cls.parsed_data[obj_type] = data
       obj = copy.deepcopy(data)
     obj.update(kwargs)
-    if type != "relationship" and "object_owner":
+    if obj_type not in {"relationship", "object_owner"}:
       contact = (
-          {"contact": TemplateProvider.generate_object(1, objects.PEOPLE)})
+          {"contact": cls.generate_object(1, objects.PEOPLE)})
       obj.update(contact)
-    return {type: obj}
+    return {obj_type: obj}
 
   @staticmethod
-  def generate_object(id, type):
+  def generate_object(obj_id, obj_type):
     """Return minimal object representation by id and type."""
     result = {}
-    result["id"] = id
-    result["href"] = "/".join([url.API, type, str(id)])
-    result["type"] = objects.get_singular(type)
+    result["id"] = obj_id
+    result["href"] = "/".join([url.API, obj_type, str(obj_id)])
+    result["type"] = objects.get_singular(obj_type)
     return result

@@ -4,42 +4,41 @@
 # pylint: disable=too-few-public-methods
 # pylint: disable=invalid-name
 
-from lib.constants import objects
-from lib.constants import roles
+from lib.constants import objects, roles
 
 
 class Lhn(object):
   """Elements' labels and properties for the LHN menu."""
   class __metaclass__(type):
-    def __init__(self, *args):
+    def __init__(cls, *args):
       for object_ in objects.ALL_PLURAL:
-        setattr(self, object_, object_.lower())
-      self.DIRECTIVES_MEMBERS = (
-          self.REGULATIONS,
-          self.POLICIES,
-          self.STANDARDS,
-          self.CONTRACTS,
-          self.CLAUSES,
-          self.SECTIONS)
-      self.CONTROLS_OR_OBJECTIVES_MEMBERS = (
-          self.CONTROLS,
-          self.OBJECTIVES)
-      self.PEOPLE_OR_GROUPS_MEMBERS = (
-          self.PEOPLE,
-          self.ORG_GROUPS,
-          self.VENDORS,
-          self.ACCESS_GROUPS)
-      self.ASSETS_OR_BUSINESS_MEMBERS = (
-          self.SYSTEMS,
-          self.PROCESSES,
-          self.DATA_ASSETS,
-          self.PRODUCTS,
-          self.PROJECTS,
-          self.FACILITIES,
-          self.MARKETS)
-      self.RISKS_OR_THREATS_MEMBERS = (
-          self.RISKS,
-          self.THREATS)
+        setattr(cls, object_, object_.lower())
+      cls.DIRECTIVES_MEMBERS = (
+          cls.REGULATIONS,
+          cls.POLICIES,
+          cls.STANDARDS,
+          cls.CONTRACTS,
+          cls.CLAUSES,
+          cls.SECTIONS)
+      cls.CONTROLS_OR_OBJECTIVES_MEMBERS = (
+          cls.CONTROLS,
+          cls.OBJECTIVES)
+      cls.PEOPLE_OR_GROUPS_MEMBERS = (
+          cls.PEOPLE,
+          cls.ORG_GROUPS,
+          cls.VENDORS,
+          cls.ACCESS_GROUPS)
+      cls.ASSETS_OR_BUSINESS_MEMBERS = (
+          cls.SYSTEMS,
+          cls.PROCESSES,
+          cls.DATA_ASSETS,
+          cls.PRODUCTS,
+          cls.PROJECTS,
+          cls.FACILITIES,
+          cls.MARKETS)
+      cls.RISKS_OR_THREATS_MEMBERS = (
+          cls.RISKS,
+          cls.THREATS)
   CONTROLS_OR_OBJECTIVES = "controls_or_objectives"
   PEOPLE_OR_GROUPS = "people_or_groups"
   ASSETS_OR_BUSINESS = "assets_or_business"
@@ -51,9 +50,9 @@ class WidgetBar(object):
   INFO = "Info"
 
   class __metaclass__(type):
-    def __init__(self, *args):
+    def __init__(cls, *args):
       for object_ in objects.ALL_PLURAL:
-        setattr(self, object_, object_.lower())
+        setattr(cls, object_, object_.lower())
 
 
 class AdminWidgetRoles(object):
@@ -113,13 +112,11 @@ class AdminWidgetCustomAttrs(object):
 
 class Common(object):
   """Common elements' labels and properties for the object."""
-  def __init__(self):
-    super(Common, self).__init__()
-    self.TITLE = "Title"
-    self.DESCRIPTION = "Description"
-    self.CODE = "Code"
-    self.TRUE = "true"
-    self.FALSE = "false"
+  TITLE = "Title"
+  DESCRIPTION = "Description"
+  CODE = "Code"
+  TRUE = "true"
+  FALSE = "false"
 
 
 class CommonModalCreate(object):
@@ -129,21 +126,25 @@ class CommonModalCreate(object):
     super(CommonModalCreate, self).__init__()
     self._HIDE_ALL_OPT_FIELDS = "Hide all optional fields"
     self._SHOW_ALL_OPT_FIELDS = "Show all optional fields"
-    self.OPT_HIDE_FIELDS = {"HIDE_ALL_OPT_FIELDS": self._HIDE_ALL_OPT_FIELDS,
-                            "SHOW_ALL_OPT_FIELDS": self._SHOW_ALL_OPT_FIELDS}
     self.SAVE_AND_CLOSE = "Save & Close"
 
 
 class CommonModalSetVisibleFields(object):
-  """Common elements' labels and properties for the Modal to set visible
-  fields for object.
+  """Common labels for modal widow that select visible fields for tree view."""
+  MODAL_HEADER_FORMAT = "Set visible fields for {}"
+  TITLE = Common.TITLE
+  CODE = Common.CODE
+  STATE = "State"
+  LAST_UPDATED = "Last Updated"
+  SET_FIELDS = "Set Fields"
+
+
+class TransformationSetVisibleFields(CommonModalSetVisibleFields):
+  """To transformation elements' labels and properties for the Modal to set
+  visible fields for object as tree view headers.
   """
-  def __init__(self):
-    super(CommonModalSetVisibleFields, self).__init__()
-    self.TITLE = Common().TITLE
-    self.CODE = Common().CODE
-    self.LAST_UPDATED = "Last Updated"
-    self.SET_FIELDS = "Set Fields"
+  OWNER = "Owner"
+  VERIFIED = "Verified"
 
 
 class CommonProgram(object):
@@ -160,119 +161,75 @@ class CommonProgram(object):
     self.EFFECTIVE_DATE = "Effective Date"
     self.STOP_DATE = "Stop Date"
     self.STATE = "State"
-    self.OPT_STATE = CommonStates().OPT_OBJ_STATE
 
 
-class CommonStates(object):
+class ObjectStates(object):
   """Elements' labels and properties for objects' states."""
-  # pylint: disable=too-many-instance-attributes
-  def __init__(self):
-    super(CommonStates, self).__init__()
-    self._DRAFT = "Draft"
-    self._FINAL = "Final"
-    self._EFFECTIVE = "Effective"
-    self._INEFFECTIVE = "Ineffective"
-    self._LAUNCHED = "Launched"
-    self._NOT_LAUNCHED = "Not Launched"
-    self._IN_SCOPE = "In Scope"
-    self._NOT_IN_SCOPE = "Not in Scope"
-    self._DEPRECATED = "Deprecated"
-    self.OPT_OBJ_STATE = {
-        "DRAFT": self._DRAFT, "FINAL": self._FINAL,
-        "EFFECTIVE": self._EFFECTIVE, "INEFFECTIVE": self._INEFFECTIVE,
-        "LAUNCHED": self._LAUNCHED, "NOT_LAUNCHED": self._NOT_LAUNCHED,
-        "IN_SCOPE": self._IN_SCOPE, "NOT_IN_SCOPE": self._NOT_IN_SCOPE,
-        "DEPRECATED": self._DEPRECATED
-    }
+  DRAFT = "Draft"
+  FINAL = "Final"
+  EFFECTIVE = "Effective"
+  INEFFECTIVE = "Ineffective"
+  LAUNCHED = "Launched"
+  NOT_LAUNCHED = "Not Launched"
+  IN_SCOPE = "In Scope"
+  NOT_IN_SCOPE = "Not in Scope"
+  DEPRECATED = "Deprecated"
 
 
-class AuditStates(object):
+class BaseStates(object):
+  """Common states for Audit and Assessment"""
+  IN_PROGRESS = "In progress"
+  COMPLETED = "Completed"
+
+
+class AuditStates(BaseStates):
   """Elements' labels and properties for Audit's states."""
-  def __init__(self):
-    super(AuditStates, self).__init__()
-    self._PLANNED = "Planned"
-    self._IN_PROGRESS = "In progress"
-    self._MANAGER_REVIEW = "Manager Review"
-    self._READY_FOR_EXT_REVIEW = "Ready for External Review"
-    self._COMPLETED = "Completed"
+  PLANNED = "Planned"
+  MANAGER_REVIEW = "Manager Review"
+  READY_FOR_EXT_REVIEW = "Ready for External Review"
 
 
-class AsmtStates(object):
+class AsmtStates(BaseStates):
   """Elements' labels and properties for Assessment's states."""
-  def __init__(self):
-    super(AsmtStates, self).__init__()
-    self.NOT_STARTED = "Not Started"
-    self.IN_PROGRESS = "In progress"
-    self.COMPLETED = "Completed"
-
-
-class ProgramModalCreate(CommonProgram, CommonModalCreate):
-  """Elements' labels and properties for the Modal to create the Program."""
-  def __init__(self):
-    super(ProgramModalCreate, self).__init__()
-    self.MODAL_HEADER = "New Program"
-    self.SAVE_AND_ADD_ANOTHER = "Save & Add Another"
+  NOT_STARTED = "Not Started"
 
 
 class ProgramWidgetInfo(CommonProgram):
   """Elements' labels and properties for the Program Info Widget."""
-  def __init__(self):
-    super(ProgramWidgetInfo, self).__init__()
-    self.TREE_VIEW_HEADER = "Program Info"
-    self.OBJECT_REVIEW = "OBJECT REVIEW"
-    self.OPT_OBJECT_REVIEW = "Submit For Review"
-    self._SHOW_ADVANCED = "Show Advanced"
-    self._HIDE_ADVANCED = "Hide Advanced"
-    self.OPT_ADVANCED = {"SHOW_ADVANCED": self._SHOW_ADVANCED,
-                         "HIDE_ADVANCED": self._HIDE_ADVANCED}
+  TREE_VIEW_HEADER = "Program Info"
 
 
 class AsmtTmplModalSetVisibleFields(CommonModalSetVisibleFields):
   """Common elements' labels and properties for the Modal to set visible
   fields for Assessment Template.
   """
-  # pylint: disable=too-many-instance-attributes
-  def __init__(self):
-    super(AsmtTmplModalSetVisibleFields, self).__init__()
-    self.MODAL_HEADER = "Set visible fields for Assessment Template"
-    self.OWNER = "Owner"
-    self.STATE = "State"
-    self.PRIMARY_CONTACT = "Primary Contact"
-    self.SECONDARY_CONTACT = "Secondary Contact"
-    self.OPT_SET_FIELDS = {
-        "TITLE": self.TITLE, "OWNER": self.OWNER, "CODE": self.CODE,
-        "STATE": self.STATE, "PRIMARY_CONTACT": self.PRIMARY_CONTACT,
-        "SECONDARY_CONTACT": self.SECONDARY_CONTACT,
-        "LAST_UPDATED": self.LAST_UPDATED
-    }
-    self.DEFAULT_SET_FIELDS = (self.TITLE, self.CODE, self.LAST_UPDATED)
+  OWNER = "Owner"
+  PRIMARY_CONTACT = "Primary Contact"
+  SECONDARY_CONTACT = "Secondary Contact"
+
+  MODAL_HEADER = CommonModalSetVisibleFields.MODAL_HEADER_FORMAT.format(
+      "Assessment Template")
+  DEFAULT_SET_FIELDS = (
+      CommonModalSetVisibleFields.TITLE,
+      CommonModalSetVisibleFields.CODE,
+      CommonModalSetVisibleFields.LAST_UPDATED)
 
 
 class AsmtModalSetVisibleFields(CommonModalSetVisibleFields):
   """Common elements' labels and properties for the Modal to set visible
   fields for Assessment.
   """
-  # pylint: disable=too-many-instance-attributes
-  def __init__(self):
-    super(AsmtModalSetVisibleFields, self).__init__()
-    self.MODAL_HEADER = "Set visible fields for Assessment"
-    self.STATE = "State"
-    self.VERIFIED = "Verified"
-    self.CONCLUSION_DESIGN = "Conclusion: Design"
-    self.CONCLUSION_OPERATION = "Conclusion: Operation"
-    self.FINISHED_DATE = "Finished Date"
-    self.VERIFIED_DATE = "Verified Date"
-    self.URL = "URL"
-    self.REFERENCE_URL = "Reference URL"
-    self.TYPE = "Type"
-    self.OPT_SET_FIELDS = {
-        "TITLE": self.TITLE, "CODE": self.CODE, "STATE": self.STATE,
-        "VERIFIED": self.VERIFIED, "LAST_UPDATED": self.LAST_UPDATED,
-        "CONCLUSION_DESIGN": self.CONCLUSION_DESIGN,
-        "CONCLUSION_OPERATION": self.CONCLUSION_OPERATION,
-        "FINISHED_DATE": self.FINISHED_DATE,
-        "VERIFIED_DATE": self.VERIFIED_DATE, "URL": self.URL,
-        "REFERENCE_URL": self.REFERENCE_URL, "TYPE": self.TYPE
-    }
-    self.DEFAULT_SET_FIELDS = (self.TITLE, self.CODE, self.STATE,
-                               self.VERIFIED, self.LAST_UPDATED)
+  MODAL_HEADER = CommonModalSetVisibleFields.MODAL_HEADER_FORMAT.format(
+      "Assessment")
+  VERIFIED = "Verified"
+  CONCLUSION_DESIGN = "Conclusion: Design"
+  CONCLUSION_OPERATION = "Conclusion: Operation"
+  FINISHED_DATE = "Finished Date"
+  VERIFIED_DATE = "Verified Date"
+  URL = "URL"
+  REFERENCE_URL = "Reference URL"
+  TYPE = "Type"
+  DEFAULT_SET_FIELDS = (
+      CommonModalSetVisibleFields.TITLE, CommonModalSetVisibleFields.CODE,
+      CommonModalSetVisibleFields.STATE, VERIFIED,
+      CommonModalSetVisibleFields.LAST_UPDATED)

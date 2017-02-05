@@ -1,6 +1,6 @@
 # Copyright (C) 2017 Google Inc.
 # Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
-"""The module provide service for working with GGRC's objects."""
+"""The module provides service for working with GGRC's objects."""
 
 
 # objects

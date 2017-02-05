@@ -3,18 +3,14 @@
 """Module for create, description, representation and equal of
 business entities.
 """
-# pylint: disable=too-few-public-methods
 # pylint: disable=too-many-arguments
-# pylint: disable=too-many-instance-attributes
-# pylint: disable=redefined-builtin
-
-import inspect
-import sys
+# pylint: disable=too-few-public-methods
 
 
 class Entity(object):
   """Class that represent model for base entity."""
   # pylint: disable=invalid-name
+  # pylint: disable=redefined-builtin
 
   def __init__(self, title=None, id=None, href=None, type=None):
     self.title = title
@@ -25,13 +21,13 @@ class Entity(object):
   @staticmethod
   def attrs_names_of_all_entities():
     """Get list of the all possible unique entities attributes' names."""
-    all_entities_classes = inspect.getmembers(sys.modules[__name__],
-                                              inspect.isclass)
+    all_entities_classes = [
+        Person, CustomAttribute, Program, Control, Audit, Asmt, AsmtTmpl]
     all_entities_attrs_names = [
-        getattr(sys.modules[__name__], entity_class[0])().__dict__.keys() for
+        entity_class().__dict__.keys() for
         entity_class in all_entities_classes]
-    unique_entities_attrs_names = list(
-        set([val for sublist in all_entities_attrs_names for val in sublist]))
+    unique_entities_attrs_names = {
+        val for sublist in all_entities_attrs_names for val in sublist}
     return unique_entities_attrs_names
 
 
@@ -45,14 +41,15 @@ class Person(Entity):
     self.authorizations = authorizations
 
   def __repr__(self):
-    return ("object: {type}, name: {title}, id: {id}, href: {href}, "
+    return ("object: {type}, name: {name}, id: {id}, href: {href}, "
             "email: {email}, authorizations: {authorizations}").format(
-        type=self.type, title=self.title, id=self.id, href=self.href,
+        type=self.type, name=self.title, id=self.id, href=self.href,
         email=self.email, authorizations=self.authorizations)
 
 
 class CustomAttribute(object):
   """Class that represent model for Custom Attribute."""
+  # pylint: disable=too-many-instance-attributes
   __hash__ = None
 
   def __init__(self, obj_id=None, title=None, ca_type=None,
@@ -201,6 +198,7 @@ class AsmtTmpl(Entity):
 
 class Asmt(Entity):
   """Class that represent model for Assessment."""
+  # pylint: disable=too-many-instance-attributes
   __hash__ = None
 
   def __init__(self, object=None, audit=None, creators=None, assignees=None,

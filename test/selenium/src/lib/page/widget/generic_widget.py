@@ -225,7 +225,7 @@ class AsmtTmpls(Widget):
   _locator_widget = locator.WidgetBar.ASSESSMENT_TEMPLATES
   _locator_filter = locator.WidgetAssessmentTemplates
   _asmt_tmpls_fields = (
-      element.AsmtTmplModalSetVisibleFields().DEFAULT_SET_FIELDS)
+      element.AsmtTmplModalSetVisibleFields.DEFAULT_SET_FIELDS)
 
   URL = environment.APP_URL + url.AUDIT.format({}) + (
       _locator_filter.widget_name)
@@ -254,7 +254,7 @@ class Asmts(Widget):
   _info_pane_cls = info_widget.Assessments
   _locator_widget = locator.WidgetBar.ASSESSMENTS
   _locator_filter = locator.WidgetAssessments
-  _asmts_fields = element.AsmtModalSetVisibleFields().DEFAULT_SET_FIELDS
+  _asmts_fields = element.AsmtModalSetVisibleFields.DEFAULT_SET_FIELDS
 
   URL = environment.APP_URL + url.AUDIT.format({}) + (
       _locator_filter.widget_name)

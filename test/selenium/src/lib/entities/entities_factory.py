@@ -1,24 +1,24 @@
 # Copyright (C) 2017 Google Inc.
 # Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
 """Module for factories that create business entities."""
-# pylint: disable=too-few-public-methods
 # pylint: disable=too-many-arguments
-# pylint: disable=expression-not-assigned
-# pylint: disable=redefined-builtin
 # pylint: disable=invalid-name
+# pylint: disable=redefined-builtin
+
 
 import random
+import uuid
 
-from lib.constants import objects, url, roles, element
+from lib.constants import element, objects, roles, url
 from lib.constants.element import AdminWidgetCustomAttrs
 from lib.entities import entity
 from lib.utils import string_utils
 from lib.utils.string_utils import random_list_of_strings, random_string
-from lib.utils.test_utils import append_random_string, prepend_random_string
 
 
 class EntitiesFactory(object):
   """Common factory class for entities."""
+  # pylint: disable=too-few-public-methods
   _obj_person = objects.get_singular(objects.PEOPLE)
   _obj_program = objects.get_singular(objects.PROGRAMS)
   _obj_control = objects.get_singular(objects.CONTROLS)
@@ -34,6 +34,7 @@ class EntitiesFactory(object):
     """Update the object's (obj) attributes values according to the list of
     unique possible objects' names and dictionary of arguments (key = value).
     """
+    # pylint: disable=expression-not-assigned
     [setattr(obj, attr_name, arguments[attr_name]) for
         attr_name in attrs_names if arguments.get(attr_name)]
     return obj
@@ -42,14 +43,14 @@ class EntitiesFactory(object):
   def _generate_title(cls, obj_type):
     """Generate title according object type."""
     special_chars = string_utils.SPECIAL
-    return append_random_string(
-        "{}_{}_".format(obj_type, random_string(
-            size=len(special_chars), chars=special_chars)))
+    return "{obj_type}_{rand_str}_{uuid}".format(
+        obj_type=obj_type, uuid=uuid.uuid4(),
+        rand_str=random_string(size=len(special_chars), chars=special_chars))
 
   @classmethod
   def _generate_email(cls, domain=url.DEFAULT_EMAIL_DOMAIN):
     """Generate email according domain."""
-    return prepend_random_string("@" + domain)
+    return "{uuid}@{domain}".format(uuid=uuid.uuid4(), domain=domain)
 
 
 class PersonFactory(EntitiesFactory):
@@ -67,30 +68,24 @@ class PersonFactory(EntitiesFactory):
              authorizations=None):
     """Create Person object.
 
-    Random values will be used for title (name).
+    Random values will be used for title aka name.
     Predictable values will be used for mail and system_wide_role.
     """
     person_entity = cls._create_random_person()
-    person_entity = cls._fill_person_entity_fields(
-        person_entity, title=title, id=id, href=href, type=type, email=email,
-        authorizations=authorizations
-    )
+    person_entity = cls.update_obj_attrs_values(
+        obj=person_entity, title=title, id=id, href=href, type=type,
+        email=email, authorizations=authorizations)
     return person_entity
 
   @classmethod
   def _create_random_person(cls):
-    """Create Person entity with randomly and predictably filled fields."""
+    """Create Person entity with randomly filled fields."""
     random_person = entity.Person()
     random_person.title = cls._generate_title(cls._obj_person)
     random_person.type = cls._obj_person
     random_person.email = cls._generate_email()
     random_person.authorizations = roles.NO_ROLE
     return random_person
-
-  @classmethod
-  def _fill_person_entity_fields(cls, person_obj, **person_obj_fields):
-    """Set the Persons object's attributes."""
-    return cls.update_obj_attrs_values(obj=person_obj, **person_obj_fields)
 
 
 class CAFactory(EntitiesFactory):
@@ -116,7 +111,7 @@ class CAFactory(EntitiesFactory):
 
   @classmethod
   def _create_random_ca(cls):
-    """Create CustomAttribute entity with randomly and filled fields."""
+    """Create CustomAttribute entity with randomly filled fields."""
     random_ca = entity.CustomAttribute()
     random_ca.ca_type = random.choice(AdminWidgetCustomAttrs.ALL_ATTRS_TYPES)
     random_ca.title = cls._generate_title(random_ca.ca_type)
@@ -183,11 +178,10 @@ class ProgramFactory(EntitiesFactory):
     Predictable values will be used for type, manager, pr_contact, state.
     """
     program_entity = cls._create_random_program()
-    program_entity = cls._fill_program_entity_fields(
-        program_entity, title=title, id=id, href=href, type=type,
+    program_entity = cls.update_obj_attrs_values(
+        obj=program_entity, title=title, id=id, href=href, type=type,
         manager=manager, pr_contact=pr_contact, code=code, state=state,
-        last_update=last_update
-    )
+        last_update=last_update)
     return program_entity
 
   @classmethod
@@ -199,13 +193,8 @@ class ProgramFactory(EntitiesFactory):
     random_program.type = cls._obj_program
     random_program.manager = roles.DEFAULT_USER
     random_program.pr_contact = roles.DEFAULT_USER
-    random_program.state = element.CommonStates()._DRAFT
+    random_program.state = element.ObjectStates.DRAFT
     return random_program
-
-  @classmethod
-  def _fill_program_entity_fields(cls, program_obj, **program_obj_fields):
-    """Set the Programs object's attributes."""
-    return cls.update_obj_attrs_values(obj=program_obj, **program_obj_fields)
 
 
 class ControlFactory(EntitiesFactory):
@@ -220,10 +209,10 @@ class ControlFactory(EntitiesFactory):
     Predictable values will be used for type, owner, pr_contact, state.
     """
     control_entity = cls._create_random_control()
-    control_entity = cls._fill_control_entity_fields(
-        control_entity, title=title, id=id, href=href, type=type, owner=owner,
-        pr_contact=pr_contact, code=code, state=state, last_update=last_update
-    )
+    control_entity = cls.update_obj_attrs_values(
+        obj=control_entity, title=title, id=id, href=href, type=type,
+        owner=owner, pr_contact=pr_contact, code=code, state=state,
+        last_update=last_update)
     return control_entity
 
   @classmethod
@@ -235,13 +224,8 @@ class ControlFactory(EntitiesFactory):
     random_control.type = cls._obj_control
     random_control.owner = roles.DEFAULT_USER
     random_control.pr_contact = roles.DEFAULT_USER
-    random_control.state = element.CommonStates()._DRAFT
+    random_control.state = element.ObjectStates.DRAFT
     return random_control
-
-  @classmethod
-  def _fill_control_entity_fields(cls, control_obj, **control_obj_fields):
-    """Set the Controls object's attributes."""
-    return cls.update_obj_attrs_values(obj=control_obj, **control_obj_fields)
 
 
 class AuditFactory(EntitiesFactory):
@@ -256,8 +240,8 @@ class AuditFactory(EntitiesFactory):
     Predictable values will be used for type, audit_lead, status.
     """
     audit_entity = cls._create_random_audit()
-    audit_entity = cls._fill_audit_entity_fields(
-        audit_entity, title=title, id=id, href=href, type=type,
+    audit_entity = cls.update_obj_attrs_values(
+        obj=audit_entity, title=title, id=id, href=href, type=type,
         program=program, audit_lead=audit_lead, code=code, status=status,
         last_update=last_update)
     return audit_entity
@@ -270,13 +254,8 @@ class AuditFactory(EntitiesFactory):
     random_audit.title = cls._generate_title(cls._obj_audit)
     random_audit.type = cls._obj_audit
     random_audit.audit_lead = roles.DEFAULT_USER
-    random_audit.status = element.AuditStates()._PLANNED
+    random_audit.status = element.AuditStates.PLANNED
     return random_audit
-
-  @classmethod
-  def _fill_audit_entity_fields(cls, audit_obj, **audit_obj_fields):
-    """Set the Audits object's attributes."""
-    return cls.update_obj_attrs_values(obj=audit_obj, **audit_obj_fields)
 
 
 class AsmtTmplFactory(EntitiesFactory):
@@ -293,8 +272,8 @@ class AsmtTmplFactory(EntitiesFactory):
     def_verifiers.
     """
     asmt_tmpl_entity = cls._create_random_asmt_tmpl()
-    asmt_tmpl_entity = cls._fill_asmt_tmpl_entity_fields(
-        asmt_tmpl_entity, title=title, id=id, href=href, type=type,
+    asmt_tmpl_entity = cls.update_obj_attrs_values(
+        obj=asmt_tmpl_entity, title=title, id=id, href=href, type=type,
         audit=audit, asmt_objects=asmt_objects, def_assessors=def_assessors,
         def_verifiers=def_verifiers, code=code, last_update=last_update)
     return asmt_tmpl_entity
@@ -312,13 +291,6 @@ class AsmtTmplFactory(EntitiesFactory):
     random_asmt_tmpl.def_verifiers = roles.OBJECT_OWNERS
     return random_asmt_tmpl
 
-  @classmethod
-  def _fill_asmt_tmpl_entity_fields(cls, asmt_tmpl_obj,
-                                    **asmt_tmpl_obj_fields):
-    """Set the Assessment Templates object's attributes."""
-    return cls.update_obj_attrs_values(obj=asmt_tmpl_obj,
-                                       **asmt_tmpl_obj_fields)
-
 
 class AsmtFactory(EntitiesFactory):
   """Factory class for Assessment entity."""
@@ -334,12 +306,11 @@ class AsmtFactory(EntitiesFactory):
     state, is_verified.
     """
     asmt_entity = cls._create_random_asmt()
-    asmt_entity = cls._fill_asmt_entity_fields(
-        asmt_entity, title=title, id=id, href=href, type=type, object=object,
-        audit=audit, creators=creators, assignees=assignees,
+    asmt_entity = cls.update_obj_attrs_values(
+        obj=asmt_entity, title=title, id=id, href=href, type=type,
+        object=object, audit=audit, creators=creators, assignees=assignees,
         pr_contact=pr_contact, is_verified=is_verified, code=code, state=state,
-        last_update=last_update
-    )
+        last_update=last_update)
     return asmt_entity
 
   @classmethod
@@ -351,11 +322,6 @@ class AsmtFactory(EntitiesFactory):
     random_asmt.object = roles.DEFAULT_USER
     random_asmt.creators = roles.DEFAULT_USER
     random_asmt.assignees = roles.DEFAULT_USER
-    random_asmt.state = element.AsmtStates().NOT_STARTED
-    random_asmt.is_verified = element.Common().FALSE
+    random_asmt.state = element.AsmtStates.NOT_STARTED
+    random_asmt.is_verified = element.Common.FALSE
     return random_asmt
-
-  @classmethod
-  def _fill_asmt_entity_fields(cls, asmt_obj, **asmt_obj_fields):
-    """Set the Assessments object's attributes."""
-    return cls.update_obj_attrs_values(obj=asmt_obj, **asmt_obj_fields)

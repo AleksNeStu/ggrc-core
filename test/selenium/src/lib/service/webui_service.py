@@ -19,7 +19,7 @@ class BaseWebUiService(object):
     """Get transformation dictionary {OLD KEY: NEW KEY}, where
     'OLD KEY' - UI elements correspond to the 'NEW KEY' - objects attributes.
     """
-    fields = element.AsmtModalSetVisibleFields()
+    fields = element.TransformationSetVisibleFields
     return {
         fields.TITLE.upper(): "title", fields.CODE.upper(): "code",
         fields.STATE.upper(): "state", fields.VERIFIED.upper(): "is_verified",

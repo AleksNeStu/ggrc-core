@@ -1,55 +1,28 @@
 # Copyright (C) 2017 Google Inc.
 # Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
-"""The module provide service for working with GGRC's URLs."""
+"""The module provides constants GGRC's URLs construction."""
 
-import objects
+# pylint: disable=wildcard-import
+# pylint: disable=unused-wildcard-import
+from lib.constants.objects import *  # noqa; the names are later exported
 
 # URL's parts for objects
 API = "api"
 DASHBOARD = "dashboard"
 ADMIN_DASHBOARD = "admin"
-PROGRAMS = "programs"
-WORKFLOWS = "workflows"
-AUDITS = "audits"
 AUDIT = AUDITS + "/{0}"
-ASSESSMENTS = "assessments"
-ASSESSMENT_TEMPLATES = "assessment_templates"
-ISSUES = "issues"
-REGULATIONS = "regulations"
-POLICIES = "policies"
-STANDARDS = "standards"
-CONTRACTS = "contracts"
-CLAUSES = "clauses"
-SECTIONS = "sections"
-CONTROLS = "controls"
-OBJECTIVES = "objectives"
-PEOPLE = "people"
-ORG_GROUPS = "org_groups"
-VENDORS = "vendors"
-ACCESS_GROUPS = "access_groups"
-SYSTEMS = "systems"
-PROCESSES = "processes"
-DATA_ASSETS = "data_assets"
-PRODUCTS = "products"
-PROJECTS = "projects"
-FACILITIES = "facilities"
-MARKETS = "markets"
-RISKS = "risks"
-THREATS = "threats"
 RELATIONSHIPS = "relationships"
 OBJECT_OWNERS = "object_owners"
 
-# default
+# url path for user
 DEFAULT_EMAIL_DOMAIN = "example.com"
 DEFAULT_EMAIL = "user@" + DEFAULT_EMAIL_DOMAIN
-DEFAULT_URL_USER_API = "/".join([API, objects.PEOPLE, str(1)])
+DEFAULT_URL_USER_API = "/".join([API, PEOPLE, str(1)])
 
 
 class Widget(object):
   """URL's parts for widgets."""
-
   # pylint: disable=too-few-public-methods
-
   # common
   INFO = "#info_widget"
   # admin dashboard page
