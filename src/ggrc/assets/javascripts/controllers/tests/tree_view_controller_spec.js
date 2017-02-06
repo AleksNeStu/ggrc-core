@@ -81,5 +81,33 @@ describe('CMS.Controllers.TreeView', function () {
 
       expect(result).toBeTruthy();
     });
+
+    it('right relationship without source', function () {
+      var result;
+
+      relationship.destination = {type: 'foo'};
+
+      result = method(relationship, 'foo');
+
+      expect(result).toBeTruthy();
+    });
+
+    it('right relationship without destination', function () {
+      var result;
+
+      relationship.source = {type: 'foo'};
+
+      result = method(relationship, 'foo');
+
+      expect(result).toBeTruthy();
+    });
+
+    it('empty relationship', function () {
+      var result;
+
+      result = method(relationship, 'foo');
+
+      expect(result).toBeFalsy();
+    });
   });
 });

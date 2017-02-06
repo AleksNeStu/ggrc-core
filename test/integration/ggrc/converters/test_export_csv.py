@@ -6,7 +6,7 @@ from flask.json import dumps
 
 from ggrc.converters import get_importables
 from ggrc.models.reflection import AttributeInfo
-from integration.ggrc.converters import TestCase
+from integration.ggrc import TestCase
 
 THIS_ABS_PATH = abspath(dirname(__file__))
 CSV_DIR = join(THIS_ABS_PATH, 'test_csvs/')
@@ -18,7 +18,7 @@ class TestExportEmptyTemplate(TestCase):
     self.client.get("/login")
     self.headers = {
         'Content-Type': 'application/json',
-        "X-Requested-By": "gGRC",
+        "X-Requested-By": "GGRC",
         "X-export-view": "blocks",
     }
 
@@ -62,7 +62,7 @@ class TestExportSingleObject(TestCase):
     self.client.get("/login")
     self.headers = {
         'Content-Type': 'application/json',
-        "X-Requested-By": "gGRC",
+        "X-Requested-By": "GGRC",
         "X-export-view": "blocks",
     }
 
@@ -351,7 +351,7 @@ class TestExportMultipleObjects(TestCase):
     self.client.get("/login")
     self.headers = {
         'Content-Type': 'application/json',
-        "X-Requested-By": "gGRC",
+        "X-Requested-By": "GGRC",
         "X-export-view": "blocks",
     }
 

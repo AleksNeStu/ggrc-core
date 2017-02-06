@@ -5,18 +5,18 @@
 
 <div data-object-id="{{instance.id}}"
     data-object-type="{{instance.class.table_singular}}" {{#instance}}{{data 'model'}}{{/instance}}>
-  {{#if_equals instance.status 'Final'}}
-    <i class="fa fa-check-square-o green"></i>
-    <span class="object-approved">
+  {{#if_equals instance.os_state 'Reviewed'}}
+      <i class="fa fa-check-square-o green"></i>
+      <span class="object-approved">Reviewed
       {{#last_approved instance}}
-        Reviewed on {{instance.updated_at}} <br />
-        and approved by
+        by
         {{#using person=instance.modified_by}}
           {{>'/static/mustache/people/popover.mustache'}}
-        {{/using}}
-      </span>
+        {{/using}} on {{instance.updated_at}}
       {{/last_approved}}
+      </span>
   {{else}}
+    <div>
     {{#with_mapping 'approval_tasks' instance}}
       {{#with_review_task}}
         {{#with_is_reviewer review_task}}
@@ -72,6 +72,7 @@
               {{/current_user_is_admin}}
             </div>
           {{else}}
+            <div>
             {{#is_allowed "read" "Workflow" context="any"}}
               {{#with_mapping_count instance 'current_approval_cycles'}}
                 {{#if_equals count 0}}
@@ -94,9 +95,11 @@
                 {{/if_equals}}
               {{/with_mapping_count}}
             {{/is_allowed}}
+            </div>
           {{/if}}
         {{/with_is_reviewer}}
       {{/with_review_task}}
     {{/with_mapping}}
+  </div>
   {{/if_equals}}
 </div>

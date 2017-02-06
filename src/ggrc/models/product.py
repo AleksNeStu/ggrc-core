@@ -11,7 +11,6 @@ from ggrc.models.option import Option
 from ggrc.models.relationship import Relatable
 from ggrc.models.utils import validate_option
 from ggrc.models.track_object_state import HasObjectState
-from ggrc.models.track_object_state import track_state_for_class
 
 
 class Product(HasObjectState, CustomAttributable, Personable,
@@ -58,5 +57,3 @@ class Product(HasObjectState, CustomAttributable, Personable,
 
     query = super(Product, cls).eager_query()
     return query.options(orm.joinedload('kind'))
-
-track_state_for_class(Product)

@@ -13,33 +13,41 @@
       leftRevisionId: null,
       rightRevisions: [],
       compareIt: function (scope, el, ev) {
-        var currentRevisionID = scope.leftRevisionId;
-        var revisionsLength = scope.rightRevisions.length;
-        var newRevisionID = scope.rightRevisions[revisionsLength - 1].id;
         var view = scope.instance.view;
-        this.getRevisions(currentRevisionID, newRevisionID)
-          .then(function (data) {
-            var revisions = this.prepareInstances(data);
-            var that = this;
-
-            GGRC.Controllers.Modals.confirm({
-              modal_title: 'Compare with the latest version',
-              header_view: GGRC.mustache_path +
-                            '/modals/modal_compare_header.mustache',
-              modal_confirm: 'Update',
-              skip_refresh: true,
-              extraCssClass: 'compare-modal',
-              button_view: GGRC.mustache_path +
-                            '/modals/prompt_buttons.mustache',
-              afterFetch: function (target) {
+        var that = this;
+        var currentRevisionID = scope.leftRevisionId;
+        var rightRevisions = scope.rightRevisions;
+        var revisionsLength = rightRevisions.length;
+        var newRevisionID;
+        if (!currentRevisionID || !rightRevisions || !revisionsLength) {
+          scope.instance.snapshot = scope.instance.snapshot.reify();
+          currentRevisionID = scope.instance.snapshot.revision_id;
+          rightRevisions = scope.instance.snapshot.revisions;
+          revisionsLength = rightRevisions.length;
+        }
+        newRevisionID = rightRevisions[revisionsLength - 1].id;
+        GGRC.Controllers.Modals.confirm({
+          modal_title: 'Compare with the latest version',
+          modal_description: 'Loading...',
+          header_view: GGRC.mustache_path +
+                        '/modals/modal_compare_header.mustache',
+          modal_confirm: 'Update',
+          skip_refresh: true,
+          extraCssClass: 'compare-modal',
+          button_view: GGRC.mustache_path +
+                        '/modals/prompt_buttons.mustache',
+          afterFetch: function (target) {
+            that.getRevisions(currentRevisionID, newRevisionID)
+              .then(function (data) {
+                var revisions = that.prepareInstances(data);
                 var fragLeft = can.view(view, revisions[0]);
                 var fragRight = can.view(view, revisions[1]);
                 fragLeft.appendChild(fragRight);
                 target.find('.modal-body').html(fragLeft);
                 that.highlightDifference(target);
-              }
-            }, this.updateRevision.bind(this));
-          }.bind(this));
+              });
+          }
+        }, this.updateRevision.bind(this));
       },
       getRevisions: function (currentRevisionID, newRevisionID) {
         var additionalFilter = {
@@ -69,11 +77,10 @@
       prepareInstances: function (data) {
         return data.Revision.values.map(function (value) {
           var content = value.content;
+          var model = CMS.Models[value.resource_type];
           content.isRevision = true;
-          content.class = {
-            is_custom_attributable: false
-          };
-          return {instance: content};
+          content.type = value.resource_type;
+          return {instance: new model(content)};
         });
       },
       updateRevision: function () {
@@ -102,7 +109,8 @@
        * @return {Object} - jQuery object
        */
       getAttributes: function ($infoPanes, index) {
-        return $($infoPanes[index]).find('.row-fluid h6 + *');
+        var selector = '.row-fluid h6 + *, .row-fluid .state-value';
+        return $($infoPanes[index]).find(selector);
       },
 
       /**
@@ -240,6 +248,7 @@
          * @param {Object} caLast - jQuery object
          */
         function compareCA(caFirst, caLast) {
+          var prevIndex = -1;
           caFirst.each(function (i, caOld) {
             var $sameCA = [];
             var $caOld = $(caOld);
@@ -249,6 +258,7 @@
               var caNewScope = $caNew.viewModel();
               if (caNewScope.caId === caOldScope.caId) {
                 $sameCA = $caNew;
+                prevIndex = j;
               }
             });
             if ($sameCA.length) {
@@ -256,7 +266,7 @@
               highlightProperty('value', $sameCA, $caOld, valueSelector);
               equalCAHeight($caOld, $sameCA);
             } else {
-              fillEmptyCA(caLast, $caOld, i);
+              fillEmptyCA(caLast, $caOld, prevIndex);
             }
           });
         }
@@ -300,19 +310,20 @@
          * Fill empty space when CA is not existing
          * @param {Object} caList - List of CA
          * @param {Object} $ca - jQuery object Current attribute
-         * @param {Number} index - Index of current attribute
+         * @param {Number} index - Index of previous the same attribute
          */
         function fillEmptyCA(caList, $ca, index) {
-          var i = 1;
-          var caOldHeight = $ca
-                              .closest(caWrapperSelector)
-                              .outerHeight(true);
-          while (!$(caList[index - i]).length && i < index) {
-            i++;
+          var caOldHeight;
+          caOldHeight = $ca
+                          .closest(caWrapperSelector)
+                          .outerHeight(true);
+          if (index === -1) {
+            $(caList.context).css('padding-top', '+=' + caOldHeight);
+          } else {
+            $(caList[index])
+                    .closest(caWrapperSelector)
+                    .css('margin-bottom', '+=' + caOldHeight);
           }
-          $(caList[index - i])
-                  .closest(caWrapperSelector)
-                  .css('margin-bottom', '+=' + caOldHeight);
           $ca.closest(caSelector).addClass(highlightClass);
         }
       }

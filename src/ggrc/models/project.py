@@ -6,12 +6,10 @@ from .mixins import BusinessObject, Timeboxed, CustomAttributable
 from .object_owner import Ownable
 from .object_person import Personable
 from .relationship import Relatable
-from .track_object_state import HasObjectState, track_state_for_class
+from .track_object_state import HasObjectState
 
 
 class Project(HasObjectState, CustomAttributable, Personable,
               Relatable, Timeboxed, Ownable, BusinessObject, db.Model):
   __tablename__ = 'projects'
   _aliases = {"url": "Project URL"}
-
-track_state_for_class(Project)

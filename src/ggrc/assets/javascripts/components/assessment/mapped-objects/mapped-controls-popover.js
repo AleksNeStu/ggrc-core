@@ -13,57 +13,63 @@
    * Assessment specific mapped controls popover view component
    */
   var defaultResponseArr = [{
-    Objective: {
+    Snapshot: {
       values: []
     }
   }, {
-    Regulation: {
+    Snapshot: {
       values: []
     }
   }];
 
-  GGRC.Components('mappedControlsPopover', {
+  can.Component.extend({
     tag: tag,
     template: tpl,
-    scope: {
+    viewModel: {
       item: null,
       expanded: false,
-      objectives: new can.List(),
-      regulations: new can.List(),
+      objectives: [],
+      regulations: [],
+      queries: [
+        {type: 'objectives'},
+        {type: 'regulations'}
+      ],
       isLoading: false,
-      getParams: function (id, type) {
+      getParams: function (id) {
         var params = {};
         var relevant = {
           id: id,
-          type: type
+          type: 'Snapshot'
         };
-        var fields = ['id', 'title', 'notes', 'description'];
+        var fields = ['revision'];
         params.data = [
-          GGRC.Utils.QueryAPI.buildParam('Objective', {}, relevant, fields),
-          GGRC.Utils.QueryAPI.buildParam('Regulation', {}, relevant, fields)
+          GGRC.Utils.Snapshots.transformQuery(
+            GGRC.Utils.QueryAPI.buildParam('Objective', {}, relevant, fields)
+          ),
+          GGRC.Utils.Snapshots.transformQuery(
+            GGRC.Utils.QueryAPI.buildParam('Regulation', {}, relevant, fields)
+          )
         ];
         return params;
       },
       setItems: function (responseArr) {
-        responseArr.forEach(function (item) {
-          if (item.Objective) {
-            this.attr('objectives').replace(item.Objective.values);
-          }
-          if (item.Regulation) {
-            this.attr('regulations').replace(item.Regulation.values);
-          }
+        responseArr.forEach(function (item, i) {
+          var type = this.attr('queries').attr(i).type;
+          this.attr(type).replace(item.Snapshot.values
+            .map(function (item) {
+              return item.revision.content;
+            }));
         }.bind(this));
       },
       loadItems: function () {
         var id = this.attr('item.data.id');
-        var type = this.attr('item.data.type');
         var params;
 
-        if (!id || !type) {
+        if (!id) {
           this.setItems(defaultResponseArr);
           return;
         }
-        params = this.getParams(id, type);
+        params = this.getParams(id);
 
         this.attr('isLoading', true);
 
@@ -80,9 +86,9 @@
       }
     },
     events: {
-      '{scope} expanded': function (scope, ev, isExpanded) {
+      '{viewModel} expanded': function (scope, ev, isExpanded) {
         if (isExpanded) {
-          this.scope.loadItems();
+          this.viewModel.loadItems();
         }
       }
     }

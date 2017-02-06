@@ -13,10 +13,10 @@ from werkzeug.exceptions import BadRequest
 
 from ggrc import db
 from ggrc.models.mixins import Identifiable
-from ggrc.models.mixins import Mapping
+from ggrc.models.mixins import Base
 
 
-class Relationship(Mapping, db.Model):
+class Relationship(Base, db.Model):
   __tablename__ = 'relationships'
   source_id = db.Column(db.Integer, nullable=False)
   source_type = db.Column(db.String, nullable=False)

@@ -25,6 +25,7 @@
       options_property: 'tree_view_options',
       show_view: null,
       expanded: false,
+      subTreeLoading: false,
       draw_children: true,
       child_options: []
     }
@@ -101,6 +102,19 @@
         }
       },
 
+    markNotRelatedItem: function () {
+      var instance = this.options.instance;
+      var relatedInstances = GGRC.Utils.CurrentPage.related
+        .attr(instance.type);
+
+      if (!relatedInstances || relatedInstances &&
+        !relatedInstances[instance.id]) {
+        this.element.addClass('parent-related');
+      } else {
+        this.element.addClass('current-instance-related');
+      }
+    },
+
     /**
      * Trigger rendering the tree node in the DOM.
      * @param {Boolean} force - indicates redraw is/is not mandatory
@@ -139,6 +153,7 @@
           this._draw_node_deferred.resolve();
         }.bind(this))
       );
+
       this.options.attr('isPlaceholder', false);
       this._draw_node_in_progress = false;
     },
@@ -257,6 +272,10 @@
       oldEl.replaceWith(el);
       this.element = firstchild.addClass(this.constructor._fullName)
         .data(oldData);
+
+      if (this.options.is_subtree) {
+        this.markNotRelatedItem();
+      }
       this.on();
     },
 
@@ -270,9 +289,13 @@
       }.bind(this)));
     },
 
-    display_subtrees: function () {
+    display_subtrees: function (refetch) {
       var childTreeDfds = [];
       var that = this;
+      var parentCtrl = this.element.closest('section')
+        .find('.cms_controllers_tree_view').control();
+
+      refetch = refetch || parentCtrl.options.showMappedToAllParents;
 
       this.element.find('.' + CMS.Controllers.TreeView._fullName)
         .each(function (_, el) {
@@ -283,7 +306,11 @@
           if ($el.closest('.' + that.constructor._fullName).is(that.element)) {
             childTreeControl = $el.control();
             if (childTreeControl) {
-              childTreeDfds.push(childTreeControl.display());
+              that.options.attr('subTreeLoading', true);
+              childTreeDfds.push(childTreeControl.display(refetch)
+                .then(function () {
+                  that.options.attr('subTreeLoading', false);
+                }));
             }
           }
         });

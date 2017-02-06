@@ -9,6 +9,12 @@
   }
 }
 
+people-list {
+  .alert-verifier {
+    border-width: 2px;
+  }
+}
+
 .person-label {
   @include border-radius(50%);
   width: 35px;

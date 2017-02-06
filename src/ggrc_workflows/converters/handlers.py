@@ -319,31 +319,13 @@ class ObjectsColumnHandler(multi_object.ObjectsColumnHandler):
     db.session.flush()
 
 
-class ExportOnlyColumnHandler(handlers.ColumnHandler):
-
-  def parse_item(self):
-    pass
-
-  def set_obj_attr(self):
-    pass
-
-  def get_value(self):
-    return ""
-
-  def insert_object(self):
-    pass
-
-  def set_value(self):
-    pass
-
-
-class CycleWorkflowColumnHandler(ExportOnlyColumnHandler):
+class CycleWorkflowColumnHandler(handlers.ExportOnlyColumnHandler):
 
   def get_value(self):
     return self.row_converter.obj.workflow.slug
 
 
-class CycleColumnHandler(ExportOnlyColumnHandler):
+class CycleColumnHandler(handlers.ExportOnlyColumnHandler):
 
   def get_value(self):
     return self.row_converter.obj.cycle.slug

@@ -24,7 +24,7 @@
           node.select(true);
         }
       },
-      openObject(scope, el, ev) {
+      openObject: function (scope, el, ev) {
         ev.stopPropagation();
       }
     }

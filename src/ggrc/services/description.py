@@ -5,10 +5,11 @@ import json
 from flask import request, current_app
 from flask.views import MethodView
 
-"""RESTful service discovery API for gGRC services."""
+"""RESTful service discovery API for GGRC services."""
+
 
 class ServiceDescription(MethodView):
-  """Flask view providing a RESTful service discovery resource for all gGRC
+  """Flask view providing a RESTful service discovery resource for all GGRC
   resources, resource collections and services.
   """
   def get(self):
@@ -18,37 +19,36 @@ class ServiceDescription(MethodView):
       service = getattr(services, entry.model_class.__name__)
       endpoints[service.__name__] = {
           'href': service.url_for(),
-          #TODO additional fields
-          #'discoveryVersion': '',
-          #'id': '',
-          #'name': '',
-          #'version': '',
-          #'title': '',
-          #'description': '',
-          #'documentationLink': '',
-          }
-    endpoints['search'] = { 'href': '/search' }
-    endpoints['log_event'] = {'href': '/api/log_events' }
+          # TODO additional fields
+          # 'discoveryVersion': '',
+          # 'id': '',
+          # 'name': '',
+          # 'version': '',
+          # 'title': '',
+          # 'description': '',
+          # 'documentationLink': '',
+      }
+    endpoints['search'] = {'href': '/search'}
+    endpoints['log_event'] = {'href': '/api/log_events'}
     return self.json_success_response({
         'service_description': {
-          'name': 'gGRC-Core',
-          'endpoints': endpoints,
-          'selfLink': request.url,
-          #TODO additional fields
-          #'id': '',
-          #'title': '',
-          #'description': '',
-          #'documentationLink': '',
-          },
-        })
+            'name': 'GGRC-Core',
+            'endpoints': endpoints,
+            'selfLink': request.url,
+            # TODO additional fields
+            # 'id': '',
+            # 'title': '',
+            # 'description': '',
+            # 'documentationLink': '',
+        },
+    })
 
-  def json_success_response(
-      self, response_object, status=200):
+  def json_success_response(self, response_object, status=200):
     headers = [
-        #('Last-Modified', self.http_timestamp(last_modified)),
-        #('Etag', self.etag(response_object)),
+        # ('Last-Modified', self.http_timestamp(last_modified)),
+        # ('Etag', self.etag(response_object)),
         ('Content-Type', 'application/json'),
-        #('Location', self.url_for())
-        ]
+        # ('Location', self.url_for())
+    ]
     return current_app.make_response(
-      (json.dumps(response_object), status, headers))
+        (json.dumps(response_object), status, headers))

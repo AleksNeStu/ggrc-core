@@ -16,8 +16,7 @@ class WorkflowRolesTestCase(WorkflowTestCase):
   """Workflow roles test case"""
 
   def setUp(self):
-    # old-style class
-    WorkflowTestCase.setUp(self)
+    super(WorkflowRolesTestCase, self).setUp()
 
     self.workflow_res = None
     self.workflow_obj = None

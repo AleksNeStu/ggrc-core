@@ -123,11 +123,12 @@
       <div class="tier-2-info-content">
         {{#if draw_children}}
           {{#prune_context}} {{! this line is just chopping the context stack down to one element}}
-              {{#child_options}}
+            {{#child_options.0}}
                 <div class="inner-tree">
+                  <spinner toggle="subTreeLoading"></spinner>
                   <ul class="tree-structure new-tree" {{data 'options'}} {{ (el) -> el.cms_controllers_tree_view(el.data("options")) }}></ul>
                 </div>
-              {{/child_options}}
+              {{/child_options.0}}
           {{/prune_context}}
         {{/if}}
       </div>

@@ -7,15 +7,15 @@
 
 from ggrc import models
 from ggrc.converters import errors
-from integration.ggrc import converters
+from integration.ggrc import TestCase
 
 
-class TestAssessmentTemplatesImport(converters.TestCase):
+class TestAssessmentTemplatesImport(TestCase):
   """Assessment Template import tests."""
 
   def setUp(self):
-    """Set up for Request test cases."""
-    converters.TestCase.setUp(self)
+    """Set up for Assessment Template test cases."""
+    super(TestAssessmentTemplatesImport, self).setUp()
     self.client.get("/login")
 
   def test_valid_import(self):

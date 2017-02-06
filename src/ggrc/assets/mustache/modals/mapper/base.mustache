@@ -56,7 +56,7 @@
                 }'
                             data-join-object-id="{{mapper.join_object_id}}">
                         <i class="fa fa-plus-circle"></i>
-                        Create New {{mapper.model.title_singular}}
+                        Create {{mapper.model.title_singular}}
                     </a>
                 </div>
             </div>
@@ -69,11 +69,12 @@
                               href="javascript://"
                               data-toggle="modal-ajax-form"
                               data-modal-class="modal-wide"
+                              data-unique-id="{{mapper.join_object_id}}"
                               data-object-singular="{{mapper.model.singular}}"
                               data-object-plural="{{mapper.model.plural}}"
                               data-join-object-id="{{mapper.join_object_id}}">
                           <i class="fa fa-plus-circle"></i>
-                          Create New {{mapper.model.title_singular}}
+                          Create {{mapper.model.title_singular}}
                       </a>
                   </div>
               </div>

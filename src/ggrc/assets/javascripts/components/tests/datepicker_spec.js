@@ -49,4 +49,27 @@ describe('GGRC.Components.datepicker', function () {
       expect(result.getMonth()).toBe(0);
     });
   });
+
+  describe('prepareDate() method', function () {
+    var method;
+    var scope;
+
+    beforeAll(function () {
+      scope = Component.prototype.scope();
+      method = Component.prototype.events.prepareDate.bind(scope);
+    });
+
+    it('returns null for incorrect date', function () {
+      expect(method(scope, 'some string')).toBe(null);
+      expect(method(scope, '11.12.68')).toBe(null);
+      expect(method(scope, '11.12.2017')).toBe(null);
+      expect(method(scope, '')).toBe(null);
+    });
+
+    it('returns ISO date formated for correct date', function () {
+      expect(method(scope, '11/12/2017')).toBe('2017-11-12');
+      expect(method(scope, ' 11/12/2017')).toBe('2017-11-12');
+      expect(method(scope, '11/12/2017 ')).toBe('2017-11-12');
+    });
+  });
 });

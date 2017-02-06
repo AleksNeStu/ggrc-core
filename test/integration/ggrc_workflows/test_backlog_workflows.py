@@ -25,7 +25,7 @@ class TestBacklogWorkflow(TestCase):
   """Test cases for backlog workflow"""
 
   def setUp(self):  # noqa
-    TestCase.setUp(self)
+    super(TestBacklogWorkflow, self).setUp()
     self.api = Api()
     self.generator = WorkflowsGenerator()
     self.object_generator = ObjectGenerator()

@@ -7,10 +7,10 @@ import json
 
 from ggrc import db
 from ggrc import models
-from integration.ggrc import services
+from integration.ggrc.services import TestCase
 
 
-class TestCollectionPost(services.TestCase):
+class TestCollectionPost(TestCase):
   """Test for collection post api calls."""
 
   @staticmethod

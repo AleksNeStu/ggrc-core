@@ -5,7 +5,7 @@
 
 from flask.json import dumps
 
-from integration.ggrc.converters import TestCase
+from integration.ggrc import TestCase
 from integration.ggrc.generator import ObjectGenerator
 from ggrc.models import AccessGroup
 from ggrc.models import Product
@@ -25,14 +25,14 @@ class TestCustomAttributeImportExport(TestCase):
     that is used for sending import/export requests.
     """
     if TestCustomAttributeImportExport._set_up:
-      TestCase.setUp(self)
+      super(TestCustomAttributeImportExport, self).setUp()
       self.generator = ObjectGenerator()
       self.create_custom_attributes()
       self.create_people()
     self.client.get("/login")
     self.headers = {
         'Content-Type': 'application/json',
-        "X-Requested-By": "gGRC",
+        "X-Requested-By": "GGRC",
         "X-export-view": "blocks",
     }
     TestCustomAttributeImportExport._set_up = False

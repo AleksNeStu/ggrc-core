@@ -1,0 +1,21 @@
+Object type,"Must be unique.  Can be left empty for autogeneration.  If updating or deleting, code is required",,,"if owner is not provided, current user will be reated as owner of the object","Default value 'draft' is selected
+Other values are:
+Final
+Effective
+Ineffective
+Launched
+Not Launched
+In Scope
+Not in Scope
+Deprecated",,,,,,MM/DD/YYYY,MM/DD/YYYY,
+Access Group,code*,title*,description,owner,state,notes,primary contact,secondary contact,access group url,reference url,effective date,stop date,access group test custom
+,ag-1,ag-1,test,user1@ggrc.com,Draft,this is a note,user1@ggrc.com,someone.else@ggrc.com,google.com,ggrc.com,7/1/2015,7/15/2015,some text 1
+,ag-2,ag-2,test,user1@ggrc.com,Active,this is a note,user1@ggrc.com,someone.else@ggrc.com,google.com,ggrc.com,7/1/2015,7/15/2015,some text 2
+,ag-3,ag-3,test,user1@ggrc.com,Active,this is a note,user1@ggrc.com,someone.else@ggrc.com,google.com,ggrc.com,7/1/2015,7/15/2015,some text 3
+,ag-4,ag-4,test,user1@ggrc.com,Active,this is a note,user1@ggrc.com,someone.else@ggrc.com,google.com,ggrc.com,7/1/2015,7/15/2015,some text 4
+,ag-5,ag-5,test,user1@ggrc.com,Active,this is a note,user1@ggrc.com,someone.else@ggrc.com,google.com,ggrc.com,7/1/2015,7/15/2015,some text 5
+,ag-6,ag-6,test,user1@ggrc.com,Draft,this is a note,user1@ggrc.com,someone.else@ggrc.com,google.com,ggrc.com,7/1/2015,7/15/2015,some text 6
+,ag-7,ag-7,test,user1@ggrc.com,Active,this is a note,user1@ggrc.com,someone.else@ggrc.com,google.com,ggrc.com,7/1/2015,7/15/2015,some text 7
+,ag-8,ag-8,test,user1@ggrc.com,Draft,this is a note,user1@ggrc.com,someone.else@ggrc.com,google.com,ggrc.com,7/1/2015,7/15/2015,some text 8
+,ag-9,ag-9,test,user1@ggrc.com,Deprecated,this is a note,user1@ggrc.com,someone.else@ggrc.com,google.com,ggrc.com,7/1/2015,7/15/2015,some text 9
+,ag-10,ag-10,test,user1@ggrc.com,Draft,this is a note,user1@ggrc.com,someone.else@ggrc.com,google.com,ggrc.com,7/1/2015,7/15/2015,some text 10

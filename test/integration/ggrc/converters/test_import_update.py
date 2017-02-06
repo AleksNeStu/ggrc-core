@@ -3,7 +3,7 @@
 
 """Tests for bulk updates with CSV import."""
 
-from integration.ggrc.converters import TestCase
+from integration.ggrc import TestCase
 
 from ggrc import models
 
@@ -13,7 +13,7 @@ class TestImportUpdates(TestCase):
   """ Test importing of already existing objects """
 
   def setUp(self):
-    TestCase.setUp(self)
+    super(TestImportUpdates, self).setUp()
     self.client.get("/login")
 
   def test_policy_basic_update(self):

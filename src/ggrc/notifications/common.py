@@ -50,7 +50,7 @@ class Services(object):
 
     Args:
       name: Name of an object for which we want to get a service function, such
-        as "Request", "CycleTask", "Assessment", etc.
+        as "CycleTask", "Assessment", etc.
 
     Returns:
       callable: A function that takes a notification and returns a data dict

@@ -27,6 +27,7 @@ dashboard-js-files:
   - canjs/can.map.attributes.js
   - canjs/can.map.backup.js
   - canjs/can.map.define.js
+  - canjs/can.stache.js
   - wysihtml5/advanced.js
   - wysihtml5/wysihtml5-0.4.0pre.js
   - wysihtml5/bootstrap-wysihtml5-0.0.2.js
@@ -43,6 +44,7 @@ dashboard-js-files:
   - plugins/persistent_notifier.js
   - ggrc_base.js
   - plugins/ggrc_utils.js
+  - plugins/utils/current-page-utils.js
   - plugins/datepicker.js
   - plugins/can_control.js
   - plugins/wysiwyg.js
@@ -76,7 +78,9 @@ dashboard-js-files:
   - models/mappers/indirect-list-loader.js
   - models/mappers/search-list-loader.js
   - models/mappers/reifying-list-loader.js
+  - models/mappers/tree-base-loader.js
   - models/mappers/tree-page-loader.js
+  - models/mappers/sub-tree-loader.js
   - models/mappers/mapper-helpers.js
   - models/mappers/mappings.js
   - models/mappers/mappings-ggrc.js
@@ -210,10 +214,11 @@ dashboard-js-files:
   - components/tree_pagination/tree_pagination.js
   - components/tree/tree-header-selector.js
   - components/tree/tree-type-selector.js
+  - components/tree/tree-child-show.js
+  - components/tree/sub-tree-expander.js
   - components/view-object-buttons/view-object-buttons.js
   - components/add-object-button/add-object-button.js
   - components/effective-dates/effective-dates.js
-  - components/snapshotter/individual-update.js
   - components/snapshotter/revisions-comparer.js
   - components/snapshotter/scope-update.js
   - components/info-pin-buttons/info-pin-buttons.js
@@ -306,6 +311,8 @@ dashboard-js-template-files:
   - base_objects/tree_view_filter.mustache
   - base_objects/tree_column_selector.mustache
   - base_objects/tree_column_names.mustache
+  - base_objects/tree_child_show.mustache
+  - base_objects/sub_tree_expand.mustache
   - base_objects/filter_trigger.mustache
   - base_objects/generate_assessments_button.mustache
   - base_objects/states.mustache

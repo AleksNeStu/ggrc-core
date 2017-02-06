@@ -2,7 +2,7 @@
 # Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
 
 
-"""gGRC Collection REST services implementation. Common to all gGRC collection
+"""GGRC Collection REST services implementation. Common to all GGRC collection
 resources.
 """
 
@@ -146,10 +146,6 @@ def set_ids_for_new_custom_attributes(parent_obj):
     attr = object_attrs[obj.type]
     setattr(obj, attr, parent_obj.id)
 
-    # Disable state updating so that a newly create object doesn't go straight
-    # from Draft to Modified.
-    if hasattr(obj, '_skip_os_state_update'):
-      obj.skip_os_state_update()
     db.session.add(obj)
   db.session.flush()
 

@@ -11,10 +11,11 @@ from datetime import datetime
 from operator import itemgetter
 from flask import json
 
+from ggrc import app
 from ggrc import db
 from ggrc.models import CustomAttributeDefinition as CAD
 
-from integration.ggrc.converters import TestCase
+from integration.ggrc import TestCase
 from integration.ggrc.models import factories
 
 
@@ -803,28 +804,29 @@ class TestQueryWithCA(BaseQueryAPITestCase):
 class TestQueryWithUnicode(BaseQueryAPITestCase):
   """Test query API with unicode values."""
 
-  def setUp(self):
-    """Set up test cases for all tests."""
-    TestCase.clear_data()
-    self._generate_cad()
-    self._import_file("querying_with_unicode.csv")
-    self.client.get("/login")
-
   CAD_TITLE1 = u"CA список" + "X" * 200
   CAD_TITLE2 = u"CA текст" + "X" * 200
 
   @classmethod
+  def setUpClass(self):
+    """Set up test cases for all tests."""
+    TestCase.clear_data()
+    self._generate_cad()
+    self._import_file("querying_with_unicode.csv")
+
+  @classmethod
   def _generate_cad(cls):
     """Generate custom attribute definitions."""
-    factories.CustomAttributeDefinitionFactory(
-        title=cls.CAD_TITLE1,
-        definition_type="program",
-        multi_choice_options=u"один,два,три,четыре,пять",
-    )
-    factories.CustomAttributeDefinitionFactory(
-        title=cls.CAD_TITLE2,
-        definition_type="program",
-    )
+    with app.app.app_context():
+      factories.CustomAttributeDefinitionFactory(
+          title=cls.CAD_TITLE1,
+          definition_type="program",
+          multi_choice_options=u"один,два,три,четыре,пять",
+      )
+      factories.CustomAttributeDefinitionFactory(
+          title=cls.CAD_TITLE2,
+          definition_type="program",
+      )
 
   @staticmethod
   def _flatten_cav(data):
@@ -834,6 +836,9 @@ class TestQueryWithUnicode(BaseQueryAPITestCase):
       for cav in entry.get("custom_attribute_values", []):
         entry[cad_names[cav["custom_attribute_id"]]] = cav["attribute_value"]
     return data
+
+  def setUp(self):
+    self.client.get("/login")
 
   def test_query(self):
     """Test query by unicode value."""

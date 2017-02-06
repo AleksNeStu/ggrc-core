@@ -21,7 +21,7 @@ class TestOneTimeWorkflowNotification(TestCase):
   """
 
   def setUp(self):
-    TestCase.setUp(self)
+    super(TestOneTimeWorkflowNotification, self).setUp()
     self.api = Api()
     self.wf_generator = WorkflowsGenerator()
     self.object_generator = ObjectGenerator()

@@ -66,6 +66,54 @@
       },
       '.modalSearchButton click': 'getResults',
       '.results-wrap scrollNext': 'drawPage',
+      '{mapper.newEntries} length': function () {
+        var newEntries = this.scope.attr('mapper.newEntries');
+        var newSelected;
+        var entries;
+        var clonedSelected;
+        var selected = this.scope.attr('selected');
+
+        // newEntries should be contain only one element
+        if (newEntries.length === 0) {
+          return;
+        }
+
+        entries = this.scope.attr('entries');
+
+        // add new entry as first element (should be displayed on top of list)
+        entries.unshift(newEntries[0]);
+
+        this.drawNewEntries(newEntries);
+
+        // get selected object from new entry
+        newSelected = _.map(newEntries, function (model) {
+          return {
+            id: model.id,
+            type: model.type,
+            href: model.href
+          };
+        });
+
+        // clone 'selected' and then update 'selected' attr (it triggers checkboxes)
+        clonedSelected = selected.slice();
+        clonedSelected.push.apply(clonedSelected, newSelected);
+        this.scope.attr('selected', clonedSelected);
+      },
+      drawNewEntries: function (newEntries) {
+        var options = this.scope.attr('options');
+
+        if (!newEntries.length) {
+          return undefined;
+        }
+
+        // set first page for correct render of pages
+        this.scope.attr('page', 1);
+
+        // should be displayed on top of list
+        options.unshift.apply(options,
+          can.map(newEntries, this.getItem.bind(this))
+        );
+      },
       getItem: function (model) {
         var selected;
         var mapper;

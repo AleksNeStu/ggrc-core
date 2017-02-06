@@ -6,7 +6,7 @@ from .mixins import BusinessObject, Timeboxed, CustomAttributable
 from .object_owner import Ownable
 from .object_person import Personable
 from .relationship import Relatable
-from .track_object_state import HasObjectState, track_state_for_class
+from .track_object_state import HasObjectState
 
 
 class DataAsset(HasObjectState,
@@ -15,5 +15,3 @@ class DataAsset(HasObjectState,
   __tablename__ = 'data_assets'
 
   _aliases = {"url": "Data Asset URL"}
-
-track_state_for_class(DataAsset)

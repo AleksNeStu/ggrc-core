@@ -3,6 +3,8 @@
  Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
  */
 (function (can, GGRC, CMS) {
+  'use strict';
+
   can.Model.Cacheable('CMS.Models.Assessment', {
     root_object: 'assessment',
     root_collection: 'assessments',
@@ -28,9 +30,11 @@
     defaults: {
       status: 'Not Started'
     },
+    statuses: ['Not Started', 'In Progress', 'Ready for Review',
+        'Verified', 'Completed'],
     tree_view_options: {
       add_item_view: GGRC.mustache_path +
-        '/base_objects/tree_add_item.mustache',
+      '/base_objects/tree_add_item.mustache',
       attr_list: [{
         attr_title: 'Title',
         attr_name: 'title'
@@ -141,56 +145,108 @@
           }
         }
       );
-    }
-  }, {
-    define: {
-      customAttributeItems: {
-        get: function () {
-          var scope = this;
-          var values = this.attr('custom_attribute_values');
-          var definitions = this.attr('custom_attribute_definitions');
-          return definitions.map(function (def) {
-            var valueData = false;
-            var id = def.id;
-            var type = GGRC.Utils.mapCAType(def.attribute_type);
-            var stub = {
-              isStub: true,
-              attributable_id: scope.id,
-              custom_attribute_id: id,
-              attribute_value: null,
-              attribute_object: null,
-              preconditions_failed: (def.mandatory) ? ['value'] : [],
-              validation: {
-                empty: true,
-                mandatory: def.mandatory,
-                valid: true
-              },
-              def: def,
-              attributeType: type
+    },
+    prepareAttributes: function (attrs) {
+      return attrs[this.root_object] ? attrs[this.root_object] : attrs;
+    },
+    /**
+     * Assessment specific parsing logic to simplify business logic of Custom Attributes
+     * @param {Array} definitions - original list of Custom Attributes Definition
+     * @param {Array} values - original list of Custom Attributes Values
+     * @return {Array} Updated Custom attributes
+     */
+    prepareCustomAttributes: function (definitions, values) {
+      return definitions.map(function (def) {
+        var valueData = false;
+        var id = def.id;
+        var type = GGRC.Utils.mapCAType(def.attribute_type);
+        var stub = {
+          id: null,
+          custom_attribute_id: id,
+          attribute_value: null,
+          attribute_object: null,
+          validation: {
+            empty: true,
+            mandatory: def.mandatory,
+            valid: true
+          },
+          def: def,
+          attributeType: type
+        };
+
+        values.forEach(function (value) {
+          var errors = [];
+          if (value.custom_attribute_id === id) {
+            errors = value.preconditions_failed || [];
+            value.def = def;
+            value.attributeType = type;
+            value.validation = {
+              empty: errors.indexOf('value') > -1,
+              mandatory: def.mandatory,
+              valid: errors.indexOf('comment') < 0 &&
+              errors.indexOf('evidence') < 0
             };
 
-            values.forEach(function (value) {
-              var errors = [];
-              if (value.custom_attribute_id === id) {
-                errors = value.attr('preconditions_failed') || [];
-                value.attr('def', def);
-                value.attr('attributeType', type);
-                value.attr('validation', {
-                  empty: errors.indexOf('value') > -1,
-                  mandatory: def.mandatory,
-                  valid: errors.indexOf('comment') < 0 &&
-                  errors.indexOf('evidence') < 0
-                });
+            valueData = value;
+          }
+        });
 
-                valueData = value;
-              }
-            });
-
-            return valueData || stub;
-          });
-        }
-      }
+        return valueData || stub;
+      });
     },
+    /**
+     * Assessment specific AJAX data parsing logic
+     * @param {Object} attributes - hash of Model key->values
+     * @return {Object} - parsed object with normalized data
+     */
+    parseModel: function (attributes) {
+      var values;
+      var definitions;
+      attributes = this.prepareAttributes(attributes);
+      values = attributes.custom_attribute_values || [];
+      definitions = attributes.custom_attribute_definitions || [];
+
+      if (!definitions.length) {
+        return attributes;
+      }
+
+      attributes.custom_attribute_values =
+        this.prepareCustomAttributes(definitions, values);
+      return attributes;
+    },
+    model: function (attributes, oldModel) {
+      var model;
+      var id;
+      if (!attributes) {
+        return;
+      }
+
+      if (typeof attributes.serialize === 'function') {
+        attributes = attributes.serialize();
+      } else {
+        attributes = this.parseModel(attributes);
+      }
+
+      id = attributes[this.id];
+      if ((id || id === 0) && this.store[id]) {
+        oldModel = this.store[id];
+      }
+
+      model = oldModel && can.isFunction(oldModel.attr) ?
+        oldModel.attr(attributes) :
+        new this(attributes);
+
+      return model;
+    },
+    /**
+     * Replace Cacheble#findInCacheById method with the latest feature of can.Model - store
+     * @param {String} id - Id of requested Model
+     * @return {CMS.Models.Assessment} - already existing model
+     */
+    findInCacheById: function (id) {
+      return this.store[id];
+    }
+  }, {
     init: function () {
       if (this._super) {
         this._super.apply(this, arguments);
@@ -232,7 +288,7 @@
           }
         });
         if (cad.mandatory &&
-            GGRC.Utils.isEmptyCA(value, cad.attribute_type, cav)) {
+          GGRC.Utils.isEmptyCA(value, cad.attribute_type, cav)) {
           // If Custom Attribute is mandatory and empty
           errorsList.value.push(cad.title);
         } else if (cav) {
@@ -286,12 +342,16 @@
         GGRC.current_user.id, GGRC.current_user);
       var auditLead;
 
-      if (!newObjectForm) {
-        return;
+      if (pageInstance && (!this.audit || !this.audit.id || !this.audit.type)) {
+        if (pageInstance.type === 'Audit') {
+          this.attr('audit', pageInstance);
+        } else if (this.scopeObject) {
+          this.audit = this.scopeObject;
+        }
       }
 
-      if (pageInstance && pageInstance.type === 'Audit' && !this.audit) {
-        this.attr('audit', pageInstance);
+      if (!newObjectForm) {
+        return;
       }
 
       if (this.audit) {

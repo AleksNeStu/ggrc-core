@@ -2,14 +2,14 @@
 # Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
 
 from ggrc.models import Person
-from integration.ggrc.converters import TestCase
+from integration.ggrc import TestCase
 from integration.ggrc.generator import ObjectGenerator
 
 
 class TestBasicCsvImport(TestCase):
 
   def setUp(self):
-    TestCase.setUp(self)
+    super(TestBasicCsvImport, self).setUp()
     self.generator = ObjectGenerator()
     self.client.get("/login")
 

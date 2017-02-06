@@ -47,11 +47,8 @@ def _get_assignable_dict(people, notif):
   obj = get_notification_object(notif)
   data = {}
   for person in people:
-    # Requests have "requested_on" field instead of "start_date" and we should
-    # default to today() if no appropriate field is found on the object.
-    start_date = getattr(obj, "start_date",
-                         getattr(obj, "requested_on",
-                                 datetime.date.today()))
+    # We should default to today() if no start date is found on the object.
+    start_date = getattr(obj, "start_date", datetime.date.today())
     data[person.email] = {
         "user": get_person_dict(person),
         notif.notification_type.name: {
@@ -97,10 +94,7 @@ def _get_declined_people(obj):
     A list of people that should receive a declined notification according to
     the given object type.
   """
-  if obj.type == "Request":
-    return [person for person, role in obj.assignees
-            if "Requester" in role]
-  elif obj.type == "Assessment":
+  if obj.type == "Assessment":
     return [person for person, role in obj.assignees
             if "Assessor" in role]
   return []
@@ -201,7 +195,7 @@ def get_assignable_data(notif):
     Dict with all data for the assignable notification or an empty dict if the
     notification is not for a valid assignable object.
   """
-  if notif.object_type not in {"Request", "Assessment"}:
+  if notif.object_type not in {"Assessment"}:
     return {}
   elif notif.notification_type.name.endswith("_open"):
     return assignable_open_data(notif)
@@ -246,12 +240,10 @@ def get_comment_data(notif):
   recipients = set()
   comment = get_notification_object(notif)
   comment_obj = None
-  rel = (models.Relationship.find_related(comment, models.Request()) or
-         models.Relationship.find_related(comment, models.Assessment()))
+  rel = models.Relationship.find_related(comment, models.Assessment())
 
   if rel:
-    comment_obj = (rel.Request_destination or rel.Request_source or
-                   rel.Assessment_destination or rel.Assessment_source)
+    comment_obj = rel.Assessment_destination or rel.Assessment_source
   if not comment_obj:
     logger.warning('Comment object not found for notification %s', notif.id)
     return {}

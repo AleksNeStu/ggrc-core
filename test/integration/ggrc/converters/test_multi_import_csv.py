@@ -9,14 +9,14 @@ from ggrc.models import OrgGroup
 from ggrc.models import Product
 from ggrc.models import Relationship
 from ggrc.converters import errors
-from integration.ggrc.converters import TestCase
+from integration.ggrc import TestCase
 from integration.ggrc.generator import ObjectGenerator
 
 
 class TestCsvImport(TestCase):
 
   def setUp(self):
-    TestCase.setUp(self)
+    super(TestCsvImport, self).setUp()
     self.generator = ObjectGenerator()
     self.client.get("/login")
 

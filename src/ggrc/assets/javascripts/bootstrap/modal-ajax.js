@@ -307,6 +307,21 @@
           }
 
           Permission.refresh().then(function () {
+            var hiddenElement;
+            var tagName;
+
+            if (!$trigger.is(':visible') && option.uniqueId &&
+              $trigger.context) {
+              tagName = $trigger.context.tagName;
+
+              hiddenElement =
+                $(tagName + "[data-unique-id='" + option.uniqueId + "']");
+
+              if (hiddenElement) {
+                $trigger = hiddenElement;
+              }
+            }
+
             $trigger.trigger(
               'modal:success', Array.prototype.slice.call(args, 1)
             );

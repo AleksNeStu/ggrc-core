@@ -4,10 +4,10 @@ Type,{{directive_type}} Code,,,,,,,
 
 For {{directive_type}} {{section_term}} import, Type should be ""{{directive_type}}"", in cell A2.
 
-Then copy the Code from your {{directive_type}} Info widget on your {{directive_type}} page in gGRC to cell B2 above",,,,,,,
-* The gGRC system will generate {{section_term}} Codes if necessary but we recommend you assign {{section_term}} Codes that help you identify these as part of a specific {{directive_type}}.,*{{section_name}} Titles are required text fields.  You MUST fill in a title for all sections in order to import them.,"* {{section_term}} Description is an optional text field.  If you have the description available, we recommend entering it now.  Otherwise, it can be filled in later after creating your {{section_term}}s. ","* Notes
+Then copy the Code from your {{directive_type}} Info widget on your {{directive_type}} page in GGRC to cell B2 above",,,,,,,
+* The GGRC system will generate {{section_term}} Codes if necessary but we recommend you assign {{section_term}} Codes that help you identify these as part of a specific {{directive_type}}.,*{{section_name}} Titles are required text fields.  You MUST fill in a title for all sections in order to import them.,"* {{section_term}} Description is an optional text field.  If you have the description available, we recommend entering it now.  Otherwise, it can be filled in later after creating your {{section_term}}s. ","* Notes
 Use this text field to keep notes about this {{section_term}}",*Optional.  Enter a valid URL,"*Optional.
-You can map a person to be the Person of Contact for the {{section_term}} by entering an email address that already exists in your gGRC instance. Only 1 email address may be entered.
+You can map a person to be the Person of Contact for the {{section_term}} by entering an email address that already exists in your GGRC instance. Only 1 email address may be entered.
 
 Example:
 

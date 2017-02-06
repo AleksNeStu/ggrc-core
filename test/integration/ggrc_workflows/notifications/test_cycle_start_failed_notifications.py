@@ -21,7 +21,7 @@ class TestCycleStartFailed(TestCase):
   """
 
   def setUp(self):
-    TestCase.setUp(self)
+    super(TestCycleStartFailed, self).setUp()
     self.api = Api()
     self.wf_generator = WorkflowsGenerator()
     self.object_generator = ObjectGenerator()

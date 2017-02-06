@@ -94,6 +94,12 @@
 
         if (oldValue === value) {
           return;
+        } else if (this.attr('type') === 'person') {
+          if (value && oldValue && oldValue.id === value.id) {
+            // check instances of value and oldValue.
+            // return if instances are exist and ids are equal.
+            return;
+          }
         }
 
         this.attr('_value', value);

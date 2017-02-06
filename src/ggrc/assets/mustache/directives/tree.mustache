@@ -135,6 +135,7 @@
           {{#prune_context}} {{! this line is just chopping the context stack down to one element}}
             {{#child_options}}
               <div class="inner-tree">
+                  <spinner toggle="subTreeLoading"></spinner>
                   <ul class="tree-structure new-tree" {{data 'options'}} {{ (el) -> el.cms_controllers_tree_view(el.data("options")) }}></ul>
               </div>
             {{/child_options}}

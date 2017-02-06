@@ -9,10 +9,11 @@ from sqlalchemy.ext.declarative import declared_attr
 from ggrc import db
 from ggrc.models import reflection
 from ggrc.models.deferred import deferred
-from ggrc.models.mixins import Mapping, Timeboxed
+from ggrc.models.mixins import Base
+from ggrc.models.mixins import Timeboxed
 
 
-class ObjectDocument(Timeboxed, Mapping, db.Model):
+class ObjectDocument(Timeboxed, Base, db.Model):
   __tablename__ = 'object_documents'
 
   role = deferred(db.Column(db.String), 'ObjectDocument')

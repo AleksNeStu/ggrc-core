@@ -7,7 +7,6 @@ from ggrc.models.object_owner import Ownable
 from ggrc.models.object_person import Personable
 from ggrc.models.relationship import Relatable
 from ggrc.models.track_object_state import HasObjectState
-from ggrc.models.track_object_state import track_state_for_class
 
 
 class AccessGroup(HasObjectState,
@@ -16,5 +15,3 @@ class AccessGroup(HasObjectState,
     __tablename__ = 'access_groups'
 
     _aliases = {"url": "Access Group URL"}
-
-track_state_for_class(AccessGroup)

@@ -53,7 +53,7 @@
               });
 
             $('body').trigger('treeupdate');
-            return GGRC.Utils.QueryAPI
+            return GGRC.Utils.CurrentPage
               .initCounts([
                 WorkflowExtension.countsMap.history
               ], {

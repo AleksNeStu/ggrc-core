@@ -22,7 +22,7 @@ class TestWorkflowCycleStatePropagantion(TestCase):
   """Test case for cycle task to cycle task group status propagation"""
 
   def setUp(self):
-    TestCase.setUp(self)
+    super(TestWorkflowCycleStatePropagantion, self).setUp()
     self.api = Api()
     self.generator = WorkflowsGenerator()
     self.object_generator = ObjectGenerator()

@@ -119,7 +119,8 @@
     {attr_title: 'State', attr_name: 'status'},
     {attr_title: 'Primary Contact', attr_name: 'contact', attr_sort_field: 'contact.name|email'},
     {attr_title: 'Secondary Contact', attr_name: 'secondary_contact', attr_sort_field: 'secondary_contact.name|email'},
-    {attr_title: 'Last Updated', attr_name: 'updated_at'}
+    {attr_title: 'Last Updated', attr_name: 'updated_at'},
+    {attr_title: 'Review State', attr_name: 'os_state'}
     ],
 
     root_collection: '',

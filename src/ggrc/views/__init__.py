@@ -180,9 +180,6 @@ def get_import_types(export_only=False):
   types = get_exportables if export_only else get_importables
   data = []
   for model in set(types().values()):
-    # TODO: remove Requests from GGRC_IMPORTABLE during requests cleanup
-    if model.__name__ == "Request":
-      continue
     data.append({
         "model_singular": model.__name__,
         "title_plural": model._inflector.title_plural
@@ -256,7 +253,7 @@ def index():
               For any questions, please contact your administrator.""",
           "alert alert-warning")
   about_url = getattr(settings, "ABOUT_URL", None)
-  about_text = getattr(settings, "ABOUT_TEXT", "About gGRC")
+  about_text = getattr(settings, "ABOUT_TEXT", "About GGRC")
   return render_template(
       "welcome/index.haml",
       about_url=about_url,
@@ -360,7 +357,6 @@ def contributed_object_views():
       object_view(models.System),
       object_view(models.Process),
       object_view(models.Product),
-      object_view(models.Request),
       object_view(models.OrgGroup),
       object_view(models.Facility),
       object_view(models.Market),

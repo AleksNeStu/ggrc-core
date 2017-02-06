@@ -50,18 +50,19 @@
       };
     },
     init_widgets: function () {
-      var base_widgets_by_type = GGRC.tree_view.base_widgets_by_type;
-      var widget_list = new GGRC.WidgetList('ggrc_core');
-      var object_class = GGRC.infer_object_type(GGRC.page_object);
-      var object_table = object_class && object_class.table_plural;
+      var baseWidgetsByType = GGRC.tree_view.base_widgets_by_type;
+      var widgetList = new GGRC.WidgetList('ggrc_core');
+      var objectClass = GGRC.infer_object_type(GGRC.page_object);
+      var objectTable = objectClass && objectClass.table_plural;
       var object = GGRC.page_instance();
       var path = GGRC.mustache_path;
-      var info_widget_views;
+      var infoWidgetViews;
       var summaryWidgetViews;
-      var model_names;
-      var possible_model_type;
+      var modelNames;
+      var possibleModelType;
       var treeViewDepth = 2;
-      var relatedObjectsChildOptions = [GGRC.Utils.getRelatedObjects(treeViewDepth)];
+      var relatedObjectsChildOptions =
+        [GGRC.Utils.getRelatedObjects(treeViewDepth)];
       var farModels;
       var extraDescriptorOptions;
       var overriddenModels;
@@ -76,16 +77,16 @@
       summaryWidgetViews = {
         audits: path + '/audits/summary.mustache'
       };
-      if (summaryWidgetViews[object_table]) {
-        widget_list.add_widget(object.constructor.shortName, 'summary', {
+      if (summaryWidgetViews[objectTable]) {
+        widgetList.add_widget(object.constructor.shortName, 'summary', {
           widget_id: 'summary',
           content_controller: GGRC.Controllers.SummaryWidget,
           instance: object,
-          widget_view: summaryWidgetViews[object_table],
+          widget_view: summaryWidgetViews[objectTable],
           order: 3
         });
       }
-      info_widget_views = {
+      infoWidgetViews = {
         programs: path + '/programs/info.mustache',
         audits: path + '/audits/info.mustache',
         people: path + '/people/info.mustache',
@@ -100,17 +101,17 @@
           path + '/assessment_templates/info.mustache',
         issues: path + '/issues/info.mustache'
       };
-      widget_list.add_widget(object.constructor.shortName, 'info', {
+      widgetList.add_widget(object.constructor.shortName, 'info', {
         widget_id: 'info',
         content_controller: GGRC.Controllers.InfoWidget,
         instance: object,
-        widget_view: info_widget_views[object_table],
+        widget_view: infoWidgetViews[objectTable],
         order: 5
       });
-      model_names = can.Map.keys(base_widgets_by_type);
-      model_names.sort();
-      possible_model_type = model_names.slice();
-      can.each(model_names, function (name) {
+      modelNames = can.Map.keys(baseWidgetsByType);
+      modelNames.sort();
+      possibleModelType = modelNames.slice();
+      can.each(modelNames, function (name) {
         var w_list;
         var child_model_list = [];
 
@@ -119,10 +120,10 @@
           display_name: CMS.Models[name].title_singular
         });
         // Initialize child_model_list, and child_display_list each model_type
-        w_list = base_widgets_by_type[name];
+        w_list = baseWidgetsByType[name];
 
         can.each(w_list, function (item) {
-          if (possible_model_type.indexOf(item) !== -1) {
+          if (possibleModelType.indexOf(item) !== -1) {
             child_model_list.push({
               model_name: item,
               display_name: CMS.Models[item].title_singular
@@ -184,102 +185,35 @@
       if (/^\/assessments_view/.test(window.location.pathname)) {
         farModels = ['Assessment'];
       } else {
-        farModels = base_widgets_by_type[object.constructor.shortName];
+        farModels = baseWidgetsByType[object.constructor.shortName];
       }
 
         // here we are going to define extra descriptor options, meaning that
         //  these will be used as extra options to create widgets on top of
 
-      // NOTE: By default, widgets are sorted alphabetically (the value of
-      // the order 100+), but the objects with higher importance that should
-      // be  prioritized use order values below 100. An order value of 0 is
-      // reserved for the "info" widget which always comes first.
       extraDescriptorOptions = {
-        all: {
-          Standard: {
-            order: 10
-          },
-          Regulation: {
-            order: 20
-          },
-          Contract: {
-            order: 30
-          },
-          Section: {
-            order: 40
-          },
-          Objective: {
-            order: 50
-          },
-          Control: {
-            order: 60
-          },
-          AccessGroup: {
-            order: 100
-          },
-          Assessment: {
-            order: 110
-          },
-          Audit: {
-            order: 120
-          },
-          Clause: {
-            order: 130
-          },
-          DataAsset: {
-            order: 140
-          },
-          Document: {
-            widget_icon: 'fa fa-link',
+        all: (function () {
+          var defOrder = GGRC.tree_view.attr('defaultOrderTypes');
+          var all = {};
+          Object.keys(defOrder).forEach(function (type) {
+            all[type] = {
+              order: defOrder[type]
+            };
+          });
+
+          all.Document = {
+            widget_icon: 'fa fa-link!',
             order: 150
-          },
-          Facility: {
-            order: 160
-          },
-          Issue: {
-            order: 170
-          },
-          Market: {
-            order: 180
-          },
-          OrgGroup: {
-            order: 190
-          },
-          Person: {
-            widget_icon: 'fa fa-person',
-            order: 200
-          },
-          Policy: {
-            order: 210
-          },
-          Process: {
-            order: 220
-          },
-          Product: {
-            order: 230
-          },
-          Program: {
-            order: 240
-          },
-          Project: {
-            order: 250
-          },
-          System: {
-            order: 270
-          },
-          Vendor: {
-            order: 280
-          }
-        },
+          };
+          all.Person.widget_icon = 'person';
+          return all;
+        })(),
         Contract: {
           Clause: {
             widget_name: function () {
               var $objectArea = $('.object-area');
-              if ($objectArea.hasClass('dashboard-area')) {
-                return 'Clauses';
-              } else {
-                return 'Mapped Clauses';
-              }
+              return $objectArea.hasClass('dashboard-area') ?
+                'Clauses' : 'Mapped Clauses';
             }
           }
         },
@@ -970,7 +904,7 @@
             content_controller_options: extraContentControllerOptions[object.constructor.shortName][model_name]
           });
         }
-        widget_list.add_widget(object.constructor.shortName, widget_id, descriptor);
+        widgetList.add_widget(object.constructor.shortName, widget_id, descriptor);
       });
     }
   });

@@ -1,7 +1,7 @@
 # Copyright (C) 2017 Google Inc.
 # Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
 
-"""Utilties to deal with introspecting gGRC models for publishing, creation,
+"""Utilties to deal with introspecting GGRC models for publishing, creation,
 and update from resource format representations, such as JSON."""
 
 from sqlalchemy.sql.schema import UniqueConstraint
@@ -15,7 +15,6 @@ ATTRIBUTE_ORDER = (
     "slug",
     "assessment_template",
     "audit",
-    "request_audit",
     "control",
     "program",
     "task_group",
@@ -25,10 +24,8 @@ ATTRIBUTE_ORDER = (
     "notes",
     "test_plan",
     "owners",
-    "request_type",
     "related_assessors",
     "related_creators",
-    "related_requesters",
     "related_assignees",
     "related_verifiers",
     "program_owner",
@@ -47,6 +44,7 @@ ATTRIBUTE_ORDER = (
     "finished_date",
     "verified_date",
     "status",
+    'os_state',
     "assertions",
     "categories",
     "contact",
@@ -70,7 +68,6 @@ ATTRIBUTE_ORDER = (
     "is_enabled",
     "company",
     "user_role",
-    "test",
     "recipients",
     "send_by_default",
     "document_url",

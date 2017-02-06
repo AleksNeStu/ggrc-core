@@ -12,16 +12,16 @@ from ggrc.models import Assessment
 from ggrc.models import Notification
 from ggrc.models import NotificationType
 from ggrc.models import Revision
-from integration.ggrc import converters
+from integration.ggrc import TestCase
 from integration.ggrc import generator
 
 
-class TestCommentNotification(converters.TestCase):
+class TestCommentNotification(TestCase):
 
   """Test notification on assessment comments."""
 
   def setUp(self):
-    converters.TestCase.setUp(self)
+    super(TestCommentNotification, self).setUp()
     self.client.get("/login")
     self._fix_notification_init()
     self.generator = generator.ObjectGenerator()

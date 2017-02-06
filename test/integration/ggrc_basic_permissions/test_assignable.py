@@ -16,7 +16,7 @@ class TestReader(TestCase):
   """Test Assignable RBAC"""
 
   def setUp(self):
-    TestCase.setUp(self)
+    super(TestReader, self).setUp()
     self.generator = Generator()
     self.api = Api()
     self.object_generator = ObjectGenerator()

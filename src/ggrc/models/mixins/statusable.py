@@ -27,3 +27,7 @@ class Statusable(object):
       db.Enum(*VALID_STATES),
       nullable=False,
       default=START_STATE)
+
+  @classmethod
+  def default_status(cls):
+    return "Not Started"

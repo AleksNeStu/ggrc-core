@@ -4,7 +4,7 @@
 ---
 galaxy_info:
   author: Goran Mekić
-  description: gGRC
+  description: GGRC
   company: Reciprocity
 dependencies:
   - {role: mysql}

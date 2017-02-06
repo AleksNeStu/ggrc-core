@@ -1,0 +1,33 @@
+/*
+ * Copyright (C) 2017 Google Inc.
+ * Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
+ */
+
+
+.audit-summary {
+  .legend {
+    position: relative;
+    min-height: 300px;
+    ul {
+      position: absolute;
+      top: 25%;
+      list-style: none;
+      text-align: left;
+      min-width: 300px;
+      font-size: 14px;
+
+      li {
+        padding-bottom: 5px;
+      }
+
+      i {
+        padding-right: 5px;
+      }
+
+      span {
+        color: $grayLight;
+        float: right;
+      }
+    }
+  }
+}

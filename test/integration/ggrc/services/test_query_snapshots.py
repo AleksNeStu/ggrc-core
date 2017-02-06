@@ -8,6 +8,7 @@
 from sqlalchemy import func
 from flask import json
 
+from ggrc import app
 from ggrc import views
 from ggrc import models
 from ggrc import db
@@ -22,9 +23,7 @@ class TestAuditSnapshotQueries(TestCase):
 
   def setUp(self):
     """Log in before performing queries."""
-    super(TestAuditSnapshotQueries, self).setUp()
     self.client.get("/login")
-    self._setup_objects()
 
   def _post(self, data):
     return self.client.post(
@@ -32,6 +31,12 @@ class TestAuditSnapshotQueries(TestCase):
         data=json.dumps(data),
         headers={"Content-Type": "application/json", }
     )
+
+  @classmethod
+  def setUpClass(cls):
+    TestCase.clear_data()
+    with app.app.app_context():
+      cls._setup_objects()
 
   @staticmethod
   def _setup_objects():

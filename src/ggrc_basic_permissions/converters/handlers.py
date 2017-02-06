@@ -149,13 +149,17 @@ class UserRoleColumnHandler(UserColumnHandler):
   }
 
   _allowed_roles = [
-      "Reader",
-      "Editor",
       "Administrator",
+      "Creator",
+      "Editor",
+      "Reader",
+      ""
   ]
 
   def parse_item(self):
     value = self.raw_value.lower()
+    if value.title() not in self._allowed_roles:
+      self.add_error(errors.WRONG_VALUE, column_name=self.display_name)
     name = self._role_map.get(value, value)
     return Role.query.filter_by(name=name).first()
 

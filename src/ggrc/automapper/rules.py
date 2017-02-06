@@ -169,11 +169,4 @@ rules = RuleSet(count_limit=10000, rule_list=[
         {'Control'},
     ),
 
-    Rule(
-        'mapping request to audit',
-        {Attr('program')},
-        {'Audit'},
-        {'Request'},
-    ),
-
 ])

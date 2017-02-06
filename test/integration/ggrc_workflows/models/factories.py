@@ -69,6 +69,7 @@ class CycleTaskFactory(TitledFactory):
   cycle = factory.SubFactory(CycleFactory)
   cycle_task_group = factory.SubFactory(CycleTaskGroupFactory)
   task_group_task = factory.SubFactory(TaskGroupTaskFactory)
+  status = "Assigned"
   task_type = "text"
   start_date = date(2015, 12, 4)
   end_date = date(2015, 12, 27)

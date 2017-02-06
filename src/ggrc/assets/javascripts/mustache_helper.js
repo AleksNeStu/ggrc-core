@@ -3312,7 +3312,8 @@ Mustache.registerHelper('get_url_value', function (attr_name, instance) {
         slug: 1,
         status: 1,
         url: 1,
-        verified: 1
+        verified: 1,
+        os_state: 1
       });
 
       var res;
@@ -3658,6 +3659,7 @@ Example:
       return options.inverse(options.contexts);
     }
   );
+
   Mustache.registerHelper('isNotInScopeModel', function (modelName, options) {
     var isInScopeModel;
     modelName = can.isFunction(modelName) ? modelName() : modelName;
@@ -3667,4 +3669,46 @@ Example:
       isInScopeModel || GGRC.Utils.Snapshots.isSnapshotParent(modelName);
     return isInScopeModel ? options.inverse(this) : options.fn(this);
   });
+
+  /**
+   * Determine whether the target modal for a Model type that should be opened
+   * on a particular page type matches the given modal type.
+   *
+   * This helper is primarily used by the HNB in the "Add Tab" menu to
+   * determine whether to open the "add new" or the unified mapper modal.
+   *
+   * @param {String} modelName - capitalized model name, e.g. "Audit"
+   * @param {String} modalType - must be either "modal-ajax-form" or
+   *   "unified-mapper"
+   * @param {Object} options - a CanJS options argument
+   */
+  Mustache.registerHelper(
+    'if_target_modal_match',
+    function (modelName, modalType, options) {
+      var matchingModal;
+      var pageType = GGRC.Utils.win.location.pathname.split('/')[1];
+
+      // a list of model types for each page object type when the add/edit
+      // modal should be used instead of the default "map to" modal
+      var EDIT_MODAL_PAIRS = Object.freeze({
+        contracts: ['Section'],
+        policies: ['Section'],
+        regulations: ['Section'],
+        standards: ['Section'],
+        programs: ['Audit']
+      });
+
+      modelName = Mustache.resolve(modelName);
+      modalType = Mustache.resolve(modalType);
+
+      matchingModal = _.contains(EDIT_MODAL_PAIRS[pageType], modelName) ?
+                        'modal-ajax-form' : 'unified-mapper';
+
+      if (modalType === matchingModal) {
+        return options.fn(options.contexts);
+      }
+
+      return options.inverse(options.contexts);
+    }
+  );
 })(this, jQuery, can);

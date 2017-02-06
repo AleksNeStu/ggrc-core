@@ -112,8 +112,7 @@ CMS.Models.SystemOrProcess('CMS.Models.System', {
     url: '',
     status: 'Draft'
   },
-  statuses: ['Draft', 'Final', 'Effective', 'Ineffective', 'Launched',
-    'Not Launched', 'In Scope', 'Not in Scope', 'Deprecated'],
+  statuses: ['Draft', 'Deprecated', 'Active'],
   init: function () {
     can.extend(this.attributes, CMS.Models.SystemOrProcess.attributes);
     this._super && this._super.apply(this, arguments);
@@ -158,8 +157,7 @@ CMS.Models.SystemOrProcess('CMS.Models.Process', {
     status: 'Draft'
   },
   mixins: ['ca_update'],
-  statuses: ['Draft', 'Final', 'Effective', 'Ineffective', 'Launched',
-    'Not Launched', 'In Scope', 'Not in Scope', 'Deprecated'],
+  statuses: ['Draft', 'Deprecated', 'Active'],
   init: function () {
     can.extend(this.attributes, CMS.Models.SystemOrProcess.attributes);
     this._super && this._super.apply(this, arguments);

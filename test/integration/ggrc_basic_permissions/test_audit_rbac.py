@@ -7,7 +7,7 @@ from os.path import abspath
 from os.path import dirname
 from os.path import join
 from collections import defaultdict
-from integration.ggrc.converters import TestCase
+from integration.ggrc import TestCase
 from integration.ggrc.api_helper import Api
 from ggrc.models import all_models
 
@@ -17,20 +17,22 @@ class TestAuditRBAC(TestCase):
 
   CSV_DIR = join(abspath(dirname(__file__)), "test_csvs")
 
-  def setUp(self):
-    """Imports test_csvs/audit_rbac.csv needed by the tests"""
-    TestCase.setUp(self)
-    self.api = Api()
-    self.client.get("/login")
-    filename = "audit_rbac.csv"
-    self.import_file(filename)
-    self.people = all_models.Person.eager_query().all()
-    self.audit = all_models.Audit.eager_query().first()
-    sources = set(r.source for r in self.audit.related_sources)
-    destinations = set(r.destination for r in self.audit.related_destinations)
+  @classmethod
+  def setUpClass(cls):
+    TestCase.clear_data()
+    cls._import_file("audit_rbac.csv")
+    cls.people = all_models.Person.eager_query().all()
+    cls.audit = all_models.Audit.eager_query().first()
+    sources = set(r.source for r in cls.audit.related_sources)
+    destinations = set(r.destination for r in cls.audit.related_destinations)
     related = [obj for obj in sources.union(destinations)
                if not isinstance(obj, all_models.Person)]
-    self.related_objects = related
+    cls.related_objects = related
+
+  def setUp(self):
+    """Imports test_csvs/audit_rbac.csv needed by the tests"""
+    self.api = Api()
+    self.client.get("/login")
     self.sanity_check()
 
   def sanity_check(self):
@@ -74,8 +76,9 @@ class TestAuditRBAC(TestCase):
     return all_errors
 
   def test_read_access_on_mapped(self):
-    """Test if people have read access to audit objects. All users except
-       creator@test.com should have read access."""
+    """Test if people have read access to mapped objects.
+
+    All users except creator@test.com should have read access."""
     expected_statuses = defaultdict(lambda: 200)
     for exception in ("creator@test.com",):
       expected_statuses[exception] = 403
@@ -83,9 +86,10 @@ class TestAuditRBAC(TestCase):
     assert not errors, "\n".join(errors)
 
   def test_update_access_on_mapped(self):
-    """Test if people have upate access to audit objects. All users except
-       creator@test.com, reader@test.com, creatorpr@test.com, readerpr@test.com
-       should have update access."""
+    """Test if people have upate access to mapped objects.
+
+    All users except creator@test.com, reader@test.com, creatorpr@test.com,
+    readerpr@test.com should have update access."""
     expected_statuses = defaultdict(lambda: 200)
     for exception in ("creator@test.com", "reader@test.com",
                       "creatorpr@test.com", "readerpr@test.com"):

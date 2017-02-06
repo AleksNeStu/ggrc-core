@@ -254,6 +254,10 @@
                 }
               }
 
+              &.tree-child-show {
+                border-top: 1px solid $sidenavBorder;
+              }
+
               a {
                 > i {
                   color: #999;

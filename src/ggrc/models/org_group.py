@@ -6,7 +6,7 @@ from .mixins import BusinessObject, Timeboxed, CustomAttributable
 from .object_owner import Ownable
 from .object_person import Personable
 from .relationship import Relatable
-from .track_object_state import HasObjectState, track_state_for_class
+from .track_object_state import HasObjectState
 
 
 class OrgGroup(HasObjectState, CustomAttributable,
@@ -14,5 +14,3 @@ class OrgGroup(HasObjectState, CustomAttributable,
                Ownable, BusinessObject, db.Model):
   __tablename__ = 'org_groups'
   _aliases = {"url": "Org Group URL"}
-
-track_state_for_class(OrgGroup)

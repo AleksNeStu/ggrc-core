@@ -20,7 +20,7 @@
         data-object-singular="RiskAssessment"
         data-object-plural="risk_assessments"
         data-object-params='{ "{{parent_instance.class.table_singular}}": { "id" : {{parent_instance.id}}, "title" : "{{parent_instance.title}}" }, "context": { "id" : {{firstnonempty parent_instance.context.id "null"}}, "href" : "{{parent_instance.context.href}}", "type" : "{{parent_instance.context.type}}" } }'>
-        Create New
+        Create
       </a>
     {{/is_allowed}}
     {{/if}}
@@ -38,7 +38,7 @@
         data-object-params='{ "{{parent_instance.class.table_singular}}": { "id" : {{parent_instance.id}}, "title" : "{{parent_instance.title}}" }, "context": { "id" : {{firstnonempty parent_instance.context.id "null"}}, "href" : "{{parent_instance.context.href}}", "type" : "{{parent_instance.context.type}}" } }'
         data-placement="right"
         data-original-title="Create {{model.title_singular}}">
-        Create New
+        Create
       </a>
     {{/is_allowed_to_map}}
 {{/if_instance_of}}

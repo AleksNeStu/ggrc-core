@@ -12,15 +12,15 @@ from ggrc.models import NotificationType
 from ggrc.models import Assessment
 from ggrc.models import Revision
 from integration.ggrc import api_helper
-from integration.ggrc import converters
+from integration.ggrc import TestCase
 from integration.ggrc import generator
 
 
-class TestRequestDataHandlers(converters.TestCase):
-  """Test data handlers for various request notifications."""
+class TestAssessmentDataHandlers(TestCase):
+  """Test data handlers for various Assessment notifications."""
 
   def setUp(self):
-    converters.TestCase.setUp(self)
+    super(TestAssessmentDataHandlers, self).setUp()
     self.client.get("/login")
     self.api_helper = api_helper.Api()
     self.import_file("assessment_notifications.csv")

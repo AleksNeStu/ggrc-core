@@ -1,0 +1,10 @@
+Object type,,,
+Person,Name,Email*,Company,Role
+,Reader,reader@reciprocitylabs.com,google,Reader
+,Reader1,reader1@reciprocitylabs.com,google,MonkeyJobDoer
+,Reader2,reader2@reciprocitylabs.com,google,Administrator
+,Reader3,reader3@reciprocitylabs.com,google,Creator
+,user 1,user1@example.com,google,Admin
+,user 2,user2@example.com,google,gGRC Admin
+,user 3,user3@example.com,google,
+,user 4,user4@example.com,google,reader

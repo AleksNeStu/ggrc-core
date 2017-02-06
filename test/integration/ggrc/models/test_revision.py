@@ -4,8 +4,8 @@
 """ Tests for ggrc.models.Revision """
 
 import ggrc.models
-import integration.ggrc
 import integration.ggrc.generator
+from integration.ggrc import TestCase
 
 from integration.ggrc.models import factories
 
@@ -30,11 +30,11 @@ def _project_content(content):
   }
 
 
-class TestRevisions(integration.ggrc.TestCase):
+class TestRevisions(TestCase):
   """ Tests for ggrc.models.Revision """
 
   def setUp(self):
-    integration.ggrc.TestCase.setUp(self)
+    super(TestRevisions, self).setUp()
     self.gen = integration.ggrc.generator.ObjectGenerator()
 
   def test_revisions(self):

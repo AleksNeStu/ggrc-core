@@ -29,7 +29,6 @@ class Converter(object):
       "Program",
       "Risk Assessment",
       "Audit",
-      "Request",
       "Policy",
       "Regulation",
       "Standard",

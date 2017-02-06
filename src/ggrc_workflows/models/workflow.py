@@ -26,8 +26,8 @@ from ggrc_workflows.models import cycle_task_group
 
 
 class Workflow(mixins.CustomAttributable, HasOwnContext, mixins.Timeboxed,
-               mixins.Described, mixins.Titled, mixins.Slugged,
-               mixins.Notifiable, mixins.Stateful, mixins.Base, db.Model):
+               mixins.Described, mixins.Titled,
+               mixins.Notifiable, mixins.Stateful, mixins.Slugged, db.Model):
   """Basic Workflow first class object.
   """
   __tablename__ = 'workflows'

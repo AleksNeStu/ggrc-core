@@ -4,7 +4,36 @@
 }}
 
 {{#if allow_mapping_or_creating}}
-  {{#if allow_mapping}}
+  {{#if_instance_of parent_instance 'Contract|Policy|Regulation|Standard'}}
+    {{#if allow_creating}}
+    {{#is_allowed 'update' parent_instance}}
+      <a
+        href="javascript://"
+        class="section-create action-button create-button"
+        rel="tooltip" data-placement="left"
+        data-original-title="Create {{model.title_singular}}"
+        data-toggle="modal-ajax-form"
+        data-modal-reset="reset"
+        data-modal-class="modal-wide"
+        data-object-singular="{{model.model_singular}}"
+        data-object-plural="{{model.root_collection}}"
+        data-object-params='{
+          "directive": {
+              "id": {{parent_instance.id}},
+              "title": "{{parent_instance.title}}"
+          },
+          "context": {
+              "id": {{firstnonempty parent_instance.context.id "null"}},
+              "href": "{{parent_instance.context.href}}",
+              "type": "{{parent_instance.context.type}}"
+          }
+        }'>
+          Create
+      </a>
+    {{/is_allowed}}
+    {{/if}}
+  {{else}}
+    {{#if allow_mapping}}
     {{#is_allowed_to_map parent_instance model.shortName}}
       <a
         class="section-add btn btn-mini action-button map-button"
@@ -23,5 +52,6 @@
           Map
       </a>
     {{/is_allowed_to_map}}
-  {{/if}}
+    {{/if}}
+  {{/if_instance_of}}
 {{/if}}

@@ -34,3 +34,21 @@ class Notifiable(object):
         primaryjoin=join_function,
         backref="{}_notifiable".format(self.__name__),
     )
+
+  @declared_attr
+  def _notifications_deletion(self):
+    """Relationship with notifications for self."""
+    from ggrc.models.notification import Notification
+
+    def join_function():
+      """Object and Notification join function."""
+      object_id = sa.orm.foreign(Notification.object_id)
+      object_type = sa.orm.foreign(Notification.object_type)
+      return sa.and_(object_type == self.__name__,
+                     object_id == self.id)
+
+    return sa.orm.relationship(
+        Notification,
+        primaryjoin=join_function,
+        cascade='all, delete-orphan',
+    )

@@ -1,0 +1,14 @@
+{{!
+    Copyright (C) 2017 Google Inc.
+    Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
+}}
+
+<li class="tree-child-show">
+  <tree-child-show is-child-show="showMappedToAllParents"
+                   on-child-show-state-change="@onChildShowStateChange">
+    <a href="javascript://">
+      <i class="fa fa-fw fa-{{#if isChildShow}}check-{{/if}}square-o"></i>
+      Show mapped to all parents in child tree
+    </a>
+  </tree-child-show>
+</li>

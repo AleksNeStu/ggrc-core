@@ -9,7 +9,6 @@ from ggrc.converters.handlers import default_people
 from ggrc.converters.handlers import handlers
 from ggrc.converters.handlers import list_handlers
 from ggrc.converters.handlers import related_person
-from ggrc.converters.handlers import request
 from ggrc.converters.handlers import template
 from ggrc.converters.handlers import document
 from ggrc.extensions import get_extension_modules
@@ -36,6 +35,7 @@ GGRC_COLUMN_HANDLERS = {
     "fraud_related": boolean.CheckboxColumnHandler,
     "is_enabled": boolean.CheckboxColumnHandler,
     "key_control": boolean.KeyControlColumnHandler,
+    "directive_kind": handlers.DirectiveKindColumnHandler,
     "kind": handlers.OptionColumnHandler,
     "link": handlers.TextColumnHandler,
     "means": handlers.OptionColumnHandler,
@@ -51,21 +51,16 @@ GGRC_COLUMN_HANDLERS = {
     "related_assessors": related_person.RelatedAssessorsColumnHandler,
     "related_assignees": related_person.RelatedAssigneesColumnHandler,
     "related_creators": related_person.RelatedCreatorsColumnHandler,
-    "related_requesters": related_person.RelatedRequestersColumnHandler,
     "related_verifiers": related_person.RelatedVerifiersColumnHandler,
     "report_end_date": handlers.DateColumnHandler,
     "report_start_date": handlers.DateColumnHandler,
-    "request": handlers.RequestColumnHandler,
-    "request_audit": handlers.RequestAuditColumnHandler,
-    "request_status": request.RequestStatusColumnHandler,
-    "request_type": handlers.RequestTypeColumnHandler,
-    "requested_on": handlers.DateColumnHandler,
     "secondary_assessor": handlers.UserColumnHandler,
     "secondary_contact": handlers.UserColumnHandler,
     "send_by_default": boolean.CheckboxColumnHandler,
     "slug": handlers.SlugColumnHandler,
     "start_date": handlers.DateColumnHandler,
     "status": handlers.StatusColumnHandler,
+    "os_state": handlers.ExportOnlyColumnHandler,
     "template_custom_attributes": template.TemplateCaColumnHandler,
     "template_object_type": template.TemplateObjectColumnHandler,
     "test_plan": handlers.TextareaColumnHandler,

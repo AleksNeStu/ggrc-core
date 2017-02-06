@@ -1,0 +1,53 @@
+,,,,,,,,,,,,,,,,,
+Object type,,,,,Only works if object under assessment is Control.,,,,"List of custom attributes for the assessment template
+One attribute per line. fields are separated by commas,
+
+<attribute type>, <attribute name>, [<attribute value1>, <attribute value2>, ...]
+
+Valid attribute types: Text, Rich Text, Date, Checkbox, Person, Dropdown.
+attribute name: any single line string without commas. Leading and trailing spaces are ignored.
+list of attribute values: comma separetd list, only used if attribute type is ""Dropdown"".
+
+Limitations: Dropdown values can not start with either ""(a)"" or ""(c)"" and attribute names can not contain commas "","".",,,,,,,,
+Assessment Template,Code,Audit,Title,Object under assessment,Use control test plan,Default Test Plan,Default Assessors,Default Verifier,Custom Attributes,,,,,,,,
+,T-1,Audit,Template 1,Control,yes,this will be ignored,Object owners,Auditors,"Text, my text name
+mandatory Text, Some Other text name
+Rich text, custom description
+Mandatory Date, date of birth
+Checkbox, dashie?
+peRson, santa clause",,,,,,,,
+,T-2,Audit,Template 2,Control,,Some test plan,Audit lead,"user3@a.com
+user1@a.com",,,,,,,,,
+,T-3,Audit,Template 2,Market,,Market test plan,principal assessor,primary contact,"Dropdown, my dropdown, value 1, value 2, value 3
+mandatory dropdown, my second dropdown, value1, value2
+Dropdown, dropdown with mandatory attachments and comments, (a) value1, (a)(c) value 2, (c)  (a)  value3, (c) value cc, valueeee",,,,,,,,
+,T-4,Audit,Template 3,Org Group,yes,Control test plan value will be ignored,principal assessor,primary contact,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+Object type,,,,,,,,,,,,,,,,,
+Audit,Code*,Program*,Title*,Internal Audit Lead*,Status,,,,,,,,,,,,
+,Audit,Program,Audit,user@example.com,Planned,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+Object type,,,,,,,,,,,,,,,,,
+Program,Code*,Title*,Manager,,,,,,,,,,,,,,
+,Program,Program,user@example.com,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+Object type,,,,,,,,,,,,,,,,,
+control,code*,title*,description,owner,state,notes,primary contact,secondary contact,effective date,stop date,control url,reference url,test plan,principal assessor,,Assertions,Categories
+,control-1,control-1,test,user@example.com,Draft,this is a note,user@example.com,user@example.com,7/1/2015,7/15/2015,google.com,ggrc.com,plan for control 1,user@example.com,,Privacy,Data Centers
+,control-2,control-2,test,user@example.com,Active,this is a note,user@example.com,user@example.com,7/1/2015,7/15/2015,google.com,ggrc.com,plan for control 2,user@example.com,,Security,Disaster Recovery
+,control-3,control 3,test,user@example.com,Active,this is a note,user@example.com,user@example.com,7/1/2015,7/15/2015,google.com,ggrc.com,plan for control 3,user@example.com,,Availability,Logical Access/ Access Control
+,control-4,control-4,test,user@example.com,Active,this is a note,user@example.com,user@example.com,7/1/2015,7/15/2015,google.com,ggrc.com,plan for control 4,user@example.com,,Integrity,Sites

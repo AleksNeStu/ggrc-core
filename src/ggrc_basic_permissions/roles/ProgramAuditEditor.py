@@ -8,7 +8,6 @@ description = """
   """
 permissions = {
     "read": [
-        "Request",
         "Comment",
         "Assessment",
         "Issue",
@@ -27,7 +26,6 @@ permissions = {
     ],
     "create": [
         "Snapshot",
-        "Request",
         "Comment",
         "Assessment",
         "Issue",
@@ -61,7 +59,6 @@ permissions = {
             "condition": "contains"
         },
         "Snapshot",
-        "Request",
         "Audit",
         "AuditObject",
         "Meeting",

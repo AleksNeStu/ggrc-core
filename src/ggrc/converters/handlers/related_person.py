@@ -74,7 +74,7 @@ class RelatedPersonColumnHandler(handlers.UserColumnHandler):
         self._update_relationship_attr(relation, person)
 
   def get_value(self):
-    """ Get a list of people with specific role on a Request """
+    """Get a list of people with specific role on an Assessment"""
     RA = models.RelationshipAttr
     relations = models.Relationship.get_related_query(
         self.row_converter.obj, models.Person()
@@ -100,14 +100,6 @@ class RelatedAssigneesColumnHandler(RelatedPersonColumnHandler):
     self._assignee_type = "Assignee"
     super(RelatedAssigneesColumnHandler, self).__init__(row_converter, key,
                                                         **options)
-
-
-class RelatedRequestersColumnHandler(RelatedPersonColumnHandler):
-
-  def __init__(self, row_converter, key, **options):
-    self._assignee_type = "Requester"
-    super(RelatedRequestersColumnHandler, self).__init__(row_converter, key,
-                                                         **options)
 
 
 class RelatedVerifiersColumnHandler(RelatedPersonColumnHandler):

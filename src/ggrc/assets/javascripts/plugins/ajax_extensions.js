@@ -38,7 +38,7 @@
       options.cache = false;
     }
     if (/^\/api\/\w+/.test(options.url)) {
-      jqXHR.setRequestHeader("X-Requested-By", "gGRC");
+      jqXHR.setRequestHeader("X-Requested-By", "GGRC");
       jqXHR.done(function(data, status, xhr) {
         if (!/^\/api\/\w+\/\d+/.test(options.url) && options.type.toUpperCase() === "GET") {
           return;

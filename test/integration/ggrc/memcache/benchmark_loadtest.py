@@ -8,7 +8,7 @@
  is followed by a collection get. The batch size for the collection get
  (batch_size) and number of test iterations (num_iterations) are configurable.
  The iterations of test allows to get consistent time for getting stubs and
- collection in gGRC
+ collection in GGRC
 
  The memcache mechanism be turned off in settings (default.py) and this script
  can be rerun to compare with/without cache
@@ -26,19 +26,19 @@ from datetime import datetime
 
 localhost_headers = {
     'Accept': 'application/json',
-    'x-requested-by': 'gGRC',
+    'x-requested-by': 'GGRC',
     'Cookie': 'Please enter cookie in headers'
 }
 
 ggrcdev_headers = {
     'Accept': 'application/json',
-    'x-requested-by': 'gGRC',
+    'x-requested-by': 'GGRC',
     'Cookie': 'Please enter cookie in headers'
 }
 
 appspot_headers = {
     'Accept': 'application/json',
-    'x-requested-by': 'gGRC',
+    'x-requested-by': 'GGRC',
     'Cookie': 'Please enter cookie in headers'
 }
 

@@ -4,7 +4,7 @@ Objectives,{{object_slug}},,,,,,,,,,
 
 For Objective Import, Type should be ""Objectives"", in cell A2.
 
-Then copy the Code from your {{object_kind}} Info widget on your {{object_kind}} page in gGRC to cell B2 above",,,,,,,,,,
+Then copy the Code from your {{object_kind}} Info widget on your {{object_kind}} page in GGRC to cell B2 above",,,,,,,,,,
 "*Required
 
 If you have a standardized acronym or other specific reason for entering Codes manually, we recommend doing so.
@@ -31,7 +31,7 @@ Example:
 
 CONTROL-1
 CONTROL-2","*Optional.
-You can map a person to be the Owner/Person of Contact for the Control by enter an email address that already exists in your gGRC instance. Only 1 email address may be entered.
+You can map a person to be the Owner/Person of Contact for the Control by enter an email address that already exists in your GGRC instance. Only 1 email address may be entered.
 
 Example:
 

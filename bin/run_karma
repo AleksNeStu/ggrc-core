@@ -2,4 +2,4 @@
 # Copyright (C) 2017 Google Inc.
 # Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
 
-/vagrant/node_modules/karma/bin/karma start --reporters dots & watch_assets
+/vagrant/node_modules/karma/bin/karma start & watch_assets

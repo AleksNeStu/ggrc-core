@@ -100,8 +100,7 @@ CMS.Models.Directive("CMS.Models.Standard", {
     status: 'Draft',
     kind: 'Standard'
   },
-  statuses: ['Draft', 'Final', 'Effective', 'Ineffective', 'Launched',
-      'Not Launched', 'In Scope', 'Not in Scope', 'Deprecated'],
+  statuses: ['Draft', 'Deprecated', 'Active'],
   init: function () {
     can.extend(this.attributes, CMS.Models.Directive.attributes);
     this._super.apply(this, arguments);
@@ -130,8 +129,7 @@ CMS.Models.Directive("CMS.Models.Regulation", {
     status: 'Draft',
     kind: 'Regulation'
   },
-  statuses: ['Draft', 'Final', 'Effective', 'Ineffective', 'Launched',
-      'Not Launched', 'In Scope', 'Not in Scope', 'Deprecated'],
+  statuses: ['Draft', 'Deprecated', 'Active'],
   init: function () {
     can.extend(this.attributes, CMS.Models.Directive.attributes);
     this._super.apply(this, arguments);
@@ -161,8 +159,7 @@ CMS.Models.Directive("CMS.Models.Policy", {
     status: 'Draft',
     kind: null
   },
-  statuses: ['Draft', 'Final', 'Effective', 'Ineffective', 'Launched',
-      'Not Launched', 'In Scope', 'Not in Scope', 'Deprecated'],
+  statuses: ['Draft', 'Deprecated', 'Active'],
   init: function () {
     can.extend(this.attributes, CMS.Models.Directive.attributes);
     can.extend(this.tree_view_options, CMS.Models.Directive.tree_view_options);
@@ -200,8 +197,7 @@ CMS.Models.Directive("CMS.Models.Contract", {
     status: 'Draft',
     kind: 'Contract'
   },
-  statuses: ['Draft', 'Final', 'Effective', 'Ineffective', 'Launched',
-      'Not Launched', 'In Scope', 'Not in Scope', 'Deprecated'],
+  statuses: ['Draft', 'Deprecated', 'Active'],
   init: function () {
     can.extend(this.attributes, CMS.Models.Directive.attributes);
     this._super.apply(this, arguments);

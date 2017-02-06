@@ -1,0 +1,110 @@
+Object type,"Use this db for custom attribute definitions
+https://gist.github.com/zidarsk8/c6335d961a7004b9f896a3e4b1db8a8b",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Access Group,Code*,Title*,Description,Notes,,Owner*,Effective Date,Stop Date,State,Primary Contact,Secondary Contact,Access Group URL,Reference URL,,,,,,,,,,,,,Delete,,,,,,,,map:assessment,map:audit,map:clause,map:contract,map:control,map:cycle task group object task,map:data asset,map:facility,map:issue,map:market,map:objective,map:org group,map:person,map:policy,map:process,map:product,map:program,map:project,map:regulation,map:risk,map:section,map:standard,map:system,map:threat,map:vendor
+,Access Group code,Access Group title,Access Group description,Access Group notes,,"user@example.com
+user1@example.com",20/2/2020,22/2/2022,Draft,user2@example.com,user3@example.com,http://url.example.zzz,reference.example.zzz,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Object type,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Clause,Code*,Title*,Text of Clause,Notes,,Owner*,Effective Date,Stop Date,State,Primary Contact,Secondary Contact,Clause URL,Reference URL,,,,,,,,,,,,,Delete,,,,,,,map:access group,map:assessment,map:audit,,map:contract,map:control,map:cycle task group object task,map:data asset,map:facility,map:issue,map:market,map:objective,map:org group,map:person,map:policy,map:process,map:product,map:program,map:project,map:regulation,map:risk,map:section,map:standard,map:system,map:threat,map:vendor
+,Clause code,Clause title,Clause description,Clause notes,,"user@example.com
+user1@example.com",20/2/2020,22/2/2022,Draft,user2@example.com,user3@example.com,http://url.example.zzz,reference.example.zzz,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Object type,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Contract,Code*,Title*,Description,Notes,,Owner*,Effective Date,Stop Date,State,Primary Contact,Secondary Contact,Contract URL,Reference URL,,,,,,,,,,,,,Delete,,,,,,,map:access group,map:assessment,map:audit,map:clause,,map:control,map:cycle task group object task,map:data asset,map:facility,map:issue,map:market,map:objective,map:org group,map:person,,map:process,map:product,map:program,map:project,,map:risk,map:section,,map:system,map:threat,map:vendor
+,Contract code,Contract title,Contract description,Contract notes,,"user@example.com
+user1@example.com",20/2/2020,22/2/2022,Draft,user2@example.com,user3@example.com,http://url.example.zzz,reference.example.zzz,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Object type,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Control,Code*,Title*,Description,Notes,Test Plan,Owner*,Effective Date,Stop Date,State,Primary Contact,Secondary Contact,Control URL,Reference URL,Assertions,Categories,Fraud Related,Significance,Kind/Nature,Type/Means,Principal Assessor,Secondary Assessor,Frequency,,,,Delete,CA date,CA dropdown,CA text,CA rich text,CA checkbox,CA person,map:access group,map:assessment,map:audit,map:clause,map:contract,map:control,map:cycle task group object task,map:data asset,map:facility,map:issue,map:market,map:objective,map:org group,map:person,map:policy,map:process,map:product,map:program,map:project,map:regulation,map:risk,map:section,map:standard,map:system,map:threat,map:vendor
+,Control code,Control title,Control description,Control notes,Control test plan,"user@example.com
+user1@example.com",20/2/2020,22/2/2022,Draft,user2@example.com,user3@example.com,http://url.example.zzz,reference.example.zzz,"Privacy
+Integrity","Sites
+Data Centers",yes,non-key,corrective,physical,user3@example.com,user4@example.com,daily,,,,,22/2/2022,one,Control ca text,"control<br><br>
+rich text",yes,user4@example.com,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Object type,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Data Asset,Code*,Title*,Description,Notes,,Owner*,Effective Date,Stop Date,State,Primary Contact,Secondary Contact,Data Asset URL,Reference URL,,,,,,,,,,,,,Delete,,,,,,,map:access group,map:assessment,map:audit,map:clause,map:contract,map:control,map:cycle task group object task,map:data asset,map:facility,map:issue,map:market,map:objective,map:org group,map:person,map:policy,map:process,map:product,map:program,map:project,map:regulation,map:risk,map:section,map:standard,map:system,map:threat,map:vendor
+,Data Assest code,Data Assest title,Data Assest description,Data Assest notes,,"user@example.com
+user1@example.com",20/2/2020,22/2/2022,Draft,user2@example.com,user3@example.com,http://url.example.zzz,reference.example.zzz,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Object type,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Facility,Code*,Title*,Description,Notes,,Owner*,Effective Date,Stop Date,State,Primary Contact,Secondary Contact,Facility URL,Reference URL,,,,,,,,,,,,,Delete,CA date,CA dropdown,CA text,CA rich text,CA checkbox,CA person,map:access group,map:assessment,map:audit,map:clause,map:contract,map:control,map:cycle task group object task,map:data asset,map:facility,map:issue,map:market,map:objective,map:org group,map:person,map:policy,map:process,map:product,map:program,map:project,map:regulation,map:risk,map:section,map:standard,map:system,map:threat,map:vendor
+,Facility code,Facility title,Facility description,Facility notes,,"user@example.com
+user1@example.com",20/2/2020,22/2/2022,Draft,user2@example.com,user3@example.com,http://url.example.zzz,reference.example.zzz,,,,,,,,,,,,,,22/2/2022,TWO,Facility ca text,"Facility<br><br>
+rich text",no,user4@example.com,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Object type,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Market,Code*,Title*,Description,Notes,,Owner*,Effective Date,Stop Date,State,Primary Contact,Secondary Contact,Market URL,Reference URL,,,,,,,,,,,,,Delete,CA date,CA dropdown,CA text,CA rich text,CA checkbox,CA person,map:access group,map:assessment,map:audit,map:clause,map:contract,map:control,map:cycle task group object task,map:data asset,map:facility,map:issue,map:market,map:objective,map:org group,map:person,map:policy,map:process,map:product,map:program,map:project,map:regulation,map:risk,map:section,map:standard,map:system,map:threat,map:vendor
+,Market code,Market title,Market description,Market notes,,"user@example.com
+user1@example.com",20/2/2020,22/2/2022,Draft,user2@example.com,user3@example.com,http://url.example.zzz,reference.example.zzz,,,,,,,,,,,,,,22/2/2022,three,Market ca text,"Market<br><br>
+rich text",yes,user4@example.com,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Object type,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Objective,Code*,Title*,Description,Notes,,Owner*,,,State,Primary Contact,Secondary Contact,Objective URL,Reference URL,,,,,,,,,,,,,Delete,,,,,,,map:access group,map:assessment,map:audit,map:clause,map:contract,map:control,map:cycle task group object task,map:data asset,map:facility,map:issue,map:market,map:objective,map:org group,map:person,map:policy,map:process,map:product,map:program,map:project,map:regulation,map:risk,map:section,map:standard,map:system,map:threat,map:vendor
+,Objective code,Objective title,Objective description,Objective notes,,"user@example.com
+user1@example.com",,,Draft,user2@example.com,user3@example.com,http://url.example.zzz,reference.example.zzz,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Object type,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Org Group,Code*,Title*,Description,Notes,,Owner*,Effective Date,Stop Date,State,Primary Contact,Secondary Contact,Org Group URL,Reference URL,,,,,,,,,,,,,Delete,,,,,,,map:access group,map:assessment,map:audit,map:clause,map:contract,map:control,map:cycle task group object task,map:data asset,map:facility,map:issue,map:market,map:objective,map:org group,map:person,map:policy,map:process,map:product,map:program,map:project,map:regulation,map:risk,map:section,map:standard,map:system,map:threat,map:vendor
+,Org Group code,Org Group title,Org Group description,Org Group notes,,"user@example.com
+user1@example.com",20/2/2020,22/2/2022,Draft,user2@example.com,user3@example.com,http://url.example.zzz,reference.example.zzz,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Object type,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Policy,Code*,Title*,Description,Notes,,Owner*,Effective Date,Stop Date,State,Primary Contact,Secondary Contact,Policy URL,Reference URL,,,,,,,,,,,,Kind/Type,Delete,,,,,,,map:access group,map:assessment,map:audit,map:clause,,map:control,map:cycle task group object task,map:data asset,map:facility,map:issue,map:market,map:objective,map:org group,map:person,,map:process,map:product,map:program,map:project,,map:risk,map:section,,map:system,map:threat,map:vendor
+,Policy code,Policy title,Policy description,Policy notes,,"user@example.com
+user1@example.com",20/2/2020,22/2/2022,Draft,user2@example.com,user3@example.com,http://url.example.zzz,reference.example.zzz,,,,,,,,,,,,company policy,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Object type,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Process,Code*,Title*,Description,Notes,,Owner*,Effective Date,Stop Date,State,Primary Contact,Secondary Contact,Process URL,Reference URL,,,,,,,,,,,Network Zone,,Delete,,,,,,,map:access group,map:assessment,map:audit,map:clause,map:contract,map:control,map:cycle task group object task,map:data asset,map:facility,map:issue,map:market,map:objective,map:org group,map:person,map:policy,map:process,map:product,map:program,map:project,map:regulation,map:risk,map:section,map:standard,map:system,map:threat,map:vendor
+,Process code,Process title,Process description,Process notes,,"user@example.com
+user1@example.com",20/2/2020,22/2/2022,Draft,user2@example.com,user3@example.com,http://url.example.zzz,reference.example.zzz,,,,,,,,,,,prod,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Object type,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Product,Code*,Title*,Description,Notes,,Owner*,Effective Date,Stop Date,State,Primary Contact,Secondary Contact,Product URL,Reference URL,,,,,,,,,,,,Kind/Type,Delete,,,,,,,map:access group,map:assessment,map:audit,map:clause,map:contract,map:control,map:cycle task group object task,map:data asset,map:facility,map:issue,map:market,map:objective,map:org group,map:person,map:policy,map:process,map:product,map:program,map:project,map:regulation,map:risk,map:section,map:standard,map:system,map:threat,map:vendor
+,Product code,Product title,Product description,Product notes,,"user@example.com
+user1@example.com",20/2/2020,22/2/2022,Draft,user2@example.com,user3@example.com,http://url.example.zzz,reference.example.zzz,,,,,,,,,,,,saas,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Object type,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Regulation,Code*,Title*,Description,Notes,,Owner*,Effective Date,Stop Date,State,Primary Contact,Secondary Contact,Regulation URL,Reference URL,,,,,,,,,,,,,Delete,,,,,,,map:access group,map:assessment,map:audit,map:clause,,map:control,map:cycle task group object task,map:data asset,map:facility,map:issue,map:market,map:objective,map:org group,map:person,,map:process,map:product,map:program,map:project,,map:risk,map:section,,map:system,map:threat,map:vendor
+,Regulation code,Regulation title,Regulation description,Regulation notes,,"user@example.com
+user1@example.com",20/2/2020,22/2/2022,Draft,user2@example.com,user3@example.com,http://url.example.zzz,reference.example.zzz,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Object type,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Risk,Code*,Title*,Description*,Notes,,Owner*,Effective Date,Stop Date,State,Contact,,Url,Reference URL,,,,,,,,,,,,,Delete,,,,,,,map:access group,map:assessment,,map:clause,map:contract,map:control,map:cycle task group object task,map:data asset,map:facility,map:issue,map:market,map:objective,map:org group,map:person,map:policy,map:process,map:product,map:program,map:project,map:regulation,,map:section,map:standard,map:system,map:threat,map:vendor
+,Risk code,Risk title,Risk description,Risk notes,,"user@example.com
+user1@example.com",20/2/2020,22/2/2022,Draft,user2@example.com,,http://url.example.zzz,reference.example.zzz,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Object type,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Section,Code*,Title*,Text of Section,Notes,,Owner*,,,State,Primary Contact,Secondary Contact,Section URL,Reference URL,,,,,,,,,,Policy / Regulation / Standard / Contract,,,Delete,CA date,CA dropdown,CA text,CA rich text,CA checkbox,CA person,map:access group,map:assessment,map:audit,map:clause,map:contract,map:control,map:cycle task group object task,map:data asset,map:facility,map:issue,map:market,map:objective,map:org group,map:person,map:policy,map:process,map:product,map:program,map:project,map:regulation,map:risk,map:section,map:standard,map:system,map:threat,map:vendor
+,Section code,Section title,Section description,Section notes,,"user@example.com
+user1@example.com",,,Draft,user2@example.com,user3@example.com,http://url.example.zzz,reference.example.zzz,,,,,,,,,,policy code,,,,22/2/2022,four,Section ca text,"Section<br><br>
+rich text",yes,user4@example.com,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Object type,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Standard,Code*,Title*,Description,Notes,,Owner*,Effective Date,Stop Date,State,Primary Contact,Secondary Contact,Standard URL,Reference URL,,,,,,,,,,,,,Delete,,,,,,,map:access group,map:assessment,map:audit,map:clause,,map:control,map:cycle task group object task,map:data asset,map:facility,map:issue,map:market,map:objective,map:org group,map:person,,map:process,map:product,map:program,map:project,,map:risk,map:section,,map:system,map:threat,map:vendor
+,Standard code,Standard title,Standard description,Standard notes,,"user@example.com
+user1@example.com",20/2/2020,22/2/2022,Draft,user2@example.com,user3@example.com,http://url.example.zzz,reference.example.zzz,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Object type,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+System,Code*,Title*,Description,Notes,,Owner*,Effective Date,Stop Date,State,Primary Contact,Secondary Contact,System URL,Reference URL,,,,,,,,,,,Network Zone,,Delete,,,,,,,map:access group,map:assessment,map:audit,map:clause,map:contract,map:control,map:cycle task group object task,map:data asset,map:facility,map:issue,map:market,map:objective,map:org group,map:person,map:policy,map:process,map:product,map:program,map:project,map:regulation,map:risk,map:section,map:standard,map:system,map:threat,map:vendor
+,System code,System title,System description,System notes,,"user@example.com
+user1@example.com",20/2/2020,22/2/2022,Draft,user2@example.com,user3@example.com,http://url.example.zzz,reference.example.zzz,,,,,,,,,,,core,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Object type,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Threat,Code*,Title*,Description,Notes,,Owner*,Effective Date,Stop Date,State,Contact,,Threat URL,Reference URL,,,,,,,,,,,,,Delete,CA date,CA dropdown,CA text,CA rich text,CA checkbox,CA person,map:access group,map:assessment,,map:clause,map:contract,map:control,map:cycle task group object task,map:data asset,map:facility,map:issue,map:market,map:objective,map:org group,map:person,map:policy,map:process,map:product,map:program,map:project,map:regulation,map:risk,map:section,map:standard,map:system,map:vendor,
+,Threat code,Threat title,Threat description,Threat notes,,"user@example.com
+user1@example.com",20/2/2020,22/2/2022,Draft,user2@example.com,,http://url.example.zzz,reference.example.zzz,,,,,,,,,,,,,,22/2/2022,four,Threat ca text,"Threat<br><br>
+rich text",no,user4@example.com,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Object type,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Vendor,Code*,Title*,Description,Notes,,Owner*,Effective Date,Stop Date,State,Primary Contact,Secondary Contact,Vendor URL,Reference URL,,,,,,,,,,,,,Delete,,,,,,,map:access group,map:assessment,map:audit,map:clause,map:contract,map:control,map:cycle task group object task,map:data asset,map:facility,map:issue,map:market,map:objective,map:org group,map:person,map:policy,map:process,map:product,map:program,map:project,map:regulation,map:risk,map:section,map:standard,map:system,map:threat,map:vendor
+,Vendor code,Vendor title,Vendor description,Vendor notes,,"user@example.com
+user1@example.com",20/2/2020,22/2/2022,Draft,user2@example.com,user3@example.com,http://url.example.zzz,reference.example.zzz,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Object type,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Person,name,email,company,role,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,user 1,user1@example.com,google,Administrator,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,user 2,user2@example.com,google,Administrator,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,user 3,user3@example.com,google,creator,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,user 4,user4@example.com,google,reader,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,

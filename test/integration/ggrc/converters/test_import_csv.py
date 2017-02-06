@@ -4,14 +4,14 @@
 
 from ggrc import models
 from ggrc.converters import errors
-from integration.ggrc import converters
+from integration.ggrc import TestCase
 from integration.ggrc import generator
 
 
-class TestBasicCsvImport(converters.TestCase):
+class TestBasicCsvImport(TestCase):
 
   def setUp(self):
-    converters.TestCase.setUp(self)
+    super(TestBasicCsvImport, self).setUp()
     self.generator = generator.ObjectGenerator()
     self.client.get("/login")
 
@@ -44,14 +44,14 @@ class TestBasicCsvImport(converters.TestCase):
     filename = "policy_import_working_with_warnings.csv"
     response_json = self.import_file(filename)
 
-    expected_warnings = set([
+    expected_warnings = {
         errors.UNKNOWN_USER_WARNING.format(line=3, email="miha@policy.com"),
         errors.UNKNOWN_OBJECT.format(
             line=3, object_type="Program", slug="p753"),
         errors.OWNER_MISSING.format(line=4, column_name="Owner"),
         errors.UNKNOWN_USER_WARNING.format(line=6, email="not@a.user"),
         errors.OWNER_MISSING.format(line=6, column_name="Owner"),
-    ])
+    }
     response_warnings = response_json[0]["row_warnings"]
     self.assertEqual(expected_warnings, set(response_warnings))
     response_errors = response_json[0]["row_errors"]
@@ -76,7 +76,7 @@ class TestBasicCsvImport(converters.TestCase):
     self.assertEqual(0, response_json[0]["updated"])
     self.assertEqual(9, response_json[0]["rows"])
 
-    expected_errors = set([
+    expected_errors = {
         errors.DUPLICATE_VALUE_IN_CSV.format(
             line_list="3, 4, 6, 10, 11", column_name="Title",
             value="A title", s="s", ignore_lines="4, 6, 10, 11"),
@@ -86,7 +86,7 @@ class TestBasicCsvImport(converters.TestCase):
         errors.DUPLICATE_VALUE_IN_CSV.format(
             line_list="8, 9, 10, 11", column_name="Code", value="code",
             s="s", ignore_lines="9, 10, 11"),
-    ])
+    }
     response_errors = response_json[0]["row_errors"]
     self.assertEqual(expected_errors, set(response_errors))
 
@@ -127,6 +127,10 @@ class TestBasicCsvImport(converters.TestCase):
     ])
 
   def test_assessments_import_update(self):
+    """Test for updating Assessment with import
+
+    Checks for fields being updarted correctly
+    """
     messages = ("block_errors", "block_warnings", "row_errors", "row_warnings")
 
     filename = "pci_program.csv"
@@ -162,11 +166,11 @@ class TestBasicCsvImport(converters.TestCase):
     filename = "people_test.csv"
     response = self.import_file(filename)[0]
 
-    expected_errors = set([
+    expected_errors = {
         errors.MISSING_VALUE_ERROR.format(line=8, column_name="Email"),
         errors.WRONG_VALUE_ERROR.format(line=10, column_name="Email"),
         errors.WRONG_VALUE_ERROR.format(line=11, column_name="Email"),
-    ])
+    }
 
     self.assertEqual(expected_errors, set(response["row_errors"]))
     self.assertEqual(0, models.Person.query.filter_by(email=None).count())

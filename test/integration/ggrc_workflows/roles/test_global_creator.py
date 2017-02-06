@@ -23,8 +23,7 @@ class GlobalCreatorGetTest(WorkflowRolesTestCase):
   """
 
   def setUp(self):
-    # old-style class
-    WorkflowRolesTestCase.setUp(self)
+    super(GlobalCreatorGetTest, self).setUp()
     self.api.set_user(self.users['creator'])
 
   def test_get_obj(self):

@@ -15,7 +15,7 @@ from ggrc import db
 from ggrc.converters import errors
 from ggrc_workflows.models import Cycle
 from ggrc_workflows.models import CycleTaskGroupObjectTask
-from integration.ggrc.converters import TestCase
+from integration.ggrc import TestCase
 from integration.ggrc.generator import ObjectGenerator
 from integration.ggrc_workflows.generator import WorkflowsGenerator
 
@@ -30,7 +30,7 @@ class TestCycleTaskImportUpdate(TestCase):
   CSV_DIR = join(abspath(dirname(__file__)), "test_csvs/")
 
   def setUp(self):
-    TestCase.setUp(self)
+    super(TestCycleTaskImportUpdate, self).setUp()
     self.wf_generator = WorkflowsGenerator()
     self.object_generator = ObjectGenerator()
     self.random_objects = self.object_generator.generate_random_objects(2)

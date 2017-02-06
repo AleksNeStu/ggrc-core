@@ -4,17 +4,17 @@
 """Test object owner of comments."""
 
 from ggrc.models import Assessment, ObjectOwner, Revision
-from integration.ggrc import converters
+from integration.ggrc import TestCase
 from integration.ggrc import generator
 
 
-class TestCommentObjectOwner(converters.TestCase):
+class TestCommentObjectOwner(TestCase):
 
   """Test object owner of comments."""
 
   def setUp(self):
     """Setup test case."""
-    converters.TestCase.setUp(self)
+    super(TestCommentObjectOwner, self).setUp()
     self.response = self.client.get("/login")
     self.generator = generator.ObjectGenerator()
 

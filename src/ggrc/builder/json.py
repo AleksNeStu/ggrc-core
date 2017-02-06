@@ -1,7 +1,7 @@
 # Copyright (C) 2017 Google Inc.
 # Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
 
-"""JSON resource state representation handler for gGRC models."""
+"""JSON resource state representation handler for GGRC models."""
 
 # pylint: disable=no-name-in-module
 # false positive for RelationshipProperty

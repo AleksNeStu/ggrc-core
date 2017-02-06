@@ -30,6 +30,8 @@
   });
 
   $('body').on('click', selectors.join(', '), function (ev, disableMapper) {
+    var relevantTo = null;
+    var type;
     var btn = $(ev.currentTarget);
     var data = {};
     var isSearch;
@@ -47,11 +49,22 @@
 
     isSearch = /unified-search/ig.test(data.toggle);
     if (!disableMapper) {
+      if (GGRC.Utils.Snapshots.isInScopeModel(data.join_object_type)) {
+        relevantTo = [{
+          readOnly: true,
+          type: data.snapshot_scope_type,
+          id: data.snapshot_scope_id
+        }];
+        type = 'Control';
+      } else {
+        type = btn.data('join-option-type');
+      }
       GGRC.Controllers.MapperModal.launch(btn, _.extend({
         object: btn.data('join-object-type'),
-        type: btn.data('join-option-type'),
+        type: type,
         'join-object-id': btn.data('join-object-id'),
         'search-only': isSearch,
+        relevantTo: relevantTo,
         template: {
           title: isSearch ?
             '/static/mustache/base_objects/modal/search_title.mustache' : ''

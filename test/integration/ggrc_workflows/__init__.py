@@ -11,8 +11,7 @@ from integration.ggrc.generator import ObjectGenerator
 class WorkflowTestCase(TestCase):
 
   def setUp(self):
-    # old-style class
-    TestCase.setUp(self)
+    super(WorkflowTestCase, self).setUp()
     self.api = Api()
     self.generator = WorkflowsGenerator()
     self.object_generator = ObjectGenerator()

@@ -43,7 +43,8 @@
       // { property: "controls", model: CMS.Models.Control, }
       // { parent_find_param: "system_id" ... }
       scroll_page_count: 1, // pages above and below viewport
-      is_subtree: false
+      is_subtree: false,
+      showMappedToAllParents: false
     },
     do_not_propagate: [
       'header_view',
@@ -268,6 +269,11 @@
           this.page_loader = new GGRC.ListLoaders.TreePageLoader(
             this.options.model, this.options.parent_instance,
             this.options.mapping);
+        } else if (this.options.attr('is_subtree') &&
+          GGRC.page_instance().type !== 'Workflow') {
+          this.page_loader = new GGRC.ListLoaders.SubTreeLoader(
+            this.options.model, this.options.parent_instance,
+            this.options.mapping);
         }
 
         if ('parent_instance' in opts && 'status' in opts.parent_instance) {
@@ -337,6 +343,7 @@
 
       if (this.options.header_view && this.options.show_header) {
         optionsDfd = $.when(this.options).then(function (options) {
+          options.onChildShowStateChange = self.childShowStateChange.bind(self);
           options.onChildModelsChange = self.set_tree_display_list.bind(self);
           return options;
         });
@@ -379,7 +386,9 @@
             }.bind(this))
           ));
       }
-      return $.when.apply($.when, dfds);
+
+      this._init_view_deferred = $.when.apply($.when, dfds);
+      return this._init_view_deferred;
     },
 
     init_count: function () {
@@ -389,7 +398,7 @@
       var countsName = options.counts_name || options.model.shortName;
 
       if (this.options.parent_instance && this.options.mapping) {
-        counts = GGRC.Utils.QueryAPI.getCounts();
+        counts = GGRC.Utils.CurrentPage.getCounts();
 
         if (self.element) {
           can.trigger(self.element, 'updateCount',
@@ -834,8 +843,43 @@
 
       res.then(function () {
         _.defer(this.draw_visible.bind(this));
+      }.bind(this)).always(function () {
+        if (this.options.is_subtree) {
+          this.addSubTreeExpander(items);
+        }
       }.bind(this));
       return res;
+    },
+
+    addSubTreeExpander: function () {
+      var parentCtrl = this.element.closest('section')
+        .find('.cms_controllers_tree_view').control();
+      var showMappedToAllParents = parentCtrl.options
+        .attr('showMappedToAllParents');
+      var element;
+      var options;
+      var expander;
+
+      if (this.element.find('.sub-tree-expander').length) {
+        return;
+      }
+
+      element = this.element.find('.parent-related:first');
+      options = {
+        expanded: !!element.length && showMappedToAllParents
+      };
+      expander = can.view(GGRC.mustache_path +
+        '/base_objects/sub_tree_expand.mustache', options);
+
+      if (!showMappedToAllParents) {
+        $(expander.firstElementChild).hide();
+      }
+
+      if (element.length) {
+        $(expander).insertBefore(element);
+      } else {
+        this.element.append(expander);
+      }
     },
 
     ' removeChildNode': function (el, ev, data) { // eslint-disable-line quote-props
@@ -904,8 +948,15 @@
       if (!(instance instanceof CMS.Models.Relationship)) {
         return false;
       }
-      return _.includes([instance.destination.type, instance.source.type],
-        shortName);
+      if (instance.destination &&
+        instance.destination.type === shortName) {
+        return true;
+      }
+      if (instance.source &&
+        instance.source.type === shortName) {
+        return true;
+      }
+      return false;
     },
 
     triggerListeners: (function () {
@@ -947,8 +998,10 @@
           // if unmapping e.g. an URL (a "Document") or an assignee from
           // the info pin, refreshing the latter is not needed
           if (instance instanceof CMS.Models.Relationship) {
-            srcType = instance.source.type;
-            destType = instance.destination.type;
+            srcType = instance.source ?
+              instance.source.type : null;
+            destType = instance.destination ?
+              instance.destination.type : null;
             if (srcType === 'Person' || destType === 'Person' ||
               srcType === 'Document' || destType === 'Document') {
               return;
@@ -1175,6 +1228,44 @@
       this.refreshList();
     },
 
+    loadSubTree: function (allRelatedToParent) {
+      var parent = this.options.parent_instance;
+      var queryAPI = GGRC.Utils.QueryAPI;
+      var parentCtrl = this.element.closest('section')
+        .find('.cms_controllers_tree_view').control();
+      var displayModels = can.makeArray(
+        parentCtrl.options.attr('selected_child_tree_model_list'));
+      var originalOrder =
+        GGRC.tree_view.attr('orderedWidgetsByType')[parent.type];
+      var relevant = {
+        type: parent.type,
+        id: parent.id,
+        operation: 'relevant'
+      };
+      var current = GGRC.page_instance();
+      var addFilter;
+      var reqParams;
+
+      if (!allRelatedToParent) {
+        addFilter = {
+          expression: {
+            object_name: current.type,
+            op: {
+              name: 'relevant'
+            },
+            ids: [current.id]
+          }
+        };
+      }
+      displayModels = _.map(displayModels, 'model_name');
+      displayModels = _.intersection(originalOrder, displayModels);
+      reqParams = displayModels.map(function (model) {
+        return queryAPI.buildParam(model, {}, relevant, null, addFilter);
+      });
+
+      return this.page_loader.load({data: reqParams}, displayModels);
+    },
+
     loadPage: function () {
       var options = this.options;
       var queryAPI = GGRC.Utils.QueryAPI;
@@ -1193,13 +1284,14 @@
         .then(function (data) {
           var total = data.total;
           var countsName = this.options.counts_name || modelName;
+          var getCounts = GGRC.Utils.CurrentPage.getCounts;
           this.options.attr('paging.total', total);
           this.options.attr('paging.count',
             Math.ceil(data.total / this.options.paging.pageSize));
 
           if (!this.options.paging.filter &&
-            total !== queryAPI.getCounts().attr(countsName)) {
-            queryAPI.getCounts().attr(countsName, total);
+            total !== getCounts().attr(countsName)) {
+            getCounts().attr(countsName, total);
           }
           return data.values;
         }.bind(this));
@@ -1238,6 +1330,20 @@
         if (oldVal !== newVal && _.contains(['current', 'pageSize'], type)) {
           this.refreshList();
         }
-      })
+      }),
+    childShowStateChange: function (childShowState) {
+      var expanderEls = this.element.find('.sub-tree-expander');
+
+      if (!_.isBoolean(childShowState)) {
+        return;
+      }
+      if (childShowState) {
+        expanderEls.show();
+      } else {
+        expanderEls.hide();
+      }
+
+      this.options.attr('showMappedToAllParents', !!childShowState);
+    }
   });
 })(window.can, window.$);

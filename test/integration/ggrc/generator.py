@@ -147,8 +147,7 @@ class ObjectGenerator(Generator):
     created.
 
     Args:
-      commentable (db.Model): Model that is commentable such as Request or
-        Assessment.
+      commentable (db.Model): Model that is commentable such as Assessment.
       assignee_type (string): Assignee type of the person creating the comment.
       description (string): Comment content.
       kwargs (dict): Any additional data added to the comments.

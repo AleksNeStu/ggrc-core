@@ -63,8 +63,8 @@ def init_hook():
         if snapshot:
           parent_title = snapshot.parent.title
           child_revision_title = snapshot.revision.content['title']
-          obj.title = '{} assessment for {}'.format(child_revision_title,
-                                                    parent_title)
+          obj.title = u'{} assessment for {}'.format(child_revision_title,
+                                                     parent_title)
 
 
 def map_assessment(assessment, obj):

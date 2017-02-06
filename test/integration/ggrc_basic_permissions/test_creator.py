@@ -17,7 +17,7 @@ class TestCreator(TestCase):
   """ TestCreator """
 
   def setUp(self):
-    TestCase.setUp(self)
+    super(TestCreator, self).setUp()
     self.generator = Generator()
     self.api = Api()
     self.object_generator = ObjectGenerator()

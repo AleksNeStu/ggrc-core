@@ -11,7 +11,7 @@ from ggrc_basic_permissions.roles.Creator import owner_update
 
 scope = "System"
 description = """
-  This role grants a user basic, read-only, access permission to a gGRC
+  This role grants a user basic, read-only, access permission to a GGRC
   instance.
   """
 permissions = {
@@ -65,7 +65,6 @@ permissions = {
         "ObjectOwner",
         "Person",
         "Program",
-        "Request",
         "Revision",
         "Role",
         "UserRole",

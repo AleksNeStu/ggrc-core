@@ -736,14 +736,16 @@
        .info-pane-utility{
          display: none;
        }
-       .state-value{
-         display: none;
+       .pane-header h3{
+         float: none;
        }
        .tier-content,
        custom-attributes{
+         display: block;
          .row-fluid{
            margin-bottom: 0;
            .span3,
+           .span4,
            .span6,
            .span9,
            .span12{

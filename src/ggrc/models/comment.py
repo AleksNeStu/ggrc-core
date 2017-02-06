@@ -37,7 +37,6 @@ class Commentable(object):
       "Assessor",
       "Assignee",
       "Creator",
-      "Requester",
       "Verifier",
   ])
 

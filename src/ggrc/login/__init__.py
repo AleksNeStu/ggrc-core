@@ -48,7 +48,7 @@ def init_app(app):
        and a simple json error object.
     """
     if (re.match(r'^(\/api|\/query|\/search)', request.path) or
-       request.headers.get('X-Requested-By') == 'gGRC'):
+       request.headers.get('X-Requested-By') == 'GGRC'):
       return json.dumps({'error': 'unauthorized'}), 401
     return redirect(login_url('/login', request.url))
 

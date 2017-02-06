@@ -9,14 +9,14 @@ If you have a standardized acronym or other specific reason for entering Codes m
 Enter the Codes for already existing objects if you want to use Import as a means to edit and update those objects.","*Required
 
 Titles are required text fields.  You MUST fill in a Title for all Risks in order to import them.",*Required,"*Required.
-Map a person to be the Person of Contact for the Risk by entering an email address that already exists in your gGRC instance. Only 1 email address may be entered.
+Map a person to be the Person of Contact for the Risk by entering an email address that already exists in your GGRC instance. Only 1 email address may be entered.
 
 Example:
 
 ken@reciprocitylabs.com
 ","*Optional.  
 
-You can link gGRC objects to Risks on import by specifying the type and that object's code, separated by a colon.  Use <option><return> to deliniate between object codes.
+You can link GGRC objects to Risks on import by specifying the type and that object's code, separated by a colon.  Use <option><return> to deliniate between object codes.
 Example:
 
 System:SYSTEM-1

@@ -41,12 +41,12 @@
   {{/is_allowed}}
 
   {{#any_allowed 'create' object_menu context='any'}}
-    <li class="get-started__list__item get-started__list__item--top-space hidden-widgets-list">
+    <li class="get-started__list__item get-started__list__item--top-space hidden-widgets-list top-space">
       <a href="#" class="dropdown-toggle" data-toggle="dropdown">
         <span class="get-started__list__icon-wrap">
           <i class="fa fa-plus-circle white"></i>
         </span>
-        Create new object
+        Create object
       </a>
       <div class="dropdown-menu" role="menu">
         {{#object_menu}}

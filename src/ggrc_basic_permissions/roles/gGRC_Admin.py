@@ -3,7 +3,7 @@
 
 scope = "Admin"
 description = """
-  gGRC System Administrator with super-user privileges.
+  GGRC System Administrator with super-user privileges.
   """
 permissions = {
     "read": [],

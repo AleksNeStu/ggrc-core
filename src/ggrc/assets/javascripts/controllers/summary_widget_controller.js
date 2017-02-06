@@ -9,7 +9,24 @@
       model: null,
       instance: null,
       widget_view: GGRC.mustache_path + '/base_objects/summary.mustache',
-      isLoading: true
+      isLoading: true,
+      colorsMap: {
+        Completed: '#8bc34a',
+        'In Progress': '#ffab40',
+        'Not Started': '#bdbdbd',
+        'Ready for Review': '#1378bb'
+      },
+      chartOptions: {
+        pieSliceText: 'value-and-percentage',
+        chartArea: {
+          width: '100%',
+          height: '90%'
+        },
+        height: 300,
+        legend: {
+          position: 'none'
+        }
+      }
     },
     init: function () {
       var that = this;
@@ -37,7 +54,12 @@
         model: this.options.model,
         instance: this.options.instance,
         error_msg: '',
-        error: true
+        error: true,
+        charts: {
+          Assessment: {
+            legend: []
+          }
+        }
       });
       can.view(this.get_widget_view(this.element),
         this.options.context, function (frag) {
@@ -58,58 +80,97 @@
       return false;
     },
     widget_hidden: function (event) {
-      this.setState('assessments', {total: 0, statuses: { }}, true);
+      this.setState('Assessment', {total: 0, statuses: { }}, true);
       return false;
     },
     reloadSummary: function () {
       var that = this;
       this.loadChartLibrary(function () {
-        that.reloadChart('Assessment', 'assessments',
-          'piechart_audit_assessments_chart');
+        that.reloadChart('Assessment', 'piechart_audit_assessments_chart');
       });
     },
-    reloadChart: function (type, name, elementId) {
+    reloadChart: function (type, elementId) {
       var that = this;
-      that.setState(name, {total: 0, statuses: { }}, true);
+      that.setState(type, {total: 0, statuses: { }}, true);
       that.getStatuses(type, that.options.instance.id).then(function (raw) {
         var data = that.parseStatuses(raw[0][type]);
-        that.drawChart(elementId, data);
-        that.setState(name, data, false);
+        var chart = that.drawChart(elementId, data);
+
+        that.prepareLegend(type, chart, data);
+        that.setState(type, data, false);
       });
     },
     drawChart: function (elementId, raw) {
-      var columns = [['Status', 'Count']];
-      var data;
       var chart;
       var options = this.getChartOptions(raw);
-      columns.push.apply(columns, raw.statuses);
-      data = google.visualization.arrayToDataTable(columns);
+      var data = new google.visualization.DataTable();
+
+      data.addColumn('string', 'Status');
+      data.addColumn('number', 'Count');
+      data.addRows(raw.statuses);
+
       chart = new google.visualization.PieChart(
         document.getElementById(elementId));
       chart.draw(data, options);
       this.resizeChart(chart, data, options);
+
+      return chart;
+    },
+    prepareLegend: function (type, chart, data) {
+      var legendData = [];
+      var statuses = CMS.Models[type].statuses;
+      var chartOptions = this.options.context.charts[type];
+      var colorsMap = this.options.colorsMap;
+
+      statuses.forEach(function (status) {
+        var rowIndex = _.findIndex(data.statuses, function (row) {
+          return row[0] === status;
+        });
+        var statusData;
+
+        if (rowIndex > -1) {
+          statusData = data.statuses[rowIndex];
+        }
+        if (statusData) {
+          legendData.push({
+            title: statusData[0],
+            count: statusData[1],
+            percent: (statusData[1] / data.total * 100).toFixed(1),
+            rowIndex: rowIndex,
+            color: colorsMap[status]
+          });
+        } else {
+          legendData.push({
+            title: status,
+            count: 0,
+            percent: 0,
+            color: colorsMap[status]
+          });
+        }
+      });
+
+      chartOptions.attr('legend', legendData);
+
+      this.element.find('#piechart_audit_assessments_chart-legend')
+        .on('mouseenter', 'li', function () {
+          var $el = $(this);
+          var rowIndex = $el.data('row-index');
+
+          if (_.isNumber(rowIndex)) {
+            chart.setSelection([{row: rowIndex, column: null}]);
+          }
+        })
+        .on('mouseleave', 'li', function () {
+          chart.setSelection(null);
+        });
     },
     getChartOptions: function (raw) {
-      var options = {
-        pieSliceText: 'value-and-percentage',
-        chartArea: {
-          width: '100%',
-          height: '90%'
-        },
-        legend: {
-          position: 'right',
-          alignment: 'center'
-        }
-      };
-      var colorMaps = {
-        Completed: '#8bc34a',
-        'In Progress': '#ffab40',
-        'Not Started': '#bdbdbd',
-        Verified: '#1378bb'
-      };
+      var options = Object.assign({}, this.options.chartOptions);
+      var colorMaps = this.options.colorsMap;
       options.colors = raw.statuses.map(function (e) {
         return colorMaps[e[0]];
       });
+
       return options;
     },
     resizeChart: function (chart, data, options) {
@@ -120,13 +181,16 @@
         $(window).trigger('resize');
       }, 0);
     },
-    setState: function (name, data, isLoading) {
-      var instance = this.options.context.instance;
-      instance.attr(name + '_total', data.total);
-      instance.attr(name + '_any', data.total > 0);
-      instance.attr(name + '_none', isLoading || data.total === 0);
-      instance.attr(name + '_isLoading', isLoading);
-      instance.attr(name + '_isLoaded', !isLoading);
+    setState: function (type, data, isLoading) {
+      var chartOptions = this.options.context.charts[type];
+      chartOptions.attr('total', data.total);
+      chartOptions.attr('any', data.total > 0);
+      chartOptions.attr('none', isLoading || data.total === 0);
+      chartOptions.attr('isLoading', isLoading);
+      chartOptions.attr('isLoaded', !isLoading);
+      if (isLoading) {
+        chartOptions.attr('legend', []);
+      }
     },
     parseStatuses: function (data) {
       var groups = _.groupBy(data.values, 'status');

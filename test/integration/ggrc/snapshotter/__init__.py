@@ -8,9 +8,8 @@ from os.path import abspath, dirname, join
 
 import ggrc.models as models
 
-import integration.ggrc
 from integration.ggrc import api_helper
-from integration.ggrc.converters import TestCase
+from integration.ggrc import TestCase
 import integration.ggrc.generator
 from integration.ggrc.models import factories
 
@@ -33,12 +32,9 @@ class SnapshotterBaseTestCase(TestCase):
   # pylint: disable=invalid-name
 
   def setUp(self):
-    integration.ggrc.TestCase.setUp(self)
+    super(SnapshotterBaseTestCase, self).setUp()
     self.objgen = integration.ggrc.generator.ObjectGenerator()
     self.api = api_helper.Api()
-
-  def tearDown(self):
-    integration.ggrc.TestCase.tearDown(self)
 
   def create_object(self, cls, data):
     _, obj = self.objgen.generate_object(cls, data)

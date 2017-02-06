@@ -3,7 +3,7 @@ Processes,,,,,,,,,,,,,,
 *Rows 3 and 4 are ignored on import.  We use these rows to describe the legal values for cells above and below.,"*Type is very important.  For Process import, Type should be ""Process"", in cell A2.",,,,,,,,,,,,,
 "*Optional
 
-If you leave this field blank, the gGRC system will generate Codes automatically upon creation of the new object.  If you have a standardized acronym or other specific reason for entering Codes manually, we recommend doing so.  Otherwise, we recommend you leave this blank.
+If you leave this field blank, the GGRC system will generate Codes automatically upon creation of the new object.  If you have a standardized acronym or other specific reason for entering Codes manually, we recommend doing so.  Otherwise, we recommend you leave this blank.
 
 Enter the Codes for already existing objects if you want to use Import as a means to edit and update those objects.","*Required
 
@@ -19,7 +19,7 @@ Enter a valid reference URL
 Example:
 www.reciprocitylabs.com","* Notes
 Use this text field to keep notes about this Process","*Optional.
-You can map a person to be the Owner/Person of Contact for the Process by entering an email address that already exists in your gGRC instance. Only 1 email address may be entered.
+You can map a person to be the Owner/Person of Contact for the Process by entering an email address that already exists in your GGRC instance. Only 1 email address may be entered.
 
 Example:
 

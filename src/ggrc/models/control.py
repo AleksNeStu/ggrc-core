@@ -23,7 +23,6 @@ from ggrc.models.person import Person
 from ggrc.models.reflection import PublishOnly
 from ggrc.models.relationship import Relatable
 from ggrc.models.track_object_state import HasObjectState
-from ggrc.models.track_object_state import track_state_for_class
 from ggrc.models.utils import validate_option
 
 
@@ -263,5 +262,3 @@ class Control(HasObjectState, Relatable, CustomAttributable,
     if self.directive:
       out_json["mapped_directive"] = self.directive.display_name
     return out_json
-
-track_state_for_class(Control)

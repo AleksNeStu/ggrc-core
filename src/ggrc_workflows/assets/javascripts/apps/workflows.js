@@ -518,7 +518,7 @@
 
     GGRC.register_hook(
         'ObjectNav.Actions',
-        GGRC.mustache_path + '/dashboard/object_nav_actions');
+        GGRC.mustache_path + '/dashboard/object_nav_actions.mustache');
 
     $.extend(
       true,
@@ -644,7 +644,7 @@
     newWidgetDescriptors.history = historyWidgetDescriptor;
     newWidgetDescriptors.current = currentWidgetDescriptor;
 
-    GGRC.Utils.QueryAPI
+    GGRC.Utils.CurrentPage
       .initCounts([
         WorkflowExtension.countsMap.history,
         WorkflowExtension.countsMap.activeCycles,
@@ -716,10 +716,12 @@
   };
 
   GGRC.register_hook(
-      'Dashboard.Widgets', GGRC.mustache_path + '/dashboard/widgets');
+      'Dashboard.Widgets',
+      GGRC.mustache_path + '/dashboard/widgets.mustache');
 
   GGRC.register_hook(
-      'Dashboard.Errors', GGRC.mustache_path + '/dashboard/info/errors');
+      'Dashboard.Errors',
+      GGRC.mustache_path + '/dashboard/info/errors.mustache');
 
   WorkflowExtension.init_mappings();
 

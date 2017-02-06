@@ -5,11 +5,11 @@
 
 from ggrc import db
 from sqlalchemy.ext.associationproxy import association_proxy
-from ggrc.models.mixins import Mapping
+from ggrc.models.mixins import Base
 from ggrc.models.reflection import PublishOnly
 
 
-class RiskObject(Mapping, db.Model):
+class RiskObject(Base, db.Model):
   __tablename__ = 'risk_objects'
 
   risk_id = db.Column(

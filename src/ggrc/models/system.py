@@ -81,8 +81,6 @@ class SystemOrProcess(track_object_state.HasObjectState, Timeboxed,
                  'is_biz_process'),
     )
 
-track_object_state.track_state_for_class(SystemOrProcess)
-
 
 class System(CustomAttributable, Personable,
              Relatable, Ownable, SystemOrProcess):

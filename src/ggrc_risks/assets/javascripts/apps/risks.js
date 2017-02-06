@@ -317,7 +317,9 @@
 
 
 
-  GGRC.register_hook("LHN.Sections_risk", GGRC.mustache_path + "/dashboard/lhn_risks");
+  GGRC.register_hook(
+    'LHN.Sections_risk',
+    GGRC.mustache_path + '/dashboard/lhn_risks.mustache');
 
   RisksExtension.init_mappings();
 

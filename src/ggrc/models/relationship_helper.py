@@ -8,7 +8,6 @@ from ggrc import db
 from ggrc.extensions import get_extension_modules
 from ggrc import models
 from ggrc.models import Audit
-from ggrc.models import Request
 from ggrc.models import Snapshot
 from ggrc.models.relationship import Relationship
 from ggrc.models import all_models
@@ -95,18 +94,6 @@ class RelationshipHelper(object):
     )
 
   @classmethod
-  def audit_request(cls, object_type, related_type, related_ids):
-    if {object_type, related_type} != {"Audit", "Request"} or not related_ids:
-      return None
-
-    if object_type == "Audit":
-      return db.session.query(Request.audit_id).filter(
-          Request.id.in_(related_ids))
-    else:
-      return db.session.query(Request.id).filter(
-          Request.audit_id.in_(related_ids))
-
-  @classmethod
   def program_risk_assessment(cls, object_type, related_type, related_ids):
     if {object_type, related_type} != {"Program", "RiskAssessment"} or \
             not related_ids:
@@ -148,7 +135,6 @@ class RelationshipHelper(object):
   @classmethod
   def get_special_mappings(cls, object_type, related_type, related_ids):
     return [
-        cls.audit_request(object_type, related_type, related_ids),
         cls._audit_snapshot(object_type, related_type, related_ids),
         cls.person_object(object_type, related_type, related_ids),
         cls.person_ownable(object_type, related_type, related_ids),

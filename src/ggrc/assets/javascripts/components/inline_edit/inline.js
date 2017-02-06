@@ -104,6 +104,18 @@
         this.attr('context.isEdit', false);
         if (oldValue === value) {
           return;
+        } else if (type === 'checkbox' && Number(oldValue) === Number(value)) {
+          // cast to Number and compare. return if equal.
+          return;
+        } else if (type === 'person') {
+          if (value && oldValue && oldValue.id === value.id) {
+            // check instances of value and oldValue.
+            // return if instances are exist and ids are equal.
+            return;
+          } else if (!value && !oldValue) {
+            // return if instances are not exist.
+            return;
+          }
         }
 
         this.attr('_value', value);
@@ -193,7 +205,7 @@
         if (!isInside &&
             this.scope.attr('context.isEdit')) {
           _.defer(function () {
-            this.scope.onSave(this.scope, this.element, ev);
+            this.scope.onCancel(this.scope, this.element, ev);
           }.bind(this));
         }
       }

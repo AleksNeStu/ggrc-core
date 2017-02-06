@@ -66,6 +66,7 @@
     selected: [],
     entries: [],
     options: [],
+    newEntries: [],
     relevant: [],
     is_snapshotable: false,
     snapshot_scope_id: '',
@@ -214,7 +215,8 @@
           assessmentGenerator: parentScope.attr('assessmentGenerator'),
           is_snapshotable: parentScope.attr('is_snapshotable'),
           snapshot_scope_id: parentScope.attr('snapshot_scope_id'),
-          snapshot_scope_type: parentScope.attr('snapshot_scope_type')
+          snapshot_scope_type: parentScope.attr('snapshot_scope_type'),
+          newEntries: parentScope.attr('newEntries')
         })),
         template: parentScope.attr('template'),
         draw_children: true
@@ -229,6 +231,13 @@
         this.setModel();
         this.setBinding();
       },
+      '.add-button modal:success': function (el, ev, model) {
+        // clear
+        this.scope.attr('mapper.newEntries').replace([]);
+
+        // push new instance
+        this.scope.attr('mapper.newEntries').push(model);
+      },
       closeModal: function () {
         this.scope.attr('mapper.is_saving', false);
 
@@ -238,29 +247,36 @@
       deferredSave: function () {
         var source = this.scope.attr('deferred_to').instance ||
           this.scope.attr('mapper.object');
+        var data = {};
 
-        var data = {
-          multi_map: true,
-          arr: _.compact(_.map(
-            this.scope.attr('mapper.selected'),
-            function (desination) {
-              var isAllowed = GGRC.Utils.allowed_to_map(source, desination);
-              var instance =
-                can.makeArray(this.scope.attr('mapper.entries'))
-                  .map(function (entry) {
-                    return entry.instance || entry;
-                  })
-                  .find(function (instance) {
-                    return instance.id === desination.id &&
-                      instance.type === desination.type;
-                  });
-              if (instance && isAllowed) {
-                return instance;
-              }
-            }.bind(this)
-          ))
-        };
-
+        if (this.scope.attr('mapper.useSnapshots')) {
+          data = {
+            multi_map: true,
+            arr: this.scope.attr('mapper.selected')
+          };
+        } else {
+          data = {
+            multi_map: true,
+            arr: _.compact(_.map(
+              this.scope.attr('mapper.selected'),
+              function (desination) {
+                var isAllowed = GGRC.Utils.allowed_to_map(source, desination);
+                var instance =
+                  can.makeArray(this.scope.attr('mapper.entries'))
+                    .map(function (entry) {
+                      return entry.instance || entry;
+                    })
+                    .find(function (instance) {
+                      return instance.id === desination.id &&
+                        instance.type === desination.type;
+                    });
+                if (instance && isAllowed) {
+                  return instance;
+                }
+              }.bind(this)
+            ))
+          };
+        }
         this.scope.attr('deferred_to').controller.element.trigger(
           'defer:add', [data, {map_and_save: true}]);
         this.closeModal();
@@ -386,8 +402,12 @@
         this.scope.attr('mapper.contact', null);
         this.scope.attr('mapper.contactEmail', null);
         // Edge case for Assessment Generation
+        // and objects that are not in Snapshot scope
         if (!this.scope.attr('mapper.assessmentGenerator')) {
-          this.scope.attr('mapper.relevant').replace([]);
+          if (!GGRC.Utils.Snapshots.isInScopeModel(
+            this.scope.attr('mapper.object'))) {
+            this.scope.attr('mapper.relevant').replace([]);
+          }
         }
         this.setModel();
         this.setBinding();

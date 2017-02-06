@@ -6,7 +6,7 @@ from .mixins import BusinessObject, Timeboxed, CustomAttributable
 from .object_person import Personable
 from .object_owner import Ownable
 from .relationship import Relatable
-from .track_object_state import HasObjectState, track_state_for_class
+from .track_object_state import HasObjectState
 
 
 class Market(HasObjectState, CustomAttributable, Personable,
@@ -14,5 +14,3 @@ class Market(HasObjectState, CustomAttributable, Personable,
              BusinessObject, db.Model):
   __tablename__ = 'markets'
   _aliases = {"url": "Market URL"}
-
-track_state_for_class(Market)

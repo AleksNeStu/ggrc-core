@@ -22,20 +22,22 @@ describe('GGRC.Components.revisionsComparer', function () {
         Revision: {
           values: [{
             id: 1,
-            content: {id: 1}
+            content: {id: 1},
+            resource_type: 'Control'
           }, {
             id: 2,
-            content: {id: 1}
+            content: {id: 1},
+            resource_type: 'Control'
           }]
         }
       };
     });
 
-    it('returns instances with isRevision and class properties', function () {
+    it('returns instances of necessary type and with isRevision', function () {
       var result = method(fakeData);
       result.forEach(function (item) {
-        expect(typeof item.instance.class).toEqual('object');
-        expect(item.instance.class.is_custom_attributable).toBe(false);
+        expect(item.instance instanceof CMS.Models.Control).toBeTruthy();
+        expect(item.instance.type).toBe('Control');
         expect(item.instance.isRevision).toBe(true);
       });
     });

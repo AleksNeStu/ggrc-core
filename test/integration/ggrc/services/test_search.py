@@ -17,7 +17,7 @@ class TestResource(TestCase):
   """
 
   def setUp(self):
-    TestCase.setUp(self)
+    super(TestResource, self).setUp()
     self.api = Api()
     self.object_generator = ObjectGenerator()
     self.create_objects()

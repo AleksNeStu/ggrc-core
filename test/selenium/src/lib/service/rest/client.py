@@ -15,8 +15,8 @@ from lib.service.rest.template_provider import TemplateProvider
 
 
 class RestClient(object):
-  """Used for HTTP interactions with REST API."""
-  BASIC_HEADERS = {'X-Requested-By': 'gGRC',
+  """Used for HTTP interactions with App's REST API."""
+  BASIC_HEADERS = {'X-Requested-By': 'GGRC',
                    'Content-Type': 'application/json',
                    'Accept-Encoding': 'gzip, deflate'}
 

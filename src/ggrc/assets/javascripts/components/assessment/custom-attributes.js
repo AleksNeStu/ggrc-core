@@ -22,7 +22,6 @@
         var errors;
         var value = scope.attr('value');
         var type = scope.attr('type');
-        var valueId = Number(scope.attr('valueId'));
         var defId = scope.attr('def.id');
         var attributeObjectId;
         var valueParts;
@@ -50,14 +49,14 @@
                 type: scope.attr('type')
               }, {
                 defId: defId,
-                valueId: valueId
+                valueId: itemToSave.id
               });
             }
             if (type === 'person') {
               customAttributeValue =
                 can.makeArray(this.attr('instance.custom_attribute_values'))
                   .find(function (v) {
-                    return v.id === valueId;
+                    return v.id === itemToSave.id;
                   });
               if (customAttributeValue &&
                 customAttributeValue.attribute_object &&

@@ -36,10 +36,6 @@ class Event(Base, db.Model):
   def _extra_table_args(class_):
     return (
         db.Index('events_modified_by', 'modified_by_id'),
-        db.Index(
-            'ix_{}_updated_at'.format(class_.__tablename__),
-            'updated_at',
-        ),
     )
 
   @classmethod

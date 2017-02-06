@@ -23,7 +23,7 @@ class TestExportEmptyTemplate(TestCase):
     self.client.get("/login")
     self.headers = {
         'Content-Type': 'application/json',
-        "X-Requested-By": "gGRC",
+        "X-Requested-By": "GGRC",
         "X-export-view": "blocks",
     }
 
@@ -76,7 +76,7 @@ class TestExportMultipleObjects(TestCase):
     data = {"file": (open(join(CSV_DIR, filename)), filename)}
     headers = {
         "X-test-only": "true" if dry_run else "false",
-        "X-requested-by": "gGRC",
+        "X-requested-by": "GGRC",
     }
     cls.tc.post("/_service/import_csv",
                 data=data, headers=headers)
@@ -101,7 +101,7 @@ class TestExportMultipleObjects(TestCase):
     self.client.get("/login")
     self.headers = {
         'Content-Type': 'application/json',
-        "X-Requested-By": "gGRC",
+        "X-Requested-By": "GGRC",
         "X-export-view": "blocks",
     }
     self.activate()

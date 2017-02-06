@@ -3,14 +3,14 @@
     Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
 }}
 
-{{#instance}}
+
   <div class="row-fluid wrap-row">
 
     <div class="span12">
-        <section class="info">
+        <section class="info audit-summary">
 
             <div class="info-pane-utility">
-                <add-object-button 
+                <add-object-button
                     instance="instance"
                     linkclass="btn btn-small btn-draft"
                     content="+ Create assessment"
@@ -18,7 +18,7 @@
                     singular="Assessment"
                     plural="assessments">
                 </add-object-button>
-                <add-object-button 
+                <add-object-button
                     instance="instance"
                     linkclass="btn btn-small btn-primary"
                     content="+ Create Template"
@@ -34,47 +34,56 @@
                     {{#instance}}
                         <div class="row-fluid">
                             <div class="span3">
-                                <h3 style="max-width: 100%; margin-right: 0px;">Assessments {{#if assessments_any}}({{assessments_total}}){{/if}}</h3>
+                                <h3 style="max-width: 100%; margin-right: 0;">Assessments {{#if charts.Assessment.any}}({{charts.Assessment.total}}){{/if}}</h3>
                             </div>
-                            <div class="span12" style="margin-left: 0px;">
+                            <div class="span12" style="margin-left: 0;">
                                 <hr>
                             </div>
                         </div>
                     {{/instance}}
                 </div>
             </div>
-            <div class="row-fluid centered">
-                <div class="span12" {{#if assessments_none}}style="visibility: hidden; max-height: 0px;"{{/if}}>
-                    <div id="piechart_audit_assessments_chart" style="min-height: 300px;"></div>
+            <div class="row-fluid centered piechart">
+                <div class="span6" {{#if charts.Assessment.none}}style="visibility: hidden; max-height: 0;"{{/if}}>
+                    <div id="piechart_audit_assessments_chart"></div>
                 </div>
-                {{#if assessments_isLoading}}
+                <div class="span6 legend" {{#unless charts.Assessment.isLoaded}}style="display: none"{{/unless}}>
+                  <ul id="piechart_audit_assessments_chart-legend">
+                  {{#each charts.Assessment.legend}}
+                    <li data-row-index="{{rowIndex}}">
+                      <i class="fa fa-circle" style="color: {{color}}"></i>{{title}} <span>{{count}} ({{percent}} %)</span>
+                    </li>
+                  {{/each}}
+                  </ul>
+                </div>
+                {{#if charts.Assessment.isLoading}}
                     <div class="span12 centered">
-                        <spinner toggle="assessments_isLoading"></spinner>
-                    </div> 
+                        <spinner toggle="charts.Assessment.isLoading"></spinner>
+                    </div>
                 {{else}}
-                    {{#if assessments_any}}
-                        <div class="span12" style="margin-left: 0px;">
+                    {{#if charts.Assessment.any}}
+                        <div class="span12" style="margin-left: 0;">
                             <hr>
                         </div>
                         <div class="span12 centered">
                             <a href="#assessment_widget">View all assessments &raquo;</a>
                         </div>
                     {{else}}
-                        {{#if assessments_isLoaded}}
+                        {{#if charts.Assessment.isLoaded}}
                             <div class="span12">
-                                There are no assessments at the moment. 
+                                There are no assessments at the moment.
                                 {{#is_allowed 'create' 'AssessmentTemplate' context=instance.context}}
                                     {{#is_allowed 'create' 'Assessment' context=instance.context}}
-                                        Start by 
-                                        <add-object-button 
+                                        Start by
+                                        <add-object-button
                                             instance="instance"
                                             content="creating an assessment template"
                                             title="Define Assessment Template"
                                             singular="AssessmentTemplate"
                                             plural="assessment_templates">
                                         </add-object-button>
-                                        or add an 
-                                        <add-object-button 
+                                        or add an
+                                        <add-object-button
                                             instance="instance"
                                             content="assessment manually"
                                             title="Create Assessment"
@@ -93,5 +102,3 @@
         </section>
     </div>
   </div>
-
-{{/instance}}

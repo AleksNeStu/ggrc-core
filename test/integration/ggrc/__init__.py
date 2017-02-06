@@ -6,30 +6,41 @@
 import json
 import logging
 from collections import defaultdict
+from os.path import abspath
+from os.path import dirname
+from os.path import join
 
 from sqlalchemy import exc
 from flask.ext.testing import TestCase as BaseTestCase
+
 from ggrc import db
 from ggrc.app import app
+from integration.ggrc.api_helper import Api
 
 # Hide errors during testing. Errors are still displayed after all tests are
 # done. This is for the bad request error messages while testing the api calls.
 logging.disable(logging.CRITICAL)
 
 
+THIS_ABS_PATH = abspath(dirname(__file__))
+
+
 class SetEncoder(json.JSONEncoder):
   # pylint: disable=method-hidden
   # false positive: https://github.com/PyCQA/pylint/issues/414
+
   def default(self, obj):
     if isinstance(obj, set):
       return sorted(obj)
     return super(SetEncoder, self).default(obj)
 
 
-class TestCase(BaseTestCase):
+class TestCase(BaseTestCase, object):
   # because it's required by unittests.
 
   """Base test case for all ggrc integration tests."""
+
+  CSV_DIR = join(THIS_ABS_PATH, "test_csvs/")
 
   maxDiff = None
 
@@ -136,3 +147,34 @@ class TestCase(BaseTestCase):
                      "Expected response does not match received response:\n\n"
                      "EXPECTED:\n{}\n\nRECEIVED:\n{}".format(
                          expected_str, response_str))
+
+  @classmethod
+  def _import_file(cls, filename, dry_run=False, person=None):
+    data = {"file": (open(join(cls.CSV_DIR, filename)), filename)}
+    headers = {
+        "X-test-only": "true" if dry_run else "false",
+        "X-requested-by": "GGRC",
+    }
+    api = Api()
+    api.set_user(person)  # Ok if person is None
+    response = api.tc.post("/_service/import_csv", data=data, headers=headers)
+
+    return json.loads(response.data)
+
+  def import_file(self, filename, dry_run=False, person=None):
+    if dry_run:
+      return self._import_file(filename, dry_run=True, person=person)
+    else:
+      response_dry = self._import_file(filename, dry_run=True, person=person)
+      response = self._import_file(filename, person=person)
+      self.assertEqual(response_dry, response)
+      return response
+
+  def export_csv(self, data):
+    headers = {
+        'Content-Type': 'application/json',
+        "X-requested-by": "GGRC",
+        "X-export-view": "blocks",
+    }
+    return self.client.post("/_service/export_csv", data=json.dumps(data),
+                            headers=headers)

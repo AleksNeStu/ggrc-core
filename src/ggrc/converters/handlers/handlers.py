@@ -15,7 +15,6 @@ from ggrc.automapper import AutomapperGenerator
 from ggrc.converters import errors
 from ggrc.converters import get_exportables
 from ggrc.login import get_current_user
-from ggrc.models import Audit
 from ggrc.models import CategoryBase
 from ggrc.models import Contract
 from ggrc.models import Assessment
@@ -26,7 +25,6 @@ from ggrc.models import Policy
 from ggrc.models import Program
 from ggrc.models import Regulation
 from ggrc.models import Relationship
-from ggrc.models import Request
 from ggrc.models import Standard
 from ggrc.models import all_models
 from ggrc.models.reflection import AttributeInfo
@@ -183,19 +181,28 @@ class StatusColumnHandler(ColumnHandler):
     value = self.raw_value.lower()
     status = self.state_mappings.get(value)
     if status is None:
-      if self.mandatory:
-        if len(self.valid_states) > 0:
-          self.add_warning(errors.WRONG_REQUIRED_VALUE,
-                           value=value[:20],
-                           column_name=self.display_name)
-          status = self.valid_states[0]
-        else:
-          self.add_error(errors.MISSING_VALUE_ERROR,
-                         column_name=self.display_name)
-          return
-      elif value != "":
-        self.add_warning(errors.WRONG_VALUE, column_name=self.display_name)
+      self.add_warning(
+          errors.WRONG_VALUE_DEFAULT, column_name=self.display_name)
+      status = self.row_converter.object_class.default_status()
     return status
+
+
+class DirectiveKindColumnHandler(ColumnHandler):
+  """
+    Handler for handling imports of Directive Kind/Type
+  """
+  def __init__(self, row_converter, key, **options):
+    self.key = "kind"
+    self.valid_states = row_converter.object_class.VALID_KINDS
+    self.state_mappings = set([str(s).lower() for s in self.valid_states])
+    super(DirectiveKindColumnHandler, self).__init__(row_converter,
+                                                     key, **options)
+
+  def parse_item(self):
+    value = self.raw_value.lower()
+    if value not in self.state_mappings:
+      self.add_warning(errors.WRONG_VALUE, column_name=self.display_name)
+    return value
 
 
 class UserColumnHandler(ColumnHandler):
@@ -485,12 +492,19 @@ class OptionColumnHandler(ColumnHandler):
     if not self.mandatory and self.raw_value in {"--", "---"}:
       self.set_empty = True
       return None
-    prefixed_key = "{}_{}".format(
-        self.row_converter.object_class._inflector.table_singular, self.key)
+    if not self.raw_value:
+      return None
+    table_singular = self.row_converter.object_class._inflector.table_singular
+    prefixed_key = "{}_{}".format(table_singular, "type")\
+        if table_singular == "product" \
+        else "{}_{}".format(table_singular, self.key)
     item = Option.query.filter(
         and_(Option.title == self.raw_value.strip(),
              or_(Option.role == self.key,
                  Option.role == prefixed_key))).first()
+
+    if not item:
+      self.add_warning(errors.WRONG_VALUE, column_name=self.display_name)
     return item
 
   def get_value(self):
@@ -605,14 +619,6 @@ class AuditColumnHandler(MappingColumnHandler):
   def __init__(self, row_converter, key, **options):
     key = "{}audit".format(MAPPING_PREFIX)
     super(AuditColumnHandler, self).__init__(row_converter, key, **options)
-
-
-class RequestAuditColumnHandler(ParentColumnHandler):
-
-  def __init__(self, row_converter, key, **options):
-    self.parent = Audit
-    super(RequestAuditColumnHandler, self) \
-        .__init__(row_converter, "audit", **options)
 
 
 class ObjectPersonColumnHandler(UserColumnHandler):
@@ -747,13 +753,6 @@ class ControlAssertionColumnHandler(CategoryColumnHandler):
         row_converter, key, **options)
 
 
-class RequestColumnHandler(ParentColumnHandler):
-
-  def __init__(self, row_converter, key, **options):
-    self.parent = Request
-    super(RequestColumnHandler, self).__init__(row_converter, key, **options)
-
-
 class DocumentsColumnHandler(ColumnHandler):
 
   def get_value(self):
@@ -783,25 +782,19 @@ class DocumentsColumnHandler(ColumnHandler):
     self.dry_run = True
 
 
-class RequestTypeColumnHandler(ColumnHandler):
-
-  def __init__(self, row_converter, key, **options):
-    self.key = key
-    valid_types = row_converter.object_class.VALID_TYPES
-    self.type_mappings = {str(s).lower(): s for s in valid_types}
-    super(RequestTypeColumnHandler, self).__init__(
-        row_converter, key, **options)
+class ExportOnlyColumnHandler(ColumnHandler):
 
   def parse_item(self):
-    value = self.raw_value.lower()
-    req_type = self.type_mappings.get(value)
+    pass
 
-    if req_type is None:
-      req_type = self.get_default()
-      if not self.row_converter.is_new:
-        req_type = self.get_value()
-      if value:
-        self.add_warning(errors.WRONG_VALUE,
-                         value=value[:20],
-                         column_name=self.display_name)
-    return req_type
+  def set_obj_attr(self):
+    pass
+
+  def get_value(self):
+    return super(ExportOnlyColumnHandler, self).get_value()
+
+  def insert_object(self):
+    pass
+
+  def set_value(self):
+    pass

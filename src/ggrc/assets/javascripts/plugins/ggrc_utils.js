@@ -131,7 +131,7 @@
     getPickerElement: function (picker) {
       return _.find(_.values(picker), function (val) {
         if (val instanceof Node) {
-          return /picker\-dialog/.test(val.className);
+          return /picker-dialog/.test(val.className);
         }
         return false;
       });
@@ -172,7 +172,7 @@
         headers: $.extend({
           'Content-Type': 'application/json',
           'X-export-view': 'blocks',
-          'X-requested-by': 'gGRC'
+          'X-requested-by': 'GGRC'
         }, request.headers || {}),
         url: '/_service/export_csv',
         data: JSON.stringify(request.data || {})
@@ -506,49 +506,50 @@
       roles.unshift('none');
       return _.max(roles, Array.prototype.indexOf.bind(roleOrder));
     },
-    _display_tree_subpath: function display_subpath(el, path, attempt_counter) {
-    var rest = path.split('/');
-    var type = rest.shift();
-    var id = rest.shift();
-    var selector = '[data-object-type=\'' + type + '\'][data-object-id=' + id + ']';
-    var $node;
-    var node_controller;
-    var controller;
+    _display_tree_subpath: function displaySubpath(el, path, attemptCounter) {
+      var rest = path.split('/');
+      var type = rest.shift();
+      var id = rest.shift();
+      var selector = '[data-object-type=\'' + type +
+        '\'][data-object-id=' + id + ']';
+      var $node;
+      var nodeController;
+      var controller;
 
-    if (!attempt_counter) {
-      attempt_counter = 0;
-    }
-
-    rest = rest.join('/');
-
-    if (type || id) {
-      $node = el.find(selector);
-
-      // sometimes nodes haven't loaded yet, wait for them
-      if (!$node.size() && attempt_counter < 5) {
-        setTimeout(function () {
-          display_subpath(el, path, attempt_counter + 1);
-        }, 100);
-        return undefined;
+      if (!attemptCounter) {
+        attemptCounter = 0;
       }
 
-      if (!rest.length) {
-        controller = $node
-          .closest('.cms_controllers_tree_view_node')
-          .control();
+      rest = rest.join('/');
 
-        if (controller) {
-          controller.select();
+      if (type || id) {
+        $node = el.find(selector);
+
+        // sometimes nodes haven't loaded yet, wait for them
+        if (!$node.size() && attemptCounter < 5) {
+          setTimeout(function () {
+            displaySubpath(el, path, attemptCounter + 1);
+          }, 100);
+          return undefined;
         }
-      } else {
-        node_controller = $node.control();
-        if (node_controller && node_controller.display_path) {
-          return node_controller.display_path(rest);
+
+        if (!rest.length) {
+          controller = $node
+            .closest('.cms_controllers_tree_view_node')
+            .control();
+
+          if (controller) {
+            controller.select();
+          }
+        } else {
+          nodeController = $node.control();
+          if (nodeController && nodeController.display_path) {
+            return nodeController.display_path(rest);
+          }
         }
       }
+      return can.Deferred().resolve();
     }
-    return can.Deferred().resolve();
-  }
   };
 
   /**
@@ -569,8 +570,6 @@
      * @property {LimitArray} limit - The boundaries of the requested values.
      * @property {object} filters - Filter properties
      */
-
-    var widgetsCounts = new can.Map({});
 
     /**
      * Build params for request on Query API.
@@ -674,51 +673,6 @@
     }
 
     /**
-     * Counts for related objects.
-     *
-     * @return {can.Map} Promise which return total count of objects.
-     */
-    function getCounts() {
-      return widgetsCounts;
-    }
-
-    function initCounts(widgets, relevant) {
-      var params = can.makeArray(widgets)
-        .map(function (widget) {
-          var param;
-          if (GGRC.Utils.Snapshots.isSnapshotRelated(relevant.type, widget)) {
-            param = buildParam('Snapshot', {},
-              makeExpression(widget, relevant.type, relevant.id), null,
-              GGRC.query_parser.parse('child_type = ' + widget));
-          } else if (typeof widget === 'string') {
-            param = buildParam(widget, {},
-              makeExpression(widget, relevant.type, relevant.id));
-          } else {
-            param = buildParam(widget.name, {},
-              makeExpression(widget.name, relevant.type, relevant.id),
-              null, widget.additionalFilter);
-          }
-          param.type = 'count';
-          return param;
-        });
-
-      return makeRequest({
-        data: params
-      }).then(function (data) {
-        data.forEach(function (info, i) {
-          var widget = widgets[i];
-          var name = typeof widget === 'string' ? widget : widget.name;
-          var countsName = typeof widget === 'string' ?
-            widget : (widget.countsName || widget.name);
-          if (GGRC.Utils.Snapshots.isSnapshotRelated(relevant.type, name)) {
-            name = 'Snapshot';
-          }
-          widgetsCounts.attr(countsName, info[name].total);
-        });
-      });
-    }
-
-    /**
      * Params for request on Query API
      * @param {Object} params - Params for request
      * @param {Object} params.headers - Custom headers for request.
@@ -818,9 +772,7 @@
       buildParams: buildParams,
       buildRelevantIdsQuery: buildRelevantIdsQuery,
       makeRequest: makeRequest,
-      getCounts: getCounts,
-      makeExpression: makeExpression,
-      initCounts: initCounts
+      makeExpression: makeExpression
     };
   })();
 
@@ -866,7 +818,7 @@
      * @return {Boolean} True or False
      */
     function isSnapshot(instance) {
-      return instance && instance.snapshot;
+      return instance && (instance.snapshot || instance.isRevision);
     }
 
     /**

@@ -4,7 +4,7 @@ Controls,{{object_slug}},,,,,,,,,,,,,,,,,,,,,
 
 For Control Import, Type should be ""Controls"", in cell A2.
 
-Then copy the Code from your {{object_kind}} Info widget on your {{object_kind}} page in gGRC to cell B2 above",,,,,,,,,,,,,,,,,,,,,
+Then copy the Code from your {{object_kind}} Info widget on your {{object_kind}} page in GGRC to cell B2 above",,,,,,,,,,,,,,,,,,,,,
 "*Required
 
 If you have a standardized acronym or other specific reason for entering Codes manually, we recommend doing so.
@@ -41,19 +41,19 @@ Example:
 PROCESS-1
 PROCESS-2","*Optional.  
 
-You can assign Categories to your Controls on import by specifying the names of the Categories.  Use <option><return> to deliniate between Categories and use only Categories that already exist in gGRC.
+You can assign Categories to your Controls on import by specifying the names of the Categories.  Use <option><return> to deliniate between Categories and use only Categories that already exist in GGRC.
 Example:
 
 AUTHORIZATION
 TRAINING","*Optional.  
 
-You can assign Assertions to your Controls on import by specifying the names of the Assertions.  Use <option><return> to deliniate between Assertions and use only Assertions that already exist in gGRC.
+You can assign Assertions to your Controls on import by specifying the names of the Assertions.  Use <option><return> to deliniate between Assertions and use only Assertions that already exist in GGRC.
 Example:
 
 OCCURRENCE
 UNDERSTANDABILITY","*Optional.  
 Can be ""Continuous"", ""Ad-Hoc"", ""Semi-Annual"", ""Bi-Annual"", ""Annual"", ""Indeterminate"", ""Hourly"", ""Daily"", ""Weekly"", ""Monthly"", ""Quarterly"", or ""Transactional""","*Optional.
-You can map a person to be the Person of Contact for the Control by entering an email address that already exists in your gGRC instance. Only 1 email address may be entered.
+You can map a person to be the Person of Contact for the Control by entering an email address that already exists in your GGRC instance. Only 1 email address may be entered.
 
 Example:
 
@@ -68,13 +68,13 @@ Can be ""No"", ""False"", or ""0"" to result in control being labeled as ""Not A
 Can be ""Yes"", ""True"", or ""1"" to result in the control being labeled as Fraud Related.
 
 Can be ""No"", ""False"", or ""0"" to result in control being labeled as Not Fraud Related.","*Optional.
-You can map a person to be the Principal Assessor for the Control by entering an email address that already exists in your gGRC instance. Only 1 email address may be entered.
+You can map a person to be the Principal Assessor for the Control by entering an email address that already exists in your GGRC instance. Only 1 email address may be entered.
 
 Example:
 
 jeff@reciprocitylabs.com
 ","*Optional.
-You can map a person to be the Secondary Assessor for the Control by entering an email address that already exists in your gGRC instance. Only 1 email address may be entered.
+You can map a person to be the Secondary Assessor for the Control by entering an email address that already exists in your GGRC instance. Only 1 email address may be entered.
 
 Example:
 

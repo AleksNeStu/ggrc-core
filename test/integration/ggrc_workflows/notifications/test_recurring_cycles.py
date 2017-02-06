@@ -17,7 +17,7 @@ from integration.ggrc.models import factories
 class TestRecurringCycleNotifications(TestCase):
 
   def setUp(self):
-    TestCase.setUp(self)
+    super(TestRecurringCycleNotifications, self).setUp()
     self.api = Api()
     self.generator = WorkflowsGenerator()
     self.object_generator = ObjectGenerator()

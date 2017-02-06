@@ -14,6 +14,48 @@ ul.internav {
   @extend %reset-list;
   @extend %clearfix;
   margin-left: 28px;
+  &.audit {
+    margin-right: 40px;
+    .left-menu {
+      float: left;
+    }
+    .right-menu {
+      border-left: 1px dotted $grayLight;
+      float: right;
+      position: relative;
+      padding-left: 5px;
+      &:before {
+        content: '';
+        border-left: 1px dotted $grayLight;
+        position: absolute;
+        left: -3px;
+        height: 100%;
+      }
+      .menu-action {
+        display: block !important;
+        margin-top: 2px;
+        .hide-menu {
+          background: $grayLight;
+          &:focus {
+            outline: none;
+          }
+        }
+      }
+    }
+    li {
+      &.pie-chart, &.info-circle, &.assessment, &.issue, &.assessment_template {
+        a {
+          color: $blue;
+          &:hover {
+            color: $blue;
+          }
+          i {
+            color: $blue;
+          }
+        }
+      }
+    }
+  }
   li {
     position: relative;
     float: left;

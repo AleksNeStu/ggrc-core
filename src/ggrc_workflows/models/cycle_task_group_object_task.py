@@ -9,7 +9,6 @@ from sqlalchemy.ext.associationproxy import association_proxy
 
 from ggrc import db
 from ggrc.models.computed_property import computed_property
-from ggrc.models.mixins import Base
 from ggrc.models.mixins import Described
 from ggrc.models.mixins import Notifiable
 from ggrc.models.mixins import Slugged
@@ -25,8 +24,8 @@ from ggrc_workflows.models.cycle_task_group import CycleTaskGroup
 
 
 class CycleTaskGroupObjectTask(
-        WithContact, Stateful, Slugged, Timeboxed, Relatable, Notifiable,
-        Described, Titled, Base, db.Model):
+        WithContact, Stateful, Timeboxed, Relatable, Notifiable,
+        Described, Titled, Slugged, db.Model):
   """Cycle task model
   """
   __tablename__ = 'cycle_task_group_object_tasks'

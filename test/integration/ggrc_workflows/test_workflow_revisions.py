@@ -17,7 +17,7 @@ class TestRecurringWorkflowRevisions(TestCase):
   """Starting start recurring cycle should generate revisions."""
 
   def setUp(self):
-    TestCase.setUp(self)
+    super(TestRecurringWorkflowRevisions, self).setUp()
     self.wf_generator = WorkflowsGenerator()
     self.object_generator = ObjectGenerator()
 

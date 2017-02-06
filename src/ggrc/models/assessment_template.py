@@ -20,7 +20,7 @@ from ggrc.services import common
 
 class AssessmentTemplate(assessment.AuditRelationship, relationship.Relatable,
                          mixins.Titled, mixins.CustomAttributable,
-                         mixins.Slugged, mixins.Base, db.Model):
+                         mixins.Slugged, db.Model):
   """A class representing the assessment template entity.
 
   An Assessment Template is a template that allows users for easier creation of

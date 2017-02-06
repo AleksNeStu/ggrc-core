@@ -18,7 +18,7 @@ class BaseWorkflowTestCase(TestCase):
   """Base test class for workflow cycle calculator tests."""
 
   def setUp(self):
-    TestCase.setUp(self)
+    super(BaseWorkflowTestCase, self).setUp()
     self.api = api_helper.Api()
     self.generator = workflow_generator.WorkflowsGenerator()
     self.object_generator = generator.ObjectGenerator()

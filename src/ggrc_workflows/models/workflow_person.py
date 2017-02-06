@@ -7,10 +7,10 @@
 from sqlalchemy.orm import backref
 
 from ggrc import db
-from ggrc.models.mixins import Mapping
+from ggrc.models.mixins import Base
 
 
-class WorkflowPerson(Mapping, db.Model):
+class WorkflowPerson(Base, db.Model):
   """Workflow WorkflowPerson model."""
 
   __tablename__ = 'workflow_people'

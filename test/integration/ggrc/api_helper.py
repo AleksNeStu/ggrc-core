@@ -29,7 +29,7 @@ class Api(object):
     self.tc.get("/login")
     self.resource = Resource()
     self.headers = {'Content-Type': 'application/json',
-                    "X-Requested-By": "gGRC"
+                    "X-Requested-By": "GGRC"
                     }
     self.user_headers = {}
     self.person_name = None

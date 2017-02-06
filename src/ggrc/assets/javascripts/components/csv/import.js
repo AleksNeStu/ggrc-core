@@ -124,7 +124,7 @@
           processData: false,
           headers: {
             "X-test-only": "true",
-            "X-requested-by": "gGRC"
+            "X-requested-by": "GGRC"
           }
         };
 

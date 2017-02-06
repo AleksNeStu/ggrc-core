@@ -4,9 +4,9 @@
 import itertools
 
 import ggrc
-import ggrc.models as models
-import integration.ggrc
-import integration.ggrc.generator
+from ggrc import models
+from integration.ggrc import TestCase
+from integration.ggrc import generator
 
 
 counter = 0
@@ -25,7 +25,7 @@ def relate(src, dst):
     return (dst, src)
 
 
-class automapping_count_limit:
+class automapping_count_limit(object):
   def __init__(self, new_limit):
     self.new_limit = new_limit
 
@@ -37,15 +37,12 @@ class automapping_count_limit:
     ggrc.automapper.rules.count_limit = self.original_limit
 
 
-class TestAutomappings(integration.ggrc.TestCase):
+class TestAutomappings(TestCase):
 
   def setUp(self):
-    integration.ggrc.TestCase.setUp(self)
-    self.gen = integration.ggrc.generator.ObjectGenerator()
+    super(TestAutomappings, self).setUp()
+    self.gen = generator.ObjectGenerator()
     self.api = self.gen.api
-
-  def tearDown(self):
-    integration.ggrc.TestCase.tearDown(self)
 
   def create_object(self, cls, data):
     name = cls._inflector.table_singular

@@ -50,28 +50,28 @@ Task,code*,summary*,task group,task description,assignee*,task type,start*,end*,
 Object Type,,,,,,,,,,,,,,,,,,,,,,
 contract,Title,Description,Notes,Owner,Primary Contact,Secondary Contact,Contract URL,Reference URL,Code,Effective Date,Stop Date,State,,,,,,,,,,
 ,con 5,bah 111110,really this is lame,user@example.com,,,http://i.imgur.com/VjicYvY.webm,,contract-25,2/11/2016,3/19/2016,draft,,,,,,,,,,
-,con 10,bah 111115,really this is lame,user@example.com,,,http://i.imgur.com/VjicYvY.webm,,contract-26,2/12/2016,3/20/2016,effective ,,,,,,,,,,
+,con 10,bah 111115,really this is lame,user@example.com,,,http://i.imgur.com/VjicYvY.webm,,contract-26,2/12/2016,3/20/2016,active ,,,,,,,,,,
 ,con 15,bah 111120,really this is lame,user@example.com,,,http://i.imgur.com/VjicYvY.webm,,contract-27,2/13/2016,3/21/2016,draft,,,,,,,,,,
-,con 20,bah 111125,really this is lame,user@example.com,,,http://i.imgur.com/VjicYvY.webm,,contract-28,2/14/2016,3/22/2016,effective ,,,,,,,,,,
+,con 20,bah 111125,really this is lame,user@example.com,,,http://i.imgur.com/VjicYvY.webm,,contract-28,2/14/2016,3/22/2016,active ,,,,,,,,,,
 ,con 25,bah 111130,really this is lame,user@example.com,,,http://i.imgur.com/VjicYvY.webm,,contract-29,2/15/2016,3/23/2016,draft,,,,,,,,,,
-,con 30,bah 111135,really this is lame,user@example.com,,,http://i.imgur.com/VjicYvY.webm,,contract-30,2/16/2016,3/24/2016,effective ,,,,,,,,,,
+,con 30,bah 111135,really this is lame,user@example.com,,,http://i.imgur.com/VjicYvY.webm,,contract-30,2/16/2016,3/24/2016,active ,,,,,,,,,,
 ,con 35,bah 111140,really this is lame,user@example.com,,,http://i.imgur.com/VjicYvY.webm,,contract-31,2/17/2016,3/25/2016,draft,,,,,,,,,,
-,con 40,bah 111145,really this is lame,user@example.com,,,http://i.imgur.com/VjicYvY.webm,,contract-32,2/18/2016,3/26/2016,effective ,,,,,,,,,,
+,con 40,bah 111145,really this is lame,user@example.com,,,http://i.imgur.com/VjicYvY.webm,,contract-32,2/18/2016,3/26/2016,active ,,,,,,,,,,
 ,,,,,,,,,,,,,,,,,,,,,,
 ,,,,,,,,,,,,,,,,,,,,,,
 Object Type,,,,,,,,,,,,,,,,,,,,,,
 objective,Title,Description,Notes,Owner,Primary Contact,Secondary Contact,Objective URL,Reference URL,Code,State,map:control,,,,,,,,,,,
 ,Startupsum 155,Series A financing success channels.<br> Ecosystem conversion rockstar value proposition bandwidth ,success 111,"zidar@example.com
-user@example.com",smotko@example.com,smotko@example.com,http://i.imgur.com/SiuyNdp.jpg,http://i.imgur.com/aP8UU5I.jpg,objective-1,effective,"control-1
+user@example.com",smotko@example.com,smotko@example.com,http://i.imgur.com/SiuyNdp.jpg,http://i.imgur.com/aP8UU5I.jpg,objective-1,Active,"control-1
 control-3",,,,,,,,,,,
 ,Startupsum 156,facebook validation responsive web design business plan.<br> Startup pivot founders.<br> Infrastructure f,success 112,"zidar@example.com
-user@example.com",smotko@example.com,smotko@example.com,http://i.imgur.com/SiuyNdp.jpg,http://i.imgur.com/aP8UU5I.jpg,objective-2,effective,"control-1
+user@example.com",smotko@example.com,smotko@example.com,http://i.imgur.com/SiuyNdp.jpg,http://i.imgur.com/aP8UU5I.jpg,objective-2,Active,"control-1
 control-3",,,,,,,,,,,
 ,Startupsum 157,unding stock iteration founders freemium hackathon alpha research & development seed money branding.<br> In,success 113,"zidar@example.com
-user@example.com",smotko@example.com,smotko@example.com,http://i.imgur.com/SiuyNdp.jpg,http://i.imgur.com/aP8UU5I.jpg,objective-3,effective,"control-1
+user@example.com",smotko@example.com,smotko@example.com,http://i.imgur.com/SiuyNdp.jpg,http://i.imgur.com/aP8UU5I.jpg,objective-3,Active,"control-1
 control-3",,,,,,,,,,,
 ,Startupsum 158,fluencer scrum project startup android.<br> Partner network interaction design network effects creative conversion business plan equity influencer innovator return on investment validation buzz A/B testing research & development.<br> Non-disclosure agreement business-to-consumer gen-z.<br> Graphical user interface sales conversion pivot market scrum project android angel investor product management ramen entrepreneur rockstar.<br> Churn rate vesting period infographic social proof stealth prototype android traction freemium www.<br>discoverartisans.<br>com.<br> Gamification leverage responsive web design seed money social proof.<br>,success 114,"zidar@example.com
-user@example.com",Urbon.S@example.com,Urbon.S@example.com,http://i.imgur.com/SiuyNdp.jpg,http://i.imgur.com/aP8UU5I.jpg,objective-4,effective,"control-1
+user@example.com",Urbon.S@example.com,Urbon.S@example.com,http://i.imgur.com/SiuyNdp.jpg,http://i.imgur.com/aP8UU5I.jpg,objective-4,Active,"control-1
 control-3",,,,,,,,,,,
 ,,,,,,,,,,,,,,,,,,,,,,
 ,,,,,,,,,,,,,,,,,,,,,,
@@ -79,22 +79,22 @@ control-3",,,,,,,,,,,
 ,,,,,,,,,,,,,,,,,,,,,,
 Object Type,,,,,,,,,,,,,,,,,,,,,,
 control,Title,Description,Test Plan,Notes,Owner,Primary Contact,Secondary Contact,Control URL,Reference URL,Code,Kind/Nature,Fraud Related,Significance,Type/Means,Effective Date,Stop Date,Frequency,Assertions,Categories,Principal Assessor,Secondary Assessor,State
-,Startupsum 115,Series A financing success channels.<br> Ecosystem conversion rockstar value proposition bandwidth ,success 111,,smotko@example.com,smotko@example.com,smotko@example.com,,http://i.imgur.com/aP8UU5I.jpg,control-1,,,,manual,,,,,,,,Draft
-,Startupsum 116,facebook validation responsive web design business plan.<br> Startup pivot founders.<br> Infrastructure f,success 112,,smotko@example.com,smotko@example.com,smotko@example.com,,http://i.imgur.com/aP8UU5I.jpg,control-2,,,,automated,,,,,,,,Draft
-,Startupsum 117,unding stock iteration founders freemium hackathon alpha research & development seed money branding.<br> In,success 113,,smotko@example.com,smotko@example.com,smotko@example.com,,http://i.imgur.com/aP8UU5I.jpg,control-3,,,,manual,,,,,,,,Draft
-,Startupsum 118,fluencer scrum project startup android.<br> Partner network interaction design network effects creative conversion business plan equity influencer innovator return on investment validation buzz A/B testing research & development.<br> Non-disclosure agreement business-to-consumer gen-z.<br> Graphical user interface sales conversion pivot market scrum project android angel investor product management ramen entrepreneur rockstar.<br> Churn rate vesting period infographic social proof stealth prototype android traction freemium www.<br>discoverartisans.<br>com.<br> Gamification leverage responsive web design seed money social proof.<br>,success 114,,Urbon.S@example.com,Urbon.S@example.com,Urbon.S@example.com,,http://i.imgur.com/aP8UU5I.jpg,control-4,,,,automated,,,,,,,,Draft
-,Startupsum 119,,success 115,,Urbon.S@example.com,Urbon.S@example.com,Urbon.S@example.com,,http://i.imgur.com/aP8UU5I.jpg,control-5,,,,manual,,,,,,,,Draft
+,Startupsum 115,Series A financing success channels.<br> Ecosystem conversion rockstar value proposition bandwidth ,success 111,,smotko@example.com,smotko@example.com,smotko@example.com,,http://i.imgur.com/aP8UU5I.jpg,control-1,,,,Administrative,,,,,,,,Draft
+,Startupsum 116,facebook validation responsive web design business plan.<br> Startup pivot founders.<br> Infrastructure f,success 112,,smotko@example.com,smotko@example.com,smotko@example.com,,http://i.imgur.com/aP8UU5I.jpg,control-2,,,,Technical,,,,,,,,Draft
+,Startupsum 117,unding stock iteration founders freemium hackathon alpha research & development seed money branding.<br> In,success 113,,smotko@example.com,smotko@example.com,smotko@example.com,,http://i.imgur.com/aP8UU5I.jpg,control-3,,,,Administrative,,,,,,,,Draft
+,Startupsum 118,fluencer scrum project startup android.<br> Partner network interaction design network effects creative conversion business plan equity influencer innovator return on investment validation buzz A/B testing research & development.<br> Non-disclosure agreement business-to-consumer gen-z.<br> Graphical user interface sales conversion pivot market scrum project android angel investor product management ramen entrepreneur rockstar.<br> Churn rate vesting period infographic social proof stealth prototype android traction freemium www.<br>discoverartisans.<br>com.<br> Gamification leverage responsive web design seed money social proof.<br>,success 114,,Urbon.S@example.com,Urbon.S@example.com,Urbon.S@example.com,,http://i.imgur.com/aP8UU5I.jpg,control-4,,,,Physical,,,,,,,,Draft
+,Startupsum 119,,success 115,,Urbon.S@example.com,Urbon.S@example.com,Urbon.S@example.com,,http://i.imgur.com/aP8UU5I.jpg,control-5,,,,Administrative,,,,,,,,Draft
 ,,,,,,,,,,,,,,,,,,,,,,
 ,,,,,,,,,,,,,,,,,,,,,,
 ,,,,,,,,,,,,,,,,,,,,,,
 ,,,,,,,,,,,,,,,,,,,,,,
 Object Type,,,,,,,,,,,,,,,,,,,,,,
 person,Name,Email,Company,role,,,,,,,,,,,,,,,,,,
-,Smotko,smotko@example.com,google,Admin ,,,,,,,,,,,,,,,,,,
-,Urban,Urbon.S@example.com,google,Admin ,,,,,,,,,,,,,,,,,,
-,Zidar,zidar@example.com,google,Admin ,,,,,,,,,,,,,,,,,,
-,Frenchy,french.dude@example.com,google,Admin ,,,,,,,,,,,,,,,,,,
-,Dom,DOMINIQUE.de.Sac@fr.com,google,Admin ,,,,,,,,,,,,,,,,,,
+,Smotko,smotko@example.com,google,Administrator,,,,,,,,,,,,,,,,,,
+,Urban,Urbon.S@example.com,google,Administrator,,,,,,,,,,,,,,,,,,
+,Zidar,zidar@example.com,google,Administrator,,,,,,,,,,,,,,,,,,
+,Frenchy,french.dude@example.com,google,Administrator,,,,,,,,,,,,,,,,,,
+,Dom,DOMINIQUE.de.Sac@fr.com,google,Administrator,,,,,,,,,,,,,,,,,,
 ,Swizec,swizec@example.com,google,creator,,,,,,,,,,,,,,,,,,
 ,John Doe,primary.contact@e.com,google,creator,,,,,,,,,,,,,,,,,,
 ,Alan Turing,sec.con@example.com,google,reader,,,,,,,,,,,,,,,,,,
@@ -106,8 +106,8 @@ person,Name,Email,Company,role,,,,,,,,,,,,,,,,,,
 Object type,,,,,,,,,,,,,,,,,,,,,,
 Regulation,code*,title*,description ,owner,state,notes,primary contact,secondary contact,effective date,stop date,regulation url,reference url,,,,,,,,,,
 ,reg-1,mapped reg 1,test,smotko@example.com,Draft,this is a note,Urbon.S@example.com,zidar@example.com,7/1/2015,7/15/2015,http://i.imgur.com/ffIiNoI.webm,http://i.imgur.com/ffIiNoI.webm,,,,,,,,,,
-,reg-2,mapped reg 2,test,Urbon.S@example.com,Final,this is a note,Urbon.S@example.com,zidar@example.com,7/1/2015,7/15/2015,http://i.imgur.com/waiuiYu.jpg,http://i.imgur.com/waiuiYu.jpg,,,,,,,,,,
-,reg-3,mapped reg 3,test,zidar@example.com,Effective,this is a note,Urbon.S@example.com,zidar@example.com,7/1/2015,7/15/2015,http://i.imgur.com/KZ2coY7.jpg,http://i.imgur.com/KZ2coY7.jpg,,,,,,,,,,
+,reg-2,mapped reg 2,test,Urbon.S@example.com,Active,this is a note,Urbon.S@example.com,zidar@example.com,7/1/2015,7/15/2015,http://i.imgur.com/waiuiYu.jpg,http://i.imgur.com/waiuiYu.jpg,,,,,,,,,,
+,reg-3,mapped reg 3,test,zidar@example.com,Active,this is a note,Urbon.S@example.com,zidar@example.com,7/1/2015,7/15/2015,http://i.imgur.com/KZ2coY7.jpg,http://i.imgur.com/KZ2coY7.jpg,,,,,,,,,,
 ,,,,,,,,,,,,,,,,,,,,,,
 ,,,,,,,,,,,,,,,,,,,,,,
 ,,,,,,,,,,,,,,,,,,,,,,
@@ -115,6 +115,6 @@ Regulation,code*,title*,description ,owner,state,notes,primary contact,secondary
 Object type,,,,,,,,,,,,,,,,,,,,,,
 Policy,code*,title*,description ,owner,state,notes,primary contact,secondary contact,effective date,stop date,policy url,reference url,Kind/Type,,,,,,,,,
 ,p1,mapped policy 1,test,smotko@example.com,Draft,this is a note,zidar@example.com,,7/1/2015,7/15/2015,http://i.imgur.com/Qj0DvUH.jpg,http://i.imgur.com/AZTIAfh.png,Company Policy,,,,,,,,,
-,p2,mapped policy 2,test,Urbon.S@example.com,Final,this is a note,zidar@example.com,,7/1/2015,7/15/2015,http://i.imgur.com/VjicYvY.webm,http://i.imgur.com/vrTtJOp.jpg,Org Group Policy,,,,,,,,,
-,p3,mapped policy 3,test,zidar@example.com,Effective,this is a note,zidar@example.com,,7/1/2015,7/15/2015,http://i.imgur.com/i4aJUeY.jpg,http://i.imgur.com/jCrept2.jpg,Data Asset Policy,,,,,,,,,
-,p4,mapped policy 4,test,smotko@example.com,Ineffective,this is a note,zidar@example.com,,7/1/2015,7/15/2015,http://i.imgur.com/Qj0DvUH.jpg,http://i.imgur.com/F8eOyza.webm,Product Policy,,,,,,,,,
+,p2,mapped policy 2,test,Urbon.S@example.com,Active,this is a note,zidar@example.com,,7/1/2015,7/15/2015,http://i.imgur.com/VjicYvY.webm,http://i.imgur.com/vrTtJOp.jpg,Org Group Policy,,,,,,,,,
+,p3,mapped policy 3,test,zidar@example.com,Active,this is a note,zidar@example.com,,7/1/2015,7/15/2015,http://i.imgur.com/i4aJUeY.jpg,http://i.imgur.com/jCrept2.jpg,Data Asset Policy,,,,,,,,,
+,p4,mapped policy 4,test,smotko@example.com,Active,this is a note,zidar@example.com,,7/1/2015,7/15/2015,http://i.imgur.com/Qj0DvUH.jpg,http://i.imgur.com/F8eOyza.webm,Product Policy,,,,,,,,,

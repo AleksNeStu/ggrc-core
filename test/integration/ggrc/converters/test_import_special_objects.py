@@ -5,7 +5,7 @@ from ggrc.models import Audit
 from ggrc.models import Program
 from ggrc.models import Person
 from ggrc_basic_permissions.models import UserRole
-from integration.ggrc.converters import TestCase
+from integration.ggrc import TestCase
 
 
 class TestSpecialObjects(TestCase):
@@ -16,7 +16,7 @@ class TestSpecialObjects(TestCase):
   """
 
   def setUp(self):
-    TestCase.setUp(self)
+    super(TestSpecialObjects, self).setUp()
     self.client.get("/login")
     pass
 

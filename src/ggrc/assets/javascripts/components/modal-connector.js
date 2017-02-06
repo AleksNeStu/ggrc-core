@@ -37,7 +37,6 @@
       init: function () {
         var that = this;
         var key;
-
         this.scope.attr('controller', this);
         if (!this.scope.instance) {
           this.scope.attr('deferred', true);
@@ -116,11 +115,12 @@
         }
         this.scope.attr('instance', this.scope.attr('parent_instance')
           .attr(this.scope.instance_attr).reify());
+        // Add pending operations
         can.each(changes, function (item) {
           var mapping = this.scope.mapping ||
-            GGRC.Mappings.get_canonical_mapping_name(
-              this.scope.instance.constructor.shortName,
-              item.what.constructor.shortName);
+              GGRC.Mappings.get_canonical_mapping_name(
+                this.scope.instance.constructor.shortName,
+                item.what.constructor.shortName);
           if (item.how === 'add') {
             this.scope.instance
               .mark_for_addition(mapping, item.what, item.extra);

@@ -97,8 +97,6 @@ def validate_assessment_issue_to_audit_relationships(connection):  # noqa # pyli
   tables = [
       ("Assessment", assessments_table),
       ("Issue", issues_table),
-      # "Request",  ignoring requests since they have an audit foreign key and
-      # can not be in an invalid state.
   ]
 
   for (klass_name, table_) in tables:

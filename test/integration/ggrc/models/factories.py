@@ -169,6 +169,8 @@ class ProgramFactory(TitledFactory):
   class Meta:
     model = models.Program
 
+  context = factory.LazyAttribute(lambda _: ContextFactory())
+
 
 class AuditFactory(TitledFactory):
 
@@ -176,6 +178,7 @@ class AuditFactory(TitledFactory):
     model = models.Audit
 
   status = "Planned"
+  contact = factory.LazyAttribute(lambda _: PersonFactory())
   program = factory.LazyAttribute(lambda _: ProgramFactory())
   context = factory.LazyAttribute(lambda _: ContextFactory())
 
@@ -240,6 +243,10 @@ class PersonFactory(ModelFactory):
   class Meta:
     model = models.Person
 
+  email = factory.LazyAttribute(
+      lambda _: random_str(chars=string.ascii_letters) + "@example.com"
+  )
+
 
 class CommentFactory(ModelFactory):
 
@@ -263,14 +270,6 @@ class RegulationFactory(TitledFactory):
 
   class Meta:
     model = models.Regulation
-
-
-class RequestFactory(TitledFactory):
-
-  class Meta:
-    model = models.Request
-
-  request_type = "documentation"
 
 
 class OrgGroupFactory(TitledFactory):

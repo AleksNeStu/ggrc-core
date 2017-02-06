@@ -21,21 +21,21 @@ import threading
 localhost_headers = {
     'Accept': 'application/json',
     'Content-Type': 'application/json',
-    'x-requested-by': 'gGRC',
+    'x-requested-by': 'GGRC',
     'Cookie': 'Please enter cookie'
 }
 
 ggrcdev_headers = {
     'Accept': 'application/json',
     'Content-Type': 'application/json',
-    'x-requested-by': 'gGRC',
+    'x-requested-by': 'GGRC',
     'Cookie': 'Please enter cookie'
 }
 
 appspot_headers = {
     'Accept': 'application/json',
     'Content-Type': 'application/json',
-    'x-requested-by': 'gGRC',
+    'x-requested-by': 'GGRC',
     'Cookie': 'Please enter cookie'
 }
 

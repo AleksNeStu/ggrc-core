@@ -9,9 +9,9 @@
               parent_instance="instance"
               join_model="Relationship"
               quick_create="create_url"
-              {{#if_in instance.status 'Completed,Verified'}}verify_event="true"{{/if_in}}
-              modal_description='You are about to move request from "{{instance.status}}" to "In Progress" - are you sure about that?'
-              modal_title='Confirm moving Request to "In Progress"'
+              {{#if_in instance.status 'Completed,Verified,Ready for Review'}}verify_event="true"{{/if_in}}
+              modal_description='You are about to move assessment from "{{instance.status}}" to "In Progress" - are you sure about that?'
+              modal_title='Confirm moving Assessment to "In Progress"'
               modal_button='Confirm'
       >
         {{#prune_context}}

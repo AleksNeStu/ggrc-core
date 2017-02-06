@@ -3,7 +3,7 @@
     Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
 }}
 
-
+{{#instance}}
 {{#if_helpers '\
 #if' is_info_pin '\
 and #is_allowed_to_map' page_instance instance '\
@@ -42,16 +42,23 @@ TODO: Temporary disabled until snapshot view is added.
                     text="{{get_permalink_for_object instance}}" />
             </li>
 -->
-            {{#is_allowed 'update' instance context='for'}}
+            {{! We need to use `using` to ensure that snapshot is actually
+                reified by the time is_allowed helper uses it }}
+            {{#using reified_snapshot=snapshot}}
+            {{#is_allowed 'update' reified_snapshot context='for'}}
+            {{^isLatestRevision}}
             <li>
-                <snapshot-individual-update instance="instance">
-                    <a href="javascript://" can-click="updateIt">
-                        <i class="fa fa-refresh"></i>
-                        Update to latest version
-                    </a>
-                </snapshot-individual-update>
+              <revisions-comparer instance="instance"
+                                  left-revision-id="instance.snapshot.revision_id"
+                                  right-revisions="instance.snapshot.revisions">
+                <a href="javascript://" can-click="compareIt">
+                  <i class="fa fa-refresh"></i>
+                  Get the latest version</a>
+              </revisions-comparer>
             </li>
+            {{/isLatestRevision}}
             {{/is_allowed}}
+            {{/using}}
 
             <li>
                 <a href="{{instance.originalLink}}">
@@ -63,3 +70,4 @@ TODO: Temporary disabled until snapshot view is added.
         </ul>
     </div>
 {{/if_helpers}}
+{{/instance}}

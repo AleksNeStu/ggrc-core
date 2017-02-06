@@ -710,7 +710,7 @@ describe('GGRC.Components.objectHistory', function () {
       function () {
         var revision = {
           modified_by: 'User 17',
-          updated_at: new Date('2015-05-17 17:24:01'),
+          updated_at: new Date('2015-05-17T17:24:01'),
           action: 'created',
           destination: {
             display_type: function () {
@@ -729,7 +729,7 @@ describe('GGRC.Components.objectHistory', function () {
         expect(result).toEqual({
           madeBy: 'User 17',
           role: 'none',
-          updatedAt: new Date('2015-05-17 17:24:01'),
+          updatedAt: new Date('2015-05-17T17:24:01'),
           changes: {
             origVal: '—',
             newVal: 'Created',
@@ -744,7 +744,7 @@ describe('GGRC.Components.objectHistory', function () {
       function () {
         var revision = {
           modified_by: 'User 17',
-          updated_at: new Date('2015-05-17 17:24:01'),
+          updated_at: new Date('2015-05-17T17:24:01'),
           action: 'deleted',
           source: {
             display_type: function () {
@@ -763,7 +763,7 @@ describe('GGRC.Components.objectHistory', function () {
         expect(result).toEqual({
           madeBy: 'User 17',
           role: 'none',
-          updatedAt: new Date('2015-05-17 17:24:01'),
+          updatedAt: new Date('2015-05-17T17:24:01'),
           changes: {
             origVal: 'Created',
             newVal: 'Deleted',

@@ -81,8 +81,7 @@ can.Model.Cacheable("CMS.Models.Program", {
   defaults: {
     status: 'Draft'
   },
-  statuses: ['Draft', 'Final', 'Effective', 'Ineffective', 'Launched',
-      'Not Launched', 'In Scope', 'Not in Scope', 'Deprecated'],
+  statuses: ['Draft', 'Deprecated', 'Active'],
   init: function () {
     this.validateNonBlank("title");
     this._super.apply(this, arguments);
@@ -160,8 +159,7 @@ can.Model.Cacheable("CMS.Models.Objective", {
   defaults: {
     status: 'Draft'
   },
-  statuses: ['Draft', 'Final', 'Effective', 'Ineffective', 'Launched',
-      'Not Launched', 'In Scope', 'Not in Scope', 'Deprecated'],
+  statuses: ['Draft', 'Deprecated', 'Active'],
   init: function () {
     this.validateNonBlank("title");
     this._super.apply(this, arguments);

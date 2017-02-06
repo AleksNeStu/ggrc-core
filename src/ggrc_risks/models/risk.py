@@ -17,20 +17,14 @@ from ggrc.models.track_object_state import HasObjectState
 class Risk(HasObjectState, mixins.CustomAttributable, mixins.Stateful,
            Relatable, mixins.Described, Ownable, Personable,
            mixins.WithContact, mixins.Titled, mixins.Timeboxed,
-           mixins.Slugged, mixins.Noted, mixins.Hyperlinked, mixins.Base,
+           mixins.Noted, mixins.Hyperlinked, mixins.Slugged,
            db.Model):
   __tablename__ = 'risks'
 
   VALID_STATES = [
       'Draft',
-      'Final',
-      'Effective',
-      'Ineffective',
-      'Launched',
-      'Not Launched',
-      'In Scope',
-      'Not in Scope',
       'Deprecated',
+      'Active'
   ]
 
   # Overriding mixin to make mandatory

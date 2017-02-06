@@ -6,10 +6,10 @@
 import json
 from mock import patch
 
-from integration.ggrc import services
+from integration.ggrc.services import TestCase
 
 
-class TestCollectionPost(services.TestCase):
+class TestCollectionPost(TestCase):
   """Test response codes for post requests."""
 
   def setUp(self):

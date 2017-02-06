@@ -1,0 +1,15 @@
+Object type,,,,"Admin,
+creator, 
+reader,
+editor,
+no access - default"
+Person,name,email,company,role
+,user 1,user1@example.com,google,Administrator
+,user 2,user2@example.com,google,Administrator
+,user 10,user10@example.com,google,creator
+,user 11,user11@example.com,google,
+,user 12,user12@example.com,,reader
+,Fail,,facebook,Administrator
+,,user14@example.com,linkedin,Administrator
+,bad emil,bad email dot com,no one,
+,worse emil :P,33 is not a valid email!!!@@@+!]7535&[{}(=*,,

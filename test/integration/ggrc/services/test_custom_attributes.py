@@ -15,15 +15,15 @@ from ggrc import utils
 from ggrc import models
 from ggrc import builder
 
-from integration.ggrc import services
+from integration.ggrc.services import TestCase
 from integration.ggrc.generator import ObjectGenerator
 
 
-class ProductTestCase(services.TestCase):
+class ProductTestCase(TestCase):
   """Test case for Product post and put requests."""
 
   def setUp(self):
-    services.TestCase.setUp(self)
+    super(ProductTestCase, self).setUp()
     self.generator = ObjectGenerator()
     self.client.get("/login")
 

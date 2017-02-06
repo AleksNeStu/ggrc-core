@@ -5,7 +5,7 @@
 
 from ggrc.app import app
 from ggrc.models import all_models
-from integration.ggrc.converters import TestCase
+from integration.ggrc import TestCase
 from integration.ggrc.models import factories
 
 TEST_MODELS = [
@@ -116,7 +116,7 @@ class TestSnapshot(TestCase):
 
   def setUp(self):
     """Set up test cases for all tests."""
-    TestCase.clear_data()
+    super(TestSnapshot, self).setUp()
     self._create_cas()
     response = self._import_file("all_snapshottable_objects.csv")
     self._check_csv_response(response, {})

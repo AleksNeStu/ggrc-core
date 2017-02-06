@@ -5,20 +5,20 @@
 
 from ggrc import models
 
-import integration.ggrc
+from integration.ggrc import TestCase
 from integration.ggrc import api_helper
 from integration.ggrc import generator
 from integration.ggrc.models import factories
 
 
-class TestMixinAutoStatusChangeable(integration.ggrc.TestCase):
+class TestMixinAutoStatusChangeable(TestCase):
 
   """Test case for AutoStatusChangeable mixin"""
 
   # pylint: disable=invalid-name
 
   def setUp(self):
-    integration.ggrc.TestCase.setUp(self)
+    super(TestMixinAutoStatusChangeable, self).setUp()
     self.client.get("/login")
     self.api_helper = api_helper.Api()
     self.objgen = generator.ObjectGenerator()

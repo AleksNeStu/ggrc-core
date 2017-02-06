@@ -39,8 +39,7 @@ def cleaner(dummy, value, *_):
   Returns:
     Html (string) without unsafe tags.
   """
-  # Some cases like Request don't use the title value
-  #  and it's nullable, so check for that
+  # Some cases don't use the title value and it's nullable, so check for that
   if value is None:
     return value
   if not isinstance(value, basestring):

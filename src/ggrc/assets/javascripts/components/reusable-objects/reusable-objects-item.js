@@ -31,15 +31,22 @@
             this.attr('mapping'));
         this.attr('disabled', isDisabled);
       },
+      isSelected: function () {
+        var instanceId = this.attr('instance.id');
+
+        return _.some(this.attr('selectedList'), function (item) {
+          return item.id === instanceId;
+        });
+      },
       toggleSelection: function (isChecked) {
         var list = this.attr('selectedList');
         var index = -1;
-        if (isChecked) {
+        if (isChecked && !this.isSelected()) {
           list.push({
             id: this.attr('instance.id'),
             type: this.attr('instance.type')
           });
-        } else {
+        } else if (!isChecked) {
           list.forEach(function (item, i) {
             var type = this.attr('instance.snapshot') ?
               'Snapshot' :
@@ -57,6 +64,9 @@
     },
     init: function () {
       this.scope.setDisabled();
+      if (this.scope.isSelected()) {
+        this.scope.attr('isChecked', true);
+      }
     },
     events: {
       '{scope} isChecked': function (scope, ev, isChecked) {

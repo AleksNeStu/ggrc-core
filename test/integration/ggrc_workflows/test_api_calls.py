@@ -12,7 +12,7 @@ from integration.ggrc.api_helper import Api
 class TestWorkflowsApiPost(TestCase):
 
   def setUp(self):
-    TestCase.setUp(self)
+    super(TestWorkflowsApiPost, self).setUp()
     self.api = Api()
 
   def tearDown(self):

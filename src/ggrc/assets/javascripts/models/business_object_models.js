@@ -83,8 +83,7 @@ can.Model.Cacheable("CMS.Models.OrgGroup", {
   defaults: {
     status: 'Draft'
   },
-  statuses: ['Draft', 'Final', 'Effective', 'Ineffective', 'Launched',
-      'Not Launched', 'In Scope', 'Not in Scope', 'Deprecated'],
+  statuses: ['Draft', 'Deprecated', 'Active'],
   init: function () {
     var that = this;
     this._super && this._super.apply(this, arguments);
@@ -160,8 +159,7 @@ can.Model.Cacheable("CMS.Models.Project", {
   defaults: {
     status: 'Draft'
   },
-  statuses: ['Draft', 'Final', 'Effective', 'Ineffective', 'Launched',
-      'Not Launched', 'In Scope', 'Not in Scope', 'Deprecated'],
+  statuses: ['Draft', 'Deprecated', 'Active'],
   init: function () {
     var that = this;
     this._super && this._super.apply(this, arguments);
@@ -250,8 +248,7 @@ can.Model.Cacheable("CMS.Models.Facility", {
   defaults: {
     status: 'Draft'
   },
-  statuses: ['Draft', 'Final', 'Effective', 'Ineffective', 'Launched',
-      'Not Launched', 'In Scope', 'Not in Scope', 'Deprecated'],
+  statuses: ['Draft', 'Deprecated', 'Active'],
   init: function () {
     var that = this;
     this._super && this._super.apply(this, arguments);
@@ -344,8 +341,7 @@ can.Model.Cacheable("CMS.Models.Product", {
   defaults: {
     status: 'Draft'
   },
-  statuses: ['Draft', 'Final', 'Effective', 'Ineffective', 'Launched',
-      'Not Launched', 'In Scope', 'Not in Scope', 'Deprecated'],
+  statuses: ['Draft', 'Deprecated', 'Active'],
   init: function () {
     var that = this;
     this._super && this._super.apply(this, arguments);
@@ -436,8 +432,7 @@ can.Model.Cacheable("CMS.Models.DataAsset", {
   defaults: {
     status: 'Draft'
   },
-  statuses: ['Draft', 'Final', 'Effective', 'Ineffective', 'Launched',
-      'Not Launched', 'In Scope', 'Not in Scope', 'Deprecated'],
+  statuses: ['Draft', 'Deprecated', 'Active'],
   init: function () {
     var that = this;
     this._super && this._super.apply(this, arguments);
@@ -527,8 +522,7 @@ can.Model.Cacheable("CMS.Models.AccessGroup", {
   defaults: {
     status: 'Draft'
   },
-  statuses: ['Draft', 'Final', 'Effective', 'Ineffective', 'Launched',
-    'Not Launched', 'In Scope', 'Not in Scope', 'Deprecated'],
+  statuses: ['Draft', 'Deprecated', 'Active'],
   init: function () {
     var that = this;
     this._super && this._super.apply(this, arguments);
@@ -606,8 +600,7 @@ can.Model.Cacheable("CMS.Models.AccessGroup", {
     defaults: {
       status: 'Draft'
     },
-    statuses: ['Draft', 'Final', 'Effective', 'Ineffective', 'Launched',
-      'Not Launched', 'In Scope', 'Not in Scope', 'Deprecated'],
+    statuses: ['Draft', 'Deprecated', 'Active'],
     init: function () {
       var that = this;
       if (this._super) {
@@ -698,8 +691,7 @@ can.Model.Cacheable("CMS.Models.Vendor", {
   defaults: {
     status: 'Draft'
   },
-  statuses: ['Draft', 'Final', 'Effective', 'Ineffective', 'Launched',
-      'Not Launched', 'In Scope', 'Not in Scope', 'Deprecated'],
+  statuses: ['Draft', 'Deprecated', 'Active'],
   init: function () {
     var that = this;
     this._super && this._super.apply(this, arguments);

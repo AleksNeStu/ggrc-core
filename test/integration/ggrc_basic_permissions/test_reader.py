@@ -17,7 +17,7 @@ class TestReader(TestCase):
   """ Test reader role """
 
   def setUp(self):
-    TestCase.setUp(self)
+    super(TestReader, self).setUp()
     self.generator = Generator()
     self.api = Api()
     self.object_generator = ObjectGenerator()
@@ -48,7 +48,6 @@ class TestReader(TestCase):
         "Policy", "Regulation", "Standard", "Document", "Facility",
         "Market", "Objective", "OrgGroup", "Vendor", "Product",
         "Clause", "System", "Process", "Issue", "Project", "AccessGroup",
-        "Request"
     ])
     for model_singular in base_models:
       try:

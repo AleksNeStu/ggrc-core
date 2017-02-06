@@ -11,17 +11,17 @@ from ggrc import db
 from ggrc import models
 from ggrc.notifications import common
 
-from integration import ggrc
+from integration.ggrc import TestCase
 from integration.ggrc import api_helper
 from integration.ggrc.models import factories
 
 
-class TestReminderable(ggrc.TestCase):
+class TestReminderable(TestCase):
 
   """Test sending reminder."""
 
   def setUp(self):
-    ggrc.TestCase.setUp(self)
+    super(TestReminderable, self).setUp()
     self.client.get("/login")
     self._fix_notification_init()
     self.api_helper = api_helper.Api()

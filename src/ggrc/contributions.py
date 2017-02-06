@@ -20,7 +20,6 @@ NOTIFICATION_LISTENERS = [
 def contributed_notifications():
   """Get handler functions for ggrc notification file types."""
   return {
-      "Request": data_handlers.get_assignable_data,
       "Assessment": data_handlers.get_assignable_data,
       "Comment": data_handlers.get_comment_data,
   }

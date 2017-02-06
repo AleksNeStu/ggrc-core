@@ -134,6 +134,7 @@
       {{#if draw_children}}
         {{#child_options.0}}
           <div class="inner-tree">
+            <spinner toggle="subTreeLoading"></spinner>
             <ul class="tree-structure new-tree" {{data 'options'}} {{ (el) -> el.cms_controllers_tree_view(el.data("options")).control("tree_view").display() }}>
             </ul>
           </div>

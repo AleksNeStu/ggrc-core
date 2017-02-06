@@ -14,7 +14,7 @@ class TestReader(TestCase):
   """Test that some objects cannot be deleted by anyone."""
 
   def setUp(self):
-    TestCase.setUp(self)
+    super(TestReader, self).setUp()
     self.api = Api()
     self.object_generator = ObjectGenerator()
     self.init_users()

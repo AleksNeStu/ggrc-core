@@ -19,8 +19,11 @@
       setMinDate: null,
       setMaxDate: null,
       _date: null,  // the internal value of the text input field
-      required: '@',
       define: {
+        required: {
+          type: 'boolean',
+          'default': false
+        },
         label: {
           type: 'string'
         },
@@ -163,6 +166,26 @@
         return date;
       },
 
+      /**
+       * Prepeare date to ISO format.
+       *
+       * @param {Object} scope - scope of the Component
+       * @param {string|null} val - the new value of the date setting.
+       *   If given as string, it must be in ISO date format.
+       * @return {string|null} - the new date value
+       */
+      prepareDate: function (scope, val) {
+        var valISO = null;
+        var valF = null;
+
+        if (val) {
+          val = val.trim();
+          valF = moment.utc(val, scope.MOMENT_DISPLAY_FMT, true);
+          valISO = valF.isValid() ? valF.format(scope.MOMENT_ISO_DATE) : null;
+        }
+        return valISO;
+      },
+
       '{scope} setMinDate': function (scope, ev, date) {
         var currentDateObj = null;
         var updated = this.updateDate('minDate', date);
@@ -182,12 +205,7 @@
       },
 
       '{scope} _date': function (scope, ev, val) {
-        var valISO = null;
-
-        if (val) {
-          valISO = moment.utc(val, scope.MOMENT_DISPLAY_FMT)
-                         .format(scope.MOMENT_ISO_DATE);
-        }
+        var valISO = this.prepareDate(scope, val);
         scope.attr('date', valISO);
         scope.picker.datepicker('setDate', valISO);
       },

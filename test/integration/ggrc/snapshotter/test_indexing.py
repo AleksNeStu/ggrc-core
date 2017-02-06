@@ -34,12 +34,12 @@ class TestSnapshotIndexing(SnapshotterBaseTestCase):
   # pylint: disable=invalid-name,too-many-locals
 
   def setUp(self):
-    SnapshotterBaseTestCase.setUp(self)
+    super(TestSnapshotIndexing, self).setUp()
 
     self.client.get("/login")
     self.headers = {
         'Content-Type': 'application/json',
-        "X-Requested-By": "gGRC",
+        "X-Requested-By": "GGRC",
     }
 
   def test_create_indexing(self):

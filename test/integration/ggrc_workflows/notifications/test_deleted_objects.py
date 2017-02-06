@@ -6,6 +6,7 @@ from freezegun import freeze_time
 from datetime import datetime
 from mock import patch
 
+from ggrc import db
 from ggrc.notifications import common
 from ggrc.models import Notification, Person
 from ggrc_workflows.models import Workflow
@@ -22,7 +23,7 @@ class TestNotificationsForDeletedObjects(TestCase):
   """
 
   def setUp(self):
-    TestCase.setUp(self)
+    super(TestNotificationsForDeletedObjects, self).setUp()
     self.api = Api()
     self.wf_generator = WorkflowsGenerator()
     self.object_generator = ObjectGenerator()
@@ -64,8 +65,16 @@ class TestNotificationsForDeletedObjects(TestCase):
 
       workflow = Workflow.query.get(workflow.id)
 
+      exists_qs = db.session.query(
+          Notification.query.filter(
+              Notification.object_id == workflow.id,
+              Notification.object_type == workflow.__class__.__name__
+          ).exists()
+      )
+      self.assertTrue(exists_qs.one()[0])
       response = self.wf_generator.api.delete(workflow)
       self.assert200(response)
+      self.assertFalse(exists_qs.one()[0])
 
       _, notif_data = common.get_daily_notifications()
       user = Person.query.get(self.user.id)

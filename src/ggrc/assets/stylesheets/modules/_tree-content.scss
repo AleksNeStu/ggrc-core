@@ -203,6 +203,18 @@ ul.new-tree {
         color: $black;
       }
     }
+    &.parent-related {
+      color: $gray;
+      .fa {
+        color: $gray;
+      }
+    }
+    &.current-instance-related {
+      color: $darkText;
+      .fa {
+        color: $darkText;
+      }
+    }
     .black-font {
       color: $black;
     }

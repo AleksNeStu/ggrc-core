@@ -3,7 +3,7 @@ Requests,{{program_slug}},,,,,,,,
 ,REQUIRED,,,,,,,*Defaults to current date if none given,REQUIRED,*Defaults to Draft if none given
 "Optional
 
-If you leave this field blank, the gGRC system will generate Codes automatically upon creation of the new object.  If you have a standardized acronym or other specific reason for entering Codes manually, we recommend doing so.  Otherwise, we recommend you leave this blank.
+If you leave this field blank, the GGRC system will generate Codes automatically upon creation of the new object.  If you have a standardized acronym or other specific reason for entering Codes manually, we recommend doing so.  Otherwise, we recommend you leave this blank.
 
 Enter the Codes for already existing objects if you want to use Import as a means to edit and update those objects.",Documentation / Interview,HTML Allowed,"PBC Requests require either a Control or an Objective, but it may be added later, after importing","Optional Text Field
 Use this text field to keep notes about this Request",Optional Text Field,"If not specified, value will default to Audit Lead",MM/DD/YYYY,MM/DD/YYYY,Draft / Requested / Responded / Amended Request / Updated Response / Accepted

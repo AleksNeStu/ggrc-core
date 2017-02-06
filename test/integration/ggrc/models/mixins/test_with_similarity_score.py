@@ -6,22 +6,20 @@
 import json
 
 from ggrc import db
-import ggrc.models as models
+from ggrc import models
 from ggrc.snapshotter.rules import Types
 
-
-import integration.ggrc
+from integration.ggrc import TestCase
 import integration.ggrc.generator
 from integration.ggrc.models import factories
 
 
-# pylint: disable=super-on-old-class; TestCase is a new-style class
-class TestWithSimilarityScore(integration.ggrc.TestCase):
+class TestWithSimilarityScore(TestCase):
   """Integration test suite for WithSimilarityScore functionality."""
+
   def setUp(self):
     super(TestWithSimilarityScore, self).setUp()
     self.obj_gen = integration.ggrc.generator.ObjectGenerator()
-
     self.client.get("/login")
 
   @staticmethod

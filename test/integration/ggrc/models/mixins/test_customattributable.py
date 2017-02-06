@@ -6,13 +6,13 @@
 from ggrc import db
 from ggrc import models
 
-import integration.ggrc
+from integration.ggrc import TestCase
 from integration.ggrc.models.factories import ProgramFactory
 from integration.ggrc.models.factories import \
     CustomAttributeDefinitionFactory as CAD
 
 
-class TestCustomAttributableMixin(integration.ggrc.TestCase):
+class TestCustomAttributableMixin(TestCase):
 
   """Test cases for functions in custom attributable mixin."""
 

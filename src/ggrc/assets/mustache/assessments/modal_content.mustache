@@ -7,7 +7,7 @@
 <div class="hideable-holder">
 {{#instance}}
 <form action="javascript://">
-  {{> /static/mustache/base_objects/form_restore.mustache}}
+  {{> '/static/mustache/base_objects/form_restore.mustache'}}
 
   {{^if new_object_form}}
     {{#if_in instance.status "Not Started,Completed,Verified"}}
@@ -65,7 +65,7 @@
       <ggrc-modal-connector
               parent_instance="instance"
               instance="instance"
-              source_mapping="info_related_objects"
+              mapping="related_objects_as_source"
               deferred="true">
         <label class="border-l">
           Mapped Objects
@@ -122,7 +122,6 @@
                  data-toggle="unified-mapper"
                  data-deferred="true"
                  data-object-source="true"
-                 data-join-mapping="business_objects"
                  data-join-object-id="{{instance.id}}"
                  data-join-object-type="{{instance.class.model_singular}}"
                  data-original-title="Map Object to this {{instance.class.title_singular}}" tabindex="6"
@@ -186,7 +185,7 @@
 
 
     <div class="span6 hide-wrap hidable">
-      {{> /static/mustache/base_objects/modal_contact_fields.mustache}}
+      {{> '/static/mustache/base_objects/modal_contact_fields.mustache'}}
     </div>
     </div>
 

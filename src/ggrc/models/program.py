@@ -12,7 +12,6 @@ from ggrc.models.object_person import Personable
 from ggrc.models.reflection import AttributeInfo
 from ggrc.models.relationship import Relatable
 from ggrc.models.track_object_state import HasObjectState
-from ggrc.models.track_object_state import track_state_for_class
 
 
 class Program(HasObjectState, CustomAttributable,
@@ -73,5 +72,3 @@ class Program(HasObjectState, CustomAttributable,
     query = super(Program, cls).eager_query()
     return cls.eager_inclusions(query, Program._include_links).options(
         orm.subqueryload('audits'))
-
-track_state_for_class(Program)

@@ -138,8 +138,6 @@ unittests_tests () {
 
   echo "Running karma tests"
 
-  docker exec -id ${PROJECT}_selenium_1 python /selenium/bin/chrome_karma.py
-
   docker exec -i ${PROJECT}_dev_1 su vagrant -c "
     source /vagrant/bin/init_vagrant_env
     /vagrant/node_modules/karma/bin/karma start \\

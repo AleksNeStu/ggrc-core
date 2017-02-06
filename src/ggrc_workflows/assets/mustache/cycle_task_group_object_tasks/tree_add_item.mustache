@@ -23,13 +23,13 @@
             "id": {{ parent_instance.id }}
           }],
         {{/if_instance_of}}
-        "modal_title": "Create New Cycle Task"
+        "modal_title": "Create Cycle Task"
         {{#if_equals parent_instance.type 'Workflow'}}
           ,"workflow":{"id":{{parent_instance.id}},"type":"Workflow"}
         {{/if_equals}}
         }'>
 
-      Create New
+      Create
     </a>
   {{/if_recurring_workflow}}
 {{/is_allowed}}

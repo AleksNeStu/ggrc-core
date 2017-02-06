@@ -9,7 +9,7 @@ from urlparse import urlparse
 from wsgiref.handlers import format_date_time
 from sqlalchemy import and_
 
-from integration.ggrc import services
+from integration.ggrc.services import TestCase
 from integration.ggrc.api_helper import Api
 from integration.ggrc.generator import ObjectGenerator
 from ggrc.models import all_models
@@ -20,7 +20,7 @@ COLLECTION_ALLOWED = ["HEAD", "GET", "POST", "OPTIONS"]
 RESOURCE_ALLOWED = ["HEAD", "GET", "PUT", "DELETE", "OPTIONS"]
 
 
-class TestServices(services.TestCase):
+class TestServices(TestCase):
   """Integration tests suite for /api/<model> endpoints common logic."""
 
   @staticmethod
@@ -320,11 +320,11 @@ class TestServices(services.TestCase):
     self.assertIn("Etag", response.headers)
 
 
-class TestFilteringByRequest(services.TestCase):
+class TestFilteringByRequest(TestCase):
   """Test filter query by request"""
 
   def setUp(self):
-    services.TestCase.setUp(self)
+    super(TestFilteringByRequest, self).setUp()
     self.object_generator = ObjectGenerator()
     self.api = Api()
     self.init_users()

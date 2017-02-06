@@ -50,6 +50,10 @@ WRONG_MULTI_VALUE = (u"Line {line}: {column_name} contains invalid line. The"
 WRONG_VALUE = (u"Line {line}: Field '{column_name}' contains invalid data. The"
                u" value will be ignored.")
 
+WRONG_VALUE_DEFAULT = (u"Line {line}: Field '{column_name}' contains invalid"
+                       u" data. The default value will be used.")
+
+
 WRONG_VALUE_ERROR = (u"Line {line}: Field '{column_name}' contains invalid "
                      u"data. The line will be ignored.")
 
@@ -76,9 +80,6 @@ DELETE_CASCADE_ERROR = (u"Line {line}: Cannot delete object {object_type}:"
                         " {slug} without deleting other objects")
 
 UNKNOWN_ERROR = u"Line {line}: Import failed due to unknown error."
-
-REQUEST_INVALID_STATE = (u"Line {line}: Can not set Request state to Completed"
-                         u" or Verified via imports.")
 
 INVALID_START_END_DATES = (u"Line {line}: {start_date} can not be after "
                            u"{end_date}. The line will be ignored.")

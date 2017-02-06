@@ -13,7 +13,6 @@ description = """
   """
 permissions = {
     "read": [
-        "Request",
         "Assessment",
         "AssessmentTemplate",
         "Issue",
@@ -31,7 +30,6 @@ permissions = {
         "Context",
     ],
     "create": [
-        "Request",
         "Assessment",
         "AssessmentTemplate",
         "Issue",
@@ -51,7 +49,6 @@ permissions = {
         "__GGRC_ALL__"
     ],
     "update": [
-        "Request",
         "Assessment",
         "AssessmentTemplate",
         "Issue",
@@ -69,7 +66,6 @@ permissions = {
     ],
     "delete": [
         "UserRole",
-        "Request",
         "Assessment",
         "AssessmentTemplate",
         "Issue",

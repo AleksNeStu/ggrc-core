@@ -16,7 +16,7 @@
   can.Component.extend({
     tag: tag,
     template: tpl,
-    scope: {
+    viewModel: {
       mappedSnapshots: true,
       titleText: '@',
       filter: {

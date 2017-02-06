@@ -10,7 +10,7 @@ from ggrc.models.reflection import SanitizeHtmlInfo
 from ggrc.models.all_models import *  # noqa
 from ggrc.utils import html_cleaner
 
-"""All gGRC model objects and associated utilities."""
+"""All GGRC model objects and associated utilities."""
 
 
 def create_db_with_create_all():
@@ -87,7 +87,7 @@ def init_hooks():
 
 
 def init_all_models(app):
-  """Register all gGRC models services with the Flask application ``app``."""
+  """Register all GGRC models services with the Flask application ``app``."""
 
   from ggrc.extensions import get_extension_modules
 

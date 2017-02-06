@@ -44,7 +44,7 @@ def check_required_headers(required_headers):
 def parse_export_request():
   """ Check if request contains all required fields """
   required_headers = {
-      "X-Requested-By": ["gGRC"],
+      "X-Requested-By": ["GGRC"],
       "Content-Type": ["application/json"],
       "X-export-view": ["blocks", "grid"],
   }
@@ -87,7 +87,7 @@ def check_import_file():
 def parse_import_request():
   """ Check if request contains all required fields """
   required_headers = {
-      "X-Requested-By": ["gGRC"],
+      "X-Requested-By": ["GGRC"],
       "X-test-only": ["true", "false"],
   }
   check_required_headers(required_headers)

@@ -81,8 +81,7 @@
         draw_children: false
       }]
     },
-    statuses: ['Draft', 'Final', 'Effective', 'Ineffective', 'Launched',
-      'Not Launched', 'In Scope', 'Not in Scope', 'Deprecated'],
+    statuses: ['Draft', 'Deprecated', 'Active'],
     init: function () {
       this.validateNonBlank('title');
       this._super.apply(this, arguments);

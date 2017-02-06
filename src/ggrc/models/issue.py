@@ -8,7 +8,7 @@ from .mixins import (
 from .object_owner import Ownable
 from .object_person import Personable
 from .relationship import Relatable
-from .track_object_state import HasObjectState, track_state_for_class
+from .track_object_state import HasObjectState
 
 
 class Issue(HasObjectState, TestPlanned, CustomAttributable,
@@ -22,5 +22,3 @@ class Issue(HasObjectState, TestPlanned, CustomAttributable,
   ]
 
   _aliases = {"url": "Issue URL"}
-
-track_state_for_class(Issue)

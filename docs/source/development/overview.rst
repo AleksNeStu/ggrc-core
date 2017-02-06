@@ -961,12 +961,3 @@ Python Unit Tests
 These are currently defined in :src:`ggrc/tests`,
 but as of 2014/07/07 are in poor state due to non-upkeep.  Mostly, these
 test import/export.
-
-
-Python "behave" tests, using the ``behave`` Python module
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-These are defined using the Gherkin language, in
-``src/service_specs/*.feature`` and
-``src/<module>/service_specs/*.feature``, and are the core set of
-service-side/API tests.

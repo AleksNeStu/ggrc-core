@@ -183,11 +183,12 @@
       return GGRC.Utils.QueryAPI
         .makeRequest({data: [query]})
         .done(function (idsArr) {
-          this.attr('scopeObject',
-            {
-              id: idsArr[0][objType][queryType][0],
-              type: 'Audit'
-            });
+          var audit = {
+            id: idsArr[0][objType][queryType][0],
+            type: 'Audit'
+          };
+          this.attr('scopeObject', audit);
+          this.attr('audit', audit);
         }.bind(this));
     }
   });

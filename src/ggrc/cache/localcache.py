@@ -13,7 +13,7 @@ the AppEngine instance
 
 class LocalCache(Cache):
   """ LocalCache inherits from cache and it provides caching mechanism that is
-      local to a particular gGRC instance
+      local to a particular GGRC instance
 
       Attributes:
         cache_entries: Ordered dictionary containing resource id as key and

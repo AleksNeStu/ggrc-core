@@ -34,12 +34,22 @@
       this.instanceQueue = [];
 
       CMS.Models.Relationship.findAll(filter).then(function (relationships) {
+        var instance = GGRC.page_instance();
+        var modelName = instance.constructor.shortName;
+        if (relationships.length) {
+          return GGRC.Utils.CurrentPage
+            .initCounts(GGRC.tree_view.orderedWidgetsByType[modelName], {
+              type: instance.type,
+              id: instance.id
+            });
+        }
+      }).then(function () {
         var rq = new RefreshQueue();
-        can.each(relationships.concat(instances), function (relationship) {
-          rq.enqueue(relationship.source);
-          rq.enqueue(relationship.destination);
+        can.each(instances, function (instance) {
+          rq.enqueue(instance.source);
+          rq.enqueue(instance.destination);
         });
-        rq.trigger();
+        return rq.trigger();
       });
     }
   };

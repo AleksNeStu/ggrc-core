@@ -18,7 +18,7 @@ class TestCreatorAudit(TestCase):
   """Set up necessary objects and test Creator role with Audit roles"""
 
   def setUp(self):
-    TestCase.setUp(self)
+    super(TestCreatorAudit, self).setUp()
     self.generator = Generator()
     self.api = Api()
     self.object_generator = ObjectGenerator()

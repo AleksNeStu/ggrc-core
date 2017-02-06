@@ -24,8 +24,7 @@ class GlobalEditorReaderGetTest(WorkflowRolesTestCase):
   """
 
   def setUp(self):
-    # old-style class
-    WorkflowRolesTestCase.setUp(self)
+    super(GlobalEditorReaderGetTest, self).setUp()
 
   def assert200_helper(self, response, message=None):
     """Helper that adds the info of the current user to the message.

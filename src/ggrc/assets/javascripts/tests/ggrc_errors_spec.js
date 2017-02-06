@@ -11,7 +11,7 @@ describe('GGRC.Errors module', function () {
   var _originalMessages;
 
   beforeAll(function () {
-    _originalMessages = Object.assign({}, GGRC.Errors.messages);
+    _originalMessages = _.assign({}, GGRC.Errors.messages);
 
     GGRC.Errors.messages = {
       'default': 'Some error!',
