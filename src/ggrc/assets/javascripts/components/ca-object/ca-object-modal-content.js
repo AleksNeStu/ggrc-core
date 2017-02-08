@@ -9,21 +9,54 @@
   var tpl = can.view(GGRC.mustache_path +
     '/components/ca-object/ca-object-modal-content.mustache');
 
-  GGRC.Components('customAttributeObjectModalContent', {
+  can.Component.extend({
     tag: 'ca-object-modal-content',
     template: tpl,
-    scope: {
+    viewModel: {
+      define: {
+        comment: {
+          get: function () {
+            return this.attr('content.fields').indexOf('comment') > -1 &&
+              this.attr('state.open');
+          }
+        },
+        evidence: {
+          get: function () {
+            return this.attr('content.fields').indexOf('evidence') > -1 &&
+              this.attr('state.open');
+          }
+        },
+        state: {
+          value: {
+            open: false,
+            save: false,
+            controls: false
+          }
+        },
+        isPerson: {
+          get: function () {
+            return this.attr('content.value') &&
+              this.attr('content.type') === 'person';
+          }
+        },
+        actionBtnText: {
+          get: function () {
+            return this.attr('comment') ? 'Save' : 'Done';
+          }
+        }
+      },
       content: {
+        fields: [],
         title: null,
         value: null,
         type: null
       },
-      caIds: null
-    },
-    helpers: {
-      renderFieldValue: function (value) {
-        value = value();
-        return value || '<span class="empty-message">None</span>';
+      caIds: {},
+      isEmpty: true,
+      saveAttachments: function () {
+        return this.attr('comment') ?
+          this.attr('state.save', true) :
+          this.attr('state.open', false);
       }
     }
   });

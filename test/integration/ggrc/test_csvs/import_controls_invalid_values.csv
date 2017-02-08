@@ -2,7 +2,7 @@ Object type,"Must be unique. Can be left empty for auto generation. If updating 
 key
 non-key
 ---",,,,,,,,,
-Control,Code*,Title*,Description,Notes,Test Plan,Owner*,Effective Date,Stop Date,State,Assertions,Categories,Primary Contact,Fraud Related,Significance,Kind/Nature,Type/Means,Principal Assessor,Secondary Assessor,Secondary Contact,Control URL,Reference URL,Frequency,Delete
+Control,Code*,Title*,Description,Notes,Evidence Collection Guidance,Owner*,Effective Date,Stop Date,State,Assertions,Categories,Primary Contact,Fraud Related,Significance,Kind/Nature,Type/Means,Principal Assessor,Secondary Assessor,Secondary Contact,Control URL,Reference URL,Frequency,Delete
 ,CTRL-123,test Control 123,,,,user@example.com,,,Draft,,,,no,non-key,--,--,,,,,,--,
 ,CTRL-122,test Control 122,,,,user@example.com,,,Active,,,,yes,--,Detective,Technical,,,,,,Continuous,
 ,CTRL-125,Test-Control 125,,,,user@example.com,,,Active,,,,yes,--,3334343,kjhkjk,,,,,,jaksdh,

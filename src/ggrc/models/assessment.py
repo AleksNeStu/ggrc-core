@@ -185,11 +185,10 @@ class Assessment(statusable.Statusable, AuditRelationship,
 
   similarity_options = {
       "relevant_types": {
-          "Audit": {"weight": 5},
-          "Regulation": {"weight": 3},
-          "Control": {"weight": 10},
+          "Objective": {"weight": 2},
+          "Control": {"weight": 2},
       },
-      "threshold": 5,
+      "threshold": 1,
   }
 
   def validate_conclusion(self, value):

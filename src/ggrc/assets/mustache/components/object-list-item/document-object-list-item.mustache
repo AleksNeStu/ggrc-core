@@ -1,0 +1,11 @@
+{{!
+    Copyright (C) 2017 Google Inc., authors, and contributors
+    Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
+}}
+<div class="document-object-item {{#if iconCls}}document-object-item__with-icon{{/if}}">
+    {{#if iconCls}}<i class="fa {{iconCls}}"></i>{{/if}}
+    <div class="document-object-item__body">
+        <a class="link" href="{{itemData.link}}" target="_blank">{{itemTitle}}</a>
+        <span class="date">{{date itemData.created_at true}}</span>
+    </div>
+</div>

@@ -1,0 +1,32 @@
+{{!
+  Copyright (C) 2017 Google Inc.
+  Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
+}}
+<div class="flex-row flex-box list-object-item {{#isDisabled}}is-disabled{{/isDisabled}}">
+  <div class="title flex-size-6" can-click="toggleDetails">
+    {{^isSnapshot}}
+      <mapper-results-item-status item-data="itemData"></mapper-results-item-status>
+    {{/isSnapshot}}
+    <i class="fa action {{toggleIconCls}}"></i>
+    <i class="fa {{objectTypeIcon}}"></i>
+    {{title}}
+  </div>
+  {{#searchOnly}}
+    <view-object-buttons instance="displayItem" view-is-hidden="true"></view-object-buttons>
+  {{/searchOnly}}
+  {{^searchOnly}}
+    <object-selection-item
+      is-disabled="isDisabled"
+      is-selected="markedSelected"
+      is-saving="isSaving"
+      object-type="type"
+      object-id="itemData.id">
+    </object-selection-item>
+  {{/searchOnly}}
+</div>
+{{#showDetails}}
+  <mapper-results-item-details
+    item="displayItem"
+    class="flex-box flex-col flex-box-single">
+  </mapper-results-item-details>
+{{/showDetails}}

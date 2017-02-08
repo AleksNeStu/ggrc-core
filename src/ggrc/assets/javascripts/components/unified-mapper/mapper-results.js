@@ -1,16 +1,15 @@
 /*!
- Copyright (C) 2017 Google Inc.
- Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
- */
-
-(function (can, GGRC) {
+    Copyright (C) 2017 Google Inc.
+    Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
+*/
+(function (can, GGRC, CMS) {
   'use strict';
 
-  can.Component.extend('snapshotLoader', {
-    tag: 'snapshot-loader',
+  can.Component.extend('mapperResults', {
+    tag: 'mapper-results',
     template: can.view(
       GGRC.mustache_path +
-      '/components/snapshot-loader/snapshot-loader.mustache'
+      '/components/unified-mapper/mapper-results.mustache'
     ),
     viewModel: {
       paging: {
@@ -30,13 +29,23 @@
       term: '',
       selected: [],
       refreshItems: false,
+      searchOnly: function () {
+        return this.attr('mapper.search_only');
+      },
       updatePaging: function (total) {
         var count = Math.ceil(total / this.attr('paging.pageSize'));
         this.attr('paging.total', total);
         this.attr('paging.count', count);
       },
       setItems: function () {
-        this.attr('items').replace(this.load());
+        var self = this;
+        return self.load()
+          .then(function (items) {
+            self.attr('items', items);
+            self.attr('mapper.entries', items.map(function (item) {
+              return item.data;
+            }));
+          });
       },
       setAdditionalScopeFilter: function () {
         var id = this.attr('baseInstance.scopeObject.id');
@@ -52,6 +61,7 @@
       prepareRelevantFilters: function () {
         var filters;
         var relevantList = this.attr('mapper.relevant');
+        var useSnapshots = this.attr('mapper.useSnapshots');
 
         filters = relevantList.attr()
           .map(function (relevant) {
@@ -67,7 +77,7 @@
             return item;
           });
         // Filter by scope
-        if (this.attr('mapper.useSnapshots')) {
+        if (useSnapshots) {
           if (Number(this.attr('scopeId'))) {
             filters.push({
               type: this.attr('scopeType'),
@@ -87,6 +97,10 @@
           .buildParam(modelName, paging, filters, [], ownedFilter);
       },
       prepareRelatedQuery: function (modelName, ownedFilter) {
+        if (!this.attr('baseInstance')) {
+          return null;
+        }
+
         return GGRC.Utils.QueryAPI
           .buildRelevantIdsQuery(modelName, {
             filter: this.attr('term')
@@ -114,7 +128,90 @@
           }
         };
       },
+      loadAllItems: function () {
+        this.attr('allItems', this.loadAllItemsIds());
+      },
+      getQuery: function (queryType, addPaging) {
+        var modelName = this.attr('type');
+        var useSnapshots = this.attr('mapper.useSnapshots');
+        var paging = addPaging ? {
+          filter: this.attr('term'),
+          current: this.attr('paging.current'),
+          pageSize: this.attr('paging.pageSize')
+        } : {
+          filter: this.attr('term')
+        };
+        var filters = this.prepareRelevantFilters();
+        var ownedFilter = this.prepareOwnedFilter();
+        var query =
+          this.prepareBaseQuery(modelName, paging, filters, ownedFilter);
+        var relatedQuery = this.prepareRelatedQuery(modelName, ownedFilter);
+        if (useSnapshots) {
+          // Transform Base Query to Snapshot
+          query = GGRC.Utils.Snapshots.transformQuery(query);
+        }
+        // Add Permission check
+        query.permissions = 'update';
+        query.type = queryType || 'values';
+
+        if (!relatedQuery) {
+          return {data: [query]};
+        }
+        if (useSnapshots) {
+          // Transform Related Query to Snapshot
+          relatedQuery = GGRC.Utils.Snapshots.transformQuery(relatedQuery);
+        }
+        return {data: [query, relatedQuery]};
+      },
+      getModelKey: function () {
+        return this.attr('mapper.useSnapshots') ?
+          CMS.Models.Snapshot.shortName :
+          this.attr('type');
+      },
+      setDisabledItems: function (allItems, relatedIds) {
+        // Do not perform extra mapping validation in case Assessment generation
+        if (this.attr('mapper.assessmentGenerator')) {
+          return;
+        }
+        allItems.forEach(function (item) {
+          item.isDisabled = relatedIds.indexOf(item.data.id) !== -1;
+        });
+      },
+      load: function () {
+        var modelKey = this.getModelKey();
+        var dfd = can.Deferred();
+        var query = this.getQuery('values', true);
+        this.attr('isLoading', true);
+        GGRC.Utils.QueryAPI
+          .makeRequest(query)
+          .done(function (responseArr) {
+            var data = responseArr[0];
+            var relatedData = responseArr[1];
+            var result =
+              data[modelKey].values.map(function (value) {
+                return {
+                  id: value.id,
+                  type: value.type,
+                  data: value
+                };
+              });
+            if (relatedData) {
+              this.setDisabledItems(result, relatedData[modelKey].ids);
+            }
+            // Update paging object
+            this.updatePaging(data[modelKey].total);
+            dfd.resolve(result);
+          }.bind(this))
+          .fail(function () {
+            dfd.resolve([]);
+          })
+          .always(function () {
+            this.attr('isLoading', false);
+          }.bind(this));
+        return dfd;
+      },
       loadAllItemsIds: function () {
+        var modelKey = this.getModelKey();
         var dfd = can.Deferred();
         var queryType = 'ids';
         var query = this.getQuery(queryType, false);
@@ -123,12 +220,12 @@
           .makeRequest(query)
           .done(function (responseArr) {
             var data = responseArr[0];
-            var filters = responseArr[1].Snapshot.ids;
-            var values = data.Snapshot[queryType];
+            var filters = responseArr[1][modelKey].ids;
+            var values = data[modelKey][queryType];
             var result = values.map(function (item) {
               return {
                 id: item,
-                type: 'Snapshot'
+                type: modelKey
               };
             });
             // Do not perform extra mapping validation in case Assessment generation
@@ -142,60 +239,6 @@
           .fail(function () {
             dfd.resolve([]);
           });
-        return dfd;
-      },
-      loadAllItems: function () {
-        this.attr('allItems', this.loadAllItemsIds());
-      },
-      getQuery: function (queryType, addPaging) {
-        var modelName = this.attr('type');
-        var paging = addPaging ? {
-          filter: this.attr('term'),
-          current: this.attr('paging.current'),
-          pageSize: this.attr('paging.pageSize')
-        } : {
-          filter: this.attr('term')
-        };
-        var filters = this.prepareRelevantFilters();
-        var ownedFilter = this.prepareOwnedFilter();
-        var query =
-          this.prepareBaseQuery(modelName, paging, filters, ownedFilter);
-        var relatedQuery = this.prepareRelatedQuery(modelName, ownedFilter);
-        // Transform Base Query to Snapshot
-        query = GGRC.Utils.Snapshots.transformQuery(query);
-        // Add Permission check
-        query.permissions = 'update';
-        query.type = queryType || 'values';
-        // Transform Related Query to Snapshot
-        relatedQuery = GGRC.Utils.Snapshots.transformQuery(relatedQuery);
-        return {data: [query, relatedQuery]};
-      },
-      load: function () {
-        var dfd = can.Deferred();
-        var query = this.getQuery('values', true);
-        this.attr('isLoading', true);
-        GGRC.Utils.QueryAPI
-          .makeRequest(query)
-          .done(function (responseArr) {
-            var data = responseArr[0];
-            var filters = responseArr[1].Snapshot.ids;
-            var result = data.Snapshot.values;
-            // Do not perform extra mapping validation in case Assessment generation
-            if (!this.attr('mapper.assessmentGenerator')) {
-              result.forEach(function (item) {
-                item.isDisabled = filters.indexOf(item.id) > -1;
-              });
-            }
-            // Update paging object
-            this.updatePaging(data.Snapshot.total);
-            dfd.resolve(result);
-          }.bind(this))
-          .fail(function () {
-            dfd.resolve([]);
-          })
-          .always(function () {
-            this.attr('isLoading', false);
-          }.bind(this));
         return dfd;
       }
     },
@@ -219,4 +262,4 @@
       }
     }
   });
-})(window.can, window.GGRC);
+})(window.can, window.GGRC, window.CMS);

@@ -25,7 +25,7 @@ can.Model.Cacheable("CMS.Models.Directive", {
       {attr_title: 'Effective Date', attr_name: 'start_date'},
       {attr_title: 'Stop Date', attr_name: 'end_date'}
     ])
-    , add_item_view : GGRC.mustache_path + "/directives/tree_add_item.mustache"
+    , add_item_view : GGRC.mustache_path + "/snapshots/tree_add_item.mustache"
     }
 
   , model : function(params) {

@@ -2,17 +2,16 @@
     Copyright (C) 2017 Google Inc.
     Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
 }}
-<div class="simple-modal {{extraCssClass}} {{modalCls}}">
-    <div class="modal-header">
-        <h4>{{modalTitle}}</h4>
-        <a class="modal-dismiss" can-click="hide">
-            <i class="fa fa-times black"></i>
-        </a>
-    </div>
-    <div class="modal-body">
-      {{#state.open}}
-          <content></content>
-      {{/state.open}}
+{{#state.open}}
+<div class="simple-modal__overlay">
+    <div class="simple-modal {{extraCssClass}}">
+        <div class="simple-modal__header flex-box flex-row">
+            <div class="simple-modal__header-text flex-size-1">{{modalTitle}}</div>
+            <button class="btn btn-small btn-icon" can-click="hide">
+                <i class="fa fa-times black"></i>
+            </button>
+        </div>
+        <content></content>
     </div>
 </div>
-<div class="simple-modal__overlay {{modalOverlayCls}}"></div>
+{{/state.open}}

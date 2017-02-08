@@ -3,63 +3,59 @@
  * Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
  */
 
+$simple-modal-header-height: 42px;
+$grid-data-toolbar-height: 42px;
+$grid-data-header-height: 66px;
+
 .simple-modal__overlay {
   position: fixed;
-  width: 100%;
-  height: 100%;
-  opacity: 0;
-  background: rgba(255, 255, 255, 0.6);
+  background: rgba(255, 255, 255, 0.65);
   top: 0;
   left: 0;
-  z-index: -2;
-
-  &.simple-modal__overlay-open {
-    opacity: 1;
-    z-index: 3299;
-    transition: opacity 0.2s ease;
-  }
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  z-index: zIndex(simple-model-overlay);
 }
 
 .simple-modal {
+  border-radius: 2px;
   box-sizing: border-box;
   width: auto;
-  max-width: 700px;
-  min-width: 400px;
-  position: fixed;
-  z-index: -1;
-  opacity: 0;
-  top: 0;
-  left: 0;
+  max-width: 75%;
+  min-width: 33%;
   margin: 0;
   border: 0;
-  background: transparent;
+  background: $white;
   box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
+
   /* Specific Styles for Prior Responses Modal Window */
   &.related-assessments {
-    max-width: 932px;
+    width: 85%;
+    max-width: 85%;
+    height: 85%;
 
-    .modal-body {
+    .simple-modal__body {
       overflow: hidden;
       max-height: none;
-      height: 500px;
+      height: calc(100% - #{$simple-modal-header-height});
+    }
+
+    .grid-data-header {
+      box-sizing: border-box;
+      height: $grid-data-header-height;
     }
     .grid-data-body {
       font-size: 13px;
-      width: 900px;
-      max-height: 380px;
+      height: calc(100% - #{$grid-data-toolbar-height} - #{$grid-data-header-height});
       box-sizing: border-box;
       overflow: auto;
     }
   }
 
-  &.simple-modal-open {
-    opacity: 1;
-    z-index: 3300;
-    border-radius: 6px;
-    transition: opacity 0.2s ease;
-  }
-
-  .modal-body {
+  .simple-modal__body {
     box-sizing: border-box;
     padding: 16px;
     overflow: auto;
@@ -67,42 +63,32 @@
     margin: 0;
   }
 
-  .modal-header {
+  .simple-modal__header {
     background: $white;
-    border-radius: 2px 2px 0 0;
     box-sizing: border-box;
-    min-height: 50px;
-    padding: 16px;
+    height: $simple-modal-header-height;
+    padding: 8px;
     position: relative;
     margin: 0;
     border-bottom: 1px solid $border-color;
+    align-items: center;
 
-    .modal-dismiss {
-      margin: 0;
-      padding: 0;
-      position: absolute;
-      right: 16px;
-      top: 16px;
-      cursor: pointer;
-      opacity: .3;
-
-      &:hover{
-        opacity: 1;
-      }
+    .simple-modal__header-text {
+      padding: 0 8px;
+      line-height: 26px;
+      font-size: 16px;
+      font-weight: normal;
+      color: $infoWidgetHeader;
     }
   }
 
-  .modal-footer {
+  .simple-modal__footer {
     border-top: 1px solid $border-color;
     box-sizing: border-box;
-    padding: 16px;
+    padding: 8px 16px;
     margin: 0;
+    overflow: hidden;
     background: $white;
-    border-radius: 0 0 2px 2px;
-
-    .confirm-buttons{
-      cursor: pointer;
-    }
   }
 }
 

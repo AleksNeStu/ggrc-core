@@ -85,40 +85,19 @@
   {{/if}}
     <search-toolbar class="flex-box search-toolbar flex-box-multi"></search-toolbar>
 </div>
-{{#if mapper.useSnapshots}}
-    <snapshot-loader
-            class="snapshot-list"
-            base-instance="mapper.parentInstance"
-            is-loading="mapper.is_loading"
-            object="mapper.object"
-            mapper="mapper"
-            type="mapper.type"
-            selected="mapper.selected"
-            contact="mapper.contact"
-            term="mapper.term"
-            scope-id="{{mapper.snapshot_scope_id}}"
-            scope-type="{{mapper.snapshot_scope_type}}">
-    </snapshot-loader>
-{{else}}
-    <mapper-results
-            is-loading="mapper.is_loading"
-            object="mapper.object"
-            entries="mapper.entries"
-            options="mapper.options"
-            page_loading="mapper.page_loading"
-            mapper="mapper"
-            types="mapper.types"
-            type="mapper.type"
-            selected="mapper.selected"
-            contact="mapper.contact"
-            term="mapper.term"
-            options="mapper.options"
-            items-per-page="20"
-            is_snapshotable="mapper.is_snapshotable"
-            snapshot_scope_id="{{mapper.snapshot_scope_id}}"
-            snapshot_scope_type="{{mapper.snapshot_scope_type}}">
-    </mapper-results>
-{{/if}}
+  <mapper-results
+    class="{{#if mapper.useSnapshots}}snapshot-list{{/if}}"
+    base-instance="mapper.parentInstance"
+    is-loading="mapper.is_loading"
+    object="mapper.object"
+    mapper="mapper"
+    type="mapper.type"
+    selected="mapper.selected"
+    contact="mapper.contact"
+    term="mapper.term"
+    scope-id="{{mapper.snapshot_scope_id}}"
+    scope-type="{{mapper.snapshot_scope_type}}">
+  </mapper-results>
 <div class="modal-footer">
   {{^if mapper.search_only}}
       <div class="row-fluid">

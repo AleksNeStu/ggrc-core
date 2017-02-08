@@ -18,20 +18,21 @@
         can.batch.start();
         this.attr('modal', {
           content: {
+            fields: ['comment'],
             value: this.attr('value'),
             title: this.attr('def.title'),
             type: this.attr('type')
           },
           caIds: {
             defId: this.attr('def.id'),
-            valueId: parseInt(this.attr('valueId'), 10)
+            valueId: this.attr('valueId')
           },
-          modalTitleText: 'Add comment',
-          fields: ['comment']
+          modalTitle: 'Add comment',
+          state: {}
         });
         can.batch.stop();
 
-        this.attr('modal.open', true);
+        this.attr('modal.state.open', true);
       }
     },
     events: {

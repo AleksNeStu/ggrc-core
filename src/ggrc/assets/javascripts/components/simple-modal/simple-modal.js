@@ -8,64 +8,28 @@
 
   var tpl = can.view(GGRC.mustache_path +
     '/components/simple-modal/simple-modal.mustache');
-  var baseCls = 'simple-modal';
-
-  function recalculatePosition(el) {
-    var pos = el[0].getBoundingClientRect();
-    var top = Math
-      .floor(window.document.body.scrollHeight / 2 - pos.height / 2);
-    var left = Math
-      .floor(window.document.body.scrollWidth / 2 - pos.width / 2);
-
-    return {top: top, left: left};
-  }
-
+  /**
+   * Simple Modal Component is a general abstraction to visualize
+   * modal and pop-ups with overlay.
+   * Simple Modal can be initialized in any part of the HTML.
+   * Simple Modal provides only logic less basic markup. All business logic should be placed on the level of inner components.
+   * To simplify styling additional helper CSS classes were created: 'simple-modal__footer', 'simple-modal__body' and 'simple-modal__header'
+   */
   can.Component.extend({
     tag: 'simple-modal',
     template: tpl,
-    scope: {
+    viewModel: {
       extraCssClass: '@',
       instance: null,
-      modalEl: null,
-      modalTitle: '@',
+      modalTitle: '',
       state: {
         open: false
       },
-      modalCls: function () {
-        return this.attr('state.open') ? baseCls + '-open' : '';
-      },
-      modalOverlayCls: function () {
-        return this.attr('state.open') ? baseCls + '__overlay-open' : '';
-      },
-      hide: function hide() {
+      hide: function () {
         this.attr('state.open', false);
       },
       show: function () {
         this.attr('state.open', true);
-      },
-      toggle: function (isOpen) {
-        this.setPosition(isOpen);
-      },
-      setPosition: function (isOpen) {
-        var modal = this.attr('modalEl');
-        if (isOpen && modal) {
-          modal.offset(recalculatePosition(modal));
-        }
-      }
-    },
-    events: {
-      inserted: function (el) {
-        var modal = el.find('.' + baseCls);
-        modal.appendTo('body');
-        this.scope.attr('modalEl', modal);
-        el.find('.' + baseCls + '__overlay').appendTo('body');
-      },
-      '{scope.state} open': function (scope, ev, val) {
-        this.scope.toggle(val);
-      },
-      '{window} resize': function () {
-        var isOpen = this.scope.attr('state.open');
-        this.scope.setPosition(isOpen);
       }
     }
   });

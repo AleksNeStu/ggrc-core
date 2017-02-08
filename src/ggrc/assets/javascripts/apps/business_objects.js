@@ -299,7 +299,7 @@
             draw_children: true,
             show_view: path + '/objectives/tree.mustache',
             footer_view: path + '/base_objects/tree_footer.mustache',
-            add_item_view: path + '/objectives/tree_add_item.mustache'
+            add_item_view: path + '/snapshots/tree_add_item.mustache'
           }
         },
         controls: {
@@ -309,7 +309,7 @@
             draw_children: true,
             show_view: path + '/controls/tree.mustache',
             footer_view: path + '/base_objects/tree_footer.mustache',
-            add_item_view: path + '/controls/tree_add_item.mustache'
+            add_item_view: path + '/snapshots/tree_add_item.mustache'
           }
         },
         business_objects: {
@@ -419,7 +419,7 @@
             fetch_post_process: sort_sections,
             show_view: path + '/directives/tree.mustache',
             footer_view: path + '/base_objects/tree_footer.mustache',
-            add_item_view: path + '/directives/tree_add_item.mustache'
+            add_item_view: path + '/snapshots/tree_add_item.mustache'
           },
           Contract: {
             mapping: 'contracts',
@@ -436,7 +436,7 @@
             fetch_post_process: sort_sections,
             show_view: path + '/directives/tree.mustache',
             footer_view: path + '/base_objects/tree_footer.mustache',
-            add_item_view: path + '/directives/tree_add_item.mustache'
+            add_item_view: path + '/snapshots/tree_add_item.mustache'
           },
           Standard: {
             mapping: 'standards',
@@ -445,7 +445,7 @@
             fetch_post_process: sort_sections,
             show_view: path + '/directives/tree.mustache',
             footer_view: path + '/base_objects/tree_footer.mustache',
-            add_item_view: path + '/directives/tree_add_item.mustache'
+            add_item_view: path + '/snapshots/tree_add_item.mustache'
           },
           Control: {
             mapping: 'controls',

@@ -275,6 +275,11 @@ class Timeboxed(object):
       "end_date": "Stop Date",
   }
 
+  _fulltext_attrs = [
+      'start_date',
+      'end_date'
+  ]
+
 
 class Stateful(object):
 
@@ -691,7 +696,7 @@ class TestPlanned(object):
   _publish_attrs = ['test_plan']
   _fulltext_attrs = ['test_plan']
   _sanitize_html = ['test_plan']
-  _aliases = {"test_plan": "Test Plan"}
+  _aliases = {"test_plan": "Evidence Collection Guidance"}
 
 
 __all__ = [

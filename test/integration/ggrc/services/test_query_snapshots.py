@@ -179,7 +179,7 @@ class TestAuditSnapshotQueries(TestCase):
                         "right": {
                             "left": "date cad",
                             "op": {"name": ">"},
-                            "right": "2016-11-05",  # 2 matches
+                            "right": "11/05/2016",  # 2 matches
                         },
                     },
                 },

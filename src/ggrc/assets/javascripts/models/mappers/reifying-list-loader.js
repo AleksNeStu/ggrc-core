@@ -13,7 +13,7 @@
       else
         this.source = source;
     },
-    insert_from_source_binding: function (binding, results, index) {
+    insert_from_source_binding: function (binding, results) {
       var self = this;
       var refreshQueue = new RefreshQueue();
       var newResults = [];

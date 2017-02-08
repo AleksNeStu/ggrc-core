@@ -5,7 +5,7 @@
 
 .pin-content,
 .info-pin {
-  @include box-shadow(0 0 5px rgba(0,0,0, 0.3));
+  box-shadow: 0 0 5px rgba(0,0,0, 0.3);
   position: fixed;
   bottom: 40px;
   left: 27px;
@@ -15,15 +15,15 @@
   overflow: auto;
 
   .info {
-    @include box-shadow(none);
+    box-shadow: none;
     padding: 15px 25px 20px;
     .small-info {
       i {
-        @include opacity(.25);
-        @include transition(opacity 0.2s ease);
+        opacity: .25;
+        transition: opacity 0.2s ease;
         cursor: pointer;
         &:hover {
-          @include opacity(1);
+          opacity: 1;
         }
       }
     }
@@ -52,10 +52,12 @@
   info-pin-buttons {
     position: fixed;
     right: 47px;
-    z-index: zIndex(details-wrap);
     width: 100px;
-    margin-top: -15px !important;
-    padding-top: 5px;
+    z-index: zIndex(info-pin-buttons);
+
+    &.details-wrap {
+      margin-top: -8px;
+    }
   }
 }
 

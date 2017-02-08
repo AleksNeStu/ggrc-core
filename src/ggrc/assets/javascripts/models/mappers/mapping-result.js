@@ -19,7 +19,7 @@
    *  For CrossListLoader, the mappings are (`result`, `binding`), where
    *    `binding` is the "remote binding" which
    */
-  can.Construct('GGRC.ListLoaders.MappingResult', {}, {
+  can.Map.extend('GGRC.ListLoaders.MappingResult', {}, {
     init: function (instance, mappings, binding) {
       if (!mappings) {
         // Assume item was passed in as an object
@@ -37,20 +37,12 @@
     //  - Ensures that every instance in `mappings` is an instance of
     //    `MappingResult`.
     _make_mappings: function (mappings) {
-      var i;
-      var mapping;
-
-      if (!mappings)
-        mappings = [];
-
-      for (i = 0; i < mappings.length; i++) {
-        mapping = mappings[i];
+      mappings = mappings || [];
+      return mappings.map(function (mapping) {
         if (!(mapping instanceof GGRC.ListLoaders.MappingResult))
           mapping = new GGRC.ListLoaders.MappingResult(mapping);
-        mappings[i] = mapping;
-      }
-
-      return mappings;
+        return mapping;
+      });
     },
 
     //  `observe_trigger`, `watch_observe_trigger`, `trigger_observe_trigger`
@@ -62,7 +54,7 @@
     //    `mappings_compute` depend on.
     observe_trigger: function () {
       if (!this._observe_trigger)
-        this._observe_trigger = new can.Observe({change_count: 1});
+        this._observe_trigger = new can.Map({change_count: 1});
       return this._observe_trigger;
     },
 

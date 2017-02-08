@@ -10,7 +10,7 @@
 
   can.Component.extend({
     tag: 'related-objects',
-    scope: {
+    viewModel: {
       isLoading: false,
       baseInstance: null,
       relatedObjects: [],
@@ -55,7 +55,7 @@
         this.attr('paging.count', count);
       },
       loadRelatedItems: function () {
-        var dfd = new can.Deferred();
+        var dfd = can.Deferred();
         var params = this.getParams();
         this.attr('isLoading', true);
         GGRC.Utils.QueryAPI
@@ -85,23 +85,23 @@
       }
     },
     init: function () {
-      this.scope.setRelatedItems();
+      this.viewModel.setRelatedItems();
     },
     events: {
-      '{scope.paging} current': function () {
-        this.scope.setRelatedItems();
+      '{viewModel.paging} current': function () {
+        this.viewModel.setRelatedItems();
       },
-      '{scope.paging} pageSize': function () {
-        this.scope.setRelatedItems();
+      '{viewModel.paging} pageSize': function () {
+        this.viewModel.setRelatedItems();
       },
-      '{scope.baseInstance} related_destinations': function () {
-        if (!this.scope.attr('isLoading')) {
-          this.scope.setRelatedItems();
+      '{viewModel.baseInstance} related_destinations': function () {
+        if (!this.viewModel.attr('isLoading')) {
+          this.viewModel.setRelatedItems();
         }
       },
-      '{scope.baseInstance} related_sources': function () {
-        if (!this.scope.attr('isLoading')) {
-          this.scope.setRelatedItems();
+      '{viewModel.baseInstance} related_sources': function () {
+        if (!this.viewModel.attr('isLoading')) {
+          this.viewModel.setRelatedItems();
         }
       }
     }

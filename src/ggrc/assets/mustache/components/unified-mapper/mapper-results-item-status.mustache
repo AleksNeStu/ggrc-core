@@ -1,0 +1,9 @@
+{{#if_instance_of itemData "Cycle|CycleTaskGroup|CycleTaskGroupObjectTask"}}
+  <span class="status-label" {{addclass "status-" itemData.status}} {{addclass "status-" itemData.overdue}}></span>
+{{else}}
+  {{#if itemData.workflow_state}}
+    <span class="status-label" {{addclass "status-" itemData.workflow_state}}></span>
+  {{else}}
+    <span class="status-label"></span>
+  {{/if}}
+{{/if_instance_of}}

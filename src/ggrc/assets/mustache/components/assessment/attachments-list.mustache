@@ -4,10 +4,12 @@
 }}
 
 <h6>Evidence</h6>
-  {{#is_allowed 'update' instance context='for'}}
-    {{{render_hooks "Request.gdrive_evidence_storage"}}}
-    <div class="attach-file-info">(you can upload up to 10 files in a single batch)</div>
-  {{/is_allowed}}
+  {{#if_mapping_ready "audits" instance}}
+    {{#is_allowed 'update' instance context='for'}}
+      {{{render_hooks "Request.gdrive_evidence_storage"}}}
+      <div class="attach-file-info">(you can upload up to 10 files in a single batch)</div>
+    {{/is_allowed}}
+  {{/if_mapping_ready}}
 {{^if_null instance._mandatory_attachment_msg}}
   <div class="alert alert-info alert-dismissible" role="alert">
     {{instance._mandatory_attachment_msg}}

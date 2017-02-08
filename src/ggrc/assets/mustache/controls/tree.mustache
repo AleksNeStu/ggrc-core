@@ -120,6 +120,11 @@
                                   {{/items}}
                                 {{/using}}
                               {{/case}}
+                              {{#case 'last_assessment_date'}}
+                                  <last-assessment-date control-id="instance.id">
+                                    {{localize_date lastAssessmentDate}}
+                                  </last-assessment-date>
+                              {{/case}}
 
                               {{#default}}
                                 {{#if_helpers '\

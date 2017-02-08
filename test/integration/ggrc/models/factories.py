@@ -266,6 +266,12 @@ class ObjectDocumentFactory(ModelFactory):
     model = models.ObjectDocument
 
 
+class ObjectiveFactory(TitledFactory):
+
+  class Meta:
+    model = models.Objective
+
+
 class RegulationFactory(TitledFactory):
 
   class Meta:

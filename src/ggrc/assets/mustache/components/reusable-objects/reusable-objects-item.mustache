@@ -11,7 +11,7 @@
       {{else}}
           <input type="checkbox"
                  can-value="isChecked"
-            {{#isSaving}}disabled{{/isSaving}}/>
+            {{#if isSaving}}disabled{{/if}}/>
       {{/if}}
     {{/is_allowed}}
   {{/is_allowed}}

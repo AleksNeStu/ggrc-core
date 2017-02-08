@@ -32,6 +32,8 @@
   background: #fafafa;
 
   > * {
+    display: flex;
+    align-items: center;
     overflow: hidden;
     padding: 0 8px;
     box-sizing: border-box;
@@ -39,7 +41,7 @@
     max-width: 100%;
     text-overflow: ellipsis;
     font-size: 11px;
-    line-height: 24px;
+    line-height: 16px;
     font-weight: bold;
   }
 }
@@ -104,11 +106,18 @@
       }
     }
   }
+  > object-list {
+    > object-list-item {
+      &:nth-child(2n) {
+        background: #eee;
+      }
+    }
+  }
 }
 
 // Extra style for the first index/order column
 .grid-data-item-index {
-  width: 100px;
+  width: 104px;
 }
 
 .grid-data-row {

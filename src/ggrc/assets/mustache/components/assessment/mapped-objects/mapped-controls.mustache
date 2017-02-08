@@ -21,8 +21,12 @@
   {{/is_allowed}}
 </collapsible-panel-header>
 <collapsible-panel-body expanded="expanded" class="collapsible-panel-body">
-    <mapped-objects mapping="{{mapping}}" selected-item="selectedItem" parent-instance="instance" filter="filter" mapped-snapshots="mappedSnapshots">
-       {{> '/static/mustache/components/assessment/mapped-objects/mapped-controls-item.mustache'}}
+    <mapped-objects selected-item="selectedItem" parent-instance="instance" filter="filter" mapped-snapshots="mappedSnapshots">
+       <business-object-list-item instance="instance">
+          <div class="description">
+            <read-more text="itemData.description" max-text-length="90"></read-more>
+          </div>
+       </business-object-list-item>
     </mapped-objects>
     <object-popover class="object-popover" item="selectedItem">
         <assessment-mapped-controls-popover class="assessment-mapped-controls-popover" item="item" expanded="expanded"></assessment-mapped-controls-popover>

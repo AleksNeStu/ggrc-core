@@ -4,7 +4,7 @@
 */
 
 describe("mappers", function() {
-  
+
   var LL;
   beforeEach(function() {
     LL = GGRC.ListLoaders;
@@ -560,7 +560,7 @@ describe("mappers", function() {
         ll.remove_instance(binding, matching_instance, 'b');
         expect(binding.list).toEqual([]);
       });
-      
+
       describe("with mappings defined", function() {
 
         it("deletes only if all mappings are accounted for in instance", function() {
@@ -720,28 +720,33 @@ describe("mappers", function() {
 
     });
 
-    describe("#insert_from_source_binding", function() {
-      beforeEach(function() {
-        spyOn(RefreshQueue.prototype, "trigger").and.callFake(function() {
+    describe('#insert_from_source_binding', function () {
+      beforeEach(function () {
+        spyOn(RefreshQueue.prototype, 'trigger').and.callFake(function () {
           return $.when(this.objects);
         });
       });
 
-      it("makes a new binding referencing the instance and old mappings", function() {
-        var rll = new LL.ReifyingListLoader(),
-            binding = {},
-            results = [rll.make_result('a', [])],
-            expected = [rll.make_result(results[0].instance, results, {})];
-        spyOn(rll, "insert_results");
-        rll.insert_from_source_binding(binding, results);
-        expect(rll.insert_results).toHaveBeenCalledWith(binding, expected);
+      it('makes a new binding referencing the instance and old mappings', function () {
+        var rll = new LL.ReifyingListLoader();
+        var binding = {};
+        var result = rll.make_result({testField: 1}, []);
+        spyOn(rll, 'insert_results');
+
+        rll.insert_from_source_binding(binding, [result]);
+        expect(rll.insert_results).toHaveBeenCalled();
+        expect(rll.insert_results.calls.argsFor(0)[1][0])
+          .toEqual(jasmine.objectContaining({testField: 1}));
+        expect(rll.insert_results.calls.argsFor(1)).toEqual([]);
       });
     });
 
-    describe("#init_listeners", function() {
+    describe('#init_listeners', function () {
+      var rll;
+      var binding;
+      var source_binding;
 
-      var rll, binding, source_binding;
-      beforeEach(function() {
+      beforeEach(function () {
         source_binding = new LL.ListBinding();
         binding = new LL.ListBinding();
       });

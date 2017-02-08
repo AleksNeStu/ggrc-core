@@ -24,6 +24,8 @@ class GrcEncoder(json.JSONEncoder):
 
   def default(self, obj):
     if isinstance(obj, datetime.datetime):
+      if not obj.time():
+        return obj.date().isoformat()
       return obj.isoformat()
     elif isinstance(obj, datetime.date):
       return obj.isoformat()

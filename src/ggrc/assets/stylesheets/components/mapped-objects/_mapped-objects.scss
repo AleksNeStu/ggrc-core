@@ -43,13 +43,12 @@ assessment-mapped-controls, assessment-mapped-related-information {
   line-height: 24px;
   box-sizing: border-box;
   padding: 0 8px 0 4px;
-  margin: 0;
+  margin: 2px 0;
   font-size: 12px;
   color: $text;
   cursor: pointer;
 
   &.mapped-snapshot-item {
-    margin: 2px 0;
     background: $snapshotBgnd;
     border: 1px solid $shapshotBorder;
     border-radius: 2px
@@ -57,18 +56,25 @@ assessment-mapped-controls, assessment-mapped-related-information {
 
   .title {
     color: $middleText;
-    padding: 0 16px 0 0;
+    padding: 0 16px 0 24px;
+    position: relative;
+
+    .fa {
+      position: absolute;
+      left: 0;
+      top: 0;
+    }
   }
 
   .title-bold {
     font-weight: bold;
   }
 
-    .description {
-      width: 100%;
-      padding: 0 8px 0 28px;
-      box-sizing: border-box;
-    }
+  .description {
+    width: 100%;
+    padding: 0 8px 0 28px;
+    box-sizing: border-box;
+  }
 
   .fa {
     font-size: 14px;
@@ -81,3 +87,47 @@ assessment-mapped-controls, assessment-mapped-related-information {
   }
 }
 
+.document-object-item {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  line-height: 20px;
+  padding: 0;
+  margin: 0 0 8px;
+
+  &.document-object-item__with-icon {
+    position: relative;
+    padding-left: 32px;
+
+    .fa {
+      position: absolute;
+      display: flex;
+      left: 0;
+      top: 4px;
+      width: 32px;
+      height: 20px;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+    }
+  }
+
+  .document-object-item__body {
+    flex: 0 1;
+
+    .link {
+      line-height: 20px;
+      display: block;
+      max-width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .date {
+      color: #999;
+      line-height: 16px;
+      font-size: 11px;
+      font-style: italic;
+    }
+  }
+}

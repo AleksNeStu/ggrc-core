@@ -14,8 +14,10 @@
     </a>
     {{/instance.snapshot}}
     {{/openIsHidden}}
+    {{^viewIsHidden}}
     <a href="#" class="btn btn-mini btn-outline" can-click="maximizeObject">
       View
     </a>
+    {{/viewIsHidden}}
   {{/is_allowed}}
 {{/if}}

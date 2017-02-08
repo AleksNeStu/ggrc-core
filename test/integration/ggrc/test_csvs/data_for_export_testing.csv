@@ -221,11 +221,11 @@ Urbon.S@example.com",au-12,,,,,,,,,,,,,
 Urbon.S@example.com",au-13,,,,,,,,,,,,,
 ,,,,,,,,,,,,,,,,,,,,,,,,
 Object Type,,,,,,,,,,,,,,,,,,,,,,,,
-assessment,Title,Description,Notes,Test Plan,Audit,Primary Contact,Secondary Contact,Assessment URL,Reference URL,Code,Effective Date,Stop Date,State,Conclusion: Design,Conclusion: Operation,,,,,,,,,
+assessment,Title,Description,Notes,Evidence Collection Guidance,Audit,Primary Contact,Secondary Contact,Assessment URL,Reference URL,Code,Effective Date,Stop Date,State,Conclusion: Design,Conclusion: Operation,,,,,,,,,
 ,,,,,,,,,,,,,,,,,,,,,,,,
 ,,,,,,,,,,,,,,,,,,,,,,,,
 Object Type,,,,,,,,,,,,,,,,,,,,,,,,
-issue,Title,Description,Notes,Test Plan,Owner,Primary Contact,Secondary Contact,Issue URL,Reference URL,Code,Effective Date,Stop Date,State,,,,,,,,,,,
+issue,Title,Description,Notes,Evidence Collection Guidance,Owner,Primary Contact,Secondary Contact,Issue URL,Reference URL,Code,Effective Date,Stop Date,State,,,,,,,,,,,
 ,Corporate ipsum - 1.2.5,"Collaboratively administrate empowered markets via plug-and-play networks. Dynamically procrastinate B2C users after installed base benefits. Dramatically visualize customer directed convergence without revolutionary ROI.<br>
 <br>
 Efficiently unleash cross-media information without cross-media value. Quickly maximize timely deliverables for real-time schemas. Dramatically maintain clicks-and-mortar solutions without functional solutions.<br>
@@ -604,7 +604,7 @@ clause,Title,Text of Clause,Notes,Owner,Primary Contact,Secondary Contact,Clause
 ,,,,,,,,,,,,,,,,,,,,,,,,
 ,,,,,,,,,,,,,,,,,,,,,,,,
 Object Type,,,,,,,,,,,,,,,,,,,,,,,,
-control,Title,Description,Test Plan,Notes,Owner,Primary Contact,Secondary Contact,Control URL,Reference URL,Code,Kind/Nature,Fraud Related,Significance,Type/Means,Effective Date,Stop Date,Frequency,Assertions,Categories,Principal Assessor,Secondary Assessor,State,map:standard,map:clause
+control,Title,Description,Evidence Collection Guidance,Notes,Owner,Primary Contact,Secondary Contact,Control URL,Reference URL,Code,Kind/Nature,Fraud Related,Significance,Type/Means,Effective Date,Stop Date,Frequency,Assertions,Categories,Principal Assessor,Secondary Assessor,State,map:standard,map:clause
 ,Startupsum 115,Series A financing success channels.<br> Ecosystem conversion rockstar value proposition bandwidth ,success 111,,smotko@example.com,smotko@example.com,smotko@example.com,,http://i.imgur.com/aP8UU5I.jpg,control-1,,,,Technical,,,,,,,,Draft,"standard-1
 standard-5","clause-1
 clause-2"

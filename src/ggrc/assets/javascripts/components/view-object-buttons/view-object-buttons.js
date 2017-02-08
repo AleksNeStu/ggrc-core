@@ -15,6 +15,7 @@
     scope: {
       instance: null,
       openIsHidden: false,
+      viewIsHidden: false,
       maximizeObject: function (scope, el, ev) {
         var tree = el.closest('.cms_controllers_tree_view_node');
         var node = tree.control();

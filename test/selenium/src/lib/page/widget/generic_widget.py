@@ -26,14 +26,16 @@ class Widget(base.Widget):
   def __init__(self, driver):
     # wait for the elements to load
     self.member_count = None
-    self.label_filter = base.Label(driver, self._locator_filter.TITLE)
-    self.button_filter_question = base.Button(
-        driver, self._locator_filter.BUTTON_HELP)
     self.filter = base.Filter(
-        driver,
-        self._locator_filter.TEXTFIELD,
-        self._locator_filter.BUTTON_SUBMIT,
-        self._locator_filter.BUTTON_RESET)
+        driver, text_box=self._locator_filter.TEXTFIELD_TO_FILTER,
+        bt_filter=self._locator_filter.BUTTON_FILTER,
+        bt_reset=self._locator_filter.BUTTON_RESET,
+        bt_help=self._locator_filter.BUTTON_HELP,
+        ch_active=self._locator_filter.ACTIVE_CHECKBOX,
+        ch_draft=self._locator_filter.DRAFT_CHECKBOX,
+        ch_deprecated=self._locator_filter.CHECKBOX_DEPRECATED
+    )
+    self.filter.show_all_objs()
 
     super(Widget, self).__init__(driver)
     self._set_members_listed()
@@ -65,9 +67,9 @@ class Widget(base.Widget):
       selenium_utils.get_when_invisible(
           self._driver,
           locator.ObjectWidget.LOADING)
-      selenium_utils.get_when_visible(
-          self._driver,
-          locator.ObjectWidget.MEMBERS_TITLE_LIST)
+      # selenium_utils.get_when_visible(
+      #     self._driver,
+      #     locator.ObjectWidget.MEMBERS_TITLE_LIST)
 
       self.members_listed = self._driver.find_elements(
           *locator.ObjectWidget.MEMBERS_TITLE_LIST)
@@ -85,9 +87,9 @@ class Widget(base.Widget):
     Checks that in case of empty table,
     counter is not loaded on the filter pane
     """
-    selenium_utils.get_when_invisible(
+    selenium_utils.wait_for_element_text(
         self._driver,
-        locator.BaseWidgetGeneric.FILTER_PANE_COUNTER)
+        locator.BaseWidgetGeneric.FILTER_PANE_COUNTER, "No records")
 
   def get_items_count(self):
     """Gets elements' count from counter on the filter pane """

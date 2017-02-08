@@ -218,11 +218,14 @@ class TestComprehensiveSheets(TestCase):
     incomplete.
     """
     response = self.import_file("import_with_all_warnings_and_errors.csv")
+    duplicates = "title, evidence collection guidance, notes"
+
     expected_errors = {
         "Control": {
             "block_errors": {
                 errors.DUPLICATE_COLUMN.format(
-                    line=1, duplicates="title, notes, test plan"),
+                    line=1,
+                    duplicates=duplicates),
             },
         },
         "Program": {

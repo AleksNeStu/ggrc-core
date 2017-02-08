@@ -109,20 +109,44 @@ class QueryHelper(object):
     for object_query in self.query:
       object_name = object_query["object_name"]
       object_class = self.object_map[object_name]
-      aliases = AttributeInfo.gather_aliases(object_class)
-      self.attr_name_map[object_class] = {}
+      tgt_class = object_class
+      if object_name == "Snapshot":
+        child_type = self._get_snapshot_child_type(object_query)
+        tgt_class = getattr(models.all_models, child_type, object_class)
+      aliases = AttributeInfo.gather_aliases(tgt_class)
+      self.attr_name_map[tgt_class] = {}
       for key, value in aliases.items():
         filter_by = None
         if isinstance(value, dict):
           filter_name = value.get("filter_by", None)
           if filter_name is not None:
-            filter_by = getattr(object_class, filter_name, None)
+            filter_by = getattr(tgt_class, filter_name, None)
           name = value["display_name"]
         else:
           name = value
         if name:
-          self.attr_name_map[object_class][name.lower()] = (key.lower(),
-                                                            filter_by)
+          self.attr_name_map[tgt_class][name.lower()] = (key.lower(),
+                                                         filter_by)
+
+  def _get_snapshot_child_type(self, object_query):
+    """Return child_type for snapshot from a query"""
+    return self._find_child_type(
+        object_query.get("filters", {}).get("expression"), ""
+    )
+
+  def _find_child_type(self, expr, child_type):
+    """Search for child_type recursively down the query expression."""
+    if child_type:
+      return child_type
+    left, oper, right = expr.get("left"), expr.get("op"), expr.get("right")
+    if oper.get("name") == "=":
+      if left == "child_type" and isinstance(right, basestring):
+        child_type = right
+    else:
+      for node in (left, right):
+        if isinstance(node, dict):
+          child_type = self._find_child_type(node, child_type)
+    return child_type
 
   def _clean_query(self, query):
     """ sanitize the query object """
@@ -281,6 +305,11 @@ class QueryHelper(object):
     object_class = self.object_map[object_name]
     query = db.session.query(object_class.id)
 
+    tgt_class = object_class
+    if object_name == "Snapshot":
+      child_type = self._get_snapshot_child_type(object_query)
+      tgt_class = getattr(models.all_models, child_type, object_class)
+
     requested_permissions = object_query.get("permissions", "read")
     with benchmark("Get permissions: _get_ids > _get_type_query"):
       type_query = self._get_type_query(object_class, requested_permissions)
@@ -290,6 +319,7 @@ class QueryHelper(object):
       filter_expression = self._build_expression(
           expression,
           object_class,
+          tgt_class
       )
       if filter_expression is not None:
         query = query.filter(filter_expression)
@@ -513,7 +543,7 @@ class QueryHelper(object):
 
     return query.order_by(*orders)
 
-  def _build_expression(self, exp, object_class):
+  def _build_expression(self, exp, object_class, tgt_class):
     """Make an SQLAlchemy filtering expression from exp expression tree."""
     if "op" not in exp:
       return None
@@ -553,16 +583,16 @@ class QueryHelper(object):
 
       if not isinstance(o_key, basestring):
         return [value]
-      key, custom_filter = (self.attr_name_map[object_class]
-                                .get(o_key, (o_key, None)))
+      key, custom_filter = (self.attr_name_map[tgt_class].get(o_key,
+                                                              (o_key, None)))
 
       date_attr = date_cad = non_date_cad = False
       try:
-        attr_type = getattr(object_class, key).property.columns[0].type
+        attr_type = getattr(tgt_class, key).property.columns[0].type
       except AttributeError:
         date_cad, non_date_cad = has_date_or_non_date_cad(
             title=key,
-            definition_type=object_class.__name__,
+            definition_type=tgt_class.__name__,
         )
         if not (date_cad or non_date_cad) and not custom_filter:
           # TODO: this logic fails on CA search for Snapshots
@@ -727,7 +757,7 @@ class QueryHelper(object):
       """
       key = key.lower()
       key, filter_by = self.attr_name_map[
-          object_class].get(key, (key, None))
+          tgt_class].get(key, (key, None))
       if callable(filter_by):
         return filter_by(predicate)
       else:
@@ -737,8 +767,10 @@ class QueryHelper(object):
         else:
           return default_filter_by(object_class, key, predicate)
 
-    lift_bin = lambda f: f(self._build_expression(exp["left"], object_class),
-                           self._build_expression(exp["right"], object_class))
+    lift_bin = lambda f: f(self._build_expression(exp["left"], object_class,
+                                                  tgt_class),
+                           self._build_expression(exp["right"], object_class,
+                                                  tgt_class))
 
     def text_search(text):
       """Filter by fulltext search.

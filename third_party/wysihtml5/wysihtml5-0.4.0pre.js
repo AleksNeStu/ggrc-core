@@ -9457,7 +9457,11 @@ wysihtml5.views.Textarea = wysihtml5.views.View.extend(
     autoLink:             true,
     // Object which includes parser rules to apply when html gets inserted via copy & paste
     // See parser_rules/*.js for examples
-    parserRules:          { tags: { br: {}, span: {}, div: {}, p: {} }, classes: {} },
+    parserRules:          {
+                            tags: { br: {}, span: {}, div: {}, p: {} },
+                            classes: {},
+                            cleanUp: true
+                          },
     // Parser method to use when the user inserts content via copy & paste
     parser:               wysihtml5.dom.parse,
     // Class name which should be set on the contentEditable element in the created sandbox iframe, can be styled via the 'stylesheets' option
@@ -9562,7 +9566,10 @@ wysihtml5.views.Textarea = wysihtml5.views.View.extend(
     },
     
     parse: function(htmlOrElement) {
-      var returnValue = this.config.parser(htmlOrElement, this.config.parserRules, this.composer.sandbox.getDocument(), true);
+      var returnValue = this.config.parser(htmlOrElement,
+                                          this.config.parserRules,
+                                          this.composer.sandbox.getDocument(),
+                                          this.config.parserRules.cleanUp);
       if (typeof(htmlOrElement) === "object") {
         wysihtml5.quirks.redraw(htmlOrElement);
       }

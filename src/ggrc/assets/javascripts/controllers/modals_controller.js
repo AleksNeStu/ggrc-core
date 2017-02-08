@@ -70,6 +70,7 @@
   }, {
     init: function () {
       var currentUser;
+      var userFetch;
 
       if (!(this.options instanceof can.Observe)) {
         this.options = new can.Observe(this.options);
@@ -77,26 +78,34 @@
 
       if (!this.element.find('.modal-body').length) {
         can.view(this.options.preload_view, {}, this.proxy('after_preload'));
-      } else {
-        // Make sure that the current user object, if it exists, is fully
-        // loaded before rendering the form, otherwise initial validation can
-        // incorrectly fail for form fields whose values rely on current user's
-        // attributes.
-        if (GGRC.current_user) {
-          currentUser = CMS.Models.Person.cache[GGRC.current_user.id].reify();
-        }
-
-        if (currentUser && !currentUser.email) {
-          // If email - a required attribute - is missing, the user object is
-          // not fully loaded and we need to force-fetch it first.
-          currentUser.refresh().then(function () {
-            this.after_preload();
-          }.bind(this));
-          return;
-        }
-
-        this.after_preload();
+        return;
       }
+
+      // Make sure that the current user object, if it exists, is fully
+      // loaded before rendering the form, otherwise initial validation can
+      // incorrectly fail for form fields whose values rely on current user's
+      // attributes.
+      currentUser = CMS.Models.Person.cache[GGRC.current_user.id];
+
+      if (currentUser) {
+        currentUser = currentUser.reify();
+      }
+
+      if (!currentUser) {
+        userFetch = CMS.Models.Person.findOne({id: GGRC.current_user.id});
+      } else if (currentUser && !currentUser.email) {
+        // If email - a required attribute - is missing, the user object is
+        // not fully loaded and we need to force-fetch it first - yes, it can
+        // actually happen that reify() returns a partially loaded object.
+        userFetch = currentUser.refresh();
+      } else {
+        // nothing to wait for
+        userFetch = new can.Deferred().resolve(currentUser);
+      }
+
+      userFetch.then(function () {
+        this.after_preload();
+      }.bind(this));
     },
 
     after_preload: function (content) {

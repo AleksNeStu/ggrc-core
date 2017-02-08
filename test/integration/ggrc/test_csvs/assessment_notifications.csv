@@ -1,5 +1,5 @@
 Object type,,,,,,,,,,,,,,,,,,,,,,
-Assessment,Code*,Audit*,Title*,Url,Evidence,Test Plan,Assessor*,Creator*,Verifier,Recipients,Send by default,Effective Date,Stop Date,Finished Date,Verified Date,State*,Primary Contact,Conclusion: Design,Conclusion: Operation,Secondary Contact,Assessment URL,Reference URL
+Assessment,Code*,Audit*,Title*,Url,Evidence,Evidence Collection Guidance,Assessor*,Creator*,Verifier,Recipients,Send by default,Effective Date,Stop Date,Finished Date,Verified Date,State*,Primary Contact,Conclusion: Design,Conclusion: Operation,Secondary Contact,Assessment URL,Reference URL
 ,A 1,Audit,No template Assessment 1,https://i.imgur.com/17h9PH3.gif,https://i.imgur.com/t41OTZH.png with a title,,user1@example.com,user2@example.com,user3@example.com,,no,,,,,in progress,,Effective,Effective,,,
 ,A 2,Audit,No template Assessment 2,,https://i.imgur.com/CWa5lKv.gif,,user1@example.com,user2@example.com,user3@example.com,"Assessor, Creator, Verifier",,,,,,in progress,,Ineffective,Needs improvement,,,
 ,A 3,Audit,No template Assessment 3,,,,user1@example.com,user2@example.com,,"Creator

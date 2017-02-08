@@ -75,6 +75,9 @@ can.Control('GGRC.Controllers.TreeFilter', {}, {
   'input[type=submit] click': function (el, ev) {
     this.apply_filter(this.$txtFilter.val());
   },
+  'input[type=checkbox] click': function (el, ev) {
+    this.apply_filter(this.$txtFilter.val());
+  },
   'input keyup': function (el, ev) {
     this.toggle_indicator(GGRC.query_parser.parse(el.val()));
 

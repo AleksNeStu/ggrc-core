@@ -3,8 +3,8 @@
   Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
 }}
 
-{{#toggle}}
+{{#if toggle}}
 <div class="spinner {{extraCssClass}}">
-  <i class="spinner-icon {{#size}}spinner-size__{{size}}{{/size}} fa fa-spinner fa-pulse" aria-hidden="true"></i>
+  <i class="spinner-icon {{#if size}}spinner-size__{{size}}{{/if}} fa fa-spinner fa-pulse" aria-hidden="true"></i>
 </div>
-{{/toggle}}
+{{/if}}

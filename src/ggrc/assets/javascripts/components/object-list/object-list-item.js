@@ -3,24 +3,22 @@
  Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
  */
 
-(function (can, GGRC) {
+(function (can) {
   'use strict';
 
   var tag = 'object-list-item';
-  var tpl = can.view(GGRC.mustache_path +
-    '/components/object-list/object-list-item.mustache');
-
   /**
    * Object List Item component
    */
-  GGRC.Components('objectsListItem', {
+  can.Component.extend({
     tag: tag,
-    template: tpl,
-    scope: {
-      index: '@',
-      selectedItem: {},
-      isSelected: function () {
-        return this.attr('selectedItem.index') === this.attr('index');
+    viewModel: {
+      instance: {},
+      isSelected: false
+    },
+    events: {
+      '{this.element} click': function (el) {
+        can.trigger(el, 'selectItem', [this.viewModel.instance]);
       }
     }
   });

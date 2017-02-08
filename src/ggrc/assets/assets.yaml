@@ -45,6 +45,7 @@ dashboard-js-files:
   - ggrc_base.js
   - plugins/ggrc_utils.js
   - plugins/utils/current-page-utils.js
+  - plugins/utils/state-utils.js
   - plugins/datepicker.js
   - plugins/can_control.js
   - plugins/wysiwyg.js
@@ -132,6 +133,8 @@ dashboard-js-files:
   - controllers/quick_form_controller.js
   - controllers/comment_controller.js
   - controllers/mapper.js
+  # Helpers
+  - helpers/mapping_helpers.js
   # Modules and Apps
   - modules/widget_descriptor.js
   - modules/widget_list.js
@@ -155,9 +158,12 @@ dashboard-js-files:
   - components/assessment/inline.js
   - components/assessment/add_comment.js
   - components/comment/comment-input.js
-  - components/comment/comment-list-helper.js
   - components/assessment/controls-toolbar/controls-toolbar.js
+  - components/object-list-item/business-object-list-item.js
+  - components/object-list-item/document-object-list-item.js
   - components/mapped-objects/mapped-objects.js
+  - components/related-objects/related-audits.js
+  - components/related-objects/related-controls-objectives.js
   - components/object-state-toolbar/object-state-toolbar.js
   - components/object-list/object-list.js
   - components/object-list/object-list-item.js
@@ -165,7 +171,6 @@ dashboard-js-files:
   - components/ca-object/ca-object.js
   - components/ca-object/ca-object-validation-icon.js
   - components/ca-object/ca-object-value-mapper.js
-  - components/ca-object/ca-object-modal.js
   - components/ca-object/ca-object-modal-content.js
   - components/related-objects/related-objects.js
   - components/reusable-objects/reusable-objects-list.js
@@ -197,9 +202,11 @@ dashboard-js-files:
   - components/assessment_attributes.js
   - components/lazy_open_close.js
   - components/object_history/object_history.js
-  - components/unified_mapper/mapper.js
-  - components/unified_mapper/mapper_results.js
-  - components/unified_mapper/mapper_checkbox.js
+  - components/unified-mapper/mapper.js
+  - components/unified-mapper/mapper-results.js
+  - components/unified-mapper/mapper-results-item.js
+  - components/unified-mapper/mapper-results-item-status.js
+  - components/unified-mapper/mapper-results-item-details.js
   - components/quick_form/quick_add.js
   - components/quick_form/quick_update.js
   - components/assessment_templates/assessment_templates.js
@@ -222,11 +229,10 @@ dashboard-js-files:
   - components/snapshotter/revisions-comparer.js
   - components/snapshotter/scope-update.js
   - components/info-pin-buttons/info-pin-buttons.js
-  - components/snapshot-loader/snapshot-loader.js
-  - components/snapshot-loader/snapshot-loader-item.js
   - components/textarea-array/textarea-array.js
   - components/object-selection/object-selection.js
   - components/object-selection/object-selection-item.js
+  - components/last-assessment-date/last-assessment-date.js
   #- d3.v2.js
   #- related_graph.js
 
@@ -236,8 +242,6 @@ app-init-files:
 
 dashboard-js-template-files:
   - components/object-state-toolbar/object-state-toolbar.mustache
-  - components/snapshot-loader/snapshot-loader.mustache
-  - components/snapshot-loader/snapshot-loader-item.mustache
   - components/object-selection/object-selection-item.mustache
   - components/search-toolbar/search-toolbar.mustache
   - components/mapping-controls/mapping-type-selector.mustache
@@ -248,10 +252,8 @@ dashboard-js-template-files:
   - components/collapsible-panel/collapsible-panel-header.mustache
   - components/assessment/controls-toolbar/controls-toolbar.mustache
   - components/assessment/mapped-objects/mapped-controls.mustache
-  - components/assessment/mapped-objects/mapped-controls-item.mustache
   - components/assessment/mapped-objects/mapped-controls-popover.mustache
   - components/assessment/mapped-objects/mapped-related-information.mustache
-  - components/assessment/mapped-objects/mapped-related-information-item.mustache
   - components/assessment/urls-list.mustache
   - components/assessment/attachments-list.mustache
   - components/assessment/custom-attributes.mustache
@@ -267,12 +269,12 @@ dashboard-js-template-files:
   - components/assessment/comment/controls.mustache
   - components/comment/comment-input.mustache
   - components/object-list/object-list.mustache
-  - components/object-list/object-list-item.mustache
   - components/object-popover/object-popover.mustache
+  - components/object-list-item/business-object-list-item.mustache
+  - components/object-list-item/document-object-list-item.mustache
   - components/mapped-objects/mapped-objects.mustache
   - components/reusable-objects/reusable-objects-item.mustache
   - components/ca-object/ca-object-validation-icon.mustache
-  - components/ca-object/ca-object-modal.mustache
   - components/ca-object/ca-object-modal-content.mustache
   - components/view-object-buttons/view-object-buttons.mustache
   - components/add-object-button/add-object-button.mustache
@@ -388,7 +390,10 @@ dashboard-js-template-files:
   - components/inline_edit/person.mustache
   - components/inline_edit/datepicker.mustache
   - components/autocomplete/autocomplete.mustache
-  - components/unified_mapper/mapper_results.mustache
+  - components/unified-mapper/mapper-results.mustache
+  - components/unified-mapper/mapper-results-item.mustache
+  - components/unified-mapper/mapper-results-item-status.mustache
+  - components/unified-mapper/mapper-results-item-details.mustache
   - components/assessment_templates/assessment_templates.mustache
   - components/dropdown/dropdown.mustache
   - components/object_history/object_history.mustache
@@ -500,14 +505,8 @@ dashboard-js-template-files:
   - standards/modal_content.mustache
   - systems/info.mustache
   - systems/modal_content.mustache
-  - systems/tree_add_item.mustache
   - base_objects/tree_footer.mustache
   - base_objects/tree_add_item.mustache
-  - controls/tree_add_item.mustache
-  - directives/tree_add_item.mustache
-  - objectives/tree_add_item.mustache
-  - sections/tree_add_item.mustache
-  - documents/tree_add_item.mustache
   - audits/modal_content.mustache
   - audits/tree.mustache
   - audits/info.mustache
@@ -552,6 +551,7 @@ dashboard-js-template-files:
   - mapper/relevant_filter.mustache
   - quick_form/confirm_buttons.mustache
   - snapshots/dropdown_menu.mustache
+  - snapshots/tree_add_item.mustache
 
 dashboard-css-files:
   - dashboard.css

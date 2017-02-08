@@ -90,7 +90,7 @@ Not Launched
 In Scope
 Not in Scope
 Deprecated",,,,MM/DD/YYYY,MM/DD/YYYY,,,,
-Assessment,code*,audit*,title*,description,Creator,Assessor,Verifier,state,test plan,primary contact,secondary contact,effective date,stop date,notes,assessment url,reference url,conclusion: design,
+Assessment,code*,audit*,title*,description,Creator,Assessor,Verifier,state,Evidence Collection Guidance,primary contact,secondary contact,effective date,stop date,notes,assessment url,reference url,conclusion: design,
 ,ca-1,Aud-1,ca-1,test,user1@ggrc.com,user1@ggrc.com,user1@ggrc.com,Not Started,plan,user1@ggrc.com,user2@ggrc.com,7/1/2015,7/15/2015,this is a note,google.com,ggrc.com,Effective,
 ,ca-2,Aud-2,ca-2,test,user1@ggrc.com,user1@ggrc.com,user1@ggrc.com,Not Started,plan,user1@ggrc.com,user2@ggrc.com,7/1/2015,7/15/2015,this is a note,google.com,ggrc.com,Ineffective,
 ,ca-3,Aud-3,ca-3,test,user1@ggrc.com,user1@ggrc.com,user1@ggrc.com,Not Started,plan,user1@ggrc.com,user2@ggrc.com,7/1/2015,7/15/2015,this is a note,google.com,ggrc.com,needs improvement,
@@ -112,7 +112,7 @@ Not Launched
 In Scope
 Not in Scope
 Deprecated",,,,MM/DD/YYYY,MM/DD/YYYY,,,,,,,,
-Issue,code*,title*,description,owner,state,test plan,primary contact,secondary contact,effective date,stop date,notes,issue url,reference url,,,,,
+Issue,code*,title*,description,owner,state,Evidence Collection Guidance,primary contact,secondary contact,effective date,stop date,notes,issue url,reference url,,,,,
 ,iss-1,issue 1,test,user1@ggrc.com,Draft,plan,user1@ggrc.com,user2@ggrc.com,7/1/2015,7/15/2015,this is a note,google.com,ggrc.com,,,,,
 ,iss-2,issue 2,test,user1@ggrc.com,Active,plan,user1@ggrc.com,user2@ggrc.com,7/1/2015,7/15/2015,this is a note,google.com,ggrc.com,,,,,
 ,iss-3,issue 3,test,user1@ggrc.com,Active,plan,user1@ggrc.com,user2@ggrc.com,7/1/2015,7/15/2015,this is a note,google.com,ggrc.com,,,,,
@@ -273,7 +273,7 @@ Not Launched
 In Scope
 Not in Scope
 Deprecated",,,,MM/DD/YYYY,MM/DD/YYYY,,,,,,,,
-control,code*,title*,description,owner,state,notes,primary contact,secondary contact,effective date,stop date,control url,reference url,test plan,principal assessor,secondary assessor,Assertions,Categories,
+control,code*,title*,description,owner,state,notes,primary contact,secondary contact,effective date,stop date,control url,reference url,Evidence Collection Guidance,principal assessor,secondary assessor,Assertions,Categories,
 ,control-1,control-1,test,user1@ggrc.com,Draft,this is a note,user1@ggrc.com,user2@ggrc.com,7/1/2015,7/15/2015,google.com,ggrc.com,plan,user1@ggrc.com,user2@ggrc.com,Privacy,Data Centers,
 ,control-2,control-2,test,user1@ggrc.com,Active,this is a note,user1@ggrc.com,user2@ggrc.com,7/1/2015,7/15/2015,google.com,ggrc.com,plan,user1@ggrc.com,user2@ggrc.com,Security,Disaster Recovery,
 ,control-3,control 3,test,user1@ggrc.com,Active,this is a note,user1@ggrc.com,user2@ggrc.com,7/1/2015,7/15/2015,google.com,ggrc.com,plan,user1@ggrc.com,user2@ggrc.com,Availability,Logical Access/ Access Control,

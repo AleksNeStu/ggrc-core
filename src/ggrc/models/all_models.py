@@ -126,6 +126,7 @@ def register_model(model):
   """
   current_module = sys.modules[__name__]
   setattr(current_module, model.__name__, model)
+  inflector.register_inflections(model._inflector)
   all_models.append(model)
   __all__.append(model.__name__)
 

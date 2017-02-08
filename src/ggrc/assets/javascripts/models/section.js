@@ -43,7 +43,7 @@ can.Model.Cacheable('CMS.Models.Section', {
       {attr_title: 'URL', attr_name: 'url'},
       {attr_title: 'Reference URL', attr_name: 'reference_url'}
     ]),
-    add_item_view: GGRC.mustache_path + '/sections/tree_add_item.mustache',
+    add_item_view: GGRC.mustache_path + '/snapshots/tree_add_item.mustache',
     child_options: [{
       model: can.Model.Cacheable,
       mapping: 'related_objects',
@@ -60,7 +60,7 @@ can.Model.Cacheable('CMS.Models.Section', {
         mapping: 'controls',
         draw_children: false,
         footer_view: GGRC.mustache_path + '/base_objects/tree_footer.mustache',
-        add_item_view: GGRC.mustache_path + '/controls/tree_add_item.mustache'
+        add_item_view: GGRC.mustache_path + '/snapshots/tree_add_item.mustache'
       }]
     }]
   },
@@ -113,7 +113,7 @@ can.Model.Cacheable('CMS.Models.Clause', {
       {attr_title: 'URL', attr_name: 'url'},
       {attr_title: 'Reference URL', attr_name: 'reference_url'}
     ]),
-    add_item_view: GGRC.mustache_path + '/sections/tree_add_item.mustache',
+    add_item_view: GGRC.mustache_path + '/snapshots/tree_add_item.mustache',
     child_options: [{
       model: can.Model.Cacheable,
       mapping: 'related_objects', // 'related_and_able_objects'
@@ -130,7 +130,7 @@ can.Model.Cacheable('CMS.Models.Clause', {
         mapping: 'controls',
         draw_children: false,
         footer_view: GGRC.mustache_path + '/base_objects/tree_footer.mustache',
-        add_item_view: GGRC.mustache_path + '/controls/tree_add_item.mustache'
+        add_item_view: GGRC.mustache_path + '/snapshots/tree_add_item.mustache'
       }]
     }]
   },

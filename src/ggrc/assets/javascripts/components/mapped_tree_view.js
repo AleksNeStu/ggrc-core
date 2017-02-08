@@ -76,7 +76,8 @@
         var binding;
 
         ev.stopPropagation();
-
+        // Refactor and show spinner instead (for all lists)
+        el.hide();
         binding = _.find(mappings, function (mapping) {
           return mapping.instance.id === instance.id &&
             mapping.instance.type === instance.type;

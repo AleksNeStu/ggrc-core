@@ -30,4 +30,18 @@
       }
     }
   }
+
+  .hidden {
+    display: none;
+  }
+
+  .title {
+    max-width: 100%;
+    margin-right: 0;
+  }
+
+  .pane-header {
+    border-bottom: 1px solid $sidenavBorder;
+    padding-bottom: 19px;
+  }
 }

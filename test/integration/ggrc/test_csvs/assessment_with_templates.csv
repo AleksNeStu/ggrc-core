@@ -1,5 +1,5 @@
 Object type,,,,,,,,,,,,,,,,,,,,,,,,,
-Assessment,Code*,Template,Audit*,Title*,Url,Evidence,Test Plan,Assessor*,Creator*,Verifier,Recipients,,Send by default,Effective Date,Stop Date,Finished Date,Verified Date,State*,Primary Contact,Conclusion: Design,Conclusion: Operation,Secondary Contact,Assessment URL,Reference URL
+Assessment,Code*,Template,Audit*,Title*,Url,Evidence,Evidence Collection Guidance,Assessor*,Creator*,Verifier,Recipients,,Send by default,Effective Date,Stop Date,Finished Date,Verified Date,State*,Primary Contact,Conclusion: Design,Conclusion: Operation,Secondary Contact,Assessment URL,Reference URL
 ,A 1,,Audit,No template Assessment 1,https://i.imgur.com/17h9PH3.gif,https://i.imgur.com/t41OTZH.png with a title,,user@example.com,user@example.com,user@example.com,,,no,,,,,not started,,,,,,
 ,A 2,,Audit,No template Assessment 2,,https://i.imgur.com/CWa5lKv.gif,,user@example.com,user@example.com,user@example.com,"Assessor , 	Creator,	Verifier",,,,,,,not started,,,,,,
 ,A 3,,Audit,No template Assessment 3,,,,user@example.com,user@example.com,user@example.com,"Creator
@@ -7,7 +7,7 @@ Verifier",,Yes,,,,,not started,,,,,,
 ,,,,,,,,,,,,,,,,,,,,,,,,,
 ,,,,,,,,,,,,,,,,,,,,,,,,,
 Object type,,,,,,,,,,,,,,,,,,,,,,,,,
-Assessment,Code*,Template,Audit*,Title*,State*,Test Plan,Assessor*,Creator*,Verifier,Some Other text name,date of birth,,,,,,,,,,,,,
+Assessment,Code*,Template,Audit*,Title*,State*,Evidence Collection Guidance,Assessor*,Creator*,Verifier,Some Other text name,date of birth,,,,,,,,,,,,,
 ,A 4,T-1,Audit,Template Assessment 1,not started,This should be ignored.,user@example.com,user@example.com,,abc,7/15/2015,,,,,,,,,,,,,
 ,A 5,T-1,Audit,Template Assessment 2,not started,,user@example.com,user@example.com,,cde,7/15/2015,,,,,,,,,,,,,
 ,A 6,T-1,Audit,Template Assessment 3,not started,,user@example.com,user@example.com,,efg,7/15/2015,,,,,,,,,,,,,

@@ -1,0 +1,200 @@
+/*
+ * Copyright (C) 2017 Google Inc.
+ * Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
+ */
+
+mapper-results {
+  display: block;
+  padding: 0 20px;
+
+  .well-small {
+    font-size: 13px;
+    padding: 9px 16px 7px;
+  }
+
+  .list-toolbar {
+    height: 26px;
+    margin: 0 0 16px 0;
+  }
+
+  .list-pagination {
+    height: 26px;
+    margin: 0 0 16px 0;
+    padding: 4px 0 2px;
+  }
+
+  .list-body {
+    display: flex;
+    padding: 2px 3px 1px;
+    background: #fbfbfb;
+    max-height: 240px;
+    box-sizing: border-box;
+    overflow: auto;
+    position: relative;
+
+    &.loading {
+      overflow: hidden;
+      opacity: 0.5;
+
+      // Should affect only direct children
+      > .spinner-wrapper {
+        padding: 0;
+        margin: 0;
+        display: flex;
+        opacity: 0;
+
+        &.active {
+          z-index: 9999;
+          opacity: 1;
+        }
+
+        .spinner {
+          position: absolute;
+          right: 0;
+          left: 0;
+          top: 0;
+          bottom: 0;
+          display: flex;
+          align-items: center;
+          font-size: 18px;
+          // Bigger spinner with separate color for the grid
+          &.grid-spinner {
+            justify-content: center;
+
+            .fa {
+              color: $defaultWidget;
+              font-size: 32px;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .list-selection-switcher {
+    font-size: 13px;
+    color: $text;
+    display: flex;
+    align-items: center;
+
+    .btn {
+      display: inline-block;
+      padding: 2px 6px;
+      margin: 0 4px;
+      line-height: 16px;
+      text-align: center;
+      vertical-align: middle;
+      cursor: pointer;
+    }
+
+    .btn-link {
+      color: #0088cc;
+      font-size: 12px;
+      font-weight: normal;
+      cursor: pointer;
+      border-color: transparent;
+
+      &[disabled] {
+        opacity: 0.25;
+      }
+
+      &:focus {
+        outline: none;
+      }
+
+      &:hover {
+        background: #40c4ff;
+        color: #fff;
+        border-radius: 3px;
+      }
+
+      &.selected {
+        background: #40c4ff;
+        color: #fff;
+        border-radius: 3px;
+      }
+    }
+
+    .btn-link, .btn-link:active {
+      background-color: transparent;
+      background-image: none;
+      box-shadow: none;
+    }
+  }
+
+  .list-object-item {
+    overflow: hidden;
+    border: 1px solid #ddd;
+    cursor: default;
+    border-radius: 2px;
+    margin: 2px 0;
+    padding: 0 0 0 16px;
+    line-height: 32px;
+    font-size: 12px;
+    align-items: center;
+
+    &.is-disabled {
+      opacity: 0.6;
+
+    }
+    .title {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+
+      .fa {
+        width: 32px;
+        height: 32px;
+        line-height: 32px;
+        text-align: center;
+        font-size: 12px;
+      }
+
+      &:hover, &:active {
+        .fa {
+          text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.35);
+        }
+      }
+    }
+    reusable-objects-item {
+      padding: 0;
+      justify-content: flex-end;
+    }
+
+    reusable-objets-item-control {
+      position: static;
+    }
+
+    view-object-buttons {
+      position: relative;
+      padding-right: 10px;
+      top: -1px;
+    }
+
+    mapper-results-item-status {
+      .status-label {
+        margin: 0;
+      }
+    }
+  }
+
+  mapper-results-item-details {
+    padding: 8px 16px 12px;
+    font-size: 12px;
+    border: 1px solid #eee;
+    border-radius: 2px;
+    margin: 2px 0;
+    background: #fff;
+
+    h6 {
+      margin: 4px 0;
+    }
+  }
+
+  &.snapshot-list {
+    .list-object-item {
+      background: $snapshotBgnd;
+      border-color: #D9E6F4;
+    }
+  }
+}

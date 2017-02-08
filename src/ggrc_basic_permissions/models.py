@@ -205,14 +205,9 @@ class ContextImplication(Base, db.Model):
     )
 
 
-all_models.Role = Role
-all_models.UserRole = UserRole
-all_models.ContextImplication = ContextImplication
-all_models.Role._inflector
-all_models.UserRole._inflector
-all_models.ContextImplication._inflector
-all_models.all_models.extend([Role, UserRole, ContextImplication])
-all_models.__all__.extend(["Role", "UserRole", "ContextImplication"])
+all_models.register_model(Role)
+all_models.register_model(UserRole)
+all_models.register_model(ContextImplication)
 
 
 def get_ids_related_to_user_role(object_type, related_type, related_ids):

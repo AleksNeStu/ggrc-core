@@ -13,11 +13,12 @@
     template: tpl,
     viewModel: {
       instance: null,
-      modal: {
+      state: {
         open: false
       },
+      modalTitle: 'Prior Audit Responses',
       showRelatedResponses: function () {
-        this.attr('modal.open', true);
+        this.attr('state.open', true);
       }
     }
   });

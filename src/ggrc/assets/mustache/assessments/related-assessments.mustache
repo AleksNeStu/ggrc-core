@@ -2,7 +2,7 @@
 Copyright (C) 2017 Google Inc.
 Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
 }}
-<related-objects base-instance="instance" related-items-type="Assessment" order-by="__similarity__">
+<related-objects base-instance="instance" related-items-type="Assessment" order-by="finished_date">
     <reusable-objects-list base-instance="instance">
         <div class="grid-data-toolbar flex-box">
             <tree-pagination paging="paging" class="flex-size-1"></tree-pagination>
@@ -18,38 +18,59 @@ Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
         </div>
         <div class="grid-data-header flex-row flex-box">
             <div class="grid-data-item-index">
-                Date
+                Assessment Create Date
             </div>
-            <div class="flex-size-1">
-                Title
+            <div class="grid-data-item-index">
+                Assessment Finish Date
             </div>
-            <div class="flex-size-1">
-                Mapped objects
+            <div class="grid-data-item-index">
+                State
             </div>
-            <div class="flex-size-1">
-                Evidence
+            <div class="flex-size-3">
+                Related Controls / Objectives
+            </div>
+            <div class="flex-size-3">
+                Audit Title
+            </div>
+            <div class="flex-size-3">
+                Attachments
+            </div>
+            <div class="flex-size-3">
+                Urls
             </div>
         </div>
-        <div class="grid-data-body {{#isLoading}}loading{{/isLoading}}">
+        <div class="grid-data-body {{#if isLoading}}loading{{/if}}">
             <object-list items="relatedObjects" is-loading="isLoading" spinner-css="grid-spinner">
                 <div class="grid-data-row flex-row flex-box">
                     <div class="grid-data-item-index">
                       {{localize_date created_at}}
                     </div>
-                    <div class="flex-size-1">
-                        <a href="{{viewLink}}" target="_blank">
-                          {{title}}
-                        </a>
+                    <div class="grid-data-item-index">
+                      {{localize_date finished_date}}
                     </div>
-                    <div class="flex-size-1">
-                        <mapped-objects
-                                mapped-snapshots="instance"
-                                parent-instance="instance"
-                                mapping="{{instance.class.info_pane_options.mapped_objects.mapping}}">
-                          {{> '/static/mustache/components/assessment/mapped-objects/mapped-related-information-item.mustache' }}
-                        </mapped-objects>
+                    <div class="grid-data-item-index">
+                      {{status}}
                     </div>
-                    <div class="flex-size-1">
+                    <div class="flex-size-3">
+                        <related-controls-objectives parent-instance="instance">
+                          <mapped-objects
+                                mapped-snapshots="mappedSnapshots"
+                                filter="filter"
+                                parent-instance="parentInstance">
+                            <business-object-list-item instance="instance"></business-object-list-item>
+                          </mapped-objects>
+                        </related-controls-objectives>
+                    </div>
+                    <div class="flex-size-3">
+                        <related-audits parent-instance="instance">
+                            <mapped-objects
+                                parent-instance="parentInstance"
+                                related-types="relatedTypes">
+                                <a href="{{instance.selfLink}}" target="_blank">{{instance.title}}</a>
+                            </mapped-objects>
+                        </related-audits>
+                    </div>
+                    <div class="flex-size-3">
                         <mapped-objects
                                 parent-instance="instance"
                                 mapping="{{instance.class.info_pane_options.evidence.mapping}}">
@@ -59,12 +80,11 @@ Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
                                                    mapping="mapping"
                                                    check-reused-status="checkReusedStatus"
                                                    selected-list="evidenceList">
-                                <span class="date">{{date instance.created_at true}}</span>
-                                <a href="{{schemed_url instance.link}}" target="_blank">
-                                    <span>{{firstnonempty instance.title instance.link}}</span>
-                                </a>
+                                <document-object-list-item instance="instance"></document-object-list-item>
                             </reusable-objects-item>
                         </mapped-objects>
+                    </div>
+                    <div class="flex-size-3">
                         <mapped-objects
                                 parent-instance="instance"
                                 mapping="{{instance.class.info_pane_options.urls.mapping}}">
@@ -74,10 +94,7 @@ Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
                                                    mapping="mapping"
                                                    check-reused-status="checkReusedStatus"
                                                    selected-list="urlList">
-                                <span class="date">{{date instance.created_at true}}</span>
-                                <a href="{{schemed_url instance.link}}" target="_blank">
-                                    <span>{{firstnonempty instance.title instance.link}}</span>
-                                </a>
+                               <document-object-list-item instance="instance"></document-object-list-item>
                             </reusable-objects-item>
                         </mapped-objects>
                     </div>

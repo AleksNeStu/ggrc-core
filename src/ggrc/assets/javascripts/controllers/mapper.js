@@ -34,7 +34,10 @@
     var type;
     var btn = $(ev.currentTarget);
     var data = {};
+    var joinType;
     var isSearch;
+    var snapshots = GGRC.Utils.Snapshots;
+    var scopeObject = GGRC.page_instance().scopeObject || {};
 
     _.each(btn.data(), function (val, key) {
       data[can.camelCaseToUnderscore(key)] = val;
@@ -47,17 +50,22 @@
       ev.preventDefault();
     }
 
+    joinType = btn.data('join-option-type');
     isSearch = /unified-search/ig.test(data.toggle);
     if (!disableMapper) {
-      if (GGRC.Utils.Snapshots.isInScopeModel(data.join_object_type)) {
+      if (snapshots.isInScopeModel(data.join_object_type)) {
         relevantTo = [{
           readOnly: true,
-          type: data.snapshot_scope_type,
-          id: data.snapshot_scope_id
+          type: scopeObject.type || data.snapshot_scope_type,
+          id: scopeObject.id || data.snapshot_scope_id
         }];
-        type = 'Control';
+        if (data.join_object_type === 'Assessment') {
+          type = !joinType || joinType === 'Assessment' ? 'Control' : joinType;
+        } else {
+          type = joinType;
+        }
       } else {
-        type = btn.data('join-option-type');
+        type = joinType;
       }
       GGRC.Controllers.MapperModal.launch(btn, _.extend({
         object: btn.data('join-object-type'),

@@ -33,25 +33,6 @@
     {{/is_allowed}}
     {{/if}}
   {{else}}
-    {{#if allow_mapping}}
-    {{#is_allowed_to_map parent_instance model.shortName}}
-      <a
-        class="section-add btn btn-mini action-button map-button"
-        href="javascript://"
-        rel="tooltip"
-        data-placement="left"
-        data-toggle="unified-mapper"
-        data-join-mapping="{{mapping}}"
-        data-join-option-type="{{model.shortName}}"
-        data-join-object-id="{{parent_instance.id}}"
-        data-join-object-type="{{parent_instance.class.shortName}}"
-        data-original-title="Map {{firstnonempty title_singular model.title_singular 'Object'}} to this {{firstnonempty parent_instance.class.title_singular 'Object'}}"
-        data-is-snapshotable="{{parent_instance.is_snapshotable}}"
-        data-snapshot-scope-id="{{parent_instance.id}}"
-        data-snapshot-scope-type="{{parent_instance.type}}">
-          Map
-      </a>
-    {{/is_allowed_to_map}}
-    {{/if}}
+    {{> '/static/mustache/snapshots/tree_add_item.mustache'}}
   {{/if_instance_of}}
 {{/if}}

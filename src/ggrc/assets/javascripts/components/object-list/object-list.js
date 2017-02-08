@@ -12,26 +12,35 @@
   /**
    * Object List component
    */
-  GGRC.Components('objectList', {
+  can.Component.extend({
     tag: tag,
     template: tpl,
-    scope: {
+    viewModel: {
       spinnerCss: '@',
       isLoading: false,
       selectedItem: {},
       items: [],
-      isLoadingInProgress: function () {
-        return this.attr('isLoading');
-      },
-      select: function (ctx, el) {
-        this.attr('selectedItem.el', el);
-        this.attr('selectedItem.data', ctx.instance);
-        this.attr('selectedItem.index', el.attr('index'));
+      selectItem: function (el, selectedItem) {
+        var type = selectedItem.type;
+        var id = selectedItem.id;
+        this.attr('items').forEach(function (item) {
+          var isSelected =
+            item.attr('instance.type') === type &&
+            item.attr('instance.id') === id;
+
+          if (isSelected) {
+            this.attr('selectedItem.data', item.instance);
+            this.attr('selectedItem.el', el);
+          }
+          item.attr('isSelected', isSelected);
+        }.bind(this));
       },
       clearSelection: function () {
+        this.attr('items').forEach(function (item) {
+          item.attr('isSelected', false);
+        });
         this.attr('selectedItem.el', null);
         this.attr('selectedItem.data', null);
-        this.attr('selectedItem.index', null);
       },
       onClickHandler: function (el, ev) {
         var isInnerClick = GGRC.Utils.events.isInnerClick(el, ev.target);
@@ -42,8 +51,11 @@
       }
     },
     events: {
+      'object-list-item selectItem': function (el, ev, instance) {
+        this.viewModel.selectItem(el, instance);
+      },
       '{window} click': function (el, ev) {
-        this.scope.onClickHandler(this.element, ev);
+        this.viewModel.onClickHandler(this.element, ev);
       }
     }
   });

@@ -143,7 +143,7 @@ can.Model.Cacheable("CMS.Models.Objective", {
       {attr_title: 'URL', attr_name: 'url'},
       {attr_title: 'Reference URL', attr_name: 'reference_url'}
     ])
-    , add_item_view : GGRC.mustache_path + "/objectives/tree_add_item.mustache"
+    , add_item_view : GGRC.mustache_path + "/snapshots/tree_add_item.mustache"
     , create_link : true
     //, draw_children : true
     , start_expanded : false

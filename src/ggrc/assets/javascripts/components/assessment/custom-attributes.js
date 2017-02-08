@@ -43,7 +43,8 @@
             errors = itemToSave.attr('preconditions_failed') || [];
             if (!(errors.indexOf('comment') < 0 &&
               errors.indexOf('evidence') < 0)) {
-              this.showRequiredModal(errors, {
+              this.showRequiredModal({
+                fields: errors || [],
                 value: scope.attr('value'),
                 title: scope.attr('def.title'),
                 type: scope.attr('type')
@@ -77,18 +78,18 @@
             scope.attr('isSaving', false);
           });
       },
-      showRequiredModal: function (fields, content, ids) {
+      showRequiredModal: function (content, ids) {
         can.batch.start();
         this.attr('modal', {
           content: content,
           caIds: ids,
-          modalTitleText: 'Required ' + fields.map(function (field) {
+          modalTitle: 'Required ' + content.fields.map(function (field) {
             return can.capitalize(field);
           }).join(' and '),
-          fields: fields
+          state: {}
         });
         can.batch.stop();
-        this.attr('modal.open', true);
+        this.attr('modal.state.open', true);
       }
     },
     events: {

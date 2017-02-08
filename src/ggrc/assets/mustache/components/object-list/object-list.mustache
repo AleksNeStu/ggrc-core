@@ -2,10 +2,14 @@
     Copyright (C) 2017 Google Inc., authors, and contributors
     Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
 }}
-<spinner toggle="isLoading" extra-css-class="{{spinnerCss}}" class="spinner-wrapper {{#if isLoadingInProgress}}active{{/if}}"></spinner>
-{{#each items}}
-  <object-list-item selected-item="selectedItem" index="{{@index}}" can-click="select">
-    <content></content>
+{{#if isLoading}}
+    <spinner toggle="isLoading" extra-css-class="{{spinnerCss}}" class="spinner-wrapper active"></spinner>
+{{/if}}
+{{#items}}
+  <object-list-item instance="instance" is-selected="isSelected">
+      <div class="object-list-item {{#if isSelected}}selected{{/if}}">
+        <content>No item component or template is provided</content>
+      </div>
   </object-list-item>
-{{/each}}
+{{/items}}
 

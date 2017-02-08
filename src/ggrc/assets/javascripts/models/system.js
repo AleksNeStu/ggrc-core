@@ -122,7 +122,7 @@ CMS.Models.SystemOrProcess('CMS.Models.System', {
         footer_view: GGRC.mustache_path + '/base_objects/tree_footer.mustache',
         add_item_view: GGRC.mustache_path +
         (GGRC.infer_object_type(GGRC.page_object) === CMS.Models.Program ?
-          '/systems/tree_add_item.mustache' :
+          '/snapshots/tree_add_item.mustache' :
           '/base_objects/tree_add_item.mustache')
       });
     this.validateNonBlank('title');

@@ -49,10 +49,10 @@ class TestWithSimilarityScore(TestCase):
     self.make_relationships(source, snapshots)
 
   def make_assessments(self, assessment_mappings):
-    """Create six assessments and map them to audit, control, regulation.
+    """Create six assessments and map them to audit, control, objective.
 
     Each of the created assessments is mapped to its own subset of {audit,
-    control, regulation} so each of them has different similarity weight.
+    control, objective} so each of them has different similarity weight.
 
     Returns: the six generated assessments and their weights in a dict.
     """
@@ -152,10 +152,10 @@ class TestWithSimilarityScore(TestCase):
   def test_similar_partially_matching(self):
     """Basic check of similar objects manually and via Query API.
 
-    We create three programs, map one them to the two regulations, create two
+    We create three programs, map one them to the two objectives, create two
     audits and verify that we get the same result manually and via Query API.
 
-    We also ensure that for only single matching regulation we do not
+    We also ensure that for only single matching objective we do not
     fetch that assessment is as related.
     """
 
@@ -165,26 +165,26 @@ class TestWithSimilarityScore(TestCase):
     program_2 = factories.ProgramFactory(title="Program 2")
     program_3 = factories.ProgramFactory(title="Program 3")
 
-    regulation_1_program_1 = factories.RegulationFactory(title="Regulation 1")
-    regulation_2_program_1 = factories.RegulationFactory(title="Regulation 2")
+    objective_1_program_1 = factories.ObjectiveFactory(title="Objective 1")
+    objective_2_program_1 = factories.ObjectiveFactory(title="Objective 2")
 
     self.make_relationships(
         program_1, [
-            regulation_1_program_1,
-            regulation_2_program_1,
+            objective_1_program_1,
+            objective_2_program_1,
         ],
     )
 
     self.make_relationships(
         program_2, [
-            regulation_1_program_1,
-            regulation_2_program_1,
+            objective_1_program_1,
+            objective_2_program_1,
         ],
     )
 
     self.make_relationships(
         program_3, [
-            regulation_1_program_1,
+            objective_1_program_1,
         ],
     )
 
@@ -192,10 +192,10 @@ class TestWithSimilarityScore(TestCase):
     program_2 = models.Program.query.filter_by(title="Program 2").one()
     program_3 = models.Program.query.filter_by(title="Program 3").one()
 
-    regulation_1_program_1 = models.Regulation.query.filter_by(
-        title="Regulation 1").one()
-    regulation_2_program_1 = models.Regulation.query.filter_by(
-        title="Regulation 2").one()
+    objective_1_program_1 = models.Objective.query.filter_by(
+        title="Objective 1").one()
+    objective_2_program_1 = models.Objective.query.filter_by(
+        title="Objective 2").one()
 
     _, audit_1 = self.obj_gen.generate_object(models.Audit, {
         "title": "Audit 1",
@@ -216,9 +216,9 @@ class TestWithSimilarityScore(TestCase):
     })
 
     assessment_mappings = [
-        [audit_1, regulation_1_program_1, regulation_2_program_1],
-        [audit_2, regulation_1_program_1, regulation_2_program_1],
-        [audit_3, regulation_1_program_1],
+        [audit_1, objective_1_program_1, objective_2_program_1],
+        [audit_2, objective_1_program_1, objective_2_program_1],
+        [audit_3],
     ]
 
     assessment_1, assessment_2, assessment_3 = self.make_assessments(
@@ -265,15 +265,15 @@ class TestWithSimilarityScore(TestCase):
 
     program_1 = factories.ProgramFactory(title="Program 1")
 
-    regulation_1_program_1 = factories.RegulationFactory(title="Regulation 1")
-    regulation_2_program_1 = factories.RegulationFactory(title="Regulation 2")
+    objective_1_program_1 = factories.ObjectiveFactory(title="Objective 1")
+    objective_2_program_1 = factories.ObjectiveFactory(title="Objective 2")
     control_1_program_1 = factories.ControlFactory(title="Control 1")
     control_2_program_1 = factories.ControlFactory(title="Control 2")
 
     self.make_relationships(
         program_1, [
-            regulation_1_program_1,
-            regulation_2_program_1,
+            objective_1_program_1,
+            objective_2_program_1,
             control_1_program_1,
             control_2_program_1
         ],
@@ -293,10 +293,10 @@ class TestWithSimilarityScore(TestCase):
         "status": "Planned",
     })
 
-    regulation_1_program_1 = models.Regulation.query.filter_by(
-        title="Regulation 1").one()
-    regulation_2_program_1 = models.Regulation.query.filter_by(
-        title="Regulation 2").one()
+    objective_1_program_1 = models.Objective.query.filter_by(
+        title="Objective 1").one()
+    objective_2_program_1 = models.Objective.query.filter_by(
+        title="Objective 2").one()
     control_1_program_1 = models.Control.query.filter_by(
         title="Control 1").one()
     control_2_program_1 = models.Control.query.filter_by(
@@ -304,26 +304,26 @@ class TestWithSimilarityScore(TestCase):
 
     assessment_mappings = [
         [audit_1,
-         regulation_1_program_1, regulation_2_program_1,
+         objective_1_program_1, objective_2_program_1,
          control_1_program_1, control_2_program_1],
         [audit_1, control_1_program_1, control_2_program_1],
         [audit_1,
-         regulation_1_program_1, control_1_program_1],
+         objective_1_program_1, control_1_program_1],
         [audit_2,
-         regulation_1_program_1, regulation_2_program_1,
+         objective_1_program_1, objective_2_program_1,
          control_1_program_1, control_2_program_1],
         [audit_2,
-         regulation_1_program_1, control_1_program_1],
+         objective_1_program_1, control_1_program_1],
         [audit_2, control_1_program_1, control_2_program_1],
     ]
 
     weights = [
-        [13, 18, 20, 25, 26],
-        [10, 15, 20, 20, 25],
-        [10, 13, 13, 15, 18],
-        [13, 18, 20, 25, 26],
-        [10, 13, 13, 15, 18],
-        [10, 15, 20, 20, 25]
+        [4, 4, 4, 4, 8],
+        [2, 2, 4, 4, 4],
+        [2, 2, 4, 4, 4],
+        [4, 4, 4, 4, 8],
+        [2, 2, 4, 4, 4],
+        [2, 2, 4, 4, 4],
     ]
 
     assessments = self.make_assessments(

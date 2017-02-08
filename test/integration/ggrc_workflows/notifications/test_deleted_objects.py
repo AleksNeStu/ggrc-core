@@ -64,16 +64,21 @@ class TestNotificationsForDeletedObjects(TestCase):
       self.assertIn("cycle_starts_in", notif_data[user.email])
 
       workflow = Workflow.query.get(workflow.id)
-
+      # After workflow deletion its notifications object_ids updated to 0
+      # value, this is the error, them should be deleted
+      # so this query checks existence of notifications with object_id
+      # equal to workflow id or 0 id before and
+      # after deletion workflow instance
       exists_qs = db.session.query(
           Notification.query.filter(
-              Notification.object_id == workflow.id,
-              Notification.object_type == workflow.__class__.__name__
+              Notification.object_type == workflow.__class__.__name__,
+              Notification.object_id.in_((workflow.id, 0))
           ).exists()
       )
       self.assertTrue(exists_qs.one()[0])
       response = self.wf_generator.api.delete(workflow)
       self.assert200(response)
+
       self.assertFalse(exists_qs.one()[0])
 
       _, notif_data = common.get_daily_notifications()

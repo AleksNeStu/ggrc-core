@@ -8,6 +8,8 @@
       return;
     }
 
+    wysihtml5ParserRules.cleanUp = false;
+
     $(this).data('_wysihtml5_initialized', true);
     this.wysihtml5({
       link: true,

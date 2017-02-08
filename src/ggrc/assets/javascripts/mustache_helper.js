@@ -1425,7 +1425,14 @@ Mustache.registerHelper("json_escape", function (obj, options) {
   */
 });
 
-function localizeDate(date, options, tmpl) {
+function localizeDate(date, options, tmpl, allowNonISO) {
+  var formats = [
+    'YYYY-MM-DD',
+    'YYYY-MM-DDTHH:mm:ss'
+  ];
+  if (allowNonISO) {
+    formats.push('MM/DD/YYYY', 'MM/DD/YYYY hh:mm:ss A');
+  }
   if (!options) {
     return moment().format(tmpl);
   }
@@ -1433,7 +1440,7 @@ function localizeDate(date, options, tmpl) {
   if (date) {
     if (typeof date === 'string') {
       // string dates are assumed to be in ISO format
-      return moment.utc(date, ['YYYY-MM-DD', 'YYYY-MM-DDTHH:mm:ss'], true)
+      return moment.utc(date, formats, true)
         .format(tmpl);
     }
     return moment(new Date(date)).format(tmpl);
@@ -1445,8 +1452,13 @@ can.each({
   localize_date: 'MM/DD/YYYY',
   localize_datetime: 'MM/DD/YYYY hh:mm:ss A'
 }, function (tmpl, fn) {
-  Mustache.registerHelper(fn, function (date, options) {
-    return localizeDate(date, options, tmpl);
+  Mustache.registerHelper(fn, function (date, allowNonISO, options) {
+    // allowNonIso was not passed
+    if (!options) {
+      options = allowNonISO;
+      allowNonISO = false;
+    }
+    return localizeDate(date, options, tmpl, allowNonISO);
   });
 });
 
@@ -3711,4 +3723,18 @@ Example:
       return options.inverse(options.contexts);
     }
   );
+
+  /**
+   * Return a human friendly name of the object type associated with the
+   * currently active HNB tab.
+   *
+   * Essentially just a wrapper around GGRC.Utils.CurrentPage.activeTabObject.
+   *
+   * @param {Object} options - a CanJS options argument
+   *
+   * @return {String|null} - object type, if any, otherwise null
+   */
+  Mustache.registerHelper('activeTabType', function (options) {
+    return GGRC.Utils.CurrentPage.activeTabObject();
+  });
 })(this, jQuery, can);

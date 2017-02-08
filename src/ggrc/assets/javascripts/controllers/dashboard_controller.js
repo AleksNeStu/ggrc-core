@@ -311,7 +311,9 @@
               this.element.find('li:gt(4)')
                 .wrapAll('<div class="right-menu"/>');
               this.element.find('.right-menu li.hidden-widgets-list').detach()
-                .insertBefore('.right-menu li:first');
+                .insertAfter('.right-menu');
+              this.element.find('.right-menu li.menu-action').detach()
+                .insertBefore('.right-menu');
             }
             this.route(window.location.hash);
             delete this.delayed_display;
@@ -559,15 +561,20 @@
 
       // Update has hidden widget attr
       $.map(this.options.widget_list, function (widget) {
+        var forceShowList = model.obj_nav_options.force_show_list;
+        var forceShow = false;
+        if (forceShowList) {
+          forceShow = forceShowList.indexOf(widget.internav_display) > -1;
+        }
         if (widget.has_count && widget.count === 0 &&
-            !widget.force_show && !showAllTabs) {
+            !widget.force_show && !showAllTabs && !forceShow) {
           hasHiddenWidgets = true;
         }
       });
       if (hasHiddenWidgets) {
-        $hiddenWidgets.show();
+        $hiddenWidgets.find('a').show();
       } else {
-        $hiddenWidgets.hide();
+        $hiddenWidgets.find('a').hide();
       }
       this.show_hide_titles();
     },
@@ -587,7 +594,7 @@
       // see if too wide
       widths = _.map($el.children(':visible'),
         function (el) {
-          return $(el).width();
+          return $(el).outerWidth();
         }).reduce(function (sum, current) {
           return sum + current;
         }, 0);
@@ -631,14 +638,15 @@
       }
     },
     '.hide-menu click': function (el) {
-      var $menu = this.element.find('.right-menu');
+      var $hiddenArea = this.element
+        .find('.right-menu, .hidden-widgets-list, .separator');
       if (this.options.isMenuVisible) {
         this.options.isMenuVisible = false;
-        $menu.find('li:lt(-1)').hide();
+        $hiddenArea.hide();
         el.val('Show Audit Scope');
       } else {
         this.options.isMenuVisible = true;
-        $menu.find('li:lt(-1)').show();
+        $hiddenArea.show();
         el.val('Hide');
       }
       this.show_hide_titles();

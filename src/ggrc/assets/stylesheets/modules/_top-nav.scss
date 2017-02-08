@@ -20,27 +20,7 @@ ul.internav {
       float: left;
     }
     .right-menu {
-      border-left: 1px dotted $grayLight;
       float: right;
-      position: relative;
-      padding-left: 5px;
-      &:before {
-        content: '';
-        border-left: 1px dotted $grayLight;
-        position: absolute;
-        left: -3px;
-        height: 100%;
-      }
-      .menu-action {
-        display: block !important;
-        margin-top: 2px;
-        .hide-menu {
-          background: $grayLight;
-          &:focus {
-            outline: none;
-          }
-        }
-      }
     }
     li {
       &.pie-chart, &.info-circle, &.assessment, &.issue, &.assessment_template {
@@ -52,6 +32,31 @@ ul.internav {
           i {
             color: $blue;
           }
+        }
+      }
+      &.menu-action {
+        float: right;
+        display: block !important;
+        margin-top: 2px;
+        .hide-menu {
+          background: $grayLight;
+          &:focus {
+            outline: none;
+          }
+        }
+      }
+      &.hidden-widgets-list {
+        border-left: 1px dotted $grayLight;
+        float: right;
+        position: relative;
+        padding-left: 5px;
+        height: 29px;
+        &:before {
+          content: '';
+          border-left: 1px dotted $grayLight;
+          position: absolute;
+          left: -3px;
+          height: 100%;
         }
       }
     }

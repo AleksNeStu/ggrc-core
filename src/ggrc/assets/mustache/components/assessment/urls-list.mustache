@@ -27,12 +27,14 @@
       <a class="assessment-url-list__add-btn" {{toggle_button}}><i class="fa fa-plus-circle"></i></a>
   {{/toggle}}
 {{/is_allowed}}
-<mapping-tree-view
-  parent-instance="instance"
-  mapping="instance.class.info_pane_options.urls.mapping"
-  item-template="instance.class.info_pane_options.urls.show_view"
->
-</mapping-tree-view>
+{{#if_mapping_ready "urls" instance}}
+  <mapping-tree-view
+    parent-instance="instance"
+    mapping="instance.class.info_pane_options.urls.mapping"
+    item-template="instance.class.info_pane_options.urls.show_view"
+  >
+  </mapping-tree-view>
+{{/if_mapping_ready}}
 {{#with_mapping instance.class.info_pane_options.urls.mapping instance}}
   {{#info_related_objects}}
     {{{render parent_instance.class.info_pane_options.urls.show_view instance=instance}}}

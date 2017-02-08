@@ -16,13 +16,14 @@
   GGRC.Components('objectPopover', {
     tag: tag,
     template: tpl,
-    scope: {
+    viewModel: {
       expanded: false,
       maxInnerHeight: defaultMaxInnerHeight,
       openStyle: '',
       item: null,
       itemData: function () {
-        return this.attr('item.data');
+        var isSnapshot = this.attr('item.data.type') === 'Snapshot';
+        return isSnapshot ? this.attr('item.data.revision.content') : this.attr('item.data');
       },
       isActive: function () {
         return this.attr('active');
@@ -45,18 +46,18 @@
       }
     },
     events: {
-      '{scope.item} el': function (scope, ev, el) {
-        this.scope.setStyle(el);
+      '{viewModel.item} el': function (scope, ev, el) {
+        this.viewModel.setStyle(el);
       },
       '.object-popover-wrapper click': function (el, event) {
         event.stopPropagation();
       },
-      '{scope} expanded': function (scope, ev, isExpanded) {
+      '{viewModel} expanded': function (scope, ev, isExpanded) {
         // Double max height property in case additional content is expanded and visible
         var maxInnerHeight = isExpanded ?
           defaultMaxInnerHeight * 2 :
           defaultMaxInnerHeight;
-        this.scope.attr('maxInnerHeight', maxInnerHeight);
+        this.viewModel.attr('maxInnerHeight', maxInnerHeight);
       }
     }
   });

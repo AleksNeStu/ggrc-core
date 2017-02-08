@@ -862,14 +862,11 @@ class BaseWidgetGeneric(object):
     class should look like. Note that the same functionality can be
     implemented using properties though with more code."""
     def __init__(cls, *args):
-      cls.TITLE = (
-          By.CSS_SELECTOR, '#{}_widget .sticky-filter .tree-filter__title h6'
-            .format(cls._object_name))
-      cls.TEXTFIELD = (
+      cls.TEXTFIELD_TO_FILTER = (
           By.CSS_SELECTOR,
           '#{}_widget .sticky-filter .tree-filter__expression-holder'
             .format(cls._object_name))
-      cls.BUTTON_SUBMIT = (
+      cls.BUTTON_FILTER = (
           By.CSS_SELECTOR,
           '#{}_widget .sticky-filter .tree-filter__button [type="submit"]'
             .format(cls._object_name))
@@ -881,8 +878,22 @@ class BaseWidgetGeneric(object):
           By.CSS_SELECTOR,
           '#{}_widget .sticky-filter .tree-filter__button  #page-help'
             .format(cls._object_name))
+      cls.ACTIVE_CHECKBOX = (
+          By.CSS_SELECTOR,
+          '#{}_widget .sticky-filter .tree-filter__status-wrap '
+          '[name="active"]'.format(cls._object_name))
+      cls.DRAFT_CHECKBOX = (
+          By.CSS_SELECTOR,
+          '#{}_widget .sticky-filter .tree-filter__status-wrap '
+          '[name="draft"]'.format(cls._object_name))
+      cls.CHECKBOX_DEPRECATED = (
+          By.CSS_SELECTOR,
+          '#{}_widget .sticky-filter .tree-filter__status-wrap '
+          '[name="deprecated"]'.format(cls._object_name))
 
-  FILTER_PANE_COUNTER = (By.CSS_SELECTOR, '.tree-pagination__count')
+  FILTER_PANE_COUNTER = (
+      By.CSS_SELECTOR, ".tree-pagination__count "
+                       ".tree-view-pagination__count__title")
 
 
 class WidgetAssessments(BaseWidgetGeneric):

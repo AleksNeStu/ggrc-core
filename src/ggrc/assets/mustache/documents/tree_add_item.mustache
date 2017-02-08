@@ -17,8 +17,8 @@
     data-join-object-type="{{parent_instance.class.shortName}}"
     data-original-title="{{#if_equals model.title_singular 'Reference'}}Link non-GGRC URLs as References{{else}}Map {{firstnonempty title_singular model.title_singular 'Object'}}{{/if_equals}} to this {{firstnonempty parent_instance.class.title_singular 'Object'}}"
     data-is-snapshotable="{{parent_instance.is_snapshotable}}"
-    data-snapshot-scope-id="{{parent_instance.id}}"
-    data-snapshot-scope-type="{{parent_instance.type}}">
+    data-snapshot-scope-id="{{parent_instance.scopeObject.id}}"
+    data-snapshot-scope-type="{{parent_instance.scopeObject.type}}">
       Map
   </a>
 {{/is_allowed_to_map}}

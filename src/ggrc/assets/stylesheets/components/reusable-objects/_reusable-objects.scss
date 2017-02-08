@@ -3,27 +3,23 @@
  * Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
  */
 reusable-objects-item {
-  display: flex;
   position: relative;
-  line-height: 24px;
-  padding-right: 42px;
-
-  > .date {
-    width: 72px;
-    margin: 0 8px 0 0;
-  }
+  box-sizing: border-box;
+  display: block;
+  padding-right: 40px;
 }
 
 reusable-objets-item-control {
   position: absolute;
   display: flex;
   align-items: center;
-  top: 0;
+  justify-content: center;
+  height: 20px;
+  width: 40px;
   right: 0;
-  line-height: 24px;
-  height: 24px;
-  width: 38px;
+  top: 0;
   box-sizing: border-box;
+  flex: none;
   text-align: center;
 
   input[type="checkbox"] {

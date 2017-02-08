@@ -57,6 +57,7 @@
     model: {},
     bindings: {},
     is_loading: false,
+    is_new: false,
     page_loading: false,
     is_saving: false,
     all_selected: false,
@@ -150,7 +151,9 @@
       }.bind(this));
     },
     getBindingName: function (instance, plural) {
-      return (instance.has_binding(plural) ? '' : 'related_') + plural;
+      return (instance && instance.has_binding(plural) ?
+          '' :
+          'related_') + plural;
     },
     modelFromType: function (type) {
       var types = _.reduce(_.values(
@@ -177,6 +180,7 @@
       var id = Number($el.attr('join-object-id'));
       var object = $el.attr('object');
       var type = $el.attr('type');
+      var isNew = parentScope.attr('is_new');
       var treeView = GGRC.tree_view.sub_tree_for[object];
 
       if ($el.attr('search-only')) {
@@ -198,7 +202,9 @@
         data.type = 'Program';
       }
 
-      if (id || GGRC.page_instance()) {
+      if (isNew) {
+        data.join_object_id = null;
+      } else if (id || GGRC.page_instance()) {
         data.join_object_id = id || GGRC.page_instance().id;
       }
 
@@ -214,6 +220,7 @@
           useTemplates: parentScope.attr('useTemplates'),
           assessmentGenerator: parentScope.attr('assessmentGenerator'),
           is_snapshotable: parentScope.attr('is_snapshotable'),
+          is_new: parentScope.attr('is_new'),
           snapshot_scope_id: parentScope.attr('snapshot_scope_id'),
           snapshot_scope_type: parentScope.attr('snapshot_scope_type'),
           newEntries: parentScope.attr('newEntries')
@@ -249,34 +256,28 @@
           this.scope.attr('mapper.object');
         var data = {};
 
-        if (this.scope.attr('mapper.useSnapshots')) {
-          data = {
-            multi_map: true,
-            arr: this.scope.attr('mapper.selected')
-          };
-        } else {
-          data = {
-            multi_map: true,
-            arr: _.compact(_.map(
-              this.scope.attr('mapper.selected'),
-              function (desination) {
-                var isAllowed = GGRC.Utils.allowed_to_map(source, desination);
-                var instance =
-                  can.makeArray(this.scope.attr('mapper.entries'))
-                    .map(function (entry) {
-                      return entry.instance || entry;
-                    })
-                    .find(function (instance) {
-                      return instance.id === desination.id &&
-                        instance.type === desination.type;
-                    });
-                if (instance && isAllowed) {
-                  return instance;
-                }
-              }.bind(this)
-            ))
-          };
-        }
+        data = {
+          multi_map: true,
+          arr: _.compact(_.map(
+            this.scope.attr('mapper.selected'),
+            function (desination) {
+              var isAllowed = GGRC.Utils.allowed_to_map(source, desination);
+              var instance =
+                can.makeArray(this.scope.attr('mapper.entries'))
+                  .map(function (entry) {
+                    return entry.instance || entry;
+                  })
+                  .find(function (instance) {
+                    return instance.id === desination.id &&
+                      instance.type === desination.type;
+                  });
+              if (instance && isAllowed) {
+                return instance;
+              }
+            }.bind(this)
+          ))
+        };
+
         this.scope.attr('deferred_to').controller.element.trigger(
           'defer:add', [data, {map_and_save: true}]);
         this.closeModal();
@@ -377,6 +378,11 @@
 
         getBindingName = this.scope.attr('mapper').getBindingName;
         selected = this.scope.attr('mapper.parentInstance');
+
+        if (!selected) {
+          return;
+        }
+
         tablePlural = getBindingName(
           selected, this.scope.attr('mapper.model.table_plural'));
 
@@ -436,11 +442,7 @@
       '#search keyup': function (el, ev) {
         if (ev.keyCode === 13) {
           this.scope.attr('mapper.term', el.val());
-          if (this.scope.attr('mapper.useSnapshots')) {
-            this.element.find('snapshot-loader').scope().setItems();
-          } else {
-            this.element.find('mapper-results').control().getResults();
-          }
+          this.element.find('mapper-results').scope().setItems();
         }
       },
 

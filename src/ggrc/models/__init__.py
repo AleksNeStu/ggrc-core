@@ -6,6 +6,7 @@ import sqlalchemy as sa
 
 from ggrc import db
 from ggrc import settings
+from ggrc.models import inflector
 from ggrc.models.reflection import SanitizeHtmlInfo
 from ggrc.models.all_models import *  # noqa
 from ggrc.utils import html_cleaner
@@ -78,7 +79,8 @@ def drop_db(use_migrations=False, quiet=False):
 
 def init_models(app):
   from ggrc.models.all_models import all_models  # noqa
-  [model._inflector for model in all_models]
+  for model in all_models:
+    inflector.register_inflections(model._inflector)
 
 
 def init_hooks():

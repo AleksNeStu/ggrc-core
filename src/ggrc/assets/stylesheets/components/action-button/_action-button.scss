@@ -47,3 +47,62 @@
     }
 }
 .view-button {}
+
+.btn {
+  &.btn-link {
+    color: $blue;
+    font-size: 12px;
+    font-weight: normal;
+    cursor: pointer;
+    border-color: transparent;
+
+    &[disabled] {
+      opacity: 0.47;
+    }
+
+    &:focus {
+      outline: none;
+    }
+
+    &:hover {
+      color: $darkBlue;
+    }
+
+    &.selected {
+      background: #40c4ff;
+      color: #fff;
+      border-radius: 3px;
+    }
+  }
+
+  &.btn-icon {
+    padding: 0 6px;
+    line-height: 26px;
+    border-color: transparent;
+    background: transparent;
+
+    .fa {
+      opacity: 1;
+      line-height: 20px;
+      height: 20px;
+      width: 20px;
+      font-size: 16px;
+      color: #797979;
+
+      &:hover {
+        background: $border-color;
+      }
+    }
+
+    &:focus {
+      outline: none;
+    }
+  }
+
+
+  &.btn-link, &.btn-link:active, &.btn-icon, &.btn-icon:active {
+    background-color: transparent;
+    background-image: none;
+    box-shadow: none;
+  }
+}

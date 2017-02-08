@@ -9,6 +9,7 @@
 {{^if_instance_of parent_instance 'Assessment'}}
 <li>
   <a href="/import"
+    target="_blank"
     class="section-import">
     <i class="fa fa-fw fa-cloud-upload"></i>
     Import {{model.model_plural}}
@@ -17,6 +18,7 @@
 {{#if list.length}}
   <li>
     <a href="/export?model_type={{model.model_singular}}&relevant_type={{parent_instance.type}}&relevant_id={{parent_instance.id}}"
+      target="_blank"
       class="section-import">
       <i class="fa fa-fw fa-download"></i>
       Export {{model.model_plural}}

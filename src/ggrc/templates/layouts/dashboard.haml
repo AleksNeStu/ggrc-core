@@ -71,13 +71,10 @@
           .pin-content
 
     %section.footer
-      .row-fluid
-        .span12
-          %p
-            =config.get('COPYRIGHT')
-            =config.get('COMPANY')
-            Version
-            =config.get('VERSION')
+      =config.get('COPYRIGHT')
+      =config.get('COMPANY')
+      Version
+      =config.get('VERSION')
       .analytics
         ={config.get('GOOGLE_ANALYTICS_SCRIPT') | safe}
 

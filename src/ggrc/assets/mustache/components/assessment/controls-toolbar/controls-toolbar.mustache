@@ -6,6 +6,8 @@
 {{#is_allowed 'update' instance context='for'}}
     <object-state-toolbar instance="instance"></object-state-toolbar>
 {{/is_allowed}}
-<simple-modal instance="instance" modal-title="Prior Audit Responses" state="modal" extra-css-class="related-assessments">
-    {{> '/static/mustache/assessments/related-assessments.mustache' }}
+<simple-modal instance="instance" modal-title="modalTitle" state="state" extra-css-class="related-assessments">
+    <div class="simple-modal__body">
+      {{> '/static/mustache/assessments/related-assessments.mustache' }}
+    </div>
 </simple-modal>

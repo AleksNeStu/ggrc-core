@@ -112,6 +112,8 @@
         {{^list.length}}
           <span class="gray"><em>No mapped objects</em></span>
         {{/list.length}}
+        {{#if new_object_form}}
+        {{else}}
           <div class="objective-selector">
             <div style="clear:both">
               <br>
@@ -122,17 +124,19 @@
                  data-toggle="unified-mapper"
                  data-deferred="true"
                  data-object-source="true"
+                 data-is-new="{{instance.isNew}}"
                  data-join-object-id="{{instance.id}}"
                  data-join-object-type="{{instance.class.model_singular}}"
                  data-original-title="Map Object to this {{instance.class.title_singular}}" tabindex="6"
-                {{#instance.audit }}
-                   data-snapshot-scope-id="{{instance.audit.id}}"
-                  data-snapshot-scope-type="{{instance.audit.type}}"
-                {{/instance.audit}}>
+                 {{#instance.audit }}
+                 data-snapshot-scope-id="{{instance.audit.id}}"
+                 data-snapshot-scope-type="{{instance.audit.type}}"
+                 {{/instance.audit}}>
                    Map Objects
               </a>
             </div>
           </div>
+       {{/if}}
       </ggrc-modal-connector>
     </div>
     <div data-id="notifications_hidden" class="span6 hidable">
@@ -174,8 +178,11 @@
   <div class="row-fluid">
     <div data-id="test_plan_hidden" class="span6 hidable">
       <label>
-        Test Plan
-        <i class="fa fa-question-circle" rel="tooltip" title="Provide a test plan for this {{model.model_singular}}."></i>
+        Evidence Collection Guidance
+        <i class="fa fa-question-circle"
+           rel="tooltip"
+           title="Provide an Evidence Collection Guidance for this {{model.model_singular}}."
+           ></i>
         <a data-id="hide_description_lk" href="javascript://" class="field-hide" tabindex="-1">hide</a>
       </label>
       <div class="wysiwyg-area">
