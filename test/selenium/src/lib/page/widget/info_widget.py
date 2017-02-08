@@ -80,12 +80,6 @@ class Programs(Widget):
     """
     super(Programs, self).__init__(driver)
 
-    self.show_advanced = base.Toggle(
-        self._driver, self._locator.TOGGLE_SHOW_ADVANCED)
-
-    # activate all fields
-    self.show_advanced.toggle()
-
     self.object_review = base.Label(
         self._driver, self._locator.OBJECT_REVIEW)
     self.submit_for_review = base.Label(

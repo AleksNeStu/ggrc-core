@@ -615,10 +615,6 @@ class WidgetInfoProgram(BaseInfoWidget):
                    '[data-test-id="title_reference_url_aa7d1a65"]')
   REFERENCE_URL_ENTERED = (By.CSS_SELECTOR,
                            '[data-test-id="text_reference_url_aa7d1a65"]')
-  TOGGLE_SHOW_ADVANCED = (By.CSS_SELECTOR,
-                          '[data-test-id="button_advanced_cf47bc01"]')
-  TOGGLE_SHOW_ADVANCED_ACTIVATED = (
-      By.CSS_SELECTOR, '[data-test-id="button_advanced_cf47bc01"].active')
   CODE = (By.CSS_SELECTOR, '[data-test-id="title_code_cf47bc01"] h6')
   CODE_ENTERED = (By.CSS_SELECTOR,
                   '[data-test-id="title_code_cf47bc01"] p')
