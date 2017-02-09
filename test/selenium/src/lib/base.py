@@ -8,7 +8,7 @@ from selenium import webdriver
 from selenium.webdriver.common import keys
 from selenium.webdriver.common.by import By
 
-from lib import constants, exception, meta, mixin
+from lib import constants, exception, mixin
 from lib.utils import selenium_utils
 
 
@@ -55,7 +55,6 @@ class TestUtil(InstanceRepresentation):
 
 class Element(InstanceRepresentation):
   """The Element class represents primitives in the models"""
-  __metaclass__ = meta.RequireDocs
 
   def __init__(self, driver, locator):
     super(Element, self).__init__()
@@ -344,8 +343,6 @@ class DropdownStatic(Element):
 
 class Component(InstanceRepresentation):
   """The Component class is a container for elements"""
-
-  __metaclass__ = meta.RequireDocs
 
   def __init__(self, driver):
     """
