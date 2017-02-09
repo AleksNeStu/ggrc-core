@@ -389,20 +389,18 @@ class Modal(Component):
   """A generic modal element"""
 
 
-class Filter(Component):
-  """A filter element for tree view."""
+class FilterCommon(Component):
+  """A common filter elements for LHN and tree view
+  (without filter checkboxes).
+  """
 
-  def __init__(self, driver, text_box, bt_filter, bt_reset, bt_help,
-               ch_active, ch_draft, ch_deprecated):
-    super(Filter, self).__init__(driver)
-    self.text_box = TextInputField(driver, text_box)
-    self.button_filter = Button(driver, bt_filter)
-    # the clear button is only visible after a query is entered
-    self.button_reset = driver.find_element(*bt_reset)
-    self.button_help = Button(driver, bt_help)
-    self.checkbox_active = Checkbox(driver, ch_active)
-    self.checkbox_draft = Checkbox(driver, ch_draft)
-    self.checkbox_deprecated = Checkbox(driver, ch_deprecated)
+  def __init__(self, driver, text_box_locator, bt_submit_locator,
+               bt_clear_locator):
+    super(FilterCommon, self).__init__(driver)
+    self.text_box = TextInputField(driver, text_box_locator)
+    self.button_submit = Button(driver, bt_submit_locator)
+    # for LHN the clear button is only visible after a query is entered
+    self.button_clear = driver.find_element(*bt_clear_locator)
 
   def enter_query(self, query):
     """Enter the query to field."""
@@ -410,11 +408,24 @@ class Filter(Component):
 
   def submit_query(self):
     """Submit the query that was entered to field."""
-    self.button_filter.click()
+    self.button_submit.click()
 
   def clear_query(self):
     """Clear the query that was entered to field."""
-    self.button_reset.click()
+    self.button_clear.click()
+
+
+class Filter(FilterCommon):
+  """A filter elements for tree view with filter checkboxes."""
+
+  def __init__(self, driver, text_box_locator, bt_submit_locator,
+               bt_clear_locator, ch_active_locator, ch_draft_locator,
+               ch_deprecated_locator):
+    super(Filter, self).__init__(driver, text_box_locator, bt_submit_locator,
+                                 bt_clear_locator)
+    self.checkbox_active = Checkbox(driver, ch_active_locator)
+    self.checkbox_draft = Checkbox(driver, ch_draft_locator)
+    self.checkbox_deprecated = Checkbox(driver, ch_deprecated_locator)
 
   def show_active_objs(self):
     """Select 'Active' checkbox to show all active objects."""
@@ -434,28 +445,6 @@ class Filter(Component):
     self.show_active_objs()
     self.show_draft_objs()
     self.show_deprecated_objs()
-
-
-class Filter_LHN(Component):
-  """A filter element for LHN."""
-
-  def __init__(self, driver, locator_text_box, locator_submit,
-               locator_clear):
-    super(Filter_LHN, self).__init__(driver)
-    self.text_box = TextInputField(driver, locator_text_box)
-    self.button_submit = Button(driver, locator_submit)
-    # the clear button is only visible after a query is entered
-    self.button_clear = driver.find_element(*locator_clear)
-
-  def enter_query(self, query):
-    self.text_box.enter_text(query)
-
-  def submit_query(self):
-    self.button_submit.click()
-
-  def clear(self):
-    """Clears the query field"""
-    self.button_clear.click()
 
 
 class AbstractPage(Component):
