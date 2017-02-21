@@ -233,3 +233,18 @@ class TestUnMappingRules(BaseTestMappingRules):
   @unpack
   def test_field(self, field, rules):
     self.assertRules(field, *rules)
+
+
+class TestMappingValidationRules(unittest.TestCase):
+  """Test suite for mapping validation rules."""
+
+  def test_rules_symmetry(self):
+    """Mapping validation rules are symmetric."""
+    base_rules = ggrc.utils.rules.get_mapping_validation_rules()
+    mirrored_rules = dict()
+    for source_type, destination_types in base_rules.iteritems():
+      for destination_type in destination_types:
+        mirrored_rules[destination_type] = (
+            mirrored_rules.get(destination_type, set()) | {source_type}
+        )
+    self.assertDictEqual(mirrored_rules, base_rules)
