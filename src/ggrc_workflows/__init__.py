@@ -22,6 +22,7 @@ from ggrc_workflows.services import workflow_cycle_calculator
 from ggrc_workflows.roles import (
     WorkflowOwner, WorkflowMember, BasicWorkflowReader, WorkflowBasicReader
 )
+from ggrc_workflows import utils
 from ggrc_basic_permissions.models import Role, UserRole, ContextImplication
 from ggrc_basic_permissions.contributed_roles import (
     RoleContributions, RoleDeclarations, DeclarativeRoleImplications
@@ -1017,3 +1018,4 @@ contributed_column_handlers = COLUMN_HANDLERS
 contributed_get_ids_related_to = relationship_helper.get_ids_related_to
 CONTRIBUTED_CRON_JOBS = [start_recurring_cycles]
 NOTIFICATION_LISTENERS = [notification.register_listeners]
+MAPPING_VALIDATION_WHITELIST = [utils.get_mapping_validation_rules()]

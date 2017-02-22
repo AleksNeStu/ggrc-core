@@ -5,6 +5,8 @@
 
 import copy
 
+from ggrc import extensions
+
 
 def get_mapping_rules():
   """ Get mappings rules as defined in business_object.js
@@ -83,6 +85,21 @@ def get_mapping_validation_rules():
   The rules must be symmetric, i.e. "MyDst" in rules["MySrc"] <=> "MySrc" in
   rules["MyDst"].
   """
+  base_rules = _get_mapping_validation_core_rules()
+  # Note: at some point we may want to contribute an additional blacklist here
+  contributed_whitelists = extensions.get_module_contributions(
+      "MAPPING_VALIDATION_WHITELIST",
+  )
+  for whitelist in contributed_whitelists:
+    for source_type, destination_types in whitelist.iteritems():
+      base_rules[source_type] = (base_rules.get(source_type, set()) |
+                                 destination_types)
+
+  return base_rules
+
+
+def _get_mapping_validation_core_rules():
+  """Get Relationship validation rules in context of the core app."""
   assignable_rules = {"Person"}
   documentable_rules = {"Document"}
   commentable_rules = {"Comment"}
