@@ -184,8 +184,8 @@ class TestCreator(TestCase):
     _, obj_0 = self.generator.generate(all_models.Regulation, "regulation", {
         "regulation": {"title": "Test regulation", "context": None},
     })
-    _, obj_1 = self.generator.generate(all_models.Regulation, "regulation", {
-        "regulation": {"title": "Test regulation 2", "context": None},
+    _, obj_1 = self.generator.generate(all_models.Objective, "objective", {
+        "objective": {"title": "Test objective", "context": None},
     })
     response, rel = self.generator.generate(
         all_models.Relationship, "relationship", {
@@ -194,7 +194,7 @@ class TestCreator(TestCase):
                 "type": "Regulation"
             }, "destination": {
                 "id": obj_1.id,
-                "type": "Regulation"
+                "type": "Objective"
             }, "context": None},
         }
     )
