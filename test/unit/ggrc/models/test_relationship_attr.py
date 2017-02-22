@@ -34,10 +34,20 @@ class TestRelationshipAttr(unittest.TestCase):
 
     m1 = RelationshipAttrTestMockModel()
     m2 = RelationshipAttrTestMockModel()
+    self.rules_patcher = mock.patch("ggrc.utils.rules."
+                                    "get_mapping_validation_rules")
+    self.rules_mock = self.rules_patcher.start()
+    self.rules_mock.return_value = {
+        "RelationshipAttrTestMockModel": "RelationshipAttrTestMockModel",
+    }
     self.rel = Relationship(source=m1, destination=m2)
 
     self.mapper_mock = mock.Mock(name='mapper')
     self.connection_mock = mock.Mock(name='connection')
+
+  def tearDown(self):
+    self.rules_patcher.stop()
+    super(TestRelationshipAttr, self).tearDown()
 
   def test_attrs_validation_ok(self):
     self.rel.attrs["validated_attr"] = "123"

@@ -8,11 +8,14 @@ from sqlalchemy import event
 from sqlalchemy import or_, and_
 from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.ext.declarative import declared_attr
+from sqlalchemy import orm
 from sqlalchemy.orm.collections import attribute_mapped_collection
 
 from ggrc import db
+from ggrc.models.exceptions import ValidationError
 from ggrc.models.mixins import Identifiable
 from ggrc.models.mixins import Base
+from ggrc.utils import rules
 
 
 class Relationship(Base, db.Model):
@@ -140,6 +143,56 @@ class Relationship(Base, db.Model):
     json["attrs"] = self.attrs.copy()  # copy in order to detach from orm
     return json
 
+  @orm.validates("source_type", "destination_type")
+  def validate_relatable_type(self, field, value):
+    """Raise an exception if mapping between src_type, dst_type is not allowed.
+
+    Skip the validation if source_type or destination_type is None. This is
+    valid because of the next three considerations:
+
+    1. When we create a Relationship, we fill in source_type and
+    destination_type one by one. source_type="Control", destination_type=None
+    is a normal situation, because usually we fill in destination_type later.
+
+    2. source_type and destination_type are NOT NULL in the DB, so if we try to
+    flush source_type="Control", destination_type=None into the DB, it will
+    fail. It is OK to skip the validation if one of the fields is None.
+
+    3. "if source_type and destination_type" would skip the validation for
+    source_type="", which is not NULL and can be flushed to the DB later. So we
+    should check for "is not None" explicitly.
+
+    Args:
+      field: the name of the field for which the validation is fired;
+      value: the new value of the field.
+
+    Returns:
+      value parameter unchanged.
+
+    Raises:
+      ValidationError if mapping source_type<->destination_type is not allowed
+      in validation rules.
+    """
+    validation_rules = rules.get_mapping_validation_rules()
+
+    if field == "source_type":
+      source_type = value
+      destination_type = self.destination_type
+    elif field == "destination_type":
+      source_type = self.source_type
+      destination_type = value
+
+    if source_type is not None and destination_type is not None:
+      allowed_destinations = validation_rules.get(source_type, set())
+      if destination_type not in allowed_destinations:
+        raise ValidationError(
+            u"Invalid source-destination types pair for {}: "
+            u"source_type={!r}, destination_type={!r}"
+            .format(self.type, source_type, destination_type)
+        )
+    return value
+
+
 event.listen(Relationship, 'before_insert', Relationship.validate_attrs)
 event.listen(Relationship, 'before_update', Relationship.validate_attrs)
 
@@ -198,8 +251,6 @@ class Relatable(object):
 
   @classmethod
   def eager_query(cls):
-    from sqlalchemy import orm
-
     query = super(Relatable, cls).eager_query()
     return cls.eager_inclusions(query, Relatable._include_links).options(
         orm.subqueryload('related_sources'),
