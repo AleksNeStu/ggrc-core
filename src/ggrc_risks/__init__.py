@@ -4,10 +4,11 @@
 from flask import Blueprint
 
 from ggrc.services.registry import service
-import ggrc_risks.models as models
+from ggrc.models import all_models
 from ggrc_basic_permissions.contributed_roles import RoleContributions
 from ggrc_risks.converters import IMPORTABLE
-from ggrc.models import all_models
+import ggrc_risks.models as models
+from ggrc_risks import utils
 import ggrc_risks.views
 
 # Initialize signal handler for status changes
@@ -93,3 +94,4 @@ class RiskRoleContributions(RoleContributions):
 ROLE_CONTRIBUTIONS = RiskRoleContributions()
 
 contributed_importables = IMPORTABLE
+MAPPING_VALIDATION_WHITELIST = [utils.get_mapping_validation_rules()]
