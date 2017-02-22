@@ -156,15 +156,15 @@ class TestCollectionPost(TestCase):
     duplicates from the post request and fixing unique integrity errors.
     """
     db.session.add(models.Policy(id=144, title="hello"))
-    db.session.add(models.Policy(id=233, title="world"))
-    db.session.add(models.Policy(id=377, title="bye"))
+    db.session.add(models.Control(id=233, title="world"))
+    db.session.add(models.Objective(id=377, title="bye"))
     db.session.commit()
 
     self.client.get("/login")
     data = json.dumps([{
         "relationship": {
             "source": {"id": 144, "type": "Policy"},
-            "destination": {"id": 233, "type": "Policy"},
+            "destination": {"id": 233, "type": "Control"},
             "context": None,
         },
     }])
@@ -184,19 +184,19 @@ class TestCollectionPost(TestCase):
     data = json.dumps([{
         "relationship": {  # this should be ignored
             "source": {"id": 144, "type": "Policy"},
-            "destination": {"id": 233, "type": "Policy"},
+            "destination": {"id": 233, "type": "Control"},
             "context": None,
         },
     }, {
         "relationship": {
-            "source": {"id": 377, "type": "Policy"},
+            "source": {"id": 377, "type": "Objective"},
             "destination": {"id": 144, "type": "Policy"},
             "context": None,
         },
     }, {
         "relationship": {  # Refactored api will ignore this
             "source": {"id": 144, "type": "Policy"},
-            "destination": {"id": 377, "type": "Policy"},
+            "destination": {"id": 377, "type": "Objective"},
             "context": None,
         },
     }])
