@@ -8,7 +8,6 @@ Test Assignable RBAC
 from ggrc.models import all_models
 from integration.ggrc import TestCase
 from integration.ggrc.api_helper import Api
-from integration.ggrc.generator import Generator
 from integration.ggrc.generator import ObjectGenerator
 
 
@@ -17,9 +16,8 @@ class TestReader(TestCase):
 
   def setUp(self):
     super(TestReader, self).setUp()
-    self.generator = Generator()
     self.api = Api()
-    self.object_generator = ObjectGenerator()
+    self.object_generator = ObjectGenerator(api=self.api)
     self.init_users()
     self.init_assignable()
 
@@ -116,43 +114,60 @@ class TestReader(TestCase):
   def test_readability_of_mapped_objects(self):
     """Test if assignees get Read access on all mapped objects"""
 
-    # Editor creates a System object and maps it to the assignable object
+    # Editor creates a Program and a System and maps them to each other
     self.api.set_user(self.users["editor"])
-    response = self.api.post(all_models.System, {
-        "system": {
-            "title": "System",
-            "context": None,
-        }
-    })
-    system_id = response.json.get("system").get("id")
-    system = all_models.System.query.get(system_id)
-    self.api.post(all_models.Relationship, {
-        "relationship": {"source": {
-            "id": self.obj.id,
-            "type": "Assessment"
-        }, "destination": {
-            "id": system_id,
-            "type": "System"
-        }, "context": None},
-    })
+
+    _, program = self.object_generator.generate_object(
+        all_models.Program,
+        data={"title": "Program", "context": None},
+    )
+    _, system = self.object_generator.generate_object(
+        all_models.System,
+        data={"title": "System", "context": None},
+    )
+    self.object_generator.generate_relationship(
+        source=program,
+        destination=system,
+    )
+
+    # Editor creates an Audit in scope of the Program, snapshotting the System
+    self.object_generator.generate_object(
+        all_models.Audit,
+        data={"title": "Audit", "program": {"id": program.id},
+              "context": None},
+    )
+
+    # Editor maps an the assignable object to the Snapshot for the System
+    snapshot = all_models.Snapshot.query.filter(
+        all_models.Snapshot.child_type == "System",
+        all_models.Snapshot.child_id == system.id,
+    ).one()
+    self.object_generator.generate_relationship(
+        source=self.obj,
+        destination=snapshot,
+    )
 
     # Since creator is not an assignee she should not have access to any of the
     # two objects
     self.api.set_user(self.users["creator"])
     response = self.api.get(all_models.Assessment, self.obj.id)
     self.assertEqual(response.status_code, 403)
-    response = self.api.get(all_models.System, system_id)
+    response = self.api.get(all_models.System, system.id)
     self.assertEqual(response.status_code, 403)
 
     # Editor adds creator as an assignee
     self.api.set_user(self.users["editor"])
     response = self._post_relationship(self.users["creator"], self.obj.id)
 
-    # Creator should now have read access on the mapped object
+    # Creator should now have read access on the Snapshot
     self.api.set_user(self.users["creator"])
-    response = self.api.get(all_models.System, system_id)
+    response = self.api.get(all_models.Snapshot, snapshot.id)
     self.assertEqual(response.status_code, 200)
 
     # But he should still not be allowed to update
-    response = self.api.put(system, response.json)
+    response = self.api.put(snapshot, response.json)
+    self.assertEqual(response.status_code, 403)
+
+    # Creator does not get access to the original System
+    response = self.api.get(all_models.System, system.id)
     self.assertEqual(response.status_code, 403)

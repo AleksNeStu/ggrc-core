@@ -20,8 +20,10 @@ from integration.ggrc.models import factories
 class Generator(object):
   """Generator base class."""
 
-  def __init__(self):
-    self.api = api_helper.Api()
+  def __init__(self, api=None):
+    if api is None:
+      api = api_helper.Api()
+    self.api = api
     self.resource = common.Resource()
 
   @staticmethod
