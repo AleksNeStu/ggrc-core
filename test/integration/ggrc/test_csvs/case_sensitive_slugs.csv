@@ -1,9 +1,9 @@
-Object type,Test duplicate column error.,,,,
-Control,Code*,Title*,Owner*,,
-,a,a,user@example.com,,
-,A,A,user@example.com,,
-,,,,,
-Object type,,,,,
-Person,Name,Email*,Company,Role,map: Control
-,Person,person@gmail.com,no company,reader,"a
+Object type,Test duplicate column error.,,,
+Control,Code*,Title*,Owner*,
+,a,a,user@example.com,
+,A,A,user@example.com,
+,,,,
+Object type,,,,
+Objective,Code*,Title*,Owner*,map:control
+,,Objective mapped to "A" and "a" controls,user@example.com,"a
 A"
