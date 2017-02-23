@@ -28,12 +28,7 @@ class TestSnapshoting(SnapshotterBaseTestCase):
     control = self.create_object(models.Control, {
         "title": "Test Control Snapshot 1"
     })
-    assessment = self.create_object(models.Assessment, {
-        "title": "Test Assessment Snapshot 1"
-    })
-
     self.create_mapping(program, control)
-    self.create_mapping(program, assessment)
 
     control = self.refresh_object(control)
 
@@ -52,6 +47,10 @@ class TestSnapshoting(SnapshotterBaseTestCase):
 
     audit = db.session.query(models.Audit).filter(
         models.Audit.title == "Snapshotable audit").one()
+    assessment = self.create_object(models.Assessment, {
+        "title": "Test Assessment Snapshot 1"
+    })
+    self.create_mapping(audit, assessment)
 
     snapshot = db.session.query(models.Snapshot).filter(
         models.Snapshot.child_id == control.id,
