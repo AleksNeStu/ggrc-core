@@ -122,3 +122,6 @@ ILLEGAL_APPEND_CONTROL_VALUE = ("Line {line}: "
                                 "You can not map {mapped_type} to "
                                 "{object_type}, because this {mapped_type} is "
                                 "not mapped to the related audit.")
+
+INVALID_MAPPING_ERROR = (u"Line {line}: Tried to create an invalid mapping. "
+                         u"{exception}")

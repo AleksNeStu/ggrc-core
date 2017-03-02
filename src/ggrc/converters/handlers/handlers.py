@@ -449,9 +449,14 @@ class MappingColumnHandler(ColumnHandler):
     for obj in self.value:
       mapping = Relationship.find_related(current_obj, obj)
       if not self.unmap and not mapping:
-        mapping = Relationship(source=current_obj, destination=obj)
-        relationships.append(mapping)
-        db.session.add(mapping)
+        try:
+          mapping = Relationship(source=current_obj, destination=obj)
+          relationships.append(mapping)
+          db.session.add(mapping)
+        except Exception as e:
+          self.add_error(errors.INVALID_MAPPING_ERROR,
+                         column_name=self.display_name,
+                         exception=e)
       elif self.unmap and mapping:
         db.session.delete(mapping)
     db.session.flush()
