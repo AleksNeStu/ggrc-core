@@ -1,5 +1,5 @@
 Object type,"Must be unique. Can be left empty for autogeneration. If updating or deleting, code is required",,,,,,,,,,,,,,,,,,,,,,
-Program,Code*,Title*,Description,Notes,Manager*,Editor,Reader,Effective Date,Stop Date,State,Primary Contact,Secondary Contact,Program URL,Reference URL,map:control,map:person,,,,,,,
+Program,Code*,Title*,Description,Notes,Manager*,Editor,Reader,Effective Date,Stop Date,State,Primary Contact,Secondary Contact,Program URL,Reference URL,map:control,,,,,,,,
 ,PMRBACPROGRAM-1,Program Manager Audit RBAC Test,,,"user@example.com
 creatorpm@test.com
 readerpm@test.com
@@ -10,18 +10,7 @@ Editorpe@test.com
 adminpe@test.com","creatorpr@test.com
 readerpr@test.com
 editorpr@test.com
-Adminpr@test.com",,,Draft,user@example.com,,,,PMRBACCONTROL-1,"creatorpm@test.com
-readerpm@test.com
-editorpm@test.com
-adminpm@test.com
-creatorpe@test.com
-readerpe@test.com
-editorpe@test.com
-Adminpe@test.com
-Creatorpr@test.com
-readerpr@test.com
-Editorpr@test.com
-adminpr@test.com",,,,,,,
+Adminpr@test.com",,,Draft,user@example.com,,,,PMRBACCONTROL-1,,,,,,,,
 ,,,,,,,,,,,,,,,,,,,,,,,
 ,,,,,,,,,,,,,,,,,,,,,,,
 Object type,"Must be unique. Can be left empty for autogeneration. If updating or deleting, code is required",,,,,,,,,,,,,,,,,,,,,,
@@ -30,24 +19,24 @@ Audit,Code*,Program*,Title*,Description,Planned Start Date,Planned End Date,Plan
 ,,,,,,,,,,,,,,,,,,,,,,,
 ,,,,,,,,,,,,,,,,,,,,,,,
 Object type,,,,,,,,,,,,,,,,,,,,,,,
-Person,Name,Email*,Company,Role,map:clause,map:contract,map:control,map:objective,map:policy,map:program,map:section,map:standard,,,,,,,,,,,
-,user@example.com,user@example.com,,Administrator,PMRBACCLAUSE-1,PMRBACCONTRACT-1,PMRBACCONTROL-1,PMRBACOBJECTIVE-1,PMRBACPOLICY-1,PMRBACPROGRAM-1,PMRBACSECTION-1,PMRBACSTANDARD-1,,,,,,,,,,,
+Person,Name,Email*,Company,Role,,,,,,,,,,,,,,,,,,,
+,user@example.com,user@example.com,,Administrator,,,,,,,,,,,,,,,,,,,
 ,Admin,admin@test.com,,Administrator,,,,,,,,,,,,,,,,,,,
-,Creator PM,creatorpm@test.com,,Creator,,,,,,PMRBACPROGRAM-1,,,,,,,,,,,,,
+,Creator PM,creatorpm@test.com,,Creator,,,,,,,,,,,,,,,,,,,
 ,Creator,creator@test.com,,Creator,,,,,,,,,,,,,,,,,,,
-,Reader PM,readerpm@test.com,,Reader,,,,,,PMRBACPROGRAM-1,,,,,,,,,,,,,
+,Reader PM,readerpm@test.com,,Reader,,,,,,,,,,,,,,,,,,,
 ,Reader,reader@test.com,,Reader,,,,,,,,,,,,,,,,,,,
-,Editor PM,editorpm@test.com,,Editor,,,,,,PMRBACPROGRAM-1,,,,,,,,,,,,,
+,Editor PM,editorpm@test.com,,Editor,,,,,,,,,,,,,,,,,,,
 ,Editor,editor@test.com,,Editor,,,,,,,,,,,,,,,,,,,
-,Admin PM,adminpm@test.com,,Administrator,,,,,,PMRBACPROGRAM-1,,,,,,,,,,,,,
-,Creator PR,creatorpr@test.com,,Creator,,,,,,PMRBACPROGRAM-1,,,,,,,,,,,,,
-,Reader PR,readerpr@test.com,,Reader,,,,,,PMRBACPROGRAM-1,,,,,,,,,,,,,
-,Editor PR,editorpr@test.com,,Editor,,,,,,PMRBACPROGRAM-1,,,,,,,,,,,,,
-,Admin PR,adminpr@test.com,,Administrator,,,,,,PMRBACPROGRAM-1,,,,,,,,,,,,,
-,Creator PE,creatorpe@test.com,,Creator,,,,,,PMRBACPROGRAM-1,,,,,,,,,,,,,
-,Reader PE,readerpe@test.com,,Reader,,,,,,PMRBACPROGRAM-1,,,,,,,,,,,,,
-,Editor PE,editorpe@test.com,,Editor,,,,,,PMRBACPROGRAM-1,,,,,,,,,,,,,
-,Admin PE,adminpe@test.com,,Administrator,,,,,,PMRBACPROGRAM-1,,,,,,,,,,,,,
+,Admin PM,adminpm@test.com,,Administrator,,,,,,,,,,,,,,,,,,,
+,Creator PR,creatorpr@test.com,,Creator,,,,,,,,,,,,,,,,,,,
+,Reader PR,readerpr@test.com,,Reader,,,,,,,,,,,,,,,,,,,
+,Editor PR,editorpr@test.com,,Editor,,,,,,,,,,,,,,,,,,,
+,Admin PR,adminpr@test.com,,Administrator,,,,,,,,,,,,,,,,,,,
+,Creator PE,creatorpe@test.com,,Creator,,,,,,,,,,,,,,,,,,,
+,Reader PE,readerpe@test.com,,Reader,,,,,,,,,,,,,,,,,,,
+,Editor PE,editorpe@test.com,,Editor,,,,,,,,,,,,,,,,,,,
+,Admin PE,adminpe@test.com,,Administrator,,,,,,,,,,,,,,,,,,,
 ,,,,,,,,,,,,,,,,,,,,,,,
 ,,,,,,,,,,,,,,,,,,,,,,,
 Object type,"Must be unique. Can be left empty for autogeneration. If updating or deleting, code is required", ,,,,,,,,,,,,,,,,,,,,,

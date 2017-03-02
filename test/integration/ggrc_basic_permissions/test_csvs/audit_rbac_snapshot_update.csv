@@ -1,5 +1,5 @@
-Object type,"Must be unique. Can be left empty for autogeneration. If updating or deleting, code is required",,,,,,,,,,,,,,,
-Program,Code*,Title*,Description,Notes,Manager*,Editor,Reader,Effective Date,Stop Date,State,Primary Contact,Secondary Contact,Program URL,Reference URL,map:control,map:person
+Object type,"Must be unique. Can be left empty for autogeneration. If updating or deleting, code is required",,,,,,,,,,,,,,
+Program,Code*,Title*,Description,Notes,Manager*,Editor,Reader,Effective Date,Stop Date,State,Primary Contact,Secondary Contact,Program URL,Reference URL,map:control
 ,PMRBACPROGRAM-1,Program Manager Audit RBAC Test,,,"user@example.com
 creatorpm@test.com
 readerpm@test.com
@@ -10,94 +10,79 @@ Editorpe@test.com
 adminpe@test.com","creatorpr@test.com
 readerpr@test.com
 editorpr@test.com
-Adminpr@test.com",,,Draft,user@example.com,,,,PMRBACCONTROL-1,"creatorpm@test.com
-readerpm@test.com
-editorpm@test.com
-adminpm@test.com
-creatorpe@test.com
-readerpe@test.com
-editorpe@test.com
-Adminpe@test.com
-Creatorpr@test.com
-readerpr@test.com
-Editorpr@test.com
-adminpr@test.com
-readerauditor@test.com
-creatorauditor@test.com
-editorauditor@test.com
-adminauditor@test.com"
-,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,
-Object type,,,,,,,,,,,,,,,,
-Person,Name,Email*,Company,Role,map:clause,map:contract,map:control,map:objective,map:policy,map:program,map:regulation,map:section,map:standard,,,
-,user@example.com,user@example.com,,Administrator,PMRBACCLAUSE-1,PMRBACCONTRACT-1,PMRBACCONTROL-1,PMRBACOBJECTIVE-1,PMRBACPOLICY-1,PMRBACPROGRAM-1,PMRBACREGULATION-1,PMRBACSECTION-1,PMRBACSTANDARD-1,,,
-,Admin,admin@test.com,,Administrator,,,,,,,,,,,,
-,Creator PM,creatorpm@test.com,,Creator,,,,,,PMRBACPROGRAM-1,,,,,,
-,Creator,creator@test.com,,Creator,,,,,,,,,,,,
-,Reader PM,readerpm@test.com,,Reader,,,,,,PMRBACPROGRAM-1,,,,,,
-,Reader,reader@test.com,,Reader,,,,,,,,,,,,
-,Editor PM,editorpm@test.com,,Editor,,,,,,PMRBACPROGRAM-1,,,,,,
-,Editor,editor@test.com,,Editor,,,,,,,,,,,,
-,Admin PM,adminpm@test.com,,Administrator,,,,,,PMRBACPROGRAM-1,,,,,,
-,Creator PR,creatorpr@test.com,,Creator,,,,,,PMRBACPROGRAM-1,,,,,,
-,Reader PR,readerpr@test.com,,Reader,,,,,,PMRBACPROGRAM-1,,,,,,
-,Editor PR,editorpr@test.com,,Editor,,,,,,PMRBACPROGRAM-1,,,,,,
-,Admin PR,adminpr@test.com,,Administrator,,,,,,PMRBACPROGRAM-1,,,,,,
-,Creator PE,creatorpe@test.com,,Creator,,,,,,PMRBACPROGRAM-1,,,,,,
-,Reader PE,readerpe@test.com,,Reader,,,,,,PMRBACPROGRAM-1,,,,,,
-,Editor PE,editorpe@test.com,,Editor,,,,,,PMRBACPROGRAM-1,,,,,,
-,Admin PE,adminpe@test.com,,Administrator,,,,,,PMRBACPROGRAM-1,,,,,,
-,Reader Auditor,readerauditor@test.com,,Reader,,,,,,,,,,,,
-,Creator Auditor,creatorauditor@test.com,,Creator,,,,,,,,,,,,
-,Editor Auditor,editorauditor@test.com,,Editor,,,,,,,,,,,,
-,Admin Auditor,adminauditor@test.com,,Administrator,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,
-Object type,,,,,,,,,,,,,,,,
-Access Group,code*,title*,description,owner,state,map:program,,,,,,,,,,
-,ag-1,ag-1 EDIT,test,user@example.com,Draft,PMRBACPROGRAM-1,,,,,,,,,,
-,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,
-Object type,,,,,,,,,,,,,,,,
-Clause,code*,title*,text of clause,owner,state,map:program,,,,,,,,,,
-,Pmrbacclause-1,cl-1 EDIT,test,user@example.com,Draft,PMRBACPROGRAM-1,,,,,,,,,,
-,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,
-Object type,,,,,,,,,,,,,,,,
-control,code*,title*,description,owner,state,map:program,,,,,,,,,,
-,Pmrbaccontrol-1,control-1 EDIT,test,user@example.com,Draft,PMRBACPROGRAM-1,,,,,,,,,,
-,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,
-Object type,,,,,,,,,,,,,,,,
-Contract,code*,title*,description,owner,state,map:program,,,,,,,,,,
-,Pmrbaccontract-1,contract-1 EDIT,test,user@example.com,Draft,PMRBACPROGRAM-1,,,,,,,,,,
-,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,
-Object type,,,,,,,,,,,,,,,,
-Data Asset,code*,title*,description,owner,state,map:program,,,,,,,,,,
-,da-1,da-1 EDIT,test,user@example.com,Draft,PMRBACPROGRAM-1,,,,,,,,,,
-,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,
+Adminpr@test.com",,,Draft,user@example.com,,,,PMRBACCONTROL-1
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+Object type,,,,,,,,,,,,,,,
+Person,Name,Email*,Company,Role,,,,,,,,,,,
+,user@example.com,user@example.com,,Administrator,,,,,,,,,,,
+,Admin,admin@test.com,,Administrator,,,,,,,,,,,
+,Creator PM,creatorpm@test.com,,Creator,,,,,,,,,,,
+,Creator,creator@test.com,,Creator,,,,,,,,,,,
+,Reader PM,readerpm@test.com,,Reader,,,,,,,,,,,
+,Reader,reader@test.com,,Reader,,,,,,,,,,,
+,Editor PM,editorpm@test.com,,Editor,,,,,,,,,,,
+,Editor,editor@test.com,,Editor,,,,,,,,,,,
+,Admin PM,adminpm@test.com,,Administrator,,,,,,,,,,,
+,Creator PR,creatorpr@test.com,,Creator,,,,,,,,,,,
+,Reader PR,readerpr@test.com,,Reader,,,,,,,,,,,
+,Editor PR,editorpr@test.com,,Editor,,,,,,,,,,,
+,Admin PR,adminpr@test.com,,Administrator,,,,,,,,,,,
+,Creator PE,creatorpe@test.com,,Creator,,,,,,,,,,,
+,Reader PE,readerpe@test.com,,Reader,,,,,,,,,,,
+,Editor PE,editorpe@test.com,,Editor,,,,,,,,,,,
+,Admin PE,adminpe@test.com,,Administrator,,,,,,,,,,,
+,Reader Auditor,readerauditor@test.com,,Reader,,,,,,,,,,,
+,Creator Auditor,creatorauditor@test.com,,Creator,,,,,,,,,,,
+,Editor Auditor,editorauditor@test.com,,Editor,,,,,,,,,,,
+,Admin Auditor,adminauditor@test.com,,Administrator,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+Object type,,,,,,,,,,,,,,,
+Access Group,code*,title*,description,owner,state,map:program,,,,,,,,,
+,ag-1,ag-1 EDIT,test,user@example.com,Draft,PMRBACPROGRAM-1,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+Object type,,,,,,,,,,,,,,,
+Clause,code*,title*,text of clause,owner,state,map:program,,,,,,,,,
+,Pmrbacclause-1,cl-1 EDIT,test,user@example.com,Draft,PMRBACPROGRAM-1,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+Object type,,,,,,,,,,,,,,,
+control,code*,title*,description,owner,state,map:program,,,,,,,,,
+,Pmrbaccontrol-1,control-1 EDIT,test,user@example.com,Draft,PMRBACPROGRAM-1,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+Object type,,,,,,,,,,,,,,,
+Contract,code*,title*,description,owner,state,map:program,,,,,,,,,
+,Pmrbaccontract-1,contract-1 EDIT,test,user@example.com,Draft,PMRBACPROGRAM-1,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+Object type,,,,,,,,,,,,,,,
+Data Asset,code*,title*,description,owner,state,map:program,,,,,,,,,
+,da-1,da-1 EDIT,test,user@example.com,Draft,PMRBACPROGRAM-1,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
 Object type,"Must be unique.  Can be left empty for autogeneration.  If updating or deleting, code is required",,,"if owner is not provided, current user will be reated as owner of the object","Default value 'draft' is selected
 Other values are:
 Final
@@ -107,13 +92,13 @@ Launched
 Not Launched
 In Scope
 Not in Scope
-Deprecated",,,,,,MM/DD/YYYY,MM/DD/YYYY,,,,
-Facility,code*,title*,description,owner,state,notes,primary contact,secondary contact,facility url,reference url,effective date,stop date,map:program,,,
-,fac-1,fac-1 EDIT,test,user@example.com,Draft,this is a note,user@example.com,user@example.com,google.com,ggrc.com,7/1/2015,7/15/2015,PMRBACPROGRAM-1,,,
-,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,
+Deprecated",,,,,,MM/DD/YYYY,MM/DD/YYYY,,,
+Facility,code*,title*,description,owner,state,notes,primary contact,secondary contact,facility url,reference url,effective date,stop date,map:program,,
+,fac-1,fac-1 EDIT,test,user@example.com,Draft,this is a note,user@example.com,user@example.com,google.com,ggrc.com,7/1/2015,7/15/2015,PMRBACPROGRAM-1,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
 Object type,"Must be unique.  Can be left empty for autogeneration.  If updating or deleting, code is required",,,"if owner is not provided, current user will be reated as owner of the object","Default value 'draft' is selected
 Other values are:
 Final
@@ -123,13 +108,13 @@ Launched
 Not Launched
 In Scope
 Not in Scope
-Deprecated",,,,,,MM/DD/YYYY,MM/DD/YYYY,,,,
-Market,code*,title*,description,owner,state,notes,primary contact,secondary contact,market url,reference url,effective date,stop date,map:program,,,
-,mkt-1,mkt-1 EDIT,test,user@example.com,Draft,this is a note,user@example.com,user@example.com,google.com,ggrc.com,7/1/2015,7/15/2015,PMRBACPROGRAM-1,,,
-,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,
+Deprecated",,,,,,MM/DD/YYYY,MM/DD/YYYY,,,
+Market,code*,title*,description,owner,state,notes,primary contact,secondary contact,market url,reference url,effective date,stop date,map:program,,
+,mkt-1,mkt-1 EDIT,test,user@example.com,Draft,this is a note,user@example.com,user@example.com,google.com,ggrc.com,7/1/2015,7/15/2015,PMRBACPROGRAM-1,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
 Object type,"Must be unique.  Can be left empty for autogeneration.  If updating or deleting, code is required",,,"if owner is not provided, current user will be reated as owner of the object","Default value 'draft' is selected
 Other values are:
 Final
@@ -139,13 +124,13 @@ Launched
 Not Launched
 In Scope
 Not in Scope
-Deprecated",,,,,,,,,,,
-objective,code*,title*,description,owner,state,notes,primary contact,secondary contact,objective url,reference url,map:program,,,,,
-,Pmrbacobjective-1,obj-1 EDIT,test,user@example.com,Draft,this is a note,user@example.com,user@example.com,google.com,ggrc.com,PMRBACPROGRAM-1,,,,,
-,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,
+Deprecated",,,,,,,,,,
+objective,code*,title*,description,owner,state,notes,primary contact,secondary contact,objective url,reference url,map:program,,,,
+,Pmrbacobjective-1,obj-1 EDIT,test,user@example.com,Draft,this is a note,user@example.com,user@example.com,google.com,ggrc.com,PMRBACPROGRAM-1,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
 Object type,"Must be unique.  Can be left empty for autogeneration.  If updating or deleting, code is required",,,"if owner is not provided, current user will be reated as owner of the object","Default value 'draft' is selected
 Other values are:
 Final
@@ -155,13 +140,13 @@ Launched
 Not Launched
 In Scope
 Not in Scope
-Deprecated",,,,,,,,,,,
-OrgGroup,code*,title*,description,owner,state,notes,primary contact,secondary contact,reference url,map:program,,,,,,
-,orggroup-1,orggroup-1 EDIT,test,user@example.com,Draft,this is a note,user@example.com,user@example.com,ggrc.com,PMRBACPROGRAM-1,,,,,,
-,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,
+Deprecated",,,,,,,,,,
+OrgGroup,code*,title*,description,owner,state,notes,primary contact,secondary contact,reference url,map:program,,,,,
+,orggroup-1,orggroup-1 EDIT,test,user@example.com,Draft,this is a note,user@example.com,user@example.com,ggrc.com,PMRBACPROGRAM-1,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
 Object type,"Must be unique.  Can be left empty for autogeneration.  If updating or deleting, code is required",,,"if owner is not provided, current user will be reated as owner of the object","Default value 'draft' is selected
 Other values are:
 Final
@@ -177,13 +162,13 @@ Org Group Policy
 Data Asset Policy
 Product Policy
 Contract-Related Policy
-Company Controls Policy",,,
-Policy,code*,title*,description,owner,state,notes,primary contact,secondary contact,effective date,stop date,policy url,reference url,Kind/Type,map:program,,
-,Pmrbacpolicy-1,policy 1 EDIT,test,user@example.com,Draft,this is a note,user@example.com,user@example.com,7/1/2015,7/15/2015,google.com,ggrc.com,Company Policy,PMRBACPROGRAM-1,,
-,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,
+Company Controls Policy",,
+Policy,code*,title*,description,owner,state,notes,primary contact,secondary contact,effective date,stop date,policy url,reference url,Kind/Type,map:program,
+,Pmrbacpolicy-1,policy 1 EDIT,test,user@example.com,Draft,this is a note,user@example.com,user@example.com,7/1/2015,7/15/2015,google.com,ggrc.com,Company Policy,PMRBACPROGRAM-1,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
 Object type,"Must be unique.  Can be left empty for autogeneration.  If updating or deleting, code is required",,,"if owner is not provided, current user will be reated as owner of the object","Default value 'draft' is selected
 Other values are:
 Final
@@ -198,12 +183,12 @@ Prod
 Corp
 Service
 Core
-3rd Party",,,
-Process,code*,title*,description,owner,state,notes,primary contact,secondary contact,process url,reference url,effective date,stop date,network zone,map:program,,
-,proc-1,proc-1 EDIT,test,user@example.com,Draft,this is a note,user@example.com,user@example.com,google.com,ggrc.com,7/1/2015,7/15/2015,prod,PMRBACPROGRAM-1,,
-,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,
+3rd Party",,
+Process,code*,title*,description,owner,state,notes,primary contact,secondary contact,process url,reference url,effective date,stop date,network zone,map:program,
+,proc-1,proc-1 EDIT,test,user@example.com,Draft,this is a note,user@example.com,user@example.com,google.com,ggrc.com,7/1/2015,7/15/2015,prod,PMRBACPROGRAM-1,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
 Object type,"Must be unique.  Can be left empty for autogeneration.  If updating or deleting, code is required",,,"if owner is not provided, current user will be reated as owner of the object","Default value 'draft' is selected
 Other values are:
 Final
@@ -216,13 +201,13 @@ Not in Scope
 Deprecated",,,,,,MM/DD/YYYY,MM/DD/YYYY,"Options are:
 Saas
 Desktop Software
-Appliance",,,
-Product,code*,title*,description,owner,state,notes,primary contact,secondary contact,product url,reference url,effective date,stop date,Kind/Type,map:program,,
-,prod-1,prod-1 EDIT,test,user@example.com,Draft,this is a note,user@example.com,user@example.com,google.com,ggrc.com,7/1/2015,7/15/2015,Saas,PMRBACPROGRAM-1,,
-,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,
+Appliance",,
+Product,code*,title*,description,owner,state,notes,primary contact,secondary contact,product url,reference url,effective date,stop date,Kind/Type,map:program,
+,prod-1,prod-1 EDIT,test,user@example.com,Draft,this is a note,user@example.com,user@example.com,google.com,ggrc.com,7/1/2015,7/15/2015,Saas,PMRBACPROGRAM-1,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
 Object type,"Must be unique.  Can be left empty for autogeneration.  If updating or deleting, code is required",,,"if owner is not provided, current user will be reated as owner of the object","Default value 'draft' is selected
 Other values are:
 Final
@@ -232,12 +217,12 @@ Launched
 Not Launched
 In Scope
 Not in Scope
-Deprecated",,,,MM/DD/YYYY,MM/DD/YYYY,,,,,,
-Regulation,code*,title*,description,owner,state,notes,primary contact,secondary contact,effective date,stop date,regulation url,reference url,map:program,,,
-,Pmrbacregulation-1,reg 1 EDIT,test,user@example.com,Draft,this is a note,user@example.com,user@example.com,7/1/2015,7/15/2015,google.com,ggrc.com,PMRBACPROGRAM-1,,,
-,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,
+Deprecated",,,,MM/DD/YYYY,MM/DD/YYYY,,,,,
+Regulation,code*,title*,description,owner,state,notes,primary contact,secondary contact,effective date,stop date,regulation url,reference url,map:program,,
+,Pmrbacregulation-1,reg 1 EDIT,test,user@example.com,Draft,this is a note,user@example.com,user@example.com,7/1/2015,7/15/2015,google.com,ggrc.com,PMRBACPROGRAM-1,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
 Object type,"Must be unique.  Can be left empty for autogeneration.  If updating or deleting, code is required",,,"if owner is not provided, current user will be reated as owner of the object","Default value 'draft' is selected
 Other values are:
 Final
@@ -247,13 +232,13 @@ Launched
 Not Launched
 In Scope
 Not in Scope
-Deprecated",,,,,,,,"either of the mappings (policy, regulation, standard) is mandatory for a section to be imported",,,
-Section,code*,title*,text of section,owner,state,notes,primary contact,secondary contact,,,section url,reference url,Policy / Regulation / Standard / Contract,map:program,,
-,Pmrbacsection-1,sec-1 EDIT,test,user@example.com,Draft,this is a note,user@example.com,user@example.com,,,google.com,ggrc.com,Pmrbacpolicy-1,PMRBACPROGRAM-1,,
-,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,
+Deprecated",,,,,,,,"either of the mappings (policy, regulation, standard) is mandatory for a section to be imported",,
+Section,code*,title*,text of section,owner,state,notes,primary contact,secondary contact,,,section url,reference url,Policy / Regulation / Standard / Contract,map:program,
+,Pmrbacsection-1,sec-1 EDIT,test,user@example.com,Draft,this is a note,user@example.com,user@example.com,,,google.com,ggrc.com,Pmrbacpolicy-1,PMRBACPROGRAM-1,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
 Object type,"Must be unique.  Can be left empty for autogeneration.  If updating or deleting, code is required",,,"if owner is not provided, current user will be reated as owner of the object","Default value 'draft' is selected
 Other values are:
 Final
@@ -263,13 +248,13 @@ Launched
 Not Launched
 In Scope
 Not in Scope
-Deprecated",,,,MM/DD/YYYY,MM/DD/YYYY,,,,,,
-Standard,code*,title*,description,owner,state,notes,primary contact,secondary contact,effective date,stop date,standard url,reference url,map:program,,,
-,Pmrbacstandard-1,std 1 EDIT,test,user@example.com,Draft,this is a note,user@example.com,user@example.com,7/1/2015,7/15/2015,google.com,ggrc.com,PMRBACPROGRAM-1,,,
-,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,
+Deprecated",,,,MM/DD/YYYY,MM/DD/YYYY,,,,,
+Standard,code*,title*,description,owner,state,notes,primary contact,secondary contact,effective date,stop date,standard url,reference url,map:program,,
+,Pmrbacstandard-1,std 1 EDIT,test,user@example.com,Draft,this is a note,user@example.com,user@example.com,7/1/2015,7/15/2015,google.com,ggrc.com,PMRBACPROGRAM-1,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
 Object type,"Must be unique.  Can be left empty for autogeneration.  If updating or deleting, code is required",,,"if owner is not provided, current user will be reated as owner of the object","Default value 'draft' is selected
 Other values are:
 Final
@@ -284,13 +269,13 @@ Prod
 Corp
 Service
 Core
-3rd Party",,,
-System,code*,title*,description,owner,state,notes,primary contact,secondary contact,system url,reference url,effective date,stop date,network zone,map:program,,
-,sys-1,sys-1 EDIT,test,user@example.com,Draft,this is a note,user@example.com,user@example.com,google.com,ggrc.com,7/1/2015,7/15/2015,prod,PMRBACPROGRAM-1,,
-,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,
+3rd Party",,
+System,code*,title*,description,owner,state,notes,primary contact,secondary contact,system url,reference url,effective date,stop date,network zone,map:program,
+,sys-1,sys-1 EDIT,test,user@example.com,Draft,this is a note,user@example.com,user@example.com,google.com,ggrc.com,7/1/2015,7/15/2015,prod,PMRBACPROGRAM-1,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
 Object type,"Must be unique.  Can be left empty for autogeneration.  If updating or deleting, code is required",Mandatory field,,"if owner is not provided, current user will be reated as owner of the object","Default value 'draft' is selected
 Other values are:
 Final
@@ -300,14 +285,14 @@ Launched
 Not Launched
 In Scope
 Not in Scope
-Deprecated",,,,MM/DD/YYYY,MM/DD/YYYY,,,,,,
-Vendor,code*,title*,description,owner,state,notes,primary contact,secondary contact,effective date,stop date,vendor url,reference url,map:program,,,
-,ven-1,ven-1 EDIT,test,user@example.com,Draft,this is a note,user@example.com,user@example.com,7/1/2015,7/15/2015,google.com,ggrc.com,PMRBACPROGRAM-1,,,
-,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,
+Deprecated",,,,MM/DD/YYYY,MM/DD/YYYY,,,,,
+Vendor,code*,title*,description,owner,state,notes,primary contact,secondary contact,effective date,stop date,vendor url,reference url,map:program,,
+,ven-1,ven-1 EDIT,test,user@example.com,Draft,this is a note,user@example.com,user@example.com,7/1/2015,7/15/2015,google.com,ggrc.com,PMRBACPROGRAM-1,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
 Object type,"Must be unique.  Can be left empty for autogeneration.  If updating or deleting, code is required",,,"if owner is not provided, current user will be reated as owner of the object","Default value 'draft' is selected
 Other values are:
 Final
@@ -317,13 +302,13 @@ Launched
 Not Launched
 In Scope
 Not in Scope
-Deprecated",MM/DD/YYYY,MM/DD/YYYY,,,,,,,,,
-Risk,code*,title*,description,notes,Owner*,Effective date,stop date,map:program,,,,,,,,
-,ra-1,ra-1 EDIT,test,this is a note,user@example.com,7/1/2015,7/15/2015,PMRBACPROGRAM-1,,,,,,,,
-,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,
+Deprecated",MM/DD/YYYY,MM/DD/YYYY,,,,,,,,
+Risk,code*,title*,description,notes,Owner*,Effective date,stop date,map:program,,,,,,,
+,ra-1,ra-1 EDIT,test,this is a note,user@example.com,7/1/2015,7/15/2015,PMRBACPROGRAM-1,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
 Object type,"Must be unique.  Can be left empty for autogeneration.  If updating or deleting, code is required",,,"if owner is not provided, current user will be reated as owner of the object","Default value 'draft' is selected
 Other values are:
 Final
@@ -333,6 +318,6 @@ Launched
 Not Launched
 In Scope
 Not in Scope
-Deprecated",MM/DD/YYYY,MM/DD/YYYY,,,,,,,,,
-Threat,code*,title*,description,notes,Owner*,Effective date,stop date,map:program,,,,,,,,
-,threat-1,threat-1 EDIT,test,this is a note,user@example.com,7/1/2015,7/15/2015,PMRBACPROGRAM-1,,,,,,,,
+Deprecated",MM/DD/YYYY,MM/DD/YYYY,,,,,,,,
+Threat,code*,title*,description,notes,Owner*,Effective date,stop date,map:program,,,,,,,
+,threat-1,threat-1 EDIT,test,this is a note,user@example.com,7/1/2015,7/15/2015,PMRBACPROGRAM-1,,,,,,,
