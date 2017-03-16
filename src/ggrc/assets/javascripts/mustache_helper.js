@@ -1041,40 +1041,6 @@ Mustache.registerHelper("unmap_or_delete", function (instance, mappings) {
     return "Unmap";
 });
 
-Mustache.registerHelper("with_direct_mappings_as",
-    function (var_name, parent_instance, instance, options) {
-  // Finds the mapping, if any, between `parent_object` and `instance`, then
-  // renders the block with those mappings available in the scope as `var_name`
-
-  parent_instance = Mustache.resolve(parent_instance);
-  instance = Mustache.resolve(instance);
-
-  if (!instance) {
-      instance = [];
-  } else if (typeof instance.length === "number") {
-      instance = can.map(instance, function (inst) {
-        return inst.instance ? inst.instance : inst;
-      });
-  } else if (instance.instance) {
-      instance = [instance.instance];
-  } else {
-      instance = [instance];
-  }
-
-  var frame = new can.Observe();
-  frame.attr(var_name, []);
-  GGRC.all_local_results(parent_instance).then(function (results) {
-    var instance_only = options.hash && options.hash.instances_only;
-    can.each(results, function (result) {
-      if (~can.inArray(result.instance, instance)) {
-        frame.attr(var_name).push(instance_only ? result.instance : result);
-      }
-    });
-  });
-
-  return options.fn(options.contexts.add(frame));
-});
-
 Mustache.registerHelper("has_mapped_objects", function (selected, instance, options) {
   selected = resolve_computed(selected);
   instance = resolve_computed(instance);
