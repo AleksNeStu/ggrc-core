@@ -113,36 +113,6 @@
           View {{class.title_singular}}
         </a>
       </div>
-      <div class="span6">
-        <div class="oneline">
-          {{#with_page_object_as 'page_instance'}}
-            {{^if_equals instance page_instance}}
-              {{#with_direct_mappings_as 'mappings' page_instance instance}}
-                {{#if mappings.length}}
-                  <span class="primary"
-                        data-test-id="extended_info_object_already_mapped">
-                    <i class="fa fa-check-square-o"></i>
-                    Mapped to this {{#page_instance.class.title_singular}}
-                      {{toLowerCase}}{{/page_instance.class.title_singular}}
-                  </span>
-                {{else}}
-                  {{#is_allowed_to_map page_instance instance join=true}}
-                    <a class="primary map-to-page-object"
-                       href="javascript://"
-                       data-follow="true"
-                       data-test-id="extended_info_button_map"
-                       {{#instance}}{{data 'instance'}}
-                       {{/instance}}>
-                      <i class="fa fa-random black"></i>
-                      Map to this {{#page_instance.class.title_singular}}{{toLowerCase}}{{/page_instance.class.title_singular}}
-                    </a>
-                  {{/is_allowed_to_map}}
-                {{/if}}
-              {{/with_direct_mappings_as}}
-            {{/if_equals}}
-          {{/with_page_object_as}}
-        </div>
-      </div>
     </div>
   </div>
 {{/instance}}
