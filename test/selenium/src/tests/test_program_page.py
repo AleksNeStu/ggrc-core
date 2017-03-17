@@ -117,19 +117,3 @@ class TestProgramPage(base.Test):
             updated_program_info_page.program_url_entered.text)
     assert (modal.ui_reference_url.text ==
             updated_program_info_page.reference_url_entered.text)
-
-  @pytest.mark.smoke_tests
-  def test_mapping_controls_via_lhn(self, selenium, new_control_ui,
-                                    new_program_ui):
-    """Tests if widget number increases when mapping via LHN."""
-    # check that the widget isn't opened yet since it doesn't have any members
-    assert selenium.find_element(
-        *locator.WidgetBar.CONTROLS).is_displayed() is False
-    # map to obj
-    (dashboard.Header(selenium).open_lhn_menu().
-     select_my_objects().select_controls_or_objectives().select_controls().
-     hover_over_visible_member(new_control_ui.title_entered.text).
-     map_to_object())
-    control_widget_count = (
-        widget_bar.Programs(selenium).select_controls().member_count)
-    assert control_widget_count == 1
