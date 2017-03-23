@@ -260,7 +260,7 @@ class AuditsFactory(EntitiesFactory):
     if actual_count_all_audits == audit.id:
       return [
           cls.update_obj_attrs_values(
-              obj=copy.deepcopy(audit),
+              obj=copy.deepcopy(audit), type=cls.obj_audit.lower(),
               title=audit.title + " - copy " + str(num), id=audit.id + num,
               href=re.sub("\d+$", str(audit.id + num), audit.href),
               url=re.sub("\d+$", str(audit.id + num), audit.url),

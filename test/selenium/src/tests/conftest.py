@@ -183,9 +183,8 @@ def new_asmt_rest(new_audit_rest):
   (lib.entities.entity.Assessment, lib.entities.entity.Audit,
   lib.entities.entity.Program)
   """
-  yield (AssessmentsService().create(
-      count=1, obj=new_audit_rest[1],
-      audit=new_audit_rest[0])[0], new_audit_rest[0], new_audit_rest[1])
+  yield (AssessmentsService().create(count=1, audit=new_audit_rest[0])[0],
+         new_audit_rest[0], new_audit_rest[1])
 
 
 @pytest.yield_fixture(scope="function")

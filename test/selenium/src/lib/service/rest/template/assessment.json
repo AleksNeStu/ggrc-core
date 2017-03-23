@@ -7,7 +7,7 @@
   "validate_creator": true,
   "validate_assessor": true,
   "title": null,
-  "object": null,
+  "object": {},
   "audit": null,
   "description": "",
   "send_by_default": false,

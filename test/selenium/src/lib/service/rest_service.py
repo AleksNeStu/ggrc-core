@@ -6,6 +6,8 @@
 import json
 import re
 
+from requests import exceptions
+
 from lib import environment
 from lib.constants import url, objects
 from lib.entities.entities_factory import (
@@ -53,18 +55,27 @@ class BaseService(object):
                                 obj_el.get("viewLink")).group(1),
               "last_update": obj_el.get("updated_at")}
     resp = json.loads(response.text)
-    if isinstance(resp, list) and len(resp[0]) == 2:
-      return get_items_from_obj_el(resp[0][1].itervalues().next())
-    elif isinstance(resp, dict) and len(resp) == 1:
+    if response.status_code == 200:
+      # check that resp looks like [[resp_code, resp_message]] where resp_code
+      # is int, resp_message is dict and remap resp to resp_message
+      if (isinstance(resp, list) and len(resp[0]) == 2 and
+              isinstance(resp[0][1], dict)):
+        resp = resp[0][1]
       return get_items_from_obj_el(resp.itervalues().next())
     else:
-      pass
+      resp_code, resp_message = resp[0]
+      print "Response_code: {code}, Response_message: {message}".format(
+          code=resp_code, message=resp_message)
+      raise exceptions.ContentDecodingError
 
   @staticmethod
   def set_obj_attrs(attrs, obj, **kwargs): # flake8: noqa
     """Update object's attributes according type of object and
     list of dicts with object's attributes (dict's items).
     """
+    if (attrs.get("type") and
+            attrs["type"] == objects.get_singular(objects.AUDITS).title()):
+      obj.type = attrs["type"]
     if attrs.get("id"):
       obj.id = attrs["id"]
     if attrs.get("href"):
@@ -155,10 +166,10 @@ class AssessmentsService(BaseService):
   """Service for working with Assessments entities."""
   ENDPOINT = url.ASSESSMENTS
 
-  def create(self, count, obj, audit):
+  def create(self, count, audit):
     """Create new Assessments objects via REST API and return created."""
-    return self.create_list_objs(factory=AssessmentsFactory(), count=count,
-                                 object=obj.__dict__, audit=audit.__dict__)
+    return self.create_list_objs(factory=AssessmentsFactory(),
+                                 count=count, audit=audit.__dict__)
 
 
 class IssuesService(BaseService):
