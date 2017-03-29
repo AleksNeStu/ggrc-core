@@ -119,7 +119,7 @@
         order: 10
       },
       {
-        attr_title: 'Owner',
+        attr_title: 'Admin',
         attr_name: 'owner',
         attr_sort_field: 'owners',
         order: 20

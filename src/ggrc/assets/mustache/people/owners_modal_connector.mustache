@@ -12,7 +12,7 @@
   >
 {{#if list.length}}
   <label>
-    {{#if_equals list.length 1}}Owner{{else}}Owners{{/if_equals}}
+    {{#if_equals list.length 1}}Admin{{else}}Admins{{/if_equals}}
     <i class="fa fa-question-circle" rel="tooltip"
        title="This is the person in charge of this {{firstnonempty model_singular model.model_singular 'object'}}."></i>
     <a data-id="hide_owner_lk" href="javascript://" class="field-hide" tabindex="-1">hide</a>
@@ -28,24 +28,24 @@
   {{/each}}
 {{else}}
   <label>
-    Owners
+    Admins
     <i class="fa fa-question-circle" rel="tooltip"
        title="This is the person in charge of this {{firstnonempty model_singular model.model_singular 'object'}}."></i>
     <a data-id="hide_owner_lk" href="javascript://" class="field-hide" tabindex="-1">hide</a>
   </label>
-  <p>No owners assigned</p>
+  <p>No admins assigned</p>
 {{/if}}
 {{#toggle show_new_object_form}}
   {{#prune_context}}
     <div class="span12 objective-selector field-wrap">
-      <input tabindex="11" data-id="owner_txtbx" type="text" data-lookup="Person" null-if-empty="true" class="search-icon" placeholder="Enter text to search for Owner" {{autocomplete_select}} value="{{instance.email}}">
+      <input tabindex="11" data-id="owner_txtbx" type="text" data-lookup="Person" null-if-empty="true" class="search-icon" placeholder="Enter text to search for Admin" {{autocomplete_select}} value="{{instance.email}}">
       <a class="remove-field" href="javascript://" {{toggle_button}}><i class="fa fa-trash"></i></a>
 
     </div>
-    <!--input type="hidden" name="role_name" value="Owner" /-->
+    <!--input type="hidden" name="role_name" value="Admin" /-->
   {{/prune_context}}
 {{else}}
-<a href="javascript://" class="btn btn-small btn-draft" tabindex="11" {{toggle_button}}>Add Owner</a>
+<a href="javascript://" class="btn btn-small btn-draft" tabindex="11" {{toggle_button}}>Add Admin</a>
 
 {{/toggle}}
 </ggrc-modal-connector>

@@ -57,7 +57,7 @@
           <h6>Default Assessors</h6>
           {{#if default_people.assessors}}
             {{#if_string default_people.assessors}}
-              {{get_item DEFAULT_PEOPLE_LABELS default_people.assessors}}
+              {{get_item people_labels default_people.assessors}}
             {{else}}
               {{#if default_people.assessors.length}}
                 <ul>
@@ -80,7 +80,7 @@
           <h6>Default Verifier</h6>
           {{#if default_people.verifiers}}
             {{#if_string default_people.verifiers}}
-              {{get_item DEFAULT_PEOPLE_LABELS default_people.verifiers}}
+              {{get_item people_labels default_people.verifiers}}
             {{else}}
               {{#if default_people.verifiers.length}}
                 <ul>

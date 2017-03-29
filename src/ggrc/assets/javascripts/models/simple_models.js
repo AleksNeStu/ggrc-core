@@ -232,7 +232,7 @@
     },
     permission_summary: function () {
       if (this.name === 'ProgramOwner') {
-        return 'Owner';
+        return 'Admin';
       }
       if (this.name === 'ProgramEditor') {
         return 'Can Edit';

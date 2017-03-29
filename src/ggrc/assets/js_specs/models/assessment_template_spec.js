@@ -431,7 +431,7 @@ describe('can.Model.AssessmentTemplate', function () {
       'selected option is different from "other"',
       function () {
         instance.attr('assessorsListDisable', false);
-        instance.attr('default_people.assessors', 'Object Owners');
+        instance.attr('default_people.assessors', 'Object Admins');
 
         instance.defaultAssesorsChanged(context, $element, eventObj);
 
@@ -467,7 +467,7 @@ describe('can.Model.AssessmentTemplate', function () {
       'selected option is different from "other"',
       function () {
         instance.attr('verifiersListDisable', false);
-        instance.attr('default_people.verifiers', 'Object Owners');
+        instance.attr('default_people.verifiers', 'Object Admins');
 
         instance.defaultVerifiersChanged(context, $element, eventObj);
 

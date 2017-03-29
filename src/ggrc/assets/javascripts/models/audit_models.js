@@ -344,7 +344,7 @@
       assessorsList: {},
       verifiersList: {},
       people_values: [
-        {value: 'Object Owners', title: 'Object Owners'},
+        {value: 'Object Owners', title: 'Object Admins'},
         {value: 'Audit Lead', title: 'Audit Lead'},
         {value: 'Auditors', title: 'Auditors'},
         {value: 'Primary Assessor', title: 'Principal Assignee'},
@@ -352,7 +352,16 @@
         {value: 'Primary Contact', title: 'Primary Contact'},
         {value: 'Secondary Contact', title: 'Secondary Contact'},
         {value: 'other', title: 'Others...'}
-      ]
+      ],
+      people_labels: {
+        'Object Owners': 'Object Admins',
+        'Audit Lead': 'Audit Lead',
+        Auditors: 'Auditors',
+        'Primary Assessor': 'Principal Assessor',
+        'Secondary Assessors': 'Secondary Assessors',
+        'Primary Contact': 'Primary Contact',
+        'Secondary Contact': 'Secondary Contact'
+      }
     },
     tree_view_options: {
       attr_view: GGRC.mustache_path + '/base_objects/tree-item-attr.mustache'
