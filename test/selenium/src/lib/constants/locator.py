@@ -379,7 +379,7 @@ class ModalCreateNewControl(BaseModalCreateNew):
   SECONDARY_ASSESSOR = (
       By.CSS_SELECTOR,
       '[data-test-id="control_secondary_assessor_b9439af6"] label')
-  OWNER = (
+  ADMIN = (
       By.CSS_SELECTOR, '[data-test-id="control_owner_587d12d6"] label')
   BUTTON_ADD_OWNER = (By.CSS_SELECTOR, 'isolate-form .btn')
   PRIMARY_CONTACT = (

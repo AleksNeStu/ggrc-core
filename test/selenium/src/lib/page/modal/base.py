@@ -154,7 +154,7 @@ class ControlsModal(BaseModal):
         driver, self._locators.PRINCIPAL_ASSESSOR)
     self.secondary_assessor = base.Label(
         driver, self._locators.SECONDARY_ASSESSOR)
-    self.owner = base.Label(driver, self._locators.OWNER)
+    self.admin = base.Label(driver, self._locators.ADMIN)
     self.primary_contact = base.Label(driver, self._locators.PRIMARY_CONTACT)
     self.secondary_contact = base.Label(
         driver, self._locators.SECONDARY_CONTACT)
