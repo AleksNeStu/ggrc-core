@@ -1,0 +1,72 @@
+{{!
+    Copyright (C) 2017 Google Inc.
+    Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
+}}
+
+{{#if_instance_of instance 'CycleTaskGroup|CycleTaskGroupObjectTask'}}
+<div class="flex-box item-actions">
+  {{#with_review_task}}
+    {{^if isBacklog}}
+      {{#if isCurrent}}
+        {{#is_allowed 'update' instance}}
+          <div class="request-control">
+            {{#if_equals instance.status 'Assigned'}}
+              <button class="btn btn-mini btn-info change-task-status {{cssClasses}}"
+                      ($click)="changeStatus"
+                      data-openclose="open"
+                      data-value="InProgress">Start</button>
+            {{/if_equals}}
+            {{#if_equals instance.status 'InProgress'}}
+              <button class="btn btn-mini btn-white change-task-status {{cssClasses}}"
+                      ($click)="changeStatus"
+                      data-value="Finished">Finish</button>
+            {{/if_equals}}
+            {{#if_equals instance.status 'Declined'}}
+              {{#if review_task.object_review}}
+                <button class="btn btn-mini btn-white change-task-status {{cssClasses}}"
+                        ($click)="changeStatus"
+                        data-value="Verified">Finish</button>
+              {{else}}
+                <button class="btn btn-mini btn-white change-task-status {{cssClasses}}"
+                        ($click)="changeStatus"
+                        data-value="Finished">Finish</button>
+              {{/if}}
+            {{/if_equals}}
+            {{#if_equals instance.status 'Finished'}}
+              <button class="btn btn-mini btn-danger change-task-status {{cssClasses}}"
+                      ($click)="changeStatus"
+                      data-value="Declined">Decline</button>
+              <button class="btn btn-mini btn-success change-task-status {{cssClasses}}"
+                      ($click)="changeStatus"
+                      data-openclose="close"
+                      data-value="Verified">Verify</button>
+            {{/if_equals}}
+            {{#if oldValues.length}}
+              <a href="javascript://" data-name="status"
+                 ($click)="undo"
+                 data-undo="true"
+                 class="undo {{cssClasses}}">Undo</a>
+            {{/if}}
+          </div>
+        {{/is_allowed}}
+      {{/if}}
+    {{/if}}
+  {{/with_review_task}}
+</div>
+{{/if_instance_of}}
+
+{{#if_instance_of instance 'Cycle'}}
+<div class="flex-box item-actions">
+  <div class="request-control">
+      {{^if_equals instance.workflow.kind "Backlog"}}
+        <cycle-end-cycle cycle="instance">
+          {{#is_allowed 'update' instance.workflow.reify}}
+            {{#if instance.is_current}}
+              <button class="btn btn-draft btn-small end-cycle">End Cycle</button>
+            {{/if}}
+          {{/is_allowed}}
+        </cycle-end-cycle>
+      {{/if_equals}}
+  </div>
+</div>
+{{/if_instance_of}}
