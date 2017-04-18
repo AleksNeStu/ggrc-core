@@ -100,13 +100,16 @@
       show_view: _mustachePath + '/tree.mustache',
       header_view: _mustachePath + '/tree_header.mustache',
       draw_children: true,
-      child_options: [
-        {
-          model: 'CycleTaskGroup',
-          mapping: 'cycle_task_groups',
-          allow_creating: false
-        }
-      ]
+      attr_list: [{
+        attr_title: 'Title',
+        attr_name: 'title',
+        order: 10
+      }, {
+        attr_title: 'End Date',
+        attr_name: 'end_date',
+        order: 20
+      }],
+      disable_columns_configuration: true
     },
     init: function () {
       var that = this;

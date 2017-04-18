@@ -2458,6 +2458,7 @@ Mustache.registerHelper('get_url_value', function (attr_name, instance) {
       // attribute names considered "default" and not representing a date
       var NON_DATE_ATTRS = Object.freeze({
         kind: 1,
+        title: 1,
         reference_url: 1,
         request_type: 1,
         slug: 1,

@@ -77,7 +77,6 @@
       this.setStatus(status);
     },
     undo: function (ctx, el, ev) {
-      var instance = this.attr('instance');
       var newValue = this.attr('oldValues').shift();
       ev.stopPropagation();
 

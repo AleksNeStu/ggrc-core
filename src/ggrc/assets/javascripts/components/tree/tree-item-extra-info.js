@@ -23,7 +23,7 @@
         get: function () {
           return this.attr('drawStatuses') ||
             this.attr('isDirective') ||
-            this.attr('isCycleTaskGroupObjectTask') ||
+            this.attr('isCycleTasks') ||
             this.attr('isSection');
         }
       },
@@ -46,6 +46,26 @@
             CMS.Models.CycleTaskGroupObjectTask;
         }
       },
+      isCycleTaskGroup: {
+        type: Boolean,
+        get: function () {
+          return this.attr('instance') instanceof CMS.Models.CycleTaskGroup;
+        }
+      },
+      isCycleTasks: {
+        type: Boolean,
+        get: function () {
+          return this.attr('isCycleTaskGroup') ||
+            this.attr('isCycleTaskGroupObjectTask') ||
+            this.attr('instance') instanceof CMS.Models.Cycle;
+        }
+      },
+      disablePopover: {
+        type: Boolean,
+        get: function () {
+          return this.attr('instance') instanceof CMS.Models.Cycle;
+        }
+      },
       drawStatuses: {
         type: Boolean,
         get: function () {
@@ -61,7 +81,7 @@
             classes.push(statusClasses[instance.workflow_state]);
           }
 
-          if (this.attr('isCycleTaskGroupObjectTask') && this.isOverdue()) {
+          if (this.attr('isCycleTasks') && this.isOverdue()) {
             classes.push(statusClasses.Overdue);
           }
 

@@ -35,21 +35,8 @@
   var historyWidgetCountsName = 'cycles:history';
   var currentWidgetCountsName = 'cycles:active';
 
-  var historyWidgetFilter = {
-    expression: {
-      op: {name: '='},
-      left: 'is_current',
-      right: 0
-    }
-  };
-
-  var currentWidgetFilter = {
-    expression: {
-      op: {name: '='},
-      left: 'is_current',
-      right: 1
-    }
-  };
+  var historyWidgetFilter = 'is_current = 0';
+  var currentWidgetFilter = 'is_current = 1';
 
   // Register `workflows` extension with GGRC
   GGRC.extensions.push(WorkflowExtension);
@@ -532,7 +519,9 @@
           widget_id: 'person',
           widget_name: 'People',
           widget_icon: 'person',
-          content_controller: GGRC.Controllers.TreeView,
+          widgetType: 'treeview',
+          treeViewDepth: 3,
+          model: CMS.Models.Person,
           content_controller_options: {
             parent_instance: object,
             model: CMS.Models.Person,
@@ -551,85 +540,50 @@
           widget_id: 'task_group',
           widget_name: 'Setup',
           widget_icon: 'task_group',
-          content_controller: CMS.Controllers.TreeView,
-          content_controller_selector: 'ul',
-          widget_initial_content: '<ul class="tree-structure new-tree"></ul>',
+          widgetType: 'treeview',
+          treeViewDepth: 0,
+          model: CMS.Models.TaskGroup,
           content_controller_options: {
             parent_instance: object,
             model: CMS.Models.TaskGroup,
-            show_view: GGRC.mustache_path + '/task_groups/tree.mustache',
             sortable: true,
             sort_property: 'sort_index',
             mapping: 'task_groups',
-            draw_children: true,
-
-            // Note that we are using special naming for the tree views here.
-            // Also, tasks for a task group aren't directly mapping to the
-            // tasks themselves but to the join object.  This is important
-            // since the join objects themselves have important attributes.
-            child_options: [
-              {
-                model: can.Model.Cacheable,
-                mapping: 'objects',
-                show_view:
-                  GGRC.mustache_path +
-                  '/base_objects/task_group_subtree.mustache',
-                footer_view:
-                  GGRC.mustache_path +
-                  '/base_objects/task_group_subtree_footer.mustache',
-                add_item_view:
-                  GGRC.mustache_path +
-                  '/base_objects/task_group_subtree_add_item.mustache'
-              }, {
-                model: CMS.Models.TaskGroupTask,
-                mapping: 'task_group_tasks',
-                show_view:
-                  GGRC.mustache_path +
-                  '/task_group_tasks/task_group_subtree.mustache',
-                footer_view:
-                  GGRC.mustache_path +
-                  '/task_group_tasks/task_group_subtree_footer.mustache',
-                add_item_view:
-                  GGRC.mustache_path +
-                  '/task_group_tasks/task_group_subtree_add_item.mustache',
-                sort_property: 'sort_index',
-                allow_creating: true
-              }
-            ]
+            draw_children: true
           }
         }
       }
     );
 
     historyWidgetDescriptor = {
-      content_controller: CMS.Controllers.TreeView,
-      content_controller_selector: 'ul',
-      widget_initial_content: '<ul class="tree-structure new-tree"></ul>',
+      widgetType: 'treeview',
+      treeViewDepth: 3,
       widget_id: 'history',
       widget_name: 'History',
       widget_icon: 'history',
+      model: CMS.Models.Cycle,
       content_controller_options: {
         draw_children: true,
         parent_instance: object,
-        model: 'Cycle',
-        counts_name: historyWidgetCountsName,
+        model: CMS.Models.Cycle,
+        countsName: historyWidgetCountsName,
         mapping: 'previous_cycles',
         additional_filter: historyWidgetFilter
       }
     };
 
     currentWidgetDescriptor = {
-      content_controller: CMS.Controllers.TreeView,
-      content_controller_selector: 'ul',
-      widget_initial_content: '<ul class="tree-structure new-tree"></ul>',
+      widgetType: 'treeview',
+      treeViewDepth: 3,
       widget_id: 'current',
       widget_name: 'Active Cycles',
       widget_icon: 'cycle',
+      model: CMS.Models.Cycle,
       content_controller_options: {
         draw_children: true,
         parent_instance: object,
-        model: 'Cycle',
-        counts_name: currentWidgetCountsName,
+        model: CMS.Models.Cycle,
+        countsName: currentWidgetCountsName,
         mapping: 'current_cycle',
         additional_filter: currentWidgetFilter,
         header_view: GGRC.mustache_path + '/cycles/tree_header.mustache',

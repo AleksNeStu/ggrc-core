@@ -152,7 +152,7 @@
             param = QueryAPI.buildParam(widgetType, {}, expression);
           } else {
             param = QueryAPI.buildParam(widgetType.name, {}, expression, null,
-              widgetType.additionalFilter);
+              GGRC.query_parser.parse(widgetType.additionalFilter));
           }
           param.type = 'count';
           return param;

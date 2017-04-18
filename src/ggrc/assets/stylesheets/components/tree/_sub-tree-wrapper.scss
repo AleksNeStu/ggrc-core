@@ -28,15 +28,25 @@ sub-tree-item {
   display: flex;
   flex-direction: column;
 
-  .title {
-    width: 30%;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    line-height: 30px;
+  .columns {
+    justify-content: space-between;
+    width: 100%;
 
-    i.fa {
-      font-size: 13px;
+    .title {
+      width: 50%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      line-height: 30px;
+
+      i.fa {
+        font-size: 13px;
+      }
+    }
+
+    .state {
+      align-items: center;
+      width: 80px;
     }
   }
 
@@ -50,7 +60,7 @@ sub-tree-item {
         }
       }
 
-      tree-item-actions {
+      tree-item-actions, .item-actions {
         visibility: visible;
       }
     }

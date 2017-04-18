@@ -33,26 +33,16 @@
       <a class="btn btn-small btn-info set-tree-attrs" href="javascript://" ($click)="setColumns">Set fields</a>
     </div>
   </tree-header-selector>
-
-  <div class="flex-size-1">
-      <div class="title-heading oneline">
-          <span class="widget-col-title" ($click)="onOrderChange($element)" data-field="title">
-            Title
-            <i class="fa fa-{{#sortIcon 'title' sortingInfo.sortBy sortingInfo.sortDirection}}{{/sortIcon}}"></i>
-          </span>
-      </div>
-    </div>
   {{/if}}
-
-  <div class="flex-box flex-size-{{selectableSize}}">
-        {{#selectableColumns}}
-          <div class="flex-box flex-size-1 widget-col-title" ($click)="onOrderChange($element)" data-field="{{attr_sort_field}}">
-              <span>{{attr_title}}</span>
-              <i class="fa fa-{{#sortIcon attr_sort_field sortingInfo.sortBy sortingInfo.sortDirection}}{{/sortIcon}}"></i>
-          </div>
-        {{/selectableColumns}}
+  <div class="flex-box width-100">
+    {{#selectedColumns}}
+      <div class="flex-box widget-col-title {{attr_sort_field}}" ($click)="onOrderChange($element)" data-field="{{attr_sort_field}}">
+          <span>{{attr_title}}</span>
+          <i class="fa fa-{{#sortIcon attr_sort_field sortingInfo.sortBy sortingInfo.sortDirection}}{{/sortIcon}}"></i>
+      </div>
+    {{/selectedColumns}}
     </div>
-  {{#if_equals model.shortName 'CycleTaskGroupObjectTask'}}
+  {{#if isActiveActioinArea}}
     <div class="item-actions"></div>
-  {{/if_equals}}
+  {{/if}}
 </header>

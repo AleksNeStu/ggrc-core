@@ -59,7 +59,7 @@
               widget.widget_view
             );
             break;
-          case GGRC.Controllers.TreeView:
+          case CMS.Controllers.TreeView:
             descriptors[widgetId] = GGRC.WidgetDescriptor.make_tree_view(
               widget.content_controller_options && (widget.content_controller_options.instance || widget.content_controller_options.parent_instance) || widget.instance,
               widget.content_controller_options && widget.content_controller_options.model || widget.far_model || widget.model,

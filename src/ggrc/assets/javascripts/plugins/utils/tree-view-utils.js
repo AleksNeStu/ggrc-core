@@ -40,6 +40,8 @@
       'workflow_state'
     ]);
 
+    var FULL_SUB_LEVEL_LIST = Object.freeze(['Cycle', 'CycleTaskGroup']);
+
     allTypes.forEach(function (type) {
       var related = baseWidgets[type].slice(0);
 
@@ -209,8 +211,7 @@
           var value = {};
           value[attr.attr_name] = selectedColumns
             .some(function (selectedAttr) {
-              return !selectedAttr.mandatory &&
-                selectedAttr.attr_name === attr.attr_name;
+              return selectedAttr.attr_name === attr.attr_name;
             });
           columns.attr(value);
         });
@@ -335,15 +336,19 @@
           showMore = result.showMore;
 
           reqParams = loadedModels.map(function (model) {
+            var pageInfo = {
+              filter: filter
+            };
+
+            if (countMap[model]) {
+              pageInfo.current = 1;
+              pageInfo.pageSize = countMap[model];
+            }
             return QueryAPI.buildParam(
               model,
-              {
-                current: 1,
-                pageSize: countMap[model],
-                filter: filter
-              },
+              pageInfo,
               relevant,
-              SUB_TREE_FIELDS);
+              !_isFullSubTree(type) ? SUB_TREE_FIELDS : null);
           });
 
           if (SnapshotUtils.isSnapshotParent(relevant.type) ||
@@ -428,34 +433,54 @@
      * @private
      */
     function _buildSubTreeCountMap(models, relevant, filter) {
-      var countQuery = QueryAPI.buildCountParams(models, relevant, filter);
+      var countQuery;
+      var result;
+      var countMap = {};
 
-      return QueryAPI.makeRequest({data: countQuery}).then(function (response) {
-        var countMap = {};
-        var total = 0;
-        var showMore = models.some(function (model, index) {
-          var count = response[index][model].total;
-
-          if (!count) {
-            return;
-          }
-
-          if (total + count < SUB_TREE_ELEMENTS_LIMIT) {
-            countMap[model] = count;
-          } else {
-            countMap[model] = SUB_TREE_ELEMENTS_LIMIT - total;
-          }
-
-          total += count;
-
-          return total >= SUB_TREE_ELEMENTS_LIMIT;
+      if (_isFullSubTree(relevant.type)) {
+        models.forEach(function (model) {
+          countMap[model] = false;
         });
-
-        return {
+        result = can.Deferred().resolve({
           countsMap: countMap,
-          showMore: showMore
-        };
-      });
+          showMore: false
+        });
+      } else {
+        countQuery = QueryAPI.buildCountParams(models, relevant, filter);
+
+        result = QueryAPI.makeRequest({data: countQuery})
+          .then(function (response) {
+            var total = 0;
+            var showMore = models.some(function (model, index) {
+              var count = response[index][model].total;
+
+              if (!count) {
+                return;
+              }
+
+              if (total + count < SUB_TREE_ELEMENTS_LIMIT) {
+                countMap[model] = count;
+              } else {
+                countMap[model] = SUB_TREE_ELEMENTS_LIMIT - total;
+              }
+
+              total += count;
+
+              return total >= SUB_TREE_ELEMENTS_LIMIT;
+            });
+
+            return {
+              countsMap: countMap,
+              showMore: showMore
+            };
+          });
+      }
+
+      return result;
+    }
+
+    function _isFullSubTree(type) {
+      return FULL_SUB_LEVEL_LIST.indexOf(type) >= 0;
     }
 
     /**
@@ -482,7 +507,8 @@
      * @return {Boolean} Is associated with the current context.
      */
     function _isDirectlyRelated(instance) {
-      var needToSplit = CurrentPage.isObjectContextPage();
+      var needToSplit = CurrentPage.isObjectContextPage() &&
+        CurrentPage.getPageType() !== 'Workflow';
       var relates = CurrentPage.related.attr(instance.type);
       var result = true;
       var instanceId = SnapshotUtils.isSnapshot(instance) ?

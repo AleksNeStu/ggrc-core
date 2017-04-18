@@ -17,7 +17,10 @@
        */
       additionalFilter: {
         type: String,
-        value: ''
+        value: '',
+        get: function () {
+          return this.attr('options').additional_filter;
+        }
       },
       /**
        *
@@ -192,6 +195,7 @@
         .then(function (data) {
           var total = data.total;
           var modelName = this.attr('modelName');
+          var countsName = this.attr('options').countsName || modelName;
 
           this.attr('showedItems', data.values);
           this.attr('pageInfo.total', total);
@@ -199,8 +203,9 @@
           this.attr('loading', false);
 
           if (!this._getFilterByName('custom') &&
-            total !== GGRC.Utils.CurrentPage.getCounts().attr(modelName)) {
-            GGRC.Utils.CurrentPage.getCounts().attr(modelName, total);
+            !this._getFilterByName('status') &&
+            total !== GGRC.Utils.CurrentPage.getCounts().attr(countsName)) {
+            GGRC.Utils.CurrentPage.getCounts().attr(countsName, total);
           }
 
           if (this._getFilterByName('status')) {
@@ -267,7 +272,8 @@
     initCount: function () {
       var $el = this.attr('$el');
       var counts = GGRC.Utils.CurrentPage.getCounts();
-      var countsName = this.attr('model').shortName;
+      var countsName = this.attr('options').countsName ||
+        this.attr('model').shortName;
 
       if ($el) {
         can.trigger($el, 'updateCount', [counts.attr(countsName)]);

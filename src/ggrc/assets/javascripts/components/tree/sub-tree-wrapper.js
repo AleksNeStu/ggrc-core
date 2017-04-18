@@ -42,7 +42,8 @@
       needToSplit: {
         type: Boolean,
         get: function () {
-          return CurrentPage.isObjectContextPage();
+          return CurrentPage.isObjectContextPage() &&
+            CurrentPage.getPageType() !== 'Workflow';
         }
       },
       notResult: {
@@ -124,6 +125,7 @@
       var filter = this.getDepthFilter();
 
       models = models || this.attr('childModels') || [];
+      models = can.makeArray(models);
 
       if (!models.length) {
         return can.Deferred().resolve();
@@ -132,7 +134,7 @@
       this.attr('loading', true);
 
       return TreeViewUtils
-        .loadItemsForSubTier(can.makeArray(models), parentType, parentId,filter)
+        .loadItemsForSubTier(models, parentType, parentId, filter)
         .then(function (result) {
           this.attr('loading', false);
           this.attr('directlyItems', result.directlyItems);

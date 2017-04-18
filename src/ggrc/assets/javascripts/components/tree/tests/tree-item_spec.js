@@ -31,8 +31,4 @@ describe('GGRC.Components.treeItem', function () {
       expect(vm.attr('selectableSize')).toEqual(3);
     });
   });
-
-  describe('selectableColumns property', function () {
-
-  });
 });

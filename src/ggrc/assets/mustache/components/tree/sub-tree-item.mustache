@@ -11,12 +11,27 @@
                      {child-models-list}="childModelsList"
                      {deep-limit}="limitDepthTree"
   ></tree-item-actions>
-  <div class="columns width-100" ($click)="select($element)">
+  <div class="flex-box columns" ($click)="select($element)">
     <span class="title">
       <i class="fa fa-{{instance.class.table_singular}}"></i>
       {{title}}
     </span>
+
+    {{#if_instance_of instance 'CycleTaskGroup|CycleTaskGroupObjectTask'}}
+      {{#using status=instance.status}}
+        <div class="flex-box state">
+          <span class="state-value-dot {{addclass 'state-' status separator=''}}">
+            {{status}}
+          </span>
+        </div>
+      {{/using}}
+    {{/if_instance_of}}
   </div>
+
+  <cycle-task-actions {instance}="instance"
+                      (expand)="onExpand(%event)"
+  ></cycle-task-actions>
+
   <tree-item-extra-info {instance}="instance"></tree-item-extra-info>
 </div>
 

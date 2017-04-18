@@ -12,18 +12,9 @@
                        {child-models-list}="childModelsList"
                        {deep-limit}="limitDepthTree"
     ></tree-item-actions>
-    <div class="flex-box width-100" ($click)="select($element)">
-      {{^if disableConfiguration}}
-      <div class="attr-cell flex-box flex-size-1">
-        <div class="title-area attr-content">
-          {{instance.title}}
-        </div>
-      </div>
-      {{/if}}
-
-      <div class="flex-box selectable-attrs flex-size-{{selectableSize}}">
-        {{#selectableColumns}}
-          <div class="flex-box flex-size-1 attr-cell">
+    <div class="flex-box selectable-attrs width-100" ($click)="select($element)">
+        {{#selectedColumns}}
+          <div class="flex-box attr-cell">
             {{#if_equals attr_type 'custom'}}
               <div class="custom attr-content">
                 {{#get_custom_attr_value this instance}}
@@ -68,6 +59,9 @@
                     {{#case 'CycleTaskGroupObjectTask'}}
                       {{> '/static/mustache/cycle_task_group_object_tasks/tree-item-attr.mustache'}}
                     {{/case}}
+                    {{#case 'TaskGroup'}}
+                      {{> '/static/mustache/task_groups/tree-item-attr.mustache'}}
+                    {{/case}}
                     {{#default}}
                       {{> '/static/mustache/base_objects/tree-item-attr.mustache'}}
                     {{/default}}
@@ -76,48 +70,11 @@
               </div>
             {{/if_equals}}
           </div>
-        {{/selectableColumns}}
-      </div>
+        {{/selectedColumns}}
     </div>
-    {{#if_instance_of instance 'CycleTaskGroupObjectTask'}}
-      <div class="flex-box item-actions">
-        {{#with_review_task}}
-          {{#using cycle=instance.cycle}}
-            {{#if_equals cycle.is_current true}}
-              {{#is_allowed 'update' instance}}
-                <div class="request-control" {{ (el) -> $(el).bind('inserted', function() { el.ggrc_controllers_quick_form({ instance : el.closest('tree-item').viewModel().attr('instance')}); }); }}>
-                  {{#if_equals instance.status 'Assigned'}}
-                    <button class="btn btn-mini btn-info change-task-status {{instance._disabled}}" data-openclose="open" data-name="status" data-value="InProgress">Start</button>
-                  {{/if_equals}}
-                  {{#if_equals instance.status 'InProgress'}}
-                    <button class="btn btn-mini btn-white change-task-status {{instance._disabled}}" data-name="status" data-value="Finished">Finish</button>
-                  {{/if_equals}}
-                  {{#if_equals instance.status 'Declined'}}
-                    {{#if review_task.object_review}}
-                      <button class="btn btn-mini btn-white change-task-status {{instance._disabled}}" data-name="status" data-value="Verified">Finish</button>
-                    {{else}}
-                      <button class="btn btn-mini btn-white change-task-status {{instance._disabled}}" data-name="status" data-value="Finished">Finish</button>
-                    {{/if}}
-                  {{/if_equals}}
-                  {{#if_equals instance.status 'Finished'}}
-                    <button class="btn btn-mini btn-danger change-task-status {{instance._disabled}}" data-name="status" data-value="Declined">Decline</button>
-                    <button class="btn btn-mini btn-success change-task-status {{instance._disabled}}" data-openclose="close" data-name="status" data-value="Verified">Verify</button>
-                  {{/if_equals}}
-                  {{#if_equals instance.status 'Verified'}}
-                    <span class="task-done">
-                          <em>Verified</em>
-                        </span>
-                  {{/if_equals}}
-                  {{#instance._undo.0}}
-                    <a href="javascript://" data-name="status" data-value="{{instance._undo.0}}" data-undo="true" class="undo {{instance._disabled}}">Undo</a>
-                  {{/instance._undo.0}}
-                </div>
-              {{/is_allowed}}
-            {{/if_equals}}
-          {{/using}}
-        {{/with_review_task}}
-      </div>
-    {{/if_instance_of}}
+
+    <cycle-task-actions {instance}="instance"></cycle-task-actions>
+
     <tree-item-extra-info {instance}="instance"></tree-item-extra-info>
   </div>
 

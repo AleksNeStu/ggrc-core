@@ -71,6 +71,14 @@
   {{#case 'created_at'}}
       {{localize_date instance.created_at}}
   {{/case}}
+  {{#case 'end_date'}}
+    {{localize_date instance.end_date}}
+  {{/case}}
+  {{#case 'title'}}
+    <span>
+    {{{firstnonempty instance.title instance.description_inline instance.name instance.email ''}}}
+    </span>
+  {{/case}}
 
   {{#default}}
     {{get_default_attr_value attr_name instance}}

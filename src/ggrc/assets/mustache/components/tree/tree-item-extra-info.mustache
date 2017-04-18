@@ -7,9 +7,11 @@
   <div class="person-holder">
     <i class="fa {{cssClasses}} person-tooltip-trigger" data-placement="left"></i>
 
+    {{^if disablePopover}}
     <div class="custom-popover-content">
       <div class="preview-container tree-extra-info-preview">
         <div class="profile-info">
+
         {{#if isDirective}}
           <section>
             <h3 class="task-list-title">Number of mapped objects</h3>
@@ -30,6 +32,7 @@
             {{/if_instance_of}}
           </section>
         {{/if}}
+
         {{#if isSection}}
           <section>
           <h3 class="task-list-title">Number of mapped objects</h3>
@@ -69,6 +72,7 @@
           {{/with_mapping_count}}
         </section>
         {{/if}}
+
         {{#if isCycleTaskGroupObjectTask}}
           <section>
             <h3 class="task-list-title">Number of mapped objects</h3>
@@ -100,6 +104,23 @@
             </div>
           </section>
         {{/if}}
+
+        {{#if isCycleTaskGroup}}
+          <section>
+            <h3 class="task-list-title">Number of mapped tasks</h3>
+            {{#with_mapping_count instance 'cycle_task_group_tasks'}}
+              <div class="mapping-info">
+                <i class="fa fa-calendar-check-o"></i> Total:
+                {{#if count}}
+                  <span class="counter">{{count}}</span>
+                {{else}}
+                  <strong class="counter">0</strong>
+                {{/if}}
+              </div>
+            {{/with_mapping_count}}
+          </section>
+        {{/if}}
+
         {{#if drawStatuses}}
           <h3 class="task-list-title">Current Tasks</h3>
           {{#with_mapping 'object_tasks' instance}}
@@ -136,5 +157,6 @@
       </div>
       </div>
     </div>
+    {{/if}}
   </div>
 {{/if}}

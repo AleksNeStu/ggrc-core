@@ -103,6 +103,11 @@
   &.color { color: $purple; }
 }
 
+.#{$fa-css-prefix}-cycle_task_group {
+  &:before { content: $fa-var-cog; }
+  &.color { color: $purple; }
+}
+
 .#{$fa-css-prefix}-objective {
   &:before { content: $fa-var-dot-circle-o; }
   &.color { color: $objectives; }

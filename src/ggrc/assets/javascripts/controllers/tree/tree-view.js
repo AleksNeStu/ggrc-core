@@ -451,7 +451,7 @@
       var self = this;
       var options = this.options;
       var counts;
-      var countsName = options.counts_name || options.model.shortName;
+      var countsName = options.countsName || options.model.shortName;
 
       if (this.options.parent_instance && this.options.mapping) {
         counts = GGRC.Utils.CurrentPage.getCounts();
@@ -1464,7 +1464,7 @@
       return this.page_loader.load({data: [params]})
         .then(function (data) {
           var total = data.total;
-          var countsName = this.options.counts_name || modelName;
+          var countsName = this.options.countsName || modelName;
           var currentPageUtils = GGRC.Utils.CurrentPage;
 
           this.options.attr('paging.total', total);

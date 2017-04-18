@@ -146,6 +146,11 @@ tree-item {
     .attr-cell {
       height: 60px;
       align-items: center;
+      flex: 1 1;
+
+      &:first-child {
+        flex: 2 2;
+      }
 
       .attr-content {
         overflow: hidden;
@@ -259,6 +264,11 @@ tree-header {
 
   .widget-col-title {
     overflow: hidden;
+    flex: 1 1;
+
+    &:first-child {
+      flex: 2 2;
+    }
     span {
       overflow: hidden;
       white-space: nowrap;

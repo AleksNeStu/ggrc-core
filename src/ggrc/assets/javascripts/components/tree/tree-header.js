@@ -35,16 +35,6 @@
           }
           return result;
         }
-      },
-      selectableColumns: {
-        type: '*',
-        get: function () {
-          var fixedColumns = this.attr('mandatory') || [];
-
-          return this.attr('selectedColumns').filter(function (attr) {
-            return fixedColumns.indexOf(attr.attr_sort_field) < 0;
-          });
-        }
       }
     },
     model: null,
@@ -98,6 +88,11 @@
 
         this.attr('columns', columns);
       }
+    },
+    isActiveActioinArea: function () {
+      var modelName = this.attr('model').shortName;
+
+      return modelName === 'CycleTaskGroupObjectTask' || modelName === 'Cycle';
     },
     init: function () {
       this.initializeColumns();
