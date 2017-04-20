@@ -780,6 +780,7 @@
             content_controller_options: extraContentControllerOptions[object.constructor.shortName][model_name]
           });
         }
+        descriptor.widgetType = 'treeview';
         widgetList.add_widget(object.constructor.shortName, widget_id, descriptor);
       });
     }

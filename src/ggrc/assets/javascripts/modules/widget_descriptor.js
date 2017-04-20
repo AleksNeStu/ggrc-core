@@ -74,7 +74,7 @@
       mapping - a mapping object taken from the instance
       extenders [optional] - an array of objects that will extend the default widget config.
     */
-    make_tree_view: function (instance, farModel, mapping, extenders) {
+    make_tree_view: function (instance, farModel, mapping, extenders, id) {
       var descriptor;
       // Should not even try to create descriptor if configuration options are missing
       if (!instance || !farModel || !mapping) {
@@ -129,7 +129,8 @@
       $.extend.apply($, [true, descriptor].concat(extenders || []));
 
       return new this(
-        instance.constructor.shortName + ':' + farModel.table_singular,
+        instance.constructor.shortName + ':' +
+        id ? id : farModel.table_singular,
         descriptor
       );
     },

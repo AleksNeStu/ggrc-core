@@ -42,34 +42,41 @@
       });
 
       can.each(widgets, function (widget, widgetId) {
-        switch (widget.content_controller) {
-          case GGRC.Controllers.InfoWidget:
-            descriptors[widgetId] = GGRC.WidgetDescriptor.make_info_widget(
-              widget.content_controller_options && widget.content_controller_options.instance || widget.instance,
-              widget.content_controller_options && widget.content_controller_options.widget_view || widget.widget_view
-            );
-            break;
-          case GGRC.Controllers.SummaryWidget:
-            descriptors[widgetId] = GGRC.WidgetDescriptor.make_summary_widget(
-              widget.content_controller_options &&
-              widget.content_controller_options.instance ||
-              widget.instance,
-              widget.content_controller_options &&
-              widget.content_controller_options.widget_view ||
-              widget.widget_view
-            );
-            break;
-          case GGRC.Controllers.TreeView:
-            descriptors[widgetId] = GGRC.WidgetDescriptor.make_tree_view(
-              widget.content_controller_options && (widget.content_controller_options.instance || widget.content_controller_options.parent_instance) || widget.instance,
-              widget.content_controller_options && widget.content_controller_options.model || widget.far_model || widget.model,
-              widget.content_controller_options && widget.content_controller_options.mapping || widget.mapping,
-              widget
-            );
-            break;
-          default:
-            descriptors[widgetId] = new GGRC.WidgetDescriptor(
-                pageType + ':' + widgetId, widget);
+        var ctrl = widget.content_controller;
+        var options = widget.content_controller_options;
+
+        if (ctrl && ctrl === GGRC.Controllers.InfoWidget) {
+          descriptors[widgetId] = GGRC.WidgetDescriptor.make_info_widget(
+            options && options.instance || widget.instance,
+            options && options.widget_view || widget.widget_view
+          );
+        } else if (ctrl && ctrl === GGRC.Controllers.SummaryWidget) {
+          descriptors[widgetId] = GGRC.WidgetDescriptor.make_summary_widget(
+            options &&
+            options.instance ||
+            widget.instance,
+            options &&
+            options.widget_view ||
+            widget.widget_view
+          );
+        } else if (ctrl && ctrl === GGRC.Controllers.TreeView) {
+          descriptors[widgetId] = GGRC.WidgetDescriptor.make_tree_view(
+            options && (options.instance || options.parent_instance) || widget.instance,
+            options && options.model || widget.far_model || widget.model,
+            options && options.mapping || widget.mapping,
+            widget
+          );
+        } else if (widget.widgetType === 'treeview') {
+          descriptors[widgetId] = GGRC.WidgetDescriptor.make_tree_view(
+            options && (options.instance || options.parent_instance) || widget.instance,
+            options && options.model || widget.far_model || widget.model,
+            options && options.mapping || widget.mapping,
+            widget,
+            widgetId
+          );
+        } else {
+          descriptors[widgetId] = new GGRC.WidgetDescriptor(
+            pageType + ':' + widgetId, widget);
         }
       });
 
