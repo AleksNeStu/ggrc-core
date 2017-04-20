@@ -21,6 +21,8 @@ class UserList(base.Component):
         self._driver, self.locators.NOTIFICATIONS)
     self.checkbox_daily_digest = base.Checkbox(
         self._driver, self.locators.CHECKBOX_DAILY_DIGEST)
+    self.button_admin_dashboard = base.Button(
+        self._driver, self.locators.BUTTON_ADMIN_DASHBOARD)
     self.button_help = base.Button(
         self._driver, self.locators.BUTTON_HELP)
     self.button_data_export = base.Button(
@@ -37,6 +39,13 @@ class UserList(base.Component):
   def uncheck_daily_email_digest(self):
     """Unchecks daily checkbox."""
     self.checkbox_daily_digest.uncheck()
+
+  def select_admin_dashboard(self):
+    """
+    Return: widget.AdminDashboard
+    """
+    self.button_admin_dashboard.click()
+    return AdminDashboard(self._driver)
 
 
 class GenericHeader(base.Component):
@@ -117,21 +126,7 @@ class Header(GenericHeader):
 
   def __init__(self, driver):
     super(Header, self).__init__(driver)
-    self.button_admin_dashboard = None
     self._refresh_elements()
-
-  def _refresh_elements(self):
-    """Refresh dashboard elements."""
-    super(Header, self)._refresh_elements()
-    self.button_admin_dashboard = base.Button(
-        self._driver, self.locators.BUTTON_ADMIN_DASHBOARD)
-
-  def select_admin_dashboard(self):
-    """
-    Return: widget.AdminDashboard
-    """
-    self.button_admin_dashboard.click()
-    return AdminDashboard(self._driver)
 
 
 class Dashboard(widget_bar.Dashboard, Header):

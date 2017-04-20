@@ -57,8 +57,6 @@ class PageHeader(object):
       By.CSS_SELECTOR, _CONTENT + ' [href^="/objectBrowser"]')
   TOGGLE_USER_DROPDOWN = (By.CSS_SELECTOR, _CONTENT + " .dropdown-toggle")
   GENERIC_SUCCESS_ALERT = (By.CSS_SELECTOR, ".alert-success")
-  BUTTON_ADMIN_DASHBOARD = (
-      By.CSS_SELECTOR, _CONTENT + ' [href="/admin#people_list_widget"]')
   BUTTON_DATA_IMPORT = (
       By.CSS_SELECTOR, _CONTENT + ' [href="/import"]')
   BUTTON_DATA_EXPORT = (
@@ -68,6 +66,9 @@ class PageHeader(object):
   BUTTON_HELP = (By.CSS_SELECTOR, Common.DROPDOWN_MENU + ' #page-help')
   BUTTON_LOGOUT = (By.CSS_SELECTOR, Common.DROPDOWN_MENU + ' [href="/logout"]')
   NOTIFICATIONS = (By.CSS_SELECTOR, USER_MENU + ' .notify-wrap')
+  BUTTON_ADMIN_DASHBOARD = (
+      By.CSS_SELECTOR,
+      Common.DROPDOWN_MENU + ' [href="/admin#people_list_widget"]')
   CHECKBOX_DAILY_DIGEST = (By.CSS_SELECTOR, USER_MENU + ' input')
   CHECKBOX_DISABLED = (By.CSS_SELECTOR, USER_MENU + ' input.disabled')
 
