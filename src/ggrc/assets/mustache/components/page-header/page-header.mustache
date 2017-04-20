@@ -12,13 +12,13 @@
         All Objects
       {{/is_dashboard}}
     {{else}}
-      <i class="fa fa-{{model.table_singular}}"></i>
-      {{firstnonempty instance.name instance.email}}
+        <span class="entity-type">{{model.table_singular}}:</span>
+        <span class="entity-name">{{firstnonempty instance.name instance.email}}</span>
     {{/is_dashboard_or_all}}
   {{/if_equals}}
   {{^if_equals model.table_singular 'person'}}
-    <i class="fa fa-{{model.table_singular}}"></i>
-    {{instance.title}}
+    <span class="entity-type">{{model.table_singular}}:</span>
+    <span class="entity-name">{{instance.title}}</span>
   {{/if_equals}}
 </h1>
 
@@ -38,7 +38,6 @@
   <li>
     <a href="/dashboard#task_widget">
       <div class="oneline">
-        <i class="fa fa-calendar-check-o"></i>
         {{#if showTitles}}My Tasks{{/if}}
         <object-counter
           counter="user_task_count"
@@ -53,7 +52,6 @@
     <li>
       <a href="/assessments_view">
         <div class="oneline">
-          <i class="fa fa-assessment"></i>
           {{#if showTitles}}My Assessments{{/if}}
         </div>
       </a>
@@ -63,26 +61,14 @@
     <li>
       <a id="allObjectView" href="/objectBrowser#regulation_widget">
         <div class="oneline">
-          <i class="fa fa-files-o"></i>
           {{#if showTitles}}All Objects{{/if}}
         </div>
     </a>
     </li>
   {{!/is_allobjectview}}
-  {{#current_user_is_admin}}
-    <li>
-      <a href="/admin#people_list_widget">
-        <div class="oneline">
-          <i class="fa fa-tachometer"></i>
-          {{#if showTitles}}Administration{{/if}}
-        </div>
-      </a>
-    </li>
-  {{/current_user_is_admin}}
   <li>
     <a href="/import" target="_blank">
       <div class="oneline">
-        <i class="fa fa-sign-in"></i>
         {{#if showTitles}}Import{{/if}}
       </div>
     </a>
@@ -106,6 +92,16 @@
           </div>
         </a>
       </li>
+      {{#current_user_is_admin}}
+        <li>
+          <a href="/admin#people_list_widget" class="admin-btn">
+            <div class="oneline">
+              <i class="fa fa-tachometer"></i>
+              {{#if showTitles}}Administration{{/if}}
+            </div>
+          </a>
+        </li>
+      {{/current_user_is_admin}}
       <li>
         <a id="page-help" href="{{GGRC.config.external_help_url}}" target="_blank">
           <i class="fa fa-question-circle"></i>

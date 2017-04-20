@@ -50,7 +50,16 @@
     }
   }
   .entities {
+    font-size: 18px;
     min-width: 300px;
+
+    > .entity-type {
+      text-transform: capitalize;
+    }
+
+    > .entity-name {
+      opacity: 0.5;
+    }
   }
 }
 
