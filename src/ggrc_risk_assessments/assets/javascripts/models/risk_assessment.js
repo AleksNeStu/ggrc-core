@@ -47,13 +47,7 @@
           attr_sort_field: 'ra_counsel'
         }
       ],
-      add_item_view: path + '/tree_add_item.mustache',
-      child_options: [{
-        model: can.Model.Cacheable,
-        mapping: 'related_objects',
-        show_view: path + '/tree.mustache',
-        draw_children: true
-      }]
+      add_item_view: path + '/tree_add_item.mustache'
     },
     init: function () {
       this._super && this._super.apply(this, arguments);

@@ -450,40 +450,6 @@
       return originalText.replace(/<[^>]*>?/g, '').trim();
     },
     /**
-     * Add subtree for object tree view
-     * @param {Number} depth - for subtree
-     * @return {Object} - mapping of related objects
-     */
-    getRelatedObjects: function (depth) {
-      var basedRelatedObjects;
-      var relatedObject;
-      var mustachePath = GGRC.mustache_path;
-      if (!depth) {
-        return {};
-      }
-
-      basedRelatedObjects = {
-        model: can.Model.Cacheable,
-        mapping: 'related_objects',
-        show_view: mustachePath + '/base_objects/tree.mustache',
-        footer_view: mustachePath + '/base_objects/tree_footer.mustache',
-        add_item_view: mustachePath + '/base_objects/tree_add_item.mustache',
-        draw_children: false
-      };
-
-      relatedObject = $.extend(basedRelatedObjects, {
-        child_options: [this.getRelatedObjects(depth - 1)]
-      });
-
-      if (depth === 1) {
-        return relatedObject;
-      }
-
-      relatedObject.draw_children = true;
-
-      return relatedObject;
-    },
-    /**
      * A function that returns the highest role in an array of strings of roles
      * or a comma-separated string of roles.
      *

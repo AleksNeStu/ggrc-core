@@ -117,7 +117,6 @@
         object_category: farModel.category || 'default',
         model: farModel,
         content_controller_options: {
-          child_options: [],
           draw_children: true,
           parent_instance: instance,
           model: farModel,

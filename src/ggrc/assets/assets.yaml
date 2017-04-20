@@ -557,7 +557,6 @@ dashboard-js-template-files:
   - people/option_detail.mustache
   - people/owners_modal_connector.mustache
   - people/popover.mustache
-  - people/tree.mustache
   - people/tree-item-attr.mustache
   - people/tree_add_item.mustache
   - people/tree_header.mustache

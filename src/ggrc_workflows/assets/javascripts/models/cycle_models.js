@@ -97,8 +97,6 @@
     },
 
     tree_view_options: {
-      show_view: _mustachePath + '/tree.mustache',
-      header_view: _mustachePath + '/tree_header.mustache',
       draw_children: true,
       attr_list: [{
         attr_title: 'Title',
@@ -245,16 +243,7 @@
 
     tree_view_options: {
       sort_property: 'sort_index',
-      show_view: _mustachePath + '/tree.mustache',
-      draw_children: true,
-      child_options: [
-        {
-          title: 'Tasks',
-          model: 'CycleTaskGroupObjectTask',
-          mapping: 'cycle_task_group_tasks',
-          allow_creating: false
-        }
-      ]
+      draw_children: true
     },
 
     init: function () {
@@ -331,7 +320,6 @@
     },
     tree_view_options: {
       sort_property: 'sort_index',
-      show_view: _mustachePath + '/tree.mustache',
       attr_view: _mustachePath + '/tree-item-attr.mustache',
       attr_list: [
         {
@@ -372,19 +360,7 @@
       ],
       display_attr_names: ['title', 'assignee', 'start_date'],
       mandatory_attr_name: ['title'],
-      draw_children: true,
-      child_options: [
-        {
-          model: 'CycleTaskEntry',
-          mapping: 'cycle_task_entries',
-          allow_creating: true
-        },
-        {
-          model: can.Model.Cacheable,
-          mapping: 'info_related_objects',
-          allow_creating: true
-        }
-      ]
+      draw_children: true
     },
     init: function () {
       var that = this;

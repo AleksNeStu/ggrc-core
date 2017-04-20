@@ -162,7 +162,7 @@
     /**
      * Legacy options which were built for a previous implementation of TreeView based on CMS.Controllers.TreeView
      */
-    options: null,
+    options: {},
     $el: null,
     loading: false,
     /**

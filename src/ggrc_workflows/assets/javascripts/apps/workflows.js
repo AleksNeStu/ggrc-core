@@ -417,32 +417,23 @@
         workflow: {
           widget_id: 'workflow',
           widget_name: 'Workflows',
-          content_controller: GGRC.Controllers.TreeView,
+          widgetType: 'treeview',
+          treeViewDepth: 0,
           content_controller_options: {
             mapping: 'workflows',
             parent_instance: pageInstance,
-            model: CMS.Models.Workflow,
-            show_view: GGRC.mustache_path + '/workflows/tree.mustache',
-            footer_view: GGRC.mustache_path + '/workflows/tree_footer.mustache'
+            model: CMS.Models.Workflow
           }
         },
         task: {
           widget_id: 'task',
           widget_name: 'Workflow Tasks',
-          content_controller: GGRC.Controllers.TreeView,
+          widgetType: 'treeview',
+          treeViewDepth: 1,
           content_controller_options: {
             mapping: 'object_tasks',
             parent_instance: pageInstance,
             model: CMS.Models.CycleTaskGroupObjectTask,
-            show_view:
-              GGRC.mustache_path +
-              '/cycle_task_group_object_tasks/tree.mustache',
-            header_view:
-              GGRC.mustache_path +
-              '/cycle_task_group_object_tasks/tree_header.mustache',
-            footer_view:
-              GGRC.mustache_path +
-              '/cycle_task_group_object_tasks/tree_footer.mustache',
             add_item_view:
               GGRC.mustache_path +
               '/cycle_task_group_object_tasks/tree_add_item.mustache',
@@ -454,20 +445,7 @@
                 this.options.attr('mapping', el.attr('mapping'));
                 this.reload_list();
               }
-            },
-            child_options: [
-              {
-                model: CMS.Models.CycleTaskEntry,
-                mapping: 'cycle_task_entries',
-                show_view:
-                  GGRC.mustache_path + '/cycle_task_entries/tree.mustache',
-                footer_view:
-                  GGRC.mustache_path +
-                  '/cycle_task_entries/tree_footer.mustache',
-                draw_children: true,
-                allow_creating: true
-              }
-            ]
+            }
           }
         }
       };
@@ -526,12 +504,6 @@
             parent_instance: object,
             model: CMS.Models.Person,
             mapping: 'mapped_and_or_authorized_people',
-            show_view:
-              GGRC.mustache_path +
-              '/ggrc_basic_permissions/people_roles/' +
-              'authorizations_by_person_tree.mustache',
-            footer_view:
-              GGRC.mustache_path + '/base_objects/tree_footer.mustache',
             add_item_view:
               GGRC.mustache_path + '/wf_people/tree_add_item.mustache'
           }
@@ -630,20 +602,10 @@
       task: {
         widget_id: 'task',
         widget_name: 'My Tasks',
-        content_controller: GGRC.Controllers.TreeView,
-
+        model: CMS.Models.CycleTaskGroupObjectTask,
         content_controller_options: {
           parent_instance: GGRC.page_instance(),
           model: CMS.Models.CycleTaskGroupObjectTask,
-          show_view:
-            GGRC.mustache_path +
-            '/cycle_task_group_object_tasks/tree.mustache',
-          header_view:
-            GGRC.mustache_path +
-            '/cycle_task_group_object_tasks/tree_header.mustache',
-          footer_view:
-            GGRC.mustache_path +
-            '/cycle_task_group_object_tasks/tree_footer.mustache',
           add_item_view:
             GGRC.mustache_path +
             '/cycle_task_group_object_tasks/tree_add_item.mustache',

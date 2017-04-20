@@ -22,7 +22,6 @@ dashboard-js-template-files:
   - base_objects/task_group_subtree_add_item.mustache
   - base_objects/task_group_subtree.mustache
   - base_objects/approval_link.mustache
-  - cycles/tree.mustache
   - cycles/tree_header.mustache
   - cycles/info.mustache
   - cycle_task_entries/tree.mustache
@@ -31,12 +30,9 @@ dashboard-js-template-files:
   - cycle_task_entries/modal_content.mustache
   - cycle_task_entries/documents.mustache
   - cycle_task_entries/documents_footer.mustache
-  - cycle_task_groups/tree.mustache
   - cycle_task_groups/info.mustache
-  - cycle_task_group_objects/tree.mustache
   - cycle_task_group_objects/info.mustache
   - cycle_task_group_object_tasks/info.mustache
-  - cycle_task_group_object_tasks/tree.mustache
   - cycle_task_group_object_tasks/tree-item-attr.mustache
   - cycle_task_group_object_tasks/modal_content.mustache
   - cycle_task_group_object_tasks/tree_footer.mustache
@@ -49,7 +45,6 @@ dashboard-js-template-files:
   - tasks/states.mustache
   - task_groups/info.mustache
   - task_groups/modal_content.mustache
-  - task_groups/tree.mustache
   - task_groups/tree-item-attr.mustache
   - task_groups/tree_add_item.mustache
   - task_groups/tree_header.mustache
@@ -63,7 +58,6 @@ dashboard-js-template-files:
   - workflows/modal_content.mustache
   - workflows/info.mustache
   - workflows/contacts.mustache
-  - workflows/tree.mustache
   - workflows/tree-item-attr.mustache
   - workflows/tree_footer.mustache
   - workflows/search_result.mustache

@@ -68,26 +68,6 @@ describe('GGRC utils allowed_to_map() method', function () {
   });
 });
 
-describe('GGRC utils getRelatedObjects() method', function () {
-  it('returns related object only for second tier', function () {
-    var result = GGRC.Utils.getRelatedObjects(1);
-    expect(result).toEqual(jasmine.any(Object));
-    expect(result.mapping).toEqual('related_objects');
-    expect(result.draw_children).toBeFalsy();
-    expect(result.child_options).toEqual([{}]);
-  });
-
-  it('returns related objects for second and third tier', function () {
-    var result = GGRC.Utils.getRelatedObjects(2);
-    expect(result).toEqual(jasmine.any(Object));
-    expect(result.mapping).toEqual('related_objects');
-    expect(result.draw_children).toBeTruthy();
-    expect(result.child_options).toEqual(jasmine.any(Object));
-    expect(result.child_options[0].draw_children).toBeFalsy();
-    expect(result.child_options[0].mapping).toEqual('related_objects');
-  });
-});
-
 describe('GGRC utils getMappableTypes() method', function () {
   var mapper;
 

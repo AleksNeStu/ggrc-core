@@ -149,9 +149,6 @@
   // Override GGRC.extra_widget_descriptors and GGRC.extra_default_widgets
   // Initialize widgets for risk page
   RisksExtension.init_widgets = function () {
-    var treeViewDepth = 2;
-    var relatedObjChildOpts =
-      [GGRC.Utils.getRelatedObjects(treeViewDepth)];
     var pageInstance = GGRC.page_instance();
     var isMyWork = function () {
       return pageInstance && pageInstance.type === 'Person';
@@ -184,16 +181,14 @@
         moduleObjectNames);
 
       relatedObjectDescriptors[modelName] = {
-        content_controller: CMS.Controllers.TreeView,
-        content_controller_selector: 'ul',
-        widget_initial_content: '<ul class="tree-structure new-tree"></ul>',
+        widgetType: 'treeview',
+        treeViewDepth: 2,
         widget_id: model.table_singular,
         widget_name: model.model_plural,
         widget_icon: model.table_singular,
         content_controller_options: {
           add_item_view: GGRC.mustache_path +
           '/base_objects/tree_add_item.mustache',
-          child_options: relatedObjChildOpts,
           draw_children: true,
           parent_instance: pageInstance,
           model: model,
@@ -236,14 +231,12 @@
     });
 
     threatDescriptor = {
-      content_controller: CMS.Controllers.TreeView,
-      content_controller_selector: 'ul',
-      widget_initial_content: '<ul class="tree-structure new-tree"></ul>',
+      widgetType: 'treeview',
+      treeViewDepth: 2,
       widget_id: CMS.Models.Threat.table_singular,
       widget_name: CMS.Models.Threat.title_plural,
       widget_icon: CMS.Models.Threat.table_singular,
       content_controller_options: {
-        child_options: relatedObjChildOpts,
         draw_children: true,
         parent_instance: pageInstance,
         model: CMS.Models.Threat,
@@ -252,15 +245,13 @@
       }
     };
     riskDescriptor = {
-      content_controller: CMS.Controllers.TreeView,
-      content_controller_selector: 'ul',
-      widget_initial_content: '<ul class="tree-structure new-tree"></ul>',
+      widgetType: 'treeview',
+      treeViewDepth: 2,
       widget_id: CMS.Models.Risk.table_singular,
       widget_name: CMS.Models.Risk.title_plural,
       widget_icon: CMS.Models.Risk.table_singular,
       order: 45, // between default Objective (40) and Control (50)
       content_controller_options: {
-        child_options: relatedObjChildOpts,
         draw_children: true,
         parent_instance: pageInstance,
         model: CMS.Models.Risk,

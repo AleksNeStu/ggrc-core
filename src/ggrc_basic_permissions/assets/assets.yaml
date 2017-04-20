@@ -6,7 +6,6 @@ dashboard-js-files:
 
 dashboard-js-template-files:
   - ggrc_basic_permissions/people_roles/authorizations_by_person_list.mustache
-  - ggrc_basic_permissions/people_roles/authorizations_by_person_tree.mustache
   - ggrc_basic_permissions/people_roles/authorizations_by_person_tree_add_item.mustache
   - ggrc_basic_permissions/people_roles/authorizations_modal_actions.mustache
   - ggrc_basic_permissions/people_roles/base_modal.mustache

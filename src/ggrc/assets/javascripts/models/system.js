@@ -43,9 +43,7 @@ can.Model.Cacheable('CMS.Models.SystemOrProcess', {
     custom_attribute_values: 'CMS.Models.CustomAttributeValue.stubs'
   },
   tree_view_options: {
-    show_view: '/static/mustache/base_objects/tree.mustache',
     attr_view: GGRC.mustache_path + '/base_objects/tree-item-attr.mustache',
-    footer_view: GGRC.mustache_path + '/base_objects/tree_footer.mustache',
     attr_list: can.Model.Cacheable.attr_list.concat([
       {
         attr_title: 'Network Zone',
@@ -58,8 +56,7 @@ can.Model.Cacheable('CMS.Models.SystemOrProcess', {
       {attr_title: 'Reference URL', attr_name: 'reference_url'}
     ]),
     add_item_view: GGRC.mustache_path + '/base_objects/tree_add_item.mustache',
-    link_buttons: true,
-    child_options: []
+    link_buttons: true
   },
   links_to: {
     System: {},

@@ -121,8 +121,7 @@
         attr_title: 'Audit Firm',
         attr_name: 'audit_firm'
       }],
-      draw_children: true,
-      child_options: []
+      draw_children: true
     },
     init: function () {
       if (this._super) {
