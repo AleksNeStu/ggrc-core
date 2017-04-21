@@ -9,6 +9,7 @@
   var template = can.view(GGRC.mustache_path +
     '/components/tree/tree-widget-container.mustache');
   var TreeViewUtils = GGRC.Utils.TreeView;
+  var CurrentPageUtils = GGRC.Utils.CurrentPage;
 
   var viewModel = can.Map.extend({
     define: {
@@ -59,6 +60,10 @@
 
           if (this.attr('loading')) {
             classes.push('loading');
+          }
+
+          if (CurrentPageUtils.isMyAssessments()) {
+            classes.push('my-assessments');
           }
 
           return classes.join(' ');
@@ -127,8 +132,13 @@
       show3bbs: {
         type: Boolean,
         get: function () {
-          return this.attr('hideImportExport') ||
-            this.attr('showGenerateAssessments');
+          return !CurrentPageUtils.isMyAssessments();
+        }
+      },
+      noResults: {
+        type: Boolean,
+        get: function () {
+          return !this.attr('loading') && !this.attr('showedItems').length;
         }
       },
       pageInfo: {
@@ -204,12 +214,12 @@
 
           if (!this._getFilterByName('custom') &&
             !this._getFilterByName('status') &&
-            total !== GGRC.Utils.CurrentPage.getCounts().attr(countsName)) {
-            GGRC.Utils.CurrentPage.getCounts().attr(countsName, total);
+            total !== CurrentPageUtils.getCounts().attr(countsName)) {
+            CurrentPageUtils.getCounts().attr(countsName, total);
           }
 
           if (this._getFilterByName('status')) {
-            GGRC.Utils.CurrentPage
+            CurrentPageUtils
               .initCounts([modelName], parent.type, parent.id);
           }
         }.bind(this));
@@ -271,7 +281,7 @@
     },
     initCount: function () {
       var $el = this.attr('$el');
-      var counts = GGRC.Utils.CurrentPage.getCounts();
+      var counts = CurrentPageUtils.getCounts();
       var countsName = this.attr('options').countsName ||
         this.attr('model').shortName;
 

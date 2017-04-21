@@ -19,7 +19,7 @@
       },
 
       disable_attrs: function (el, ev) {
-        var MAX_ATTR = 6;
+        var MAX_ATTR = 7;
         var $check = this.element.find('.attr-checkbox');
         var $mandatory = $check.filter('.mandatory');
         var $selected = $check.filter(':checked');

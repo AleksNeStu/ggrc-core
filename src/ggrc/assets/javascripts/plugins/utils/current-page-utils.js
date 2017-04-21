@@ -93,7 +93,10 @@
 
       // the assessments_view only needs the Assessments widget
       if (isAssessmentsView) {
-        widgetList = {assessment: widgetList.assessment};
+        widgetList = {
+          assessment: widgetList.assessment
+        };
+        widgetList.assessment.treeViewDepth = 0;
       }
 
       return widgetList;

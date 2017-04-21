@@ -22,14 +22,16 @@
           </multiselect-dropdown>
         </tree-status-filter>
       {{/if}}
+      {{^if noResults}}
       <tree-pagination {(paging)}="pageInfo"></tree-pagination>
+      {{/if}}
     </div>
 
     <div class="tree-action" style="display: flex; justify-content: flex-end;">
       {{#if addItem}}
         {{{renderLive addItem}}}
       {{/if}}
-      {{!#if show3bbs}}
+      {{#if show3bbs}}
       <div class="details-wrap">
         <a class="btn btn-3bbps dropdown-toggle" href="#" data-toggle="dropdown">
           <span class="bubble"></span>
@@ -66,7 +68,7 @@
           {{/if}}
         </ul>
       </div>
-      {{!/if}}
+      {{/if}}
     </div>
 
     <tree-header {selected-columns}="columns.selected"
@@ -93,6 +95,8 @@
   ></tree-view>
 
   <div class="tree-footer flex-box">
-    <tree-pagination {(paging)}="pageInfo"></tree-pagination>
+    {{^if noResults}}
+      <tree-pagination {(paging)}="pageInfo"></tree-pagination>
+    {{/if}}
   </div>
 </div>

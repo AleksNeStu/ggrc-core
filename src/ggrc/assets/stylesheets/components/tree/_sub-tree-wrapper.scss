@@ -16,6 +16,7 @@ sub-tree-wrapper {
     min-height: 30px;
     position: relative;
     opacity: .5;
+    border-bottom: 1px solid $itemBorder;
 
     .tree-spinner {
       display: flex;
