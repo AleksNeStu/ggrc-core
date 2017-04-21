@@ -234,7 +234,8 @@
     setColumnsConfiguration: function () {
       var columns = TreeViewUtils.getColumnsForModel(
         this.attr('model').model_singular,
-        this.attr('displayPrefs')
+        this.attr('displayPrefs'),
+        true
       );
 
       this.attr('columns.available', columns.available);

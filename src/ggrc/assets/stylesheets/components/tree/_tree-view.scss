@@ -164,6 +164,13 @@ tree-item {
         display: -webkit-box;
         -webkit-line-clamp: 2;
         -webkit-box-orient: vertical;
+
+        &.custom {
+          max-height: 32px;
+          p, ul, ol {
+            margin-bottom: 0;
+          }
+        }
       }
     }
   }

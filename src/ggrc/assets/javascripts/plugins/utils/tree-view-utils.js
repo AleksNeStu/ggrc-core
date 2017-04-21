@@ -65,9 +65,10 @@
      * Get available and selected columns for Model type
      * @param {String} modelType - Model type.
      * @param {Object} displayPrefs - Display preferences.
+     * @param {Boolean} [includeRichText] -
      * @return {Object} Table columns configuration.
      */
-    function getColumnsForModel(modelType, displayPrefs) {
+    function getColumnsForModel(modelType, displayPrefs, includeRichText) {
       var Cacheable = can.Model.Cacheable;
       var Model = CMS.Models[modelType];
       var modelDefinition = Model().class.root_object;
@@ -110,8 +111,13 @@
         [] :
         GGRC.custom_attr_defs
           .filter(function (def) {
-            return def.definition_type === modelDefinition &&
-              def.attribute_type !== 'Rich Text';
+            var include = def.definition_type === modelDefinition;
+
+            if (!includeRichText) {
+              include = include && def.attribute_type !== 'Rich Text'
+            }
+
+            return include;
           }).map(function (def) {
             return {
               attr_title: def.title,
