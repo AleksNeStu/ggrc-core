@@ -79,8 +79,7 @@ class Widget(base.Widget):
     """Check that in case of empty table, counter not loaded on filter panel.
     """
     selenium_utils.wait_for_element_text(
-        self._driver,
-        locator.BaseWidgetGeneric.FILTER_PANE_COUNTER, "No records")
+        self._driver, locator.TreeView.NO_RESULTS_MESSAGE, "No results")
 
   def get_items_count(self):
     """Get elements' count from counter on filter panel."""
