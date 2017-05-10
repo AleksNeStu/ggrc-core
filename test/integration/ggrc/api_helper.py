@@ -67,9 +67,11 @@ class Api(object):
       response.json = None
     return response
 
-  def send_request(self, request, obj, data, headers=None, api_link=None):
+  def send_request(self, request,
+                   obj=None, data=None, headers=None, api_link=None):
     """Send an API request."""
     headers = headers or {}
+    data = data or {}
     if api_link is None:
       api_link = self.api_link(obj)
 
