@@ -9,6 +9,18 @@ from lib.page.modal import update_object
 from lib.utils import selenium_utils
 
 
+import logging
+import sys
+
+root = logging.getLogger()
+root.setLevel(logging.DEBUG)
+
+ch = logging.StreamHandler(sys.stdout)
+ch.setLevel(logging.DEBUG)
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+ch.setFormatter(formatter)
+root.addHandler(ch)
+
 class CommonInfo(base.Widget):
   """Abstract class of common info for Info pages and Info panels."""
   _locators = locator.CommonWidgetInfo
@@ -65,35 +77,38 @@ class CommonInfo(base.Widget):
     :return [['ca_header1', 'ca_header2'], ['ca_value1', 'ca_value2']]
     """
     # pylint: disable=invalid-name
-    if not self.cas_headers_and_values:
-      selenium_utils.wait_for_js_to_load(self._driver)
-      self.cas_headers_and_values = self._driver.find_elements(
-          *self._locators.CAS_HEADERS_AND_VALUES)
-    if self.cas_headers_and_values:
-      list_text_cas_scopes = [
-          scope.text.splitlines() if len(scope.text.splitlines()) == 2 else
-          [scope.text.splitlines()[0],
-           unicode(int(base.Checkbox(self._driver, scope.find_element(
-               *self._locators.CAS_CHECKBOXES)).is_element_checked()))
-           ] for scope in self.cas_headers_and_values]
-      cas_headers, _cas_values = zip(*list_text_cas_scopes)
-      cas_values = []
-      for ca_val in _cas_values:
-        if ca_val == roles.DEFAULT_USER:
-          # Example User
-          cas_values.append(
-              unicode(objects.get_singular(objects.PEOPLE).title()))
-        elif "/" in ca_val and len(ca_val) == 10:
-          # Date
-          _date = ca_val.split("/")
-          cas_values.append(unicode("{y}-{m}-{d}".format(
-              y=_date[2], m=_date[0], d=_date[1])))
-        else:
-          # Other
-          cas_values.append(ca_val)
-      return cas_headers, cas_values
-    else:
-      return [None, None]
+    try:
+      if not self.cas_headers_and_values:
+        selenium_utils.wait_for_js_to_load(self._driver)
+        self.cas_headers_and_values = self._driver.find_elements(
+            *self._locators.CAS_HEADERS_AND_VALUES)
+      if self.cas_headers_and_values:
+        list_text_cas_scopes = [
+            scope.text.splitlines() if len(scope.text.splitlines()) == 2 else
+            [scope.text.splitlines()[0],
+             unicode(int(base.Checkbox(self._driver, scope.find_element(
+                 *self._locators.CAS_CHECKBOXES)).is_element_checked()))
+             ] for scope in self.cas_headers_and_values]
+        cas_headers, _cas_values = zip(*list_text_cas_scopes)
+        cas_values = []
+        for ca_val in _cas_values:
+          if ca_val == roles.DEFAULT_USER:
+            # Example User
+            cas_values.append(
+                unicode(objects.get_singular(objects.PEOPLE).title()))
+          elif "/" in ca_val and len(ca_val) == 10:
+            # Date
+            _date = ca_val.split("/")
+            cas_values.append(unicode("{y}-{m}-{d}".format(
+                y=_date[2], m=_date[0], d=_date[1])))
+          else:
+            # Other
+            cas_values.append(ca_val)
+        return cas_headers, cas_values
+      else:
+        return [None, None]
+    except:
+      root.exception("Debug")
 
   def get_info_widget_obj_scope(self):
     """Get dict from object (text scope) which displayed on info page or
