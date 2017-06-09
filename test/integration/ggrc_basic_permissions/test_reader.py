@@ -134,23 +134,6 @@ class TestReader(TestCase):
     reader_count = self._get_count("Person")
     self.assertEqual(admin_count, reader_count)
 
-  def test_reader_cannot_be_owner(self):
-    """ Test if reader cannot become owner of the object he has not created """
-    self.api.set_user(self.users['admin'])
-    _, obj = self.generator.generate(all_models.Regulation, "regulation", {
-        "regulation": {"title": "Test regulation", "context": None},
-    })
-    self.api.set_user(self.users['reader'])
-    response = self.api.post(all_models.ObjectOwner, {"object_owner": {
-        "person": {
-            "id": self.users['reader'].id,
-            "type": "Person",
-        }, "ownable": {
-            "type": "Regulation",
-            "id": obj.id,
-        }, "context": None}})
-    self.assertEqual(response.status_code, 403)
-
   def test_relationships_access(self):
     """Check if reader can access relationship objects"""
     self.api.set_user(self.users['admin'])

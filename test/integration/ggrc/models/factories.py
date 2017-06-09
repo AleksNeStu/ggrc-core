@@ -278,6 +278,12 @@ class OrgGroupFactory(TitledFactory):
     model = models.OrgGroup
 
 
+class SystemFactory(TitledFactory):
+
+  class Meta:
+    model = models.System
+
+
 class ProcessFactory(TitledFactory):
 
   class Meta:
@@ -296,16 +302,6 @@ class MarketFactory(TitledFactory):
     model = models.Market
 
 
-class OwnerFactory(ModelFactory):
-  """ObjectOwner factory class"""
-
-  class Meta:
-    model = models.ObjectOwner
-
-  person = None
-  ownable = None
-
-
 class AccessControlListFactory(ModelFactory):
   """Access Control List factory class"""
 
@@ -322,3 +318,9 @@ class AccessControlRoleFactory(ModelFactory):
   name = factory.LazyAttribute(
       lambda _: random_str(prefix="Access Control Role - ")
   )
+
+
+class AccessControlRoleAdminFactory(AccessControlRoleFactory):
+  """Access Control Role Admin factory class"""
+  mandatory = u"1"
+  name = "Admin"

@@ -7,7 +7,7 @@ import ggrc
 from ggrc import models
 from integration.ggrc import TestCase
 from integration.ggrc import generator
-
+from integration.ggrc.models import factories
 
 counter = 0
 
@@ -43,6 +43,17 @@ class TestAutomappings(TestCase):
     super(TestAutomappings, self).setUp()
     self.gen = generator.ObjectGenerator()
     self.api = self.gen.api
+
+  @classmethod
+  def create_ac_roles(cls, obj, person_id):
+    ac_role = factories.AccessControlRoleAdminFactory(
+        object_type=obj.type
+    )
+    factories.AccessControlListFactory(
+        ac_role=ac_role,
+        object=obj,
+        person_id=person_id
+    )
 
   def create_object(self, cls, data):
     name = cls._inflector.table_singular
@@ -270,24 +281,34 @@ class TestAutomappings(TestCase):
     program = self.create_object(models.Program, {
         'title': make_name('Program')
     })
+
+    self.create_ac_roles(program, admin.id)
+    program = program.query.get(program.id)
+
     regulation = self.create_object(models.Regulation, {
         'title': make_name('Regulation'),
-        'owners': [{"id": admin.id}],
     })
-    owners = [{"id": creator.id}]
+    self.create_ac_roles(regulation, admin.id)
+    regulation = regulation.query.get(regulation.id)
+
     self.api.set_user(creator)
     section = self.create_object(models.Section, {
         'title': make_name('Section'),
-        'owners': owners,
     })
+    self.create_ac_roles(section, creator.id)
+    section = section.query.get(section.id)
+
     objective = self.create_object(models.Objective, {
         'title': make_name('Objective'),
-        'owners': owners,
     })
+    self.create_ac_roles(objective, creator.id)
+    objective = objective.query.get(objective.id)
+
     control = self.create_object(models.Control, {
         'title': make_name('Control'),
-        'owners': owners,
     })
+    self.create_ac_roles(control, creator.id)
+    control = control.query.get(control.id)
 
     self.api.set_user(admin)
     self.assert_mapping_implication(

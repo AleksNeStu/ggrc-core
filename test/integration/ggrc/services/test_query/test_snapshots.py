@@ -498,13 +498,18 @@ class TestSnapshotIndexing(BaseQueryAPITestCase):
                          [process_nz_core_id, process_nz_prod_id])
 
   def _add_owner(self, ownable_type, ownable_id, person_id):
-    """Post ObjectOwner instance for ownable and person."""
-    self.generator.generate_object(
-        models.ObjectOwner,
-        {"ownable": {"type": ownable_type,
-                     "id": ownable_id},
-         "person": {"type": "Person",
-                    "id": person_id}},
+    """Create ACL for provided object and person."""
+    acr = all_models.AccessControlRole.query.filter_by(
+        object_type=ownable_type,
+        name="Admin"
+    ).first()
+    if not acr:
+      acr = factories.AccessControlRoleAdminFactory(object_type=ownable_type)
+    factories.AccessControlListFactory(
+        person_id=person_id,
+        object_type=ownable_type,
+        object_id=ownable_id,
+        ac_role=acr
     )
 
   def assert_rows_number_in_search(self, field, value, expected_num):

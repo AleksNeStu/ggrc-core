@@ -5,6 +5,8 @@
 Test Creator role with Program scoped roles
 """
 
+# pylint: disable=unused-import
+from ggrc.app import app  # NOQA
 from ggrc import db
 from ggrc.models import all_models
 from integration.ggrc import TestCase
@@ -199,25 +201,32 @@ class TestCreatorProgram(TestCase):
     self.assertEqual(response.status_code, 201)
     context_id = response.json.get("program").get("context").get("id")
     program_id = response.json.get("program").get("id")
+
+    # Create admin owner role to map it with system
+    acr_id = factories.AccessControlRoleFactory(object_type="System").id
     self.objects["program"] = all_models.Program.query.get(program_id)
+
     # Create an object:
     for obj in ("mapped_object", "unrelated"):
       random_title = factories.random_str()
       response = self.api.post(all_models.System, {
-          "system": {"title": random_title, "context": None},
+          "system": {
+              "title": random_title,
+              "context": None,
+              "access_control_list": [{
+                  "person": {
+                      "id": creator.id,
+                      "type": "Person",
+                  },
+                  "ac_role_id": acr_id,
+                  "context": None
+              }],
+          },
       })
       self.assertEqual(response.status_code, 201)
       system_id = response.json.get("system").get("id")
       self.objects[obj] = all_models.System.query.get(system_id)
-      # Become the owner
-      response = self.api.post(all_models.ObjectOwner, {"object_owner": {
-          "person": {
-              "id": creator.id,
-              "type": "Person",
-          }, "ownable": {
-              "id": system_id,
-              "type": "System"
-          }, "context": None}})
+
     # Map Object to Program
     response = self.api.post(all_models.Relationship, {
         "relationship": {"source": {

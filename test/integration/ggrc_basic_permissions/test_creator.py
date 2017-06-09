@@ -42,6 +42,7 @@ class TestCreator(TestCase):
   def test_creator_can_crud(self):
     """ Test Basic create/read,update/delete operations """
     self.api.set_user(self.users["creator"])
+    creator_id = self.users["creator"].id
     audit_id = factories.AuditFactory().id
     all_errors = []
     base_models = set([
@@ -63,7 +64,7 @@ class TestCreator(TestCase):
                 "reference_url": "ref",
                 "contact": {
                     "type": "Person",
-                    "id": self.users["creator"].id,
+                    "id": creator_id,
                 },
                 "audit": {  # this is ignored on everything but Issues
                     "id": audit_id,
@@ -91,21 +92,17 @@ class TestCreator(TestCase):
               "{} can retrieve object if not owner (collection)"
               .format(model_singular))
           continue
-        # Become an owner
-        response = self.api.post(all_models.ObjectOwner, {"object_owner": {
-            "person": {
-                "id": self.users['creator'].id,
-                "type": "Person",
-            }, "ownable": {
-                "type": model_singular,
-                "id": obj_id
-            }, "context": None}})
-        if response.status_code != 201:
-          all_errors.append("{} can't create owner {}.".format(
-              model_singular, response.status))
-          continue
 
         # Test GET when owner
+        acr = factories.AccessControlRoleAdminFactory(
+            object_type=model_singular
+        )
+        factories.AccessControlListFactory(
+            object_id=obj_id,
+            object_type=model_singular,
+            ac_role=acr,
+            person_id=creator_id
+        )
         response = self.api.get(model, obj_id)
         if response.status_code != 200:
           all_errors.append("{} can't GET object {}".format(
@@ -133,18 +130,22 @@ class TestCreator(TestCase):
         "regulation": {"title": "Admin regulation", "context": None},
     })
     self.api.set_user(self.users['creator'])
+    acr_id = factories.AccessControlRoleAdminFactory(object_type="Policy").id
     response = self.api.post(all_models.Policy, {
-        "policy": {"title": "Creator Policy", "context": None},
+        "policy": {
+            "title": "Creator Policy",
+            "context": None,
+            "access_control_list": [{
+                "person": {
+                    "id": self.users["creator"].id,
+                    "type": "Person",
+                },
+                "ac_role_id": acr_id,
+                "context": None
+            }],
+        },
     })
-    obj_id = response.json.get("policy").get("id")
-    self.api.post(all_models.ObjectOwner, {"object_owner": {
-        "person": {
-            "id": self.users['creator'].id,
-            "type": "Person",
-        }, "ownable": {
-            "type": "Policy",
-            "id": obj_id,
-        }, "context": None}})
+    response.json.get("policy").get("id")
     response, _ = self.api.search("Regulation,Policy")
     entries = response.json["results"]["entries"]
     self.assertEqual(len(entries), 1)
@@ -166,23 +167,6 @@ class TestCreator(TestCase):
     self.api.set_user(self.users['creator'])
     creator_count = self._get_count("Person")
     self.assertEqual(admin_count, creator_count)
-
-  def test_creator_cannot_be_owner(self):
-    """Test if creator cannot become owner of the object he has not created"""
-    self.api.set_user(self.users['admin'])
-    _, obj = self.generator.generate(all_models.Regulation, "regulation", {
-        "regulation": {"title": "Test regulation", "context": None},
-    })
-    self.api.set_user(self.users['creator'])
-    response = self.api.post(all_models.ObjectOwner, {"object_owner": {
-        "person": {
-            "id": self.users['creator'].id,
-            "type": "Person",
-        }, "ownable": {
-            "type": "Regulation",
-            "id": obj.id,
-        }, "context": None}})
-    self.assertEqual(response.status_code, 403)
 
   def test_relationships_access(self):
     """Check if creator cannot access relationship objects"""
@@ -216,9 +200,11 @@ class TestCreator(TestCase):
   def test_revision_access(self):
     """Check if creator can access the right revision objects."""
 
-    def gen(title):
+    def gen(title, extra_data=None):
+      section_content = {"title": title, "context": None}
+      section_content.update(**extra_data) if extra_data else None
       return self.generator.generate(all_models.Section, "section", {
-          "section": {"title": title, "context": None},
+          "section": section_content
       })[1]
 
     def check(obj, expected):
@@ -235,17 +221,21 @@ class TestCreator(TestCase):
 
     self.api.set_user(self.users["admin"])
     obj_1 = gen("Test Section 1")
-    obj_2 = gen("Test Section 2")
-
-    self.api.post(all_models.ObjectOwner, {"object_owner": {
-        "person": {
-            "id": self.users['creator'].id,
-            "type": "Person",
-        }, "ownable": {
-            "type": "Section",
-            "id": obj_2.id,
-        }, "context": None}})
 
     self.api.set_user(self.users["creator"])
+    acr_id = factories.AccessControlRoleAdminFactory(object_type="Section").id
+    linked_acl = {
+        "access_control_list": [{
+            "person": {
+                "id": self.users["creator"].id,
+                "type": "Person",
+            },
+            "ac_role_id": acr_id,
+            "context": None
+        }]
+    }
     check(obj_1, 0)
-    check(obj_2, 2)
+    obj_2 = gen("Test Section 2", linked_acl)
+    obj2_acl = obj_2.access_control_list[0]
+    check(obj_2, 1)
+    check(obj2_acl, 1)

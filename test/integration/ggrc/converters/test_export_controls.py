@@ -25,16 +25,22 @@ class TestExportControls(TestCase):
       }
       self.basic_owner = factories.PersonFactory(name="basic owner")
       self.control = factories.ControlFactory()
-      self.owner_object = factories.OwnerFactory(person=self.basic_owner,
-                                                 ownable=self.control)
+      self.acr_id = factories.AccessControlRoleAdminFactory(
+          object_type=self.control.type
+      ).id
+      self.owner_object = factories.AccessControlListFactory(
+          person=self.basic_owner,
+          object=self.control,
+          ac_role_id=self.acr_id
+      )
 
   def test_search_by_owner_email(self):
-    self.assert_slugs("owners",
+    self.assert_slugs("Admin",
                       self.basic_owner.email,
                       [self.control.slug])
 
   def test_search_by_owner_name(self):
-    self.assert_slugs("owners",
+    self.assert_slugs("Admin",
                       self.basic_owner.name,
                       [self.control.slug])
 
@@ -42,17 +48,21 @@ class TestExportControls(TestCase):
     """Filter by added new owner and old owner"""
     basic_email, basic_name = self.basic_owner.email, self.basic_owner.name
     new_owner = factories.PersonFactory(name="new owner")
-    factories.OwnerFactory(person=new_owner, ownable=self.control)
-    self.assert_slugs("owners",
+    factories.AccessControlListFactory(
+        person=new_owner,
+        object=self.control,
+        ac_role_id=self.acr_id
+    )
+    self.assert_slugs("Admin",
                       new_owner.email,
                       [self.control.slug])
-    self.assert_slugs("owners",
+    self.assert_slugs("Admin",
                       new_owner.name,
                       [self.control.slug])
-    self.assert_slugs("owners",
+    self.assert_slugs("Admin",
                       basic_email,
                       [self.control.slug])
-    self.assert_slugs("owners",
+    self.assert_slugs("Admin",
                       basic_name,
                       [self.control.slug])
 
