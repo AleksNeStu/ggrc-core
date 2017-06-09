@@ -77,55 +77,11 @@ class TestGetRevisionsList(TestCase):
                                  ownable_deleted_count=0):
     """Returns expected action list for given params"""
     total_created_count = created_count + ownable_created_count
-    total_modified_count = (
-        modified_count + ownable_modified_count + ownable_created_count +
-        ownable_deleted_count + ownable_modified_count)
+    total_modified_count = modified_count + ownable_modified_count
     total_deleted_count = deleted_count + ownable_deleted_count
     return (["created"] * total_created_count +
             ["modified"] * total_modified_count +
             ["deleted"] * total_deleted_count)
-
-  @data(
-      # (created_count, modified_count, deleted_count,
-      #  ownable_created_count, ownable_modified_count, ownable_deleted_count)
-      (5, 5, 5, 5, 5, 5),
-      (5, 0, 0, 0, 0, 0),
-      (0, 5, 0, 0, 0, 0),
-      (0, 0, 5, 0, 0, 0),
-      (0, 0, 0, 5, 0, 0),
-      (0, 0, 0, 0, 5, 0),
-      (0, 0, 0, 0, 0, 5),
-      (0, 0, 0, 0, 0, 0),
-  )
-  def test_simple(self, values):
-    """Generated test for mixed number of ownable and simple objects"""
-    (
-        created_count, modified_count, deleted_count,
-        ownable_created_count, ownable_modified_count, ownable_deleted_count
-    ) = values
-    mock_params = {
-        "new": self.populate_object_list(
-            created_count, ownable_created_count),
-        "dirty": self.populate_object_list(
-            modified_count, ownable_modified_count),
-        "deleted": self.populate_object_list(
-            deleted_count, ownable_deleted_count),
-    }
-    with self.mock_get_cache(**mock_params) as cache_mock:
-      action_list = []
-      action_dict = collections.defaultdict(list)
-      for result in self.get_log_revisions():
-        action_list.append(result.action)
-        action_dict[result.action].append(result.resource_id)
-      self.assertEqual(self.build_expected_action_list(*values), action_list)
-      self.assertEqual(sorted([i.id for i in cache_mock.new]),
-                       sorted(action_dict['created']))
-      self.assertEqual(sorted([i.id for i in cache_mock.deleted]),
-                       sorted(action_dict['deleted']))
-      modified_objs = itertools.chain(
-          cache_mock.dirty, [i.ownable for i in self.ownable_obj])
-      self.assertEqual(sorted([i.id for i in modified_objs]),
-                       sorted(action_dict['modified']))
 
   @data(
       # (created_count, modified_count, deleted_count,
