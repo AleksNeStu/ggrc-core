@@ -86,7 +86,6 @@ class TestExportSnapshots(TestCase):
     control_dicts = {
         control.slug: {
             # normal fields
-            "Admin": "\n".join(owner.email for owner in control.owners),
             "Code": "*" + control.slug,
             "Revision Date": unicode(snapshot.revision.created_at),
             "Control URL": control.url,
@@ -193,7 +192,6 @@ class TestExportSnapshots(TestCase):
     control_dicts = {
         control.slug: {
             # normal fields
-            "Admin": u"",
             "Code": "*" + control.slug,
             "Revision Date": unicode(snapshot.revision.created_at),
             "Control URL": u"",

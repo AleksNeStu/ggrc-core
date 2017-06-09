@@ -91,7 +91,7 @@ class TestImportIssues(TestCase):
     factories.AccessControlRoleFactory(
         object_type="Market",
         mandatory=False
-    ).name
+    )
 
     email = factories.PersonFactory().email
     response_json = self.import_data(OrderedDict([

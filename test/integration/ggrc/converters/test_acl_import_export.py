@@ -60,7 +60,7 @@ class TestACLImportExport(TestCase):
     market = models.Market.query.first()
     self.assertEqual(
         {acl.person.email for acl in market.access_control_list},
-        emails,
+        emails | {"user@example.com"},
     )
 
   def test_acl_update(self):
@@ -115,7 +115,7 @@ class TestACLImportExport(TestCase):
     market = models.Market.query.first()
     self.assertEqual(
         {acl.person.email for acl in market.access_control_list},
-        emails,
+        emails | {"user@example.com"},
     )
 
   def test_acl_export(self):
