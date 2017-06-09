@@ -37,12 +37,14 @@ class TestACLImportExport(TestCase):
     ]))
     self._check_csv_response(response, {})
     market = models.Market.query.first()
-    self.assertEqual(len(market.access_control_list), 1)
-    self.assertEqual(market.access_control_list[0].ac_role_id, role_id)
-    self.assertEqual(
-        market.access_control_list[0].person.email,
-        "user@example.com"
+    acl = models.AccessControlList.query.filter_by(
+        ac_role_id=role_id,
+        object_id=market.id,
+        object_type="Market"
     )
+    self.assertEqual(acl.count(), 1)
+    self.assertEqual(acl.first().ac_role_id, role_id)
+    self.assertEqual(acl.first().person.email, "user@example.com")
 
   def test_acl_multiple_entries(self):
     """Test ACL column import with multiple emails."""

@@ -503,8 +503,6 @@ class TestSnapshotIndexing(BaseQueryAPITestCase):
         object_type=ownable_type,
         name="Admin"
     ).first()
-    if not acr:
-      acr = factories.AccessControlRoleAdminFactory(object_type=ownable_type)
     factories.AccessControlListFactory(
         person_id=person_id,
         object_type=ownable_type,

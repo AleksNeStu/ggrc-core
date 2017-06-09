@@ -197,8 +197,9 @@ class TestSnapshoting(SnapshotterBaseTestCase):
     control_revisions = db.session.query(models.Revision).filter(
         models.Revision.resource_type == control.type,
         models.Revision.resource_id == control.id)
-    # 2 revisions are from the initial creation, and 2 are from edits.
-    self.assertEqual(control_revisions.count(), 4)
+    # 1 revisions are from the initial creation (as control is not
+    # ownable now), and 2 are from edits.
+    self.assertEqual(control_revisions.count(), 3)
 
     self.assertEqual(
         control_revisions.order_by(models.Revision.id.desc()).first().id,

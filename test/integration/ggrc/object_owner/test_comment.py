@@ -2,10 +2,9 @@
 # Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
 
 """Test object owner of comments."""
-from ggrc.models import Assessment, AccessControlList, Revision
+from ggrc.models import Assessment, AccessControlList, Revision, all_models
 from integration.ggrc import TestCase
 from integration.ggrc import generator
-from integration.ggrc.models import factories
 
 
 class TestCommentObjectOwner(TestCase):
@@ -20,9 +19,10 @@ class TestCommentObjectOwner(TestCase):
 
   def test_object_owner(self):
     """Test object owner and its revision of assessment comment."""
-    acr_comment_id = factories.AccessControlRoleAdminFactory(
-        object_type='Comment'
-    ).id
+    acr_comment_id = all_models.AccessControlRole.query.filter_by(
+        object_type="Comment",
+        name="Admin"
+    ).first().id
     self.import_file("assessment_full_no_warnings.csv")
     asmt1 = Assessment.query.filter_by(slug="Assessment 1").first()
     _, comment = self.generator.generate_comment(

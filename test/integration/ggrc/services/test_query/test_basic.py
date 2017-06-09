@@ -459,7 +459,7 @@ class TestAdvancedQueryAPI(BaseQueryAPITestCase):
     # TODO: the test data set lacks objects with several owners
     policies_owner = self._get_first_result_set(
         self._make_query_dict("Policy",
-                              order_by=[{"name": "owners"}, {"name": "id"}]),
+                              order_by=[{"name": "Admin"}, {"name": "id"}]),
         "Policy", "values",
     )
     policies_unsorted = self._get_first_result_set(
@@ -472,8 +472,12 @@ class TestAdvancedQueryAPI(BaseQueryAPITestCase):
     )
     person_id_name = {person["id"]: (person["name"], person["email"])
                       for person in people}
-    policy_id_owner = {policy["id"]: person_id_name[policy["owners"][0]["id"]]
-                       for policy in policies_unsorted}
+    policy_id_owner = {
+        policy["id"]: person_id_name[
+            policy["access_control_list"][0]["person_id"]
+        ]
+        for policy in policies_unsorted
+    }
 
     self.assertListEqual(
         policies_owner,

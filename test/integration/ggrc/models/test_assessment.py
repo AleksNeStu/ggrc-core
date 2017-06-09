@@ -429,10 +429,16 @@ class TestAssessmentGeneration(ggrc.TestCase):
       if verifier_role is not None:
         auditors[verifier_role].append(factories.PersonFactory(email=verifier))
       for role, people in auditors.iteritems():
-        ac_role_id = factories.AccessControlRoleFactory(
+        ac_role = all_models.AccessControlRole.query.filter_by(
             name=role,
             object_type=self.snapshot.child_type,
-        ).id
+        ).first()
+        if not ac_role:
+          ac_role = factories.AccessControlRoleFactory(
+              name=role,
+              object_type=self.snapshot.child_type,
+          )
+        ac_role_id = ac_role.id
         for user in people:
           factories.AccessControlListFactory(
               person_id=user.id,

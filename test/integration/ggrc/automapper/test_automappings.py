@@ -46,9 +46,10 @@ class TestAutomappings(TestCase):
 
   @classmethod
   def create_ac_roles(cls, obj, person_id):
-    ac_role = factories.AccessControlRoleAdminFactory(
-        object_type=obj.type
-    )
+    ac_role = models.AccessControlRole.query.filter_by(
+        object_type=obj.type,
+        name="Admin"
+    ).first()
     factories.AccessControlListFactory(
         ac_role=ac_role,
         object=obj,
@@ -281,8 +282,6 @@ class TestAutomappings(TestCase):
     program = self.create_object(models.Program, {
         'title': make_name('Program')
     })
-
-    self.create_ac_roles(program, admin.id)
     program = program.query.get(program.id)
 
     regulation = self.create_object(models.Regulation, {

@@ -25,9 +25,10 @@ class TestExportControls(TestCase):
       }
       self.basic_owner = factories.PersonFactory(name="basic owner")
       self.control = factories.ControlFactory()
-      self.acr_id = factories.AccessControlRoleAdminFactory(
-          object_type=self.control.type
-      ).id
+      self.acr_id = all_models.AccessControlRole.query.filter_by(
+          object_type=self.control.type,
+          name="Admin"
+      ).first().id
       self.owner_object = factories.AccessControlListFactory(
           person=self.basic_owner,
           object=self.control,

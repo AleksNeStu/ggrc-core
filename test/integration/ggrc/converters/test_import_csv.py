@@ -38,9 +38,7 @@ class TestBasicCsvImport(TestCase):
     revisions = models.Revision.query.filter(
         models.Revision.resource_type == "Policy"
     ).count()
-    # Count of revisions is the same now as we don't create new
-    # revisions for ownable classes
-    self.assertEqual(revisions, 3)
+    self.assertEqual(revisions, 6)
     policy = models.Policy.eager_query().first()
     self.assertEqual(policy.modified_by.email, "user@example.com")
 
@@ -52,8 +50,12 @@ class TestBasicCsvImport(TestCase):
           "user@example.com",
           policy.access_control_list[0].person.email
       )
+      owner = models.Person.query.filter_by(email="user@example.com").first()
+      self.assert_roles(policy, Admin=owner)
+
     filename = "policy_import_working_with_warnings.csv"
     response_json = self.import_file(filename)
+
     expected_warnings = {
         errors.UNKNOWN_USER_WARNING.format(line=3, email="miha@policy.com"),
         errors.UNKNOWN_OBJECT.format(
@@ -80,6 +82,8 @@ class TestBasicCsvImport(TestCase):
       self.assertNotEqual([], policy.access_control_list)
       self.assertEqual("user@example.com",
                        policy.access_control_list[0].person.email)
+      owner = models.Person.query.filter_by(email="user@example.com").first()
+      self.assert_roles(policy, Admin=owner)
 
     filename = "policy_same_titles.csv"
     response_json = self.import_file(filename)

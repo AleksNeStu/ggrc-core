@@ -94,9 +94,10 @@ class TestCreator(TestCase):
           continue
 
         # Test GET when owner
-        acr = factories.AccessControlRoleAdminFactory(
-            object_type=model_singular
-        )
+        acr = all_models.AccessControlRole.query.filter_by(
+            object_type=model_singular,
+            name="Admin"
+        ).first()
         factories.AccessControlListFactory(
             object_id=obj_id,
             object_type=model_singular,
@@ -130,7 +131,10 @@ class TestCreator(TestCase):
         "regulation": {"title": "Admin regulation", "context": None},
     })
     self.api.set_user(self.users['creator'])
-    acr_id = factories.AccessControlRoleAdminFactory(object_type="Policy").id
+    acr_id = all_models.AccessControlRole.query.filter_by(
+        object_type="Policy",
+        name="Admin"
+    ).first().id
     response = self.api.post(all_models.Policy, {
         "policy": {
             "title": "Creator Policy",
@@ -223,7 +227,10 @@ class TestCreator(TestCase):
     obj_1 = gen("Test Section 1")
 
     self.api.set_user(self.users["creator"])
-    acr_id = factories.AccessControlRoleAdminFactory(object_type="Section").id
+    acr_id = all_models.AccessControlRole.query.filter_by(
+        object_type="Section",
+        name="Admin"
+    ).first().id
     linked_acl = {
         "access_control_list": [{
             "person": {

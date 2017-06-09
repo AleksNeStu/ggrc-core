@@ -364,3 +364,10 @@ class TestCase(BaseTestCase, object):
         for revision in revisions
     ]
     return snapshots
+
+  def assert_roles(self, obj, **roles):
+    acl_person_roles = [
+        (acl.ac_role.name, acl.person) for acl in obj.access_control_list
+    ]
+    for role, person in roles.items():
+      self.assertTrue((role, person) in acl_person_roles)

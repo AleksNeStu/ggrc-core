@@ -202,8 +202,11 @@ class TestCreatorProgram(TestCase):
     context_id = response.json.get("program").get("context").get("id")
     program_id = response.json.get("program").get("id")
 
-    # Create admin owner role to map it with system
-    acr_id = factories.AccessControlRoleFactory(object_type="System").id
+    # Use admin owner role to map it with system
+    acr_id = all_models.AccessControlRole.query.filter_by(
+        object_type="System",
+        name="Admin"
+    ).first().id
     self.objects["program"] = all_models.Program.query.get(program_id)
 
     # Create an object:
