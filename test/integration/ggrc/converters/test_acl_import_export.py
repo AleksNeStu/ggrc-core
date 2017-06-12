@@ -294,3 +294,32 @@ class TestACLImportExport(TestCase):
             acl.ac_role.object_type == object_type
         }
     self.assertEqual(stored_roles, model_dict)
+
+  def test_acl_revision_on_import(self):
+    """Test creation of separate revision for ACL in import"""
+    role_name = factories.AccessControlRoleFactory(object_type="Market").name
+    emails = {factories.PersonFactory().email for _ in range(3)}
+
+    response = self.import_data(OrderedDict([
+        ("object_type", "Market"),
+        ("code", "market-1"),
+        ("title", "Title"),
+        ("Admin", "user@example.com"),
+        (role_name, "\n".join(emails)),
+    ]))
+    self._check_csv_response(response, {})
+    market_revisions = models.Revision.query.filter_by(
+        resource_type="Market"
+    ).count()
+    # One revision for created object and one for modified when acl was added
+    self.assertEqual(market_revisions, 2)
+
+    acr_revisions = models.Revision.query.filter_by(
+        resource_type="AccessControlRole"
+    ).count()
+    self.assertEqual(acr_revisions, 1)
+
+    acl_revisions = models.Revision.query.filter_by(
+        resource_type="AccessControlList"
+    ).count()
+    self.assertEqual(acl_revisions, 4)

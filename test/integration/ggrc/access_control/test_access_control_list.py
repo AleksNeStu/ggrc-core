@@ -167,3 +167,43 @@ class TestAccessControlList(TestCase):
         "Person email not indexed {}".format(self.person.email)
     assert len([r for r in res if r.content == self.person.name]) == 1, \
         "Person name not indexed {}".format(self.person.name)
+
+  def test_acl_revision_count(self):
+    """Test if acl revision is created when object POSTed and PUTed"""
+    id_, person_id = self.acr.id, self.person.id
+
+    response = self._post_control(id_, person_id)
+    # One ACL and Control created in setUp and on by POST
+    self.assertEqual(
+        all_models.Revision.query.filter_by(
+            resource_type="AccessControlList"
+        ).count(),
+        2
+    )
+    self.assertEqual(
+        all_models.Revision.query.filter_by(
+            resource_type="Control"
+        ).count(),
+        2
+    )
+
+    # If content of "access_control_list" is changed,
+    # new revision should be created for ACL
+    control = response["control"]
+    control["access_control_list"] = []
+    self.api.put(
+        all_models.Control.query.get(control["id"]),
+        {"control": control}
+    )
+    self.assertEqual(
+        all_models.Revision.query.filter_by(
+            resource_type="AccessControlList"
+        ).count(),
+        3
+    )
+    self.assertEqual(
+        all_models.Revision.query.filter_by(
+            resource_type="Control"
+        ).count(),
+        3
+    )
