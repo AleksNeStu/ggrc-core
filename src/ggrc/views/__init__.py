@@ -9,6 +9,7 @@ import collections
 import json
 import logging
 
+import sqlalchemy
 from flask import flash
 from flask import g
 from flask import render_template
@@ -194,7 +195,9 @@ def get_roles_json():
 def get_access_control_roles_json():
   """Get a list of all access control roles"""
   with benchmark("Get access roles JSON"):
-    attrs = all_models.AccessControlRole.query.all()
+    attrs = all_models.AccessControlRole.query.options(
+        sqlalchemy.orm.undefer_group("AccessControlRole_complete")
+    ).all()
     published = []
     for attr in attrs:
       published.append(publish(attr))
