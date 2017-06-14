@@ -13,7 +13,7 @@ from lib.utils import selenium_utils
 class CommonInfo(base.Widget):
   """Abstract class of common info for Info pages and Info panels."""
   _locators = locator.CommonWidgetInfo
-  dropdown_settings_cls = widget_info.CommonDropdownSettings
+  dropdown_settings_cls = widget_info.CommonInfoDropdownSettings
   locator_headers_and_values = None
   all_headers_and_values = []
   cas_headers_and_values = []
@@ -22,24 +22,23 @@ class CommonInfo(base.Widget):
 
   def __init__(self, driver):
     super(CommonInfo, self).__init__(driver)
-    if self.is_under_audit:
-      self.title = base.Label(driver, self._locators.TITLE_UNDER_AUDIT)
-      self.title_entered = base.Label(
-          driver, self._locators.TITLE_ENTERED_UNDER_AUDIT)
-      self.state = base.Label(driver, self._locators.STATE_UNDER_AUDIT)
-      self.locator_3bbs = self._locators.BUTTON_3BBS_UNDER_AUDIT
-    else:
-      self.title = base.Label(driver, self._locators.TITLE)
-      self.title_entered = base.Label(driver, self._locators.TITLE_ENTERED)
-      self.state = base.Label(driver, self._locators.STATE)
-      self.locator_3bbs = self._locators.BUTTON_3BBS
+    self.locator_headers_and_values = self._locators.HEADERS_AND_VALUES
+
+  def title(self):
+    return base.Label(self._driver, self._locators.TITLE)
+
+  def title_entered(self):
+    return base.Label(self._driver, self._locators.TITLE_ENTERED)
+
+  def state(self):
+    return base.Label(self._driver, self._locators.STATE)
 
   def open_info_3bbs(self):
     """Click to 3BBS button on Info page or Info panel to open info 3BBS modal.
     Return: lib.element.widget_info."obj_name"DropdownSettings
     """
-    base.Button(self._driver, self.locator_3bbs).click()
-    return self.dropdown_settings_cls(self._driver, self.is_under_audit)
+    base.Button(self._driver, self._locators.BUTTON_3BBS).click()
+    return self.dropdown_settings_cls(self._driver)
 
   def get_header_and_value_text_from_custom_scopes(self, header_text,
                                                    custom_scopes_locator=None):
@@ -58,10 +57,10 @@ class CommonInfo(base.Widget):
       if not custom_scopes_locator and self.locator_headers_and_values:
         self.all_headers_and_values = self._driver.find_elements(
             *self.locator_headers_and_values)
-    header_and_value = (
-        [scope.text.splitlines()[:2] for scope in self.all_headers_and_values
-         if header_text in scope.text][0]
-        if self.all_headers_and_values else [None, None])
+    header_and_value = next((scope.text.splitlines()[:2]
+                             for scope in self.all_headers_and_values
+                             if header_text in scope.text),
+                            [None, None])
     return header_and_value
 
   def get_headers_and_values_text_from_cas_scopes(self):  # flake8: noqa
@@ -117,8 +116,7 @@ class CommonInfo(base.Widget):
           # Other
           cas_values.append(ca_val)
       return cas_headers, cas_values
-    else:
-      return [None, None]
+    return [None, None]
 
   def get_info_widget_obj_scope(self):
     """Get dict from object (text scope) which displayed on info page or
@@ -133,10 +131,6 @@ class InfoPanel(CommonInfo):
 
   def __init__(self, driver):
     super(InfoPanel, self).__init__(driver)
-    self.locator_headers_and_values = (
-        self._locators.PANEL_HEADERS_AND_VALUES if self.is_info_panel or
-        not self.is_info_panel and not self.is_info_page
-        else self._locators.PAGE_HEADERS_AND_VALUES)
 
   def button_maximize_minimize(self):
     """Button (toggle) maximize and minimize for Info Panels."""
@@ -152,13 +146,15 @@ class SnapshotableInfoPanel(InfoPanel):
   """Class for Info Panels of snapshotable objects."""
   # pylint: disable=too-few-public-methods
   _locators = locator.WidgetSnapshotsInfoPanel
+  dropdown_settings_cls = widget_info.Snapshots
   locator_link_get_latest_ver = _locators.LINK_GET_LAST_VER
 
   def __init__(self, driver):
     super(SnapshotableInfoPanel, self).__init__(driver)
-    if self.is_under_audit and self.is_info_panel:
-      self.snapshot_obj_version = base.Label(
-          driver, self._locators.SNAPSHOT_OBJ_VER)
+
+  def snapshot_obj_version(self):
+    """Label of snapshot version"""
+    return base.Label(self._driver, self._locators.SNAPSHOT_OBJ_VER)
 
   def open_link_get_latest_ver(self):
     """Click on link get latest version under Info panel."""
@@ -242,11 +238,12 @@ class Audits(InfoPanel):
     # all obj scopes
     self.list_all_headers_text = [
         self._elements.CAS_HEADERS.upper(), self._elements.CAS_VALUES.upper(),
-        self.title.text, self._elements.STATUS.upper(), self.audit_lead_text,
+        self.title().text, self._elements.STATUS.upper(), self.audit_lead_text,
         self.code_text]
     self.list_all_values_text = [
-        self.cas_headers_text, self.cas_values_text, self.title_entered.text,
-        objects.get_normal_form(self.state.text), self.audit_lead_entered_text,
+        self.cas_headers_text, self.cas_values_text, self.title_entered().text,
+        objects.get_normal_form(self.state().text),
+        self.audit_lead_entered_text,
         self.code_entered_text]
 
 
@@ -300,14 +297,15 @@ class Assessments(InfoPanel):
     # scope
     self.list_all_headers_text = [
         self._elements.CAS_HEADERS.upper(), self._elements.CAS_VALUES.upper(),
-        self.title.text, self._elements.STATE.upper(),
+        self.title().text, self._elements.STATE.upper(),
         self._elements.VERIFIED.upper(),
         self._elements.CREATORS.upper(),
         self._elements.MAPPED_OBJECTS.upper(), self.code_text]
     self.list_all_values_text = [
-        self.cas_headers_text, self.cas_values_text, self.title_entered.text,
-        objects.get_normal_form(self.state.text),
-        self.state.text.upper() in element.AssessmentStates.COMPLETED.upper(),
+        self.cas_headers_text, self.cas_values_text, self.title_entered().text,
+        objects.get_normal_form(self.state().text),
+        self.state().text.upper() in
+        element.AssessmentStates.COMPLETED.upper(),
         self.creators_entered_text,
         self.mapped_objects_titles_text, self.code_entered_text]
 
@@ -399,11 +397,11 @@ class Controls(SnapshotableInfoPanel):
     # scope
     self.list_all_headers_text = [
         self._elements.CAS_HEADERS.upper(), self._elements.CAS_VALUES.upper(),
-        self.title.text, self._elements.STATE.upper(), self.admin_text,
+        self.title().text, self._elements.STATE.upper(), self.admin_text,
         self.primary_contact_text, self.code_text]
     self.list_all_values_text = [
-        self.cas_headers_text, self.cas_values_text, self.title_entered.text,
-        objects.get_normal_form(self.state.text), self.admin_entered_text,
+        self.cas_headers_text, self.cas_values_text, self.title_entered().text,
+        objects.get_normal_form(self.state().text), self.admin_entered_text,
         self.primary_contact_entered_text, self.code_entered_text]
 
 

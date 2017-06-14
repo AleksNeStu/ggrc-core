@@ -6,27 +6,28 @@
 from selenium.webdriver.common.by import By
 
 from lib import base
-from lib.constants import locator, url, objects
+from lib.constants import locator, url
 from lib.page.modal import unified_mapper
 
 
-class CommonDropdownSettings(base.Component):
+class CommonDropdownSettings(base.DropdownMenu):
   """Common for 3BBS button/dropdown settings on Tree View."""
   _locators = locator.CommonDropdown3bbsTreeView
 
-  def __init__(self, driver, obj_name, is_under_audit):
-    super(CommonDropdownSettings, self).__init__(driver)
+  def __init__(self, driver, obj_name):
     self.widget_name = url.get_widget_name_of_mapped_objs(obj_name)
     self.obj_name = obj_name
     # elements
+    _dropdown_element = (
+        By.CSS_SELECTOR,
+        self._locators.TREE_VIEW_3BBS_DROPDOWN.format(self.widget_name))
+    super(CommonDropdownSettings, self).__init__(driver, _dropdown_element)
     self.select_child_tree_locator = (
         self._locators.BUTTON_3BBS_SELECT_CHILD_TREE.format(self.widget_name))
-    # if object is not shapshotable
-    if not (obj_name in objects.ALL_SNAPSHOTABLE_OBJS and is_under_audit):
-      self.import_locator = (
-          self._locators.BUTTON_3BBS_IMPORT.format(self.widget_name))
-      self.export_locator = (
-          self._locators.BUTTON_3BBS_EXPORT.format(self.widget_name))
+    self.import_locator = (
+        self._locators.BUTTON_3BBS_IMPORT.format(self.widget_name))
+    self.export_locator = (
+        self._locators.BUTTON_3BBS_EXPORT.format(self.widget_name))
 
 
 class Assessments(CommonDropdownSettings):

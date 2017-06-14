@@ -5,6 +5,7 @@
 # pylint: disable=too-many-lines
 
 from selenium.webdriver.common.by import By
+
 from lib.constants import objects, url
 
 
@@ -16,12 +17,7 @@ class Common(object):
   MODAL_CONFIRM = ".modal.hide"
   MODAL_MAP = ".modal-selector"
   # info page (panel)
-  PIN_CONTENT = ".pin-content "
   INFO_WIDGET = ".info"
-  INFO_HEADER = INFO_WIDGET + " .pane-header"
-  INFO_UTILITY = INFO_WIDGET + " .info-pane-utility"
-  INFO_ACTION = INFO_WIDGET + " .pin-action"
-  INFO_TOGGLE = INFO_UTILITY + " .dropdown-toggle"
   # dropdown
   DROPDOWN_MENU = ".dropdown-menu"
   # tree
@@ -39,6 +35,10 @@ class Common(object):
   MAX = "max"
   NORMAL = "normal"
   DOWN = "down"
+  # xpath helper
+  XPATH_NOT_HIDDEN = "[not(ancestor::section[contains(@class, 'hidden')])]"
+  INFO_WIDGET_XPATH = ("//section[starts-with(@class,'info')]" +
+                       XPATH_NOT_HIDDEN)
 
 
 class Login(object):
@@ -587,55 +587,37 @@ class ModalCloneAudit(ModalCommonConfirmAction):
 
 class CommonWidgetInfo(object):
   """Common locators for Info widgets and Info panels."""
-  WIDGET = Common.INFO_WIDGET
-  PIN_CONTENT = Common.PIN_CONTENT
-  INFO_HEADER = Common.INFO_HEADER
-  _INFO_HEADER = Common.INFO_HEADER + " .span9 "
-  INFO_TOGGLE = Common.INFO_TOGGLE
-  HEADERS_AND_VALUES = WIDGET + ' div [class*="span"]'
-  PAGE_HEADERS_AND_VALUES = (By.CSS_SELECTOR,
-                             HEADERS_AND_VALUES)
-  CAS_HEADERS_AND_VALUES = (
-      By.XPATH, '//*[contains(@class, "inline-edit ") and '
-                'not(ancestor::*[contains(@class, "hidden")])]')
-  CAS_CHECKBOXES = (By.CSS_SELECTOR, " .inline-edit__checkbox input")
+  _NOT_HIDDEN = Common.XPATH_NOT_HIDDEN
+  _INFO_WIDGET_XPATH = Common.INFO_WIDGET_XPATH + _NOT_HIDDEN
+  _MAIN_HEADER_XPATH = "//div[@class='span9']" + _NOT_HIDDEN
+  _HEADERS_AND_VALUES = (_INFO_WIDGET_XPATH +
+                         '//div[starts-with(./@class, "span")]//h6/..')
+  HEADERS_AND_VALUES = (By.XPATH, _HEADERS_AND_VALUES)
+  CAS_HEADERS_AND_VALUES = (By.XPATH, _INFO_WIDGET_XPATH + "//inline-edit/div")
+  CAS_CHECKBOXES = (By.XPATH, _INFO_WIDGET_XPATH + "//inline-edit//input["
+                                                   "@type='checkbox']")
   # labels
-  TITLE = (By.CSS_SELECTOR, _INFO_HEADER + "h6")
-  TITLE_UNDER_AUDIT = (By.CSS_SELECTOR,
-                       PIN_CONTENT + _INFO_HEADER + "h6")
-  TITLE_ENTERED = (By.CSS_SELECTOR, _INFO_HEADER + "h3")
-  TITLE_ENTERED_UNDER_AUDIT = (By.CSS_SELECTOR,
-                               PIN_CONTENT + _INFO_HEADER + "h3")
-  STATE = (By.CSS_SELECTOR, _INFO_HEADER + ".state-value")
-  STATE_UNDER_AUDIT = (By.CSS_SELECTOR,
-                       PIN_CONTENT + _INFO_HEADER + "span:last-of-type")
+  TITLE = (By.XPATH, _MAIN_HEADER_XPATH + "//h6")
+  TITLE_ENTERED = (By.XPATH, _MAIN_HEADER_XPATH + "//h3")
+  STATE = (By.XPATH, _MAIN_HEADER_XPATH + "//span[last()]")
   # user input elements
-  BUTTON_3BBS = (By.CSS_SELECTOR, INFO_TOGGLE)
-  BUTTON_3BBS_UNDER_AUDIT = (By.CSS_SELECTOR, PIN_CONTENT + INFO_TOGGLE)
+  BUTTON_3BBS = (By.XPATH, _INFO_WIDGET_XPATH + "//*[@data-toggle='dropdown']")
 
 
 class WidgetInfoPanel(CommonWidgetInfo):
   """Locators specific for Info panels."""
-  INFO_ACTION = Common.INFO_ACTION
-  PIN_CONTENT = Common.PIN_CONTENT
-  PANEL_HEADERS_AND_VALUES = (
-      By.CSS_SELECTOR, PIN_CONTENT + CommonWidgetInfo.HEADERS_AND_VALUES)
+  _PIN_ACTION = ' .pin-action'
   # user input elements
   BUTTON_MAXIMIZE_MINIMIZE = (By.CSS_SELECTOR,
-                              INFO_ACTION + ' [can-click="toggleSize"]')
+                              _PIN_ACTION + ' [can-click="toggleSize"]')
   BUTTON_CLOSE = (By.CSS_SELECTOR,
-                  INFO_ACTION + ' [can-click="close"]')
+                  _PIN_ACTION + ' [can-click="close"]')
 
 
 class WidgetSnapshotsInfoPanel(WidgetInfoPanel):
   """Locators specific for Info panels of snapshotable objects."""
-  WIDGET = Common.INFO_WIDGET
-  PIN_CONTENT = Common.PIN_CONTENT
-  INFO_HEADER = Common.INFO_HEADER
-  LINK_GET_LAST_VER = (By.CSS_SELECTOR,
-                       WIDGET + ' .snapshot [can-click="compareIt"]')
-  SNAPSHOT_OBJ_VER = (By.CSS_SELECTOR,
-                      PIN_CONTENT + INFO_HEADER + " .span9 span:first-of-type")
+  LINK_GET_LAST_VER = (By.CSS_SELECTOR, ".snapshot [can-click='compareIt']")
+  SNAPSHOT_OBJ_VER = (By.CSS_SELECTOR, "span.snapshot")
 
 
 class WidgetInfoProgram(WidgetInfoPanel):
@@ -842,42 +824,34 @@ class WidgetAdminEvents(object):
       "{0} {1}:first-child".format(_BASE_CSS_SELECTOR, _TREE_ITEMS_SELECTOR))
 
 
-class CommonDropdown3bbsInfoWidget(object):
+class CommonDropdownMenu(object):
+  _DROPDOWN_MAIN = 'ul'
+  _DROPDOWN_ITEMS = 'li'
+  _DROPDOWN_ITEM_ICON = 'i'
+  DROPDOWN_MAIN_CSS = (By.CSS_SELECTOR, _DROPDOWN_MAIN)
+  DROPDOWN_ITEMS_CSS = (By.CSS_SELECTOR, _DROPDOWN_ITEMS)
+  DROPDOWN_ITEM_ICON_CSS = (By.CSS_SELECTOR, _DROPDOWN_ITEM_ICON)
+
+
+class CommonDropdown3bbsInfoWidget(CommonDropdownMenu):
   """Locators for common settings 3BBS dropdown on Info widget and Info page.
  """
-  INFO_3BBS_DROPDOWN = Common.INFO_WIDGET + " .dropdown-menu"
-  PIN_CONTENT = CommonWidgetInfo.PIN_CONTENT
-  EDIT = INFO_3BBS_DROPDOWN + " .fa-pencil-square-o"
-  GET_PERMALINK = (INFO_3BBS_DROPDOWN + " .fa-link")
-  OPEN = (INFO_3BBS_DROPDOWN + " .fa-long-arrow-right")
-  DELETE = (INFO_3BBS_DROPDOWN + " .fa-trash")
-  # user input elements
-  BUTTON_3BBS_EDIT = (By.CSS_SELECTOR, EDIT)
-  BUTTON_3BBS_GET_PERMALINK = (By.CSS_SELECTOR, GET_PERMALINK)
-  BUTTON_3BBS_OPEN = (By.CSS_SELECTOR, OPEN)
-  BUTTON_3BBS_DELETE = (By.CSS_SELECTOR, DELETE)
-  # user input elements under audit
-  BUTTON_3BBS_EDIT_UNDER_AUDIT = (By.CSS_SELECTOR, PIN_CONTENT + EDIT)
-  BUTTON_3BBS_GET_PERMALINK_UNDER_AUDIT = (By.CSS_SELECTOR,
-                                           PIN_CONTENT + GET_PERMALINK)
-  BUTTON_3BBS_OPEN_UNDER_AUDIT = (By.CSS_SELECTOR, PIN_CONTENT + OPEN)
-  BUTTON_3BBS_DELETE_UNDER_AUDIT = (By.CSS_SELECTOR, PIN_CONTENT + DELETE)
+  _INFO_3BBS_DROPDOWN_XPATH = (Common.INFO_WIDGET_XPATH +
+                               "//*[contains(@class,'dropdown-menu')]")
+  INFO_3BBS_DROPDOWN = (By.XPATH, _INFO_3BBS_DROPDOWN_XPATH)
 
 
 class AuditsDropdown3bbsInfoWidget(CommonDropdown3bbsInfoWidget):
   """Locators for Audit settings 3BBS dropdown on Info page and Info panel.
   """
-  INFO_3BBS_DROPDOWN = CommonDropdown3bbsInfoWidget.INFO_3BBS_DROPDOWN
-  BUTTON_3BBS_UPDATE = (
-      By.CSS_SELECTOR, INFO_3BBS_DROPDOWN + " snapshot-scope-update")
-  BUTTON_3BBS_CLONE = (By.CSS_SELECTOR, INFO_3BBS_DROPDOWN + " object-cloner")
 
 
-class CommonDropdown3bbsTreeView(object):
+class CommonDropdown3bbsTreeView(CommonDropdownMenu):
   """Locators for common settings 3BBS dropdown on Tree View."""
   TREE_VIEW_3BBS_DROPDOWN = (
       "{} " + Common.TREE_LIST + " .tree-action-list-items")
   # user input elements
+  TREE_VIEW_3BBS_DROPDOWN_CSS = (By.CSS_SELECTOR, TREE_VIEW_3BBS_DROPDOWN)
   BUTTON_3BBS_IMPORT = TREE_VIEW_3BBS_DROPDOWN + " .fa-cloud-upload"
   BUTTON_3BBS_EXPORT = TREE_VIEW_3BBS_DROPDOWN + " .fa-download"
   BUTTON_3BBS_SELECT_CHILD_TREE = TREE_VIEW_3BBS_DROPDOWN + " .fa-share-alt"
@@ -892,18 +866,21 @@ class AssessmentsDropdown3bbsTreeView(CommonDropdown3bbsTreeView):
 class TreeView(object):
   """Locators for Tree View components."""
   # common
-  ITEMS = ".tree-item-element"
+  _WIDGET_NOT_HIDDEN_CSS = ".widget:not(.hidden)"
+  ITEMS = _WIDGET_NOT_HIDDEN_CSS + " .tree-item-element"
   HEADER = Common.TREE_HEADER
   ITEM_LOADING = (By.CSS_SELECTOR, " .tree-item-placeholder")
-  ITEM_EXPAND_BUTTON = "tree-item-actions"
+  ITEM_EXPAND_BUTTON = " tree-item-actions"
   SPINNER = (By.CSS_SELECTOR, " .tree-spinner")
   NO_RESULTS_MESSAGE = (
-      By.CSS_SELECTOR, ".widget:not(.hidden) .tree-no-results-message")
+      By.CSS_SELECTOR, _WIDGET_NOT_HIDDEN_CSS + " .tree-no-results-message")
   BUTTON_SHOW_FIELDS = "{} " + Common.TREE_HEADER + " .fa-bars"
   # user input elements
   BUTTON_3BBS = "{} " + Common.TREE_LIST + " .details-wrap"
   BUTTON_CREATE = "{} " + Common.TREE_LIST + " .create-button"
   BUTTON_MAP = "{} " + Common.TREE_LIST + " .map-button"
+  ITEM_DROPDOWN_BUTTON = (By.CSS_SELECTOR, _WIDGET_NOT_HIDDEN_CSS +
+                          ITEM_EXPAND_BUTTON)
 
 
 class AdminTreeView(object):

@@ -3,6 +3,7 @@
 """Widgets other than Info widget."""
 
 import re
+
 from selenium.common import exceptions
 from selenium.webdriver.common.by import By
 
@@ -37,8 +38,7 @@ class Widget(base.Widget):
           elements_locator=self._locators_filter.DROPDOWN_STATES)
     super(Widget, self).__init__(driver)
     # Tree View
-    self.tree_view = TreeView(
-        driver, self.info_widget_cls, self.obj_name, self.is_under_audit)
+    self.tree_view = TreeView(driver, self.info_widget_cls, self.obj_name)
     # Tab count
     self.members_listed = None
     self.member_count = None
@@ -130,14 +130,15 @@ class TreeView(base.TreeView):
   # pylint: disable=too-many-instance-attributes
   _locators = locator.TreeView
 
-  def __init__(self, driver, info_widget_cls, obj_name, is_under_audit):
+  def __init__(self, driver, info_widget_cls, obj_name):
     super(TreeView, self).__init__(driver, obj_name=obj_name)
     self.info_widget_cls = info_widget_cls
     self.obj_name = obj_name
-    self.is_under_audit = is_under_audit
     self.create_obj_cls = factory.get_cls_create_obj(object_name=obj_name)
     self.dropdown_settings_cls = factory.get_cls_3bbs_dropdown_settings(
         object_name=obj_name, is_tree_view_not_info=True)
+    self.dropdown_tree_view_item_cls = factory.get_cls_dropdown_tree_view_item(
+        object_name=obj_name)
     self.fields_to_set = factory.get_fields_to_set(object_name=obj_name)
     self.locator_set_visible_fields = (
         By.CSS_SELECTOR,
@@ -170,16 +171,34 @@ class TreeView(base.TreeView):
         By.CSS_SELECTOR, self._locators.BUTTON_3BBS.format(self.widget_name))
     base.Button(self._driver, _locator_3bbs).click()
     return self.dropdown_settings_cls(
-        self._driver, self.obj_name, self.is_under_audit)
+        self._driver, self.obj_name)
 
   def select_member_by_title(self, title):
     """Select member on Tree View by title.
     Return: lib.page.widget.info_widget."obj_name"
     """
-    list_items = [
-        item.text.splitlines() for item in self.tree_view_items_elements()]
-    item_num = [num for num, item in enumerate(list_items) if title in item][0]
+    item_num = self._get_item_num_by_title(title)
     return Widget(self._driver, self.obj_name).select_member_by_num(item_num)
+
+  def _get_item_num_by_title(self, title):
+    """Return number of item by title"""
+    list_items = [item.text.splitlines() for item in
+                  self.tree_view_items_elements()]
+    item_num = next(num for num, item in enumerate(list_items)
+                    if title in item)
+    return item_num
+
+  def open_tree_actions_dropdown_by_title(self, title):
+    """Open dropdown of obj on Tree View by title. Hover mouse on dropdown
+    button.
+    Return: lib.element.tree_view."dropdown_obj"
+    """
+    button_num = self._get_item_num_by_title(title)
+    item_dropdown_button = self.tree_view_items()[button_num].item_btn
+    selenium_utils.hover_over_element(
+        self._driver, item_dropdown_button)
+    return self.dropdown_tree_view_item_cls(self._driver, self.obj_name,
+                                            item_dropdown_button)
 
 
 class Audits(Widget):

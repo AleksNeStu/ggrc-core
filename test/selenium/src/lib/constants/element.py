@@ -385,3 +385,15 @@ class MappingStatusAttrs(namedtuple('_MappingStatusAttrs',
                                     ['title', 'is_checked', 'is_disabled'])):
   """Class for representation of html attributes for mapping checkboxes
    on unified mapper"""
+
+
+class DropdownMenuItemTypes(object):
+  """Class for types of DropdownMenu Item according to "icon" css class"""
+  EDIT = "pencil-square-o"
+  OPEN = "long-arrow-right"
+  GET_PERMALINK = "link"
+  DELETE = "trash"
+  MAP = "code-fork"
+  UNMAP = "ban"
+  CLONE = "clone"
+  UPDATE = "refresh"

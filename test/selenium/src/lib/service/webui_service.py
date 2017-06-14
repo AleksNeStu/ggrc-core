@@ -225,16 +225,29 @@ class BaseWebUiService(object):
     """Open generic widget of mapped objects, select object from Tree View
     by title and check via Info panel that object is editable.
     """
-    obj_info_panel = self.open_info_panel_of_obj_by_title(src_obj, obj)
-    return obj_info_panel.open_info_3bbs().is_edit_exist()
+    dropdown_on_info_panel = (
+        self.open_info_panel_of_obj_by_title(src_obj, obj).open_info_3bbs())
+    element_to_verify = element.DropdownMenuItemTypes.EDIT
+    return dropdown_on_info_panel.is_item_exists(element_to_verify)
+
+  def is_obj_unmappable_via_info_panel(self, src_obj, obj):
+    """""Open generic widget of mapped objects, select object from Tree View
+    by title open dropdown on Info Panel and check that object is unmappable.
+    """
+    dropdown_on_info_panel = (
+        self.open_info_panel_of_obj_by_title(src_obj, obj).open_info_3bbs())
+    element_to_verify = element.DropdownMenuItemTypes.UNMAP
+    return dropdown_on_info_panel.is_item_exists(element_to_verify)
 
   def is_obj_page_exist_via_info_panel(self, src_obj, obj):
     """Open generic widget of mapped objects, select object from Tree View
     by title and check via Info panel that object page is exist.
     """
     # pylint: disable=invalid-name
-    obj_info_panel = self.open_info_panel_of_obj_by_title(src_obj, obj)
-    return obj_info_panel.open_info_3bbs().is_open_enabled()
+    dropdown_on_info_panel = (
+        self.open_info_panel_of_obj_by_title(src_obj, obj).open_info_3bbs())
+    element_to_verify = element.DropdownMenuItemTypes.OPEN
+    return dropdown_on_info_panel.is_item_enabled(element_to_verify)
 
   def filter_list_objs_from_tree_view(self, src_obj, filter_exp):
     """Filter by specified criteria and return list of objects from Tree
@@ -245,6 +258,17 @@ class BaseWebUiService(object):
     list_objs_scopes = self.get_list_objs_scopes_from_tree_view(src_obj)
     return self.create_list_objs(entity_factory=self.entities_factory_cls,
                                  list_scopes=list_objs_scopes)
+
+  def is_obj_mappable_via_tree_view(self, src_obj, obj):
+    """""Open dropdown of Tree View Item  by title, an check is object
+    mappable.
+    """
+    objs_widget = self.open_widget_of_mapped_objs(src_obj)
+    dropdown_on_tree_view_item = (objs_widget.tree_view.
+                                  open_tree_actions_dropdown_by_title
+                                  (title=obj.title))
+    element_to_verify = element.DropdownMenuItemTypes.MAP
+    return dropdown_on_tree_view_item.is_item_exists(element_to_verify)
 
 
 class SnapshotsWebUiService(BaseWebUiService):

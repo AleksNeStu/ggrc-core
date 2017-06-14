@@ -11,7 +11,7 @@ from selenium.webdriver.common import keys
 from selenium.webdriver.common.by import By
 
 from lib import constants, exception, mixin
-from lib.constants import objects, url
+from lib.constants import url
 from lib.constants.element import MappingStatusAttrs
 from lib.constants.test import batch
 from lib.utils import selenium_utils, string_utils
@@ -504,12 +504,6 @@ class Widget(AbstractPage):
                                  constants.element.WidgetBar.INFO)
     self.mapped_obj_from_url = mapped_obj_singular
     self.mapped_obj_id_from_url = mapped_obj_id
-    self.is_under_audit = (self.source_obj_from_url == objects.AUDITS and
-                           self.widget_name_from_url != "info")
-    self.is_info_page = self.widget_name_from_url == "info"
-    self.is_info_panel = (
-        self.widget_name_from_url != "" and self.mapped_obj_from_url != "" and
-        self.mapped_obj_id_from_url != "")
 
 
 class TreeView(Component):
@@ -567,7 +561,7 @@ class TreeView(Component):
     self._tree_view_items = [
         TreeViewItem(
             driver=self._driver, text=el.text,
-            expand_btn=el.find_element(
+            item_btn=el.find_element(
                 By.CSS_SELECTOR, self._locators.ITEM_EXPAND_BUTTON)) for el in
         self._tree_view_items_elements]
 
@@ -610,8 +604,7 @@ class TreeView(Component):
       list_lists_items = [_item.text.splitlines()[:len(self.fields_to_set)] for
                           _item in self.tree_view_items_elements()]
       return [dict(zip(list_headers[0], item)) for item in list_lists_items]
-    else:
-      return self._tree_view_items_elements
+    return self._tree_view_items_elements
 
 
 class UnifiedMapperTreeView(TreeView):
@@ -694,28 +687,28 @@ class MapperSetVisibleFieldsModal(SetVisibleFieldsModal):
 
 class TreeViewItem(Component):
   """Class for describing single item on Tree View."""
-  def __init__(self, driver, text=None, expand_btn=None):
+  def __init__(self, driver, text=None, item_btn=None):
     super(TreeViewItem, self).__init__(driver)
     self.text = text
-    self.expand_btn = expand_btn
+    self.item_btn = item_btn
 
   def expand(self):
     """Expand Tree View item if it is not expanded already."""
     from lib.page.widget.widget_base import CustomAttributesItemContent
     if not self.is_expanded:
-      self.expand_btn.click()
-      selenium_utils.wait_until_stops_moving(self.expand_btn)
+      self.item_btn.click()
+      selenium_utils.wait_until_stops_moving(self.item_btn)
     return CustomAttributesItemContent(self._driver, self.text)
 
   def collapse(self):
     """Collapse Tree View item if it is expanded."""
     if self.is_expanded:
-      self.expand_btn.click()
-      selenium_utils.wait_until_stops_moving(self.expand_btn)
+      self.item_btn.click()
+      selenium_utils.wait_until_stops_moving(self.item_btn)
 
   @property
   def is_expanded(self):
-    return selenium_utils.is_value_in_attr(self.expand_btn)
+    return selenium_utils.is_value_in_attr(self.item_btn)
 
 
 class ListCheckboxes(Component):
@@ -764,3 +757,85 @@ class ListCheckboxes(Component):
               string_utils.get_bool_from_string(obj.get_attribute("disabled"))]
                 for obj in objs_checkboxes])]
     return objs
+
+
+class DropdownMenu(Component):
+  """Class for common DropdownMenu Element"""
+  _locators = constants.locator.CommonDropdownMenu
+
+  def __init__(self, driver, element_or_locator):
+    super(DropdownMenu, self).__init__(driver)
+    self._driver = driver
+    self.dropdown_element = self._get_dropdown_element(element_or_locator)
+    self._dropdown_items = []
+
+  def _get_dropdown_element(self, el_or_loc):
+    """Return  DropdownMenu element if element not defined find it by
+    locator"""
+    element = (el_or_loc if isinstance(
+               el_or_loc, webdriver.remote.webelement.WebElement)
+               else selenium_utils.get_when_visible(self._driver, el_or_loc))
+    return (element if element.tag_name == self._locators.DROPDOWN_MAIN_CSS[1]
+            else element.find_element(*self._locators.DROPDOWN_MAIN_CSS))
+
+  def dropdown_items(self):
+    """Return list of DropdownMenu Items defined  by "li" tag"""
+    if not self._dropdown_items:
+      elements_on_dropdown = self.dropdown_element.find_elements(
+          *self._locators.DROPDOWN_ITEMS_CSS)
+      self._dropdown_items = [DropdownMenuItem(self._driver, el) for el in
+                              elements_on_dropdown]
+    return self._dropdown_items
+
+  def get_dropdown_item(self, out_item_type):
+    """Return DropdownItem element according to type"""
+    return next(elem_val for elem_val in self.dropdown_items()
+                if out_item_type in elem_val.item_type)
+
+  def is_item_exists(self, out_item_type):
+    """Check if element enable on dropdown and return Bool, by comparing
+    aliases.
+    Return bool if element exist
+    """
+    return any(elem_val.item_type for elem_val in self.dropdown_items()
+               if out_item_type in elem_val.item_type)
+
+  def is_item_enabled(self, out_item_type):
+    """Check if element enable on dropdown, by comparing
+    aliases.
+    Return bool if element exist
+    If element not found raise exception
+    """
+    return self.get_dropdown_item(out_item_type).enabled
+
+
+class DropdownMenuItem(Element):
+  """Class for dropdown item"""
+  _locators = constants.locator.CommonDropdownMenu
+  _elements = constants.element.DropdownMenuItemTypes
+
+  def __init__(self, driver, locator):
+    super(DropdownMenuItem, self).__init__(driver, locator)
+    self._enabled = None
+    self._item_type = ""
+
+  @property
+  def item_type(self):
+    """Item type defined by class of icon"""
+    if not self._item_type:
+      icon = selenium_utils.get_element_by_element_safe(
+          self.element, self._locators.DROPDOWN_ITEM_ICON_CSS)
+      if icon:
+        icon_type = icon.get_attribute("class")
+        self._item_type = next(
+            (v for k, v in self._elements.__dict__.iteritems()
+             if not k.startswith("_") and v in icon_type),
+            icon_type)
+    return self._item_type
+
+  @property
+  def enabled(self):
+    """Return True if DropdownMenu Item enabled"""
+    if not self._enabled:
+      self._enabled = selenium_utils.is_element_enabled(self.element)
+    return self._enabled
