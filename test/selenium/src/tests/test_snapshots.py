@@ -339,3 +339,25 @@ class TestSnapshots(base.Test):
             actual_control_in_program), messages.ERR_MSG_TRIPLE_FORMAT.format(
                 expected_control, actual_control_in_audit,
                 actual_control_in_program)
+
+  @pytest.mark.smoke_tests
+  def test_snapshot_cannot_be_unmapped_from_audit(
+      self, create_audit_with_control, selenium
+  ):
+    """Check Snapshot cannot be unmapped from audit.
+    Check that snapshot cannot be mapped from tree-view.
+    Preconditions:
+    - Audit with mapped Control Snapshot created via REST API
+    """
+    audit_with_one_control = create_audit_with_control
+    audit = audit_with_one_control["new_audit_rest"][0]
+    control = audit_with_one_control["new_control_rest"][0]
+    is_mappable_on_tree_view_item = (webui_service.ControlsService(
+        selenium).is_obj_mappable_via_tree_view(audit, control))
+    is_unmappable_on_info_panel = (webui_service.ControlsService(
+        selenium).is_obj_unmappable_via_info_panel(src_obj=audit, obj=control))
+    assert ((False is
+             is_mappable_on_tree_view_item is
+             is_unmappable_on_info_panel),
+            messages.ERR_MSG_TRIPLE_FORMAT.format(
+            False, is_mappable_on_tree_view_item, is_unmappable_on_info_panel))

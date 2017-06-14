@@ -59,7 +59,7 @@ class TestProgramPage(base.Test):
     into modal."""
     modal, program_info_page = new_program_ui
     assert (test_utils.HtmlParser.parse_text(modal.ui_title.text) ==
-            program_info_page.title_entered.text)
+            program_info_page.title_entered().text)
     assert (modal.ui_description.text ==
             program_info_page.description_entered.text)
     assert modal.ui_notes.text == program_info_page.notes_entered.text
@@ -102,7 +102,7 @@ class TestProgramPage(base.Test):
     selenium_utils.open_url(selenium, program_info_page.url)
     updated_program_info_page = info_widget.Programs(selenium)
     assert (test_utils.HtmlParser.parse_text(modal.ui_title.text) ==
-            updated_program_info_page.title_entered.text)
+            updated_program_info_page.title_entered().text)
     assert (modal.ui_description.text ==
             updated_program_info_page.description_entered.text)
     assert modal.ui_notes.text == updated_program_info_page.notes_entered.text
