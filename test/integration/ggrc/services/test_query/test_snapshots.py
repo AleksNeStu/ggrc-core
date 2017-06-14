@@ -21,6 +21,7 @@ from ggrc import db
 from integration.ggrc import TestCase
 from integration.ggrc import generator
 from integration.ggrc.models import factories
+from integration.ggrc.models.factories import single_commit
 from integration.ggrc.services.test_query.test_basic import (
     BaseQueryAPITestCase)
 
@@ -545,40 +546,58 @@ class TestSnapshotIndexing(BaseQueryAPITestCase):
 
   def test_control_owners(self):
     """Control Snapshots are filtered and sorted by Owners."""
-    program = factories.ProgramFactory()
-    controls = [factories.ControlFactory(),
-                factories.ControlFactory()]
-    people = [factories.PersonFactory(name="Ann", email="email1@example.com"),
-              factories.PersonFactory(name="Bob", email="email2@example.com"),
-              factories.PersonFactory(name="Carl", email="email3@example.com")]
-    program_id = program.id
-    control_ids = [c.id for c in controls]
-    people_ids = [p.id for p in people]
+    with single_commit():
+      program = factories.ProgramFactory()
+      controls = [factories.ControlFactory(),
+                  factories.ControlFactory()]
+      people = [
+          factories.PersonFactory(name="Ann", email="email1@example.com"),
+          factories.PersonFactory(name="Bob", email="email2@example.com"),
+          factories.PersonFactory(name="Carl", email="email3@example.com")
+      ]
+      program_id = program.id
+      control_ids = [c.id for c in controls]
+      people_ids = [p.id for p in people]
 
-    factories.RelationshipFactory(source=program, destination=controls[0])
-    factories.RelationshipFactory(source=program, destination=controls[1])
+      factories.RelationshipFactory(source=program, destination=controls[0])
+      factories.RelationshipFactory(source=program, destination=controls[1])
 
-    self._add_owner("Control", control_ids[0], people_ids[0])
-    self._add_owner("Control", control_ids[0], people_ids[2])
-    self._add_owner("Control", control_ids[1], people_ids[0])
-    self._add_owner("Control", control_ids[1], people_ids[1])
+      self._add_owner("Control", control_ids[0], people_ids[0])
+      self._add_owner("Control", control_ids[0], people_ids[2])
+      self._add_owner("Control", control_ids[1], people_ids[0])
+      self._add_owner("Control", control_ids[1], people_ids[1])
 
     program = models.Program.query.filter_by(id=program_id).one()
 
+    control_revisions = models.Revision.query.filter_by(
+        resource_type="Control"
+    ).all()
+    for c_rev in control_revisions:
+      c_rev.content = models.Control.query.get(c_rev.resource_id).log_json()
+      db.session.add(c_rev)
+    db.session.commit()
     self._create_audit(program=program, title="some title")
 
     control_user1_result = self._get_first_result_set(
         self._make_snapshot_query_dict("Control",
-                                       expression=["admin", "=", "Ann"]),
+                                       expression=["Admin", "=", "Ann"]),
         "Snapshot",
     )
     self.assertEqual(control_user1_result["count"], 2)
 
-    def owners(snapshot):
+    def owner_ids(snapshot):
       """Shortcut to get owners list of a snapshotted object."""
-      return snapshot["revision"]["content"]["owners"]
+      owners = []
+      admin_role_id = models.AccessControlRole.query.filter_by(
+          name="Admin",
+          object_type=snapshot["revision"]["resource_type"]
+      ).first().id
+      for acl in snapshot["revision"]["content"]["access_control_list"]:
+        if acl["ac_role_id"] == admin_role_id:
+          owners.append(acl["person_id"])
+      return owners
 
-    self.assertTrue(all(people_ids[0] in {o["id"] for o in owners(snap)}
+    self.assertTrue(all(people_ids[0] in {o for o in owner_ids(snap)}
                         for snap in control_user1_result["values"]))
 
     control_user2_result = self._get_first_result_set(
@@ -587,7 +606,7 @@ class TestSnapshotIndexing(BaseQueryAPITestCase):
         "Snapshot",
     )
     self.assertEqual(control_user2_result["count"], 1)
-    self.assertTrue(all(people_ids[1] in {o["id"] for o in owners(snap)}
+    self.assertTrue(all(people_ids[1] in {o for o in owner_ids(snap)}
                         for snap in control_user2_result["values"]))
 
     order_by_owners_result = self._get_first_result_set(
