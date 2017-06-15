@@ -14,7 +14,7 @@ from lib import constants, exception, mixin
 from lib.constants import url
 from lib.constants.element import MappingStatusAttrs
 from lib.constants.test import batch
-from lib.utils import selenium_utils, string_utils
+from lib.utils import selenium_utils
 
 
 class InstanceRepresentation(object):
@@ -753,8 +753,8 @@ class ListCheckboxes(Component):
     objs = [
         MappingStatusAttrs(obj[0], obj[1][0], obj[1][1]) for obj in zip(
             [obj.text for obj in objs_titles],
-            [[string_utils.get_bool_from_string(obj.get_attribute("checked")),
-              string_utils.get_bool_from_string(obj.get_attribute("disabled"))]
+            [[obj.is_selected(),
+              not obj.is_enabled()]
                 for obj in objs_checkboxes])]
     return objs
 

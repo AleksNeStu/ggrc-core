@@ -1,7 +1,6 @@
 # Copyright (C) 2017 Google Inc.
 # Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
 "Factory for modules, classes, methods, functions."
-
 from lib import base, cache, constants, exception
 from lib.constants import objects, element, locator
 from lib.element import tree_view, widget_info, tree_view_item
@@ -165,3 +164,14 @@ def get_locator_add_widget(widget_name):
   # todo: unittests
   return getattr(
       constants.locator.WidgetBarButtonAddDropdown, widget_name.upper())
+
+
+def get_ui_service(object_name):
+  """Get and return class of UI service according to name of object
+  Returns:
+    class of ui service by object_name
+  """
+  service_name = objects.get_plural(object_name, title=True)
+  from lib.service import webui_service
+  service_classname = service_name + constants.cls_name.SERVICE
+  return getattr(webui_service, service_classname)

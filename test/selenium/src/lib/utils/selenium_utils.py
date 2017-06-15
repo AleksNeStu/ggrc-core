@@ -185,7 +185,7 @@ def click_via_js(driver, element):
 
 def is_element_enabled(element):
   """Is this element and first parent and first level child elements is
-  enabled"""
+  enabled, use when common WebDriver "isEnabled"  isn't working"""
   elements_to_check = [element, element.find_element_by_xpath("../.")]
   elements_to_check.extend(get_nested_elements(element))
   return all([el.is_enabled() and

@@ -197,6 +197,7 @@ class TreeView(base.TreeView):
     item_dropdown_button = self.tree_view_items()[button_num].item_btn
     selenium_utils.hover_over_element(
         self._driver, item_dropdown_button)
+    item_dropdown_button.click()
     return self.dropdown_tree_view_item_cls(self._driver, self.obj_name,
                                             item_dropdown_button)
 

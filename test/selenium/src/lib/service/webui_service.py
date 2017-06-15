@@ -260,7 +260,7 @@ class BaseWebUiService(object):
                                  list_scopes=list_objs_scopes)
 
   def is_obj_mappable_via_tree_view(self, src_obj, obj):
-    """""Open dropdown of Tree View Item  by title, an check is object
+    """Open dropdown of Tree View Item  by title, an check is object
     mappable.
     """
     objs_widget = self.open_widget_of_mapped_objs(src_obj)
@@ -269,6 +269,22 @@ class BaseWebUiService(object):
                                   (title=obj.title))
     element_to_verify = element.DropdownMenuItemTypes.MAP
     return dropdown_on_tree_view_item.is_item_exists(element_to_verify)
+
+  def map_objs_via_tree_view_item(self, src_obj, dest_objs):
+    """Open generic widget of mapped objects, open unified mapper modal from
+    Tree View, fill data according to destination objects, search by them
+    titles and then map to source object.
+    """
+    dest_objs_titles = [dest_obj.title for dest_obj in dest_objs]
+    objs_widget = self.open_widget_of_mapped_objs(src_obj)
+    objs_tree_view_items = (
+        objs_widget.tree_view.get_list_members_as_list_scopes())
+    for obj in objs_tree_view_items:
+      dropdown = objs_widget.tree_view.open_tree_actions_dropdown_by_title(
+          title=obj['TITLE'])
+      dropdown.select_map().map_dest_objs(
+          dest_objs_type=dest_objs[0].type.title(),
+          dest_objs_titles=dest_objs_titles)
 
 
 class SnapshotsWebUiService(BaseWebUiService):
