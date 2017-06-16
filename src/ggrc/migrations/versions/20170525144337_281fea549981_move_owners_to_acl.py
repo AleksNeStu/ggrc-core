@@ -18,6 +18,7 @@ revision = '281fea549981'
 down_revision = '47d3cb39bad7'
 
 OWNER_ROLE_NAME = 'Admin'
+OBJECT_OWNERS = 'Object Owners'
 OWNABLE_MODELS = [
     'AccessGroup',
     'Clause',
@@ -101,6 +102,19 @@ def migrate_owners(type_):
   )
 
 
+def update_assessment_templates(downgrade=False):
+  """Update assigned people categaries for asessment template"""
+  connection = op.get_bind()
+  old_name, new_name = OBJECT_OWNERS, OWNER_ROLE_NAME
+  if downgrade:
+    old_name, new_name = new_name, old_name
+  connection.execute(text("""
+      UPDATE assessment_templates
+      SET default_people = REPLACE(default_people, :old_name, :new_name)
+      WHERE default_people LIKE CONCAT("%", :old_name, "%")
+  """), old_name=old_name, new_name=new_name)
+
+
 def upgrade():
   """Upgrade database schema and/or data, creating a new revision."""
   # Need to create Admin role for all ownable models to enable import of
@@ -116,6 +130,8 @@ def upgrade():
   for obj in ownable_objects:
     if obj[0] in OWNABLE_MODELS:
       migrate_owners(obj[0])
+
+  update_assessment_templates()
 
 
 def downgrade():
@@ -137,3 +153,6 @@ def downgrade():
            WHERE name = :role_
       """), role_=OWNER_ROLE_NAME
   )
+
+  # Return Object Owners group for assessment templates
+  update_assessment_templates(downgrade=True)
