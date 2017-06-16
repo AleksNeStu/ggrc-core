@@ -794,16 +794,15 @@ class DropdownMenu(Component):
 
   def is_item_exists(self, out_item_type):
     """Check if element enable on dropdown and return Bool, by comparing
-    aliases.
-    Return bool if element exist
+    icon type.
+    Return bool
     """
     return any(elem_val.item_type for elem_val in self.dropdown_items()
                if out_item_type in elem_val.item_type)
 
   def is_item_enabled(self, out_item_type):
-    """Check if element enable on dropdown, by comparing
-    aliases.
-    Return bool if element exist
+    """Check if element enable on dropdown.
+    Return bool if element found
     If element not found raise exception
     """
     return self.get_dropdown_item(out_item_type).enabled

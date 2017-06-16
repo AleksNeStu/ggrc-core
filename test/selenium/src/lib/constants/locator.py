@@ -870,7 +870,7 @@ class TreeView(object):
   ITEMS = _WIDGET_NOT_HIDDEN_CSS + " .tree-item-element"
   HEADER = Common.TREE_HEADER
   ITEM_LOADING = (By.CSS_SELECTOR, " .tree-item-placeholder")
-  ITEM_EXPAND_BUTTON = " tree-item-actions"
+  ITEM_EXPAND_BUTTON = "tree-item-actions"
   SPINNER = (By.CSS_SELECTOR, " .tree-spinner")
   NO_RESULTS_MESSAGE = (
       By.CSS_SELECTOR, _WIDGET_NOT_HIDDEN_CSS + " .tree-no-results-message")
@@ -879,8 +879,8 @@ class TreeView(object):
   BUTTON_3BBS = "{} " + Common.TREE_LIST + " .details-wrap"
   BUTTON_CREATE = "{} " + Common.TREE_LIST + " .create-button"
   BUTTON_MAP = "{} " + Common.TREE_LIST + " .map-button"
-  ITEM_DROPDOWN_BUTTON = (By.CSS_SELECTOR, _WIDGET_NOT_HIDDEN_CSS +
-                          ITEM_EXPAND_BUTTON)
+  ITEM_DROPDOWN_BUTTON = (By.CSS_SELECTOR, " ".join(
+      (_WIDGET_NOT_HIDDEN_CSS, ITEM_EXPAND_BUTTON)))
 
 
 class AdminTreeView(object):
