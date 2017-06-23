@@ -106,16 +106,12 @@
         },
         related_threats: TypeFilter('related_objects', 'Threat')
       },
-      ownable: {
-        owners: Proxy(
-          'Person', 'person', 'ObjectOwner', 'ownable', 'object_owners')
-      },
       Risk: {
-        _mixins: ['related', 'related_objects', 'related_threat', 'ownable'],
+        _mixins: ['related', 'related_objects', 'related_threat'],
         orphaned_objects: Multi([])
       },
       Threat: {
-        _mixins: ['related', 'related_objects', 'related_risk', 'ownable'],
+        _mixins: ['related', 'related_objects', 'related_risk'],
         orphaned_objects: Multi([])
       },
       Person: {

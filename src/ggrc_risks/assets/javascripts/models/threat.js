@@ -15,12 +15,11 @@
     create: 'POST /api/threats',
     update: 'PUT /api/threats/{id}',
     destroy: 'DELETE /api/threats/{id}',
-    mixins: ['ownable', 'unique_title', 'ca_update'],
+    mixins: ['unique_title', 'ca_update'],
     is_custom_attributable: true,
     isRoleable: true,
     attributes: {
       context: 'CMS.Models.Context.stub',
-      owners: 'CMS.Models.Person.stubs',
       modified_by: 'CMS.Models.Person.stub',
       object_people: 'CMS.Models.ObjectPerson.stubs',
       people: 'CMS.Models.Person.stubs',

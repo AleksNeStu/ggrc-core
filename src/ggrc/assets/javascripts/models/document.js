@@ -39,7 +39,6 @@
     },
     attributes: {
       context: 'CMS.Models.Context.stub',
-      owners: 'CMS.Models.Person.stubs',
       kind: 'CMS.Models.Option.stub',
       year: 'CMS.Models.Option.stub'
     },

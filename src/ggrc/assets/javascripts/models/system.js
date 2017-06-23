@@ -27,10 +27,9 @@ can.Model.Cacheable('CMS.Models.SystemOrProcess', {
       return CMS.Models.System.model(params);
     }
   },
-  mixins: ['ownable', 'unique_title', 'timeboxed'],
+  mixins: ['unique_title', 'timeboxed'],
   attributes: {
     context: 'CMS.Models.Context.stub',
-    owners: 'CMS.Models.Person.stubs',
     modified_by: 'CMS.Models.Person.stub',
     object_people: 'CMS.Models.ObjectPerson.stubs',
     people: 'CMS.Models.Person.stubs',

@@ -27,25 +27,6 @@
         {{/if}}
       {{/with_mapping}}
     </p>
-    {{else}}
-    <h6>Admin</h6>
-    <p class="oneline">
-      {{#if owners.length}}
-        {{#using contacts=owners}}
-        <ul class="inner-count-list">
-          {{#contacts}}
-            <li>
-              {{#using person=this}}
-                {{>'/static/mustache/people/popover.mustache'}}
-              {{/using}}
-            </li>
-          {{/contacts}}
-        </ul>
-        {{/using}}
-      {{else}}
-        <span class="empty-message">None</span>
-      {{/if}}
-    </p>
     {{/if}}
     <access-control-list
         instance="."

@@ -236,13 +236,22 @@
             .then(function (docs) {
               var dfdDoc;
               var objectDoc;
+              var adminRole = _.filter(GGRC.access_control_roles, {
+                object_type: 'Document',
+                name: 'Admin'
+              });
 
               if (docs.length < 1) {
                 docs.push(new CMS.Models.Document({
                   context: that.instance.context || {id: null},
                   title: file.title,
                   link: file.alternateLink,
-                  owners: [{type: 'Person', id: GGRC.current_user.id}]
+                  access_control_list: adminRole ?
+                    [{
+                      ac_role_id: adminRole[0].id,
+                      person: {type: 'Person', id: GGRC.current_user.id}
+                    }] :
+                    []
                 }));
               }
               if (that.deferred || !docs[0].isNew()) {

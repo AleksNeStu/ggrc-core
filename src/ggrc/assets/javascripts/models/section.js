@@ -23,10 +23,9 @@ can.Model.Cacheable('CMS.Models.Section', {
   destroy: 'DELETE /api/sections/{id}',
   is_custom_attributable: true,
   isRoleable: true,
-  mixins: ['ownable', 'unique_title', 'ca_update'],
+  mixins: ['unique_title', 'ca_update'],
   attributes: {
     context: 'CMS.Models.Context.stub',
-    owners: 'CMS.Models.Person.stubs',
     modified_by: 'CMS.Models.Person.stub',
     object_people: 'CMS.Models.ObjectPerson.stubs',
     people: 'CMS.Models.Person.stubs',
@@ -74,10 +73,9 @@ can.Model.Cacheable('CMS.Models.Clause', {
   destroy: 'DELETE /api/clauses/{id}',
   is_custom_attributable: true,
   isRoleable: true,
-  mixins: ['ownable', 'unique_title', 'ca_update'],
+  mixins: ['unique_title', 'ca_update'],
   attributes: {
     context: 'CMS.Models.Context.stub',
-    owners: 'CMS.Models.Person.stubs',
     modified_by: 'CMS.Models.Person.stub',
     object_people: 'CMS.Models.ObjectPerson.stubs',
     people: 'CMS.Models.Person.stubs',
