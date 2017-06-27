@@ -21,6 +21,7 @@ from ggrc.models.mixins import Base
 from ggrc.models.mixins import Described
 from ggrc.models.mixins import Notifiable
 from ggrc.models.relationship import Relatable, Relationship
+from ggrc.access_control.roleable import Roleable
 from ggrc.fulltext.mixin import Indexed, ReindexRule
 from ggrc.fulltext.attributes import MultipleSubpropertyFullTextAttr
 from ggrc.models import inflector
@@ -133,7 +134,7 @@ def reindex_by_relationship(relationship):
   return []
 
 
-class Comment(Relatable, Described, Notifiable,
+class Comment(Roleable, Relatable, Described, Notifiable,
               Base, Indexed, db.Model):
   """Basic comment model."""
   __tablename__ = "comments"

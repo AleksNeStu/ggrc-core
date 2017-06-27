@@ -29,7 +29,7 @@ class TestTotalReindex(TestCase):
       'Assessment': 10,
       'AssessmentTemplate': 4,
       'Audit': 5,
-      'Comment': 3,
+      'Comment': 4,
       'Contract': 6,
       'Control': 17,
       'Cycle': 5,
