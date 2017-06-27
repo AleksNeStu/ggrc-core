@@ -15,19 +15,23 @@
   <td>
     <ul class="tree-action-list">
       <li>
-        <a
-          href="javascript://"
-          data-toggle="modal-ajax-form"
-          data-modal-reset="reset"
-          data-object-singular="{{class.model_singular}}"
-          data-object-plural="{{class.table_plural}}"
-          data-object-id="{{id}}"
-          data-object-params='{
-            "parent_type": "{{parent_instance.model_singular}}"
-          }'>
-          <i class="fa fa-pencil-square-o"></i>
-          Edit
-        </a>
+        {{#is name 'Admin'}}
+          <span>Predefined</span>
+        {{else}}
+          <a
+            href="javascript://"
+            data-toggle="modal-ajax-form"
+            data-modal-reset="reset"
+            data-object-singular="{{class.model_singular}}"
+            data-object-plural="{{class.table_plural}}"
+            data-object-id="{{id}}"
+            data-object-params='{
+              "parent_type": "{{parent_instance.model_singular}}"
+            }'>
+            <i class="fa fa-pencil-square-o"></i>
+            Edit
+          </a>
+        {{/is}}
       </li>
     </ul>
   </td>
