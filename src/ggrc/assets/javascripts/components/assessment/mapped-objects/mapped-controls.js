@@ -157,7 +157,6 @@
         title: revision.display_name,
         notes: revision.notes,
         slug: revision.slug,
-        owners: revision.owners,
         updated_at: new Date(revision.updated_at)
       };
     },
