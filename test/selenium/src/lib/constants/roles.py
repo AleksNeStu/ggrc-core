@@ -25,7 +25,7 @@ AUDIT_LEAD = "Audit Lead"
 AUDITORS = "Auditors"
 PRINCIPAL_ASSIGNEE = "Principal Assignee"
 SECONDARY_ASSIGNEE = "Secondary Assignee"
-PRIMARY_CONTACT = "Primary Contact"
+PRIMARY_CONTACT = "Primary Contacts"
 SECONDARY_CONTACT = "Secondary Contact"
 
 # user names
@@ -37,3 +37,7 @@ PRIVATE_PROGRAM = "Private Program"
 WORKFLOW = "Workflow"
 SUPERUSER = "Superuser"
 NO_ACCESS = "No Access"
+
+# Access control role ID
+ADMIN_ID = 49
+PRIMARY_CONTACT_ID = 9

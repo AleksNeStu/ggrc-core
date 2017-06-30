@@ -268,6 +268,10 @@ class ObjectPersonsFactory(EntitiesFactory):
     return person_entity
 
   @classmethod
+  def get_acl_member(cls, role_id, person):
+    return {"ac_role_id": role_id, "person": person}
+
+  @classmethod
   def _create_random_person(cls):
     """Create Person entity with randomly filled fields."""
     random_person = PersonEntity()
@@ -472,6 +476,7 @@ class ControlsFactory(EntitiesFactory):
     empty_control = ControlEntity()
     empty_control.type = cls.obj_control
     empty_control.custom_attributes = {None: None}
+    empty_control.access_control_list = []
     return empty_control
 
   @classmethod
@@ -479,7 +484,7 @@ class ControlsFactory(EntitiesFactory):
              slug=None, status=None, owners=None, contact=None,
              secondary_contact=None, updated_at=None, os_state=None,
              custom_attribute_definitions=None, custom_attribute_values=None,
-             custom_attributes=None):
+             custom_attributes=None, access_control_list=None):
     """Create Control object.
     Random values will be used for title and slug.
     Predictable values will be used for type, status, owners and contact.
@@ -492,7 +497,8 @@ class ControlsFactory(EntitiesFactory):
         updated_at=updated_at, os_state=os_state,
         custom_attribute_definitions=custom_attribute_definitions,
         custom_attribute_values=custom_attribute_values,
-        custom_attributes=custom_attributes)
+        custom_attributes=custom_attributes,
+        access_control_list=access_control_list)
     return control_entity
 
   @classmethod
@@ -505,6 +511,11 @@ class ControlsFactory(EntitiesFactory):
     random_control.status = unicode(element.ObjectStates.DRAFT)
     random_control.contact = ObjectPersonsFactory().default().__dict__
     random_control.owners = [ObjectPersonsFactory().default().__dict__]
+    random_control.access_control_list = [
+        ObjectPersonsFactory().get_acl_member(roles.ADMIN_ID,
+                                              random_control.owners[0]),
+        ObjectPersonsFactory().get_acl_member(roles.PRIMARY_CONTACT_ID,
+                                              random_control.contact)]
     return random_control
 
 
@@ -719,6 +730,7 @@ class IssuesFactory(EntitiesFactory):
     empty_issue = IssueEntity
     empty_issue.type = cls.obj_issue
     empty_issue.custom_attributes = {None: None}
+    empty_issue.access_control_list = []
     return empty_issue
 
   @classmethod
@@ -726,7 +738,7 @@ class IssuesFactory(EntitiesFactory):
              slug=None, status=None, audit=None, owners=None, contact=None,
              secondary_contact=None, updated_at=None, os_state=None,
              custom_attribute_definitions=None, custom_attribute_values=None,
-             custom_attributes=None):
+             custom_attributes=None, access_control_list=None):
     """Create Issue object.
     Random values will be used for title and slug.
     Predictable values will be used for type, status, owners and contact.
@@ -740,7 +752,8 @@ class IssuesFactory(EntitiesFactory):
         updated_at=updated_at, os_state=os_state,
         custom_attribute_definitions=custom_attribute_definitions,
         custom_attribute_values=custom_attribute_values,
-        custom_attributes=custom_attributes)
+        custom_attributes=custom_attributes,
+        access_control_list=access_control_list)
     return issue_entity
 
   @classmethod
@@ -753,4 +766,9 @@ class IssuesFactory(EntitiesFactory):
     random_issue.status = unicode(element.IssueStates.DRAFT)
     random_issue.owners = [ObjectPersonsFactory().default().__dict__]
     random_issue.contact = ObjectPersonsFactory().default().__dict__
+    random_issue.access_control_list = [
+        ObjectPersonsFactory().get_acl_member(roles.ADMIN_ID,
+                                              random_issue.owners[0]),
+        ObjectPersonsFactory().get_acl_member(roles.PRIMARY_CONTACT_ID,
+                                              random_issue.contact)]
     return random_issue

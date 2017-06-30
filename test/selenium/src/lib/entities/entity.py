@@ -31,7 +31,7 @@ class Representation(object):
         el.AUDIT_LEAD: "contact", el.CAS: "custom_attributes",
         el.MAPPED_OBJECTS: "objects_under_assessment",
         el.ASSIGNEES: "assessor", el.CREATORS: "creator",
-        el.VERIFIERS: "verifier"
+        el.VERIFIERS: "verifier", el.PRIMARY_CONTACT: "contact"
     }
     csv_remap_items = {
         csv.REVISION_DATE: "updated_at"
@@ -95,7 +95,7 @@ class PersonEntity(Representation):
   def __init__(self, type=None, id=None, name=None, href=None, url=None,
                email=None, company=None, system_wide_role=None,
                updated_at=None, custom_attribute_definitions=None,
-               custom_attribute_values=None):
+               custom_attribute_values=None, ac_role_id=None):
     super(PersonEntity, self).__init__()
     self.name = name
     self.id = id
@@ -108,18 +108,21 @@ class PersonEntity(Representation):
     self.updated_at = updated_at  # last updated
     self.custom_attribute_definitions = custom_attribute_definitions
     self.custom_attribute_values = custom_attribute_values
+    self.ac_role_id = ac_role_id
 
   def __repr__(self):
     return ("type: {type}, id: {id}, name: {name}, href: {href}, url: {url}, "
             "email: {email}, company: {company}, "
             "system_wide_role: {system_wide_role}, updated_at: {updated_at}, "
             "custom_attribute_definitions: {custom_attribute_definitions}, "
-            "custom_attribute_values: {custom_attribute_values}").format(
+            "custom_attribute_values: {custom_attribute_values}, "
+            "ac_role_id: {ac_role_id}").format(
         type=self.type, id=self.id, name=self.name, href=self.href,
         url=self.url, email=self.email, company=self.company,
         system_wide_role=self.system_wide_role, updated_at=self.updated_at,
         custom_attribute_definitions=self.custom_attribute_definitions,
-        custom_attribute_values=self.custom_attribute_values)
+        custom_attribute_values=self.custom_attribute_values,
+        ac_role_id=self.ac_role_id)
 
 
 class CustomAttributeEntity(Representation):
@@ -228,7 +231,7 @@ class ControlEntity(Entity):
   def __init__(self, slug=None, status=None, owners=None, contact=None,
                secondary_contact=None, updated_at=None, os_state=None,
                custom_attribute_definitions=None, custom_attribute_values=None,
-               custom_attributes=None):
+               custom_attributes=None, access_control_list=None):
     super(ControlEntity, self).__init__()
     self.slug = slug  # code
     self.status = status  # state
@@ -240,6 +243,7 @@ class ControlEntity(Entity):
     self.custom_attribute_definitions = custom_attribute_definitions
     self.custom_attribute_values = custom_attribute_values
     self.custom_attributes = custom_attributes  # map of cas def and values
+    self.access_control_list = access_control_list
 
   def __repr__(self):
     return ("type: {type}, id: {id}, title: {title}, href: {href}, "
@@ -248,14 +252,16 @@ class ControlEntity(Entity):
             "updated_at: {updated_at}, os_state: {os_state}, "
             "custom_attribute_definitions: {custom_attribute_definitions}, "
             "custom_attribute_values: {custom_attribute_values}, "
-            "custom_attributes: {custom_attributes}").format(
+            "custom_attributes: {custom_attributes}, "
+            "access_control_list: {access_control_list}").format(
         type=self.type, title=self.title, id=self.id, href=self.href,
         url=self.url, slug=self.slug, status=self.status, owners=self.owners,
         contact=self.contact, secondary_contact=self.secondary_contact,
         updated_at=self.updated_at, os_state=self.os_state,
         custom_attribute_definitions=self.custom_attribute_definitions,
         custom_attribute_values=self.custom_attribute_values,
-        custom_attributes=self.custom_attributes)
+        custom_attributes=self.custom_attributes,
+        access_control_list=self.access_control_list)
 
   def __eq__(self, other):
     return (isinstance(other, self.__class__) and
@@ -447,7 +453,8 @@ class IssueEntity(Entity):
   def __init__(self, slug=None, status=None, audit=None, owners=None,
                contact=None, secondary_contact=None, updated_at=None,
                custom_attribute_definitions=None, os_state=None,
-               custom_attribute_values=None, custom_attributes=None):
+               custom_attribute_values=None, custom_attributes=None,
+               access_control_list=None):
     super(IssueEntity, self).__init__()
     self.slug = slug  # code
     self.status = status  # state
@@ -460,6 +467,7 @@ class IssueEntity(Entity):
     self.custom_attribute_definitions = custom_attribute_definitions
     self.custom_attribute_values = custom_attribute_values
     self.custom_attributes = custom_attributes  # map of cas def and values
+    self.access_control_list = access_control_list
 
   def __repr__(self):
     return ("type: {type}, id: {id}, title: {title}, href: {href}, "
@@ -469,7 +477,8 @@ class IssueEntity(Entity):
             "updated_at: {updated_at}, os_state: {os_state}, "
             "custom_attribute_definitions: {custom_attribute_definitions}, "
             "custom_attribute_values: {custom_attribute_values}, "
-            "custom_attributes: {custom_attributes}").format(
+            "custom_attributes: {custom_attributes}, "
+            "access_control_list: {access_control_list}").format(
         type=self.type, title=self.title, id=self.id, href=self.href,
         url=self.url, slug=self.slug, status=self.status, audit=self.audit,
         owners=self.owners, contact=self.contact,
@@ -477,7 +486,8 @@ class IssueEntity(Entity):
         os_state=self.os_state,
         custom_attribute_definitions=self.custom_attribute_definitions,
         custom_attribute_values=self.custom_attribute_values,
-        custom_attributes=self.custom_attributes)
+        custom_attributes=self.custom_attributes,
+        access_control_list=self.access_control_list)
 
   def __eq__(self, other):
     return (isinstance(other, self.__class__) and self.type == other.type and
