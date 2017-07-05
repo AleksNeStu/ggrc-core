@@ -67,6 +67,14 @@ class Revision(Base, db.Model):
     self.resource_slug = getattr(obj, "slug", None)
     self.modified_by_id = modified_by_id
     self.action = action
+    if "access_control_list" in content and content["access_control_list"]:
+      for acl in content["access_control_list"]:
+        acl["person"] = {
+            "id": acl["person_id"],
+            "type": "Person",
+            "href": "/api/people/{}".format(acl["person_id"]),
+        }
+
     self._content = content
 
     for attr in ["source_type",
