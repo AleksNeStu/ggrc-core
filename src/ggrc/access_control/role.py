@@ -56,6 +56,7 @@ class AccessControlRole(Indexed, attributevalidator.AttributeValidator,
       "update",
       "delete",
       "my_work",
+      "mandatory",
   ]
 
   @sa.orm.validates("name", "object_type")
