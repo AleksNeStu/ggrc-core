@@ -12,7 +12,6 @@
     destroy: 'DELETE /api/issues/{id}',
     create: 'POST /api/issues',
     mixins: [
-      'ownable',
       'ca_update',
       'timeboxed',
       'mapping-limit',

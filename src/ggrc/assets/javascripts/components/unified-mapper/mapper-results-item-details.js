@@ -24,7 +24,9 @@
       item: null,
       instance: null,
       model: null,
-      isMapperDetails: true
+      isMapperDetails: true,
+      adminRole: ['Admin'],
+      deletableAdmin: false
     }
   });
 })(window.can, window.GGRC, window.CMS);

@@ -5,11 +5,6 @@
 
 
 {{#switch attr_name}}
-  {{#case 'owner'}}
-      <tree-people-list-field {source}="instance.owners">
-          {{peopleStr}}
-      </tree-people-list-field>
-  {{/case}}
   {{#case 'contact'}}
       <tree-people-list-field {source}="instance.contact">
           {{peopleStr}}

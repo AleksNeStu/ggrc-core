@@ -119,12 +119,6 @@
         order: 10
       },
       {
-        attr_title: 'Admin',
-        attr_name: 'owner',
-        attr_sort_field: 'owners',
-        order: 20
-      },
-      {
         attr_title: 'Code',
         attr_name: 'slug',
         order: 30

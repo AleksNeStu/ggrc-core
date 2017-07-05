@@ -31,15 +31,7 @@
       <div class="wysiwyg-area" data-test-id="control_description-text_9cc51ca3">
         <textarea tabindex="2" id="control_description" class="span12 triple wysihtml5" name="description" placeholder="Enter Description">{{{description}}}</textarea>
       </div>
-    </div>
-
-    <div class="span6 hide-wrap hidable">
-      <div class="row-fluid inner-hide">
-        <div data-test-id="control_owner_587d12d6" data-id="owner_hidden" class="span12 hidable bottom-spacing">
-          {{> /static/mustache/people/owners_modal_connector.mustache}}
-        </div>
-      </div>
-    </div>
+    </div> 
   </div>
 
 
@@ -58,11 +50,16 @@
 
   <div class="row">
     <div class="span12 hide-wrap hidable">
-      <access-control-list
-          instance="."
-          {is-new-instance}="new_object_form"
+      <access-control-list-admin-helper
+        {instance}="."
+        {is-new-instance}="new_object_form">
+        <access-control-list
+          {instance}="instance"
+          {is-new-instance}="isNewInstance"
           top-wrapper-class="'span12'"
-          role-block-class="'span6'"></access-control-list>
+          role-block-class="'span6'">
+        </access-control-list>
+      </access-control-list-admin-helper>
     </div>
   </div>
 

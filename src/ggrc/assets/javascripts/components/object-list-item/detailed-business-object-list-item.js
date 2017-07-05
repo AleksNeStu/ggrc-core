@@ -18,6 +18,8 @@
     viewModel: {
       instance: {},
       customAttributes: null,
+      adminRole: ['Admin'],
+      deletableAdmin: false,
       define: {
         isSnapshot: {
           get: function () {

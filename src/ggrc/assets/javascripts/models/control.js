@@ -14,12 +14,11 @@
     create: 'POST /api/controls',
     update: 'PUT /api/controls/{id}',
     destroy: 'DELETE /api/controls/{id}',
-    mixins: ['ownable', 'unique_title', 'ca_update', 'timeboxed'],
+    mixins: ['unique_title', 'ca_update', 'timeboxed'],
     is_custom_attributable: true,
     isRoleable: true,
     attributes: {
       context: 'CMS.Models.Context.stub',
-      owners: 'CMS.Models.Person.stubs',
       modified_by: 'CMS.Models.Person.stub',
       object_people: 'CMS.Models.ObjectPerson.stubs',
       documents: 'CMS.Models.Document.stubs',
@@ -77,7 +76,7 @@
         {attr_title: 'Assertions', attr_name: 'assertions'},
         {attr_title: 'Categories', attr_name: 'categories'}
       ]),
-      display_attr_names: ['title', 'owner', 'status', 'last_assessment_date'],
+      display_attr_names: ['title', 'status', 'last_assessment_date'],
       add_item_view: GGRC.mustache_path + '/snapshots/tree_add_item.mustache',
       show_related_assessments: true,
       draw_children: true

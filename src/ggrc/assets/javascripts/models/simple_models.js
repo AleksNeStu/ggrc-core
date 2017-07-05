@@ -126,7 +126,6 @@
     isRoleable: true,
     attributes: {
       context: 'CMS.Models.Context.stub',
-      owners: 'CMS.Models.Person.stubs',
       modified_by: 'CMS.Models.Person.stub',
       sections: 'CMS.Models.get_stubs',
       controls: 'CMS.Models.Control.stubs',

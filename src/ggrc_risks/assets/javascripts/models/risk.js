@@ -15,12 +15,11 @@
     create: 'POST /api/risks',
     update: 'PUT /api/risks/{id}',
     destroy: 'DELETE /api/risks/{id}',
-    mixins: ['ownable', 'unique_title', 'ca_update'],
+    mixins: ['unique_title', 'ca_update'],
     is_custom_attributable: true,
     isRoleable: true,
     attributes: {
       context: 'CMS.Models.Context.stub',
-      owners: 'CMS.Models.Person.stubs',
       modified_by: 'CMS.Models.Person.stub',
       objects: 'CMS.Models.get_stubs',
       risk_objects: 'CMS.Models.RiskObject.stubs'

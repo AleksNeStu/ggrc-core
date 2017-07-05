@@ -5,18 +5,29 @@
 
 <div class="col-container">
   <div class="attr-container title">
-    <h6>Admin</h6>
-    {{#if item.owners.length}}
-      <ul class="inner-count-list">
-        {{#each item.owners}}
-          <li>
-            <person-info person-id="{{id}}"></person-info>
-          </li>
-        {{/each}}
-      </ul>
-    {{else}}
-      <span class="empty-message">None</span>
-    {{/if}}
+    <related-people-access-control
+      {include-roles}="adminRole"
+      {instance}="item">
+      <div class="people-groups">
+        {{#groups}}
+          <related-people-access-control-group
+            {group-id}="groupId"
+            {title}="title"
+            {people}="people"
+            {instance}="instance"
+            class="people-group">
+              <deletable-people-group
+                {can-unmap}="deletableAdmin"
+                {is-loading}="isUpdating"
+                {group-id}="groupId"
+                {instance}="instance"
+                {people}="people">
+                  <h6>Admin</h6>
+              </deletable-people-group>
+          </related-people-access-control-group>
+        {{/groups}}
+      </div>
+    </related-people-access-control>
   </div>
   <div class="attr-container notes">
     <h6>Notes</h6>

@@ -12,18 +12,29 @@
         <span>{{itemData.slug}}</span>
     </div>
     <div class="flex-size-1">
-        <h6>Admin</h6>
-      {{#if itemData.owners.length}}
-          <ul class="inner-count-list">
-            {{#each itemData.owners}}
-                <li>
-                    <person-info person-id="{{id}}"></person-info>
-                </li>
-            {{/each}}
-          </ul>
-      {{else}}
-          <span class="empty-message">None</span>
-      {{/if}}
+        <related-people-access-control
+            {include-roles}="adminRole"
+            {instance}="instance">
+            <div class="people-groups">
+                {{#groups}}
+                    <related-people-access-control-group
+                        {group-id}="groupId"
+                        {title}="title"
+                        {people}="people"
+                        {instance}="instance"
+                        class="people-group">
+                            <deletable-people-group
+                                {can-unmap}="deletableAdmin"
+                                {is-loading}="isUpdating"
+                                {group-id}="groupId"
+                                {instance}="instance"
+                                {people}="people">
+                                    <h6>Admin</h6>
+                            </deletable-people-group>
+                    </related-people-access-control-group>
+                {{/groups}}
+            </div>
+        </related-people-access-control>
     </div>
     {{#if customAttributes.length}}
         {{#each customAttributes}}

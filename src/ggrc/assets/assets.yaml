@@ -244,6 +244,7 @@ dashboard-js-files:
   - components/quick_form/quick_add.js
   - components/quick_form/quick_update.js
   - components/access_control_list/access_control_list.js
+  - components/access_control_list/access_control_list_admin_helper.js
   - components/assessment_templates/assessment_templates.js
   - components/modal_wrappers/assessment_template_form.js
   - components/modal_wrappers/checkboxes_to_list.js
@@ -622,7 +623,6 @@ dashboard-js-template-files:
   - people/object_list.mustache
   - people/option_column.mustache
   - people/option_detail.mustache
-  - people/owners_modal_connector.mustache
   - people/popover.mustache
   - people/tree-item-attr.mustache
   - people/tree_add_item.mustache
