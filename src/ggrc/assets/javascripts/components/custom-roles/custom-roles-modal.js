@@ -15,7 +15,8 @@
     template: tpl,
     viewModel: {
       instance: {},
-      updatableGroupId: null
+      updatableGroupId: null,
+      isNewInstance: false
     }
   });
 })(window.can, window.GGRC);

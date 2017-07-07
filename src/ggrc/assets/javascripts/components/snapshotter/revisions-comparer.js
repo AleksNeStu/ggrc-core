@@ -41,17 +41,15 @@
                   that.getAttachmentsDfds(revisions) :
                   [];
                 fragLeft.appendChild(fragRight);
-                revisions[1].instance.refresh_all('owners')
-                  .then(function () {
-                    target.find('.modal-body').html(fragLeft);
-                    that.highlightDifference(target);
 
-                    if (attachmentsDfds.length) {
-                      $.when.apply($, attachmentsDfds).then(function () {
-                        that.highlightDifference(target);
-                      });
-                    }
+                target.find('.modal-body').html(fragLeft);
+                that.highlightDifference(target);
+
+                if (attachmentsDfds.length) {
+                  $.when.apply($, attachmentsDfds).then(function () {
+                    that.highlightDifference(target);
                   });
+                }
               });
           }
         }, this.updateRevision.bind(this));
@@ -404,9 +402,12 @@
       highlightCustomRoles: function ($target) {
         var HIGHLIGHT_CLASS = 'diff-highlighted';
 
-        var $rolesPanes = $target.find('access-control-list > div');
-        var $roleBlocksOld = $rolesPanes.eq(0).find('.role-block');
-        var $roleBlocksNew = $rolesPanes.eq(1).find('.role-block');
+        var $rolesPanes = $target
+          .find('related-people-access-control');
+        var $roleBlocksOld = $rolesPanes.eq(0)
+          .find('related-people-access-control-group');
+        var $roleBlocksNew = $rolesPanes.eq(1)
+          .find('related-people-access-control-group');
 
         $roleBlocksOld.each(function (i) {
           var $blockOld = $roleBlocksOld.eq(i);
@@ -430,8 +431,8 @@
           var oldUserIds = {};
           var newUserIds = {};
 
-          var $oldGrantees = $blockOld.find('.person-row > person-info');
-          var $newGrantees = $blockNew.find('.person-row > person-info');
+          var $oldGrantees = $blockOld.find('person-list-item');
+          var $newGrantees = $blockNew.find('person-list-item');
 
           oldUserIds = extractPeopleIds($oldGrantees);
           newUserIds = extractPeopleIds($newGrantees);
@@ -452,7 +453,8 @@
         function extractPeopleIds($grantees) {
           var peopleIds = {};
           $grantees.each(function (i, personInfo) {
-            var personId = $(personInfo).viewModel().personId;
+            var personId = $(personInfo)
+              .viewModel().attr('person.id');
             peopleIds[personId] = true;
           });
           return peopleIds;
@@ -470,10 +472,10 @@
         function highlightChanges($grantees, comparisonIds) {
           $grantees.each(function (i, grantee) {
             var $grantee = $(grantee);
-            var personId = $grantee.viewModel().personId;
+            var personId = $grantee.viewModel().attr('person.id');
 
             if (!(personId in comparisonIds)) {
-              $grantee.parent().addClass(HIGHLIGHT_CLASS);
+              $grantee.addClass(HIGHLIGHT_CLASS);
             }
           });
         }
@@ -487,6 +489,11 @@
         function equalizeHeights($block, $block2) {
           var height = $block.outerHeight();
           var height2 = $block2.outerHeight();
+
+          $block.css('max-width', 'none');
+          $block2.css('max-width', 'none');
+          $block.css('margin-right', '0');
+          $block2.css('margin-right', '0');
 
           if (height > height2) {
             $block2.outerHeight(height);

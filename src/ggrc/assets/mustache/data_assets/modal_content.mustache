@@ -40,12 +40,10 @@
       <access-control-list-admin-helper
         {instance}="."
         {is-new-instance}="new_object_form">
-        <access-control-list
-          {instance}="instance"
-          {is-new-instance}="isNewInstance"
-          top-wrapper-class="'span12'"
-          role-block-class="'span6'">
-        </access-control-list>
+          <custom-roles-modal
+            {instance}="instance"
+            {is-new-instance}="isNewInstance">
+          </custom-roles-modal>
       </access-control-list-admin-helper>
     </div>
   </div>
