@@ -50,13 +50,12 @@ class CommonInfo(base.Widget):
     # pylint: disable=not-an-iterable
     # pylint: disable=invalid-name
     selenium_utils.wait_for_js_to_load(self._driver)
-    if not self.all_headers_and_values:
-      if custom_scopes_locator:
-        self.all_headers_and_values = self._driver.find_elements(
-            *custom_scopes_locator)
-      if not custom_scopes_locator and self.locator_headers_and_values:
-        self.all_headers_and_values = self._driver.find_elements(
-            *self.locator_headers_and_values)
+    if custom_scopes_locator:
+      self.all_headers_and_values = self._driver.find_elements(
+          *custom_scopes_locator)
+    if not custom_scopes_locator and self.locator_headers_and_values:
+      self.all_headers_and_values = self._driver.find_elements(
+          *self.locator_headers_and_values)
     header_and_value = (
         next((scope.text.splitlines() + [None]
               if len(scope.text.splitlines()) == 1
@@ -384,15 +383,17 @@ class Controls(SnapshotableInfoPanel):
 
   def __init__(self, driver):
     super(Controls, self).__init__(driver)
-    self.admin_text, self.admin_entered_text = (
-        self.get_header_and_value_text_from_custom_scopes(
-            self._elements.ADMIN.upper()))
-    self.primary_contact_text, self.primary_contact_entered_text = (
-        self.get_header_and_value_text_from_custom_scopes(
-            self._elements.PRIMARY_CONTACT.upper()))
     self.code_text, self.code_entered_text = (
         self.get_header_and_value_text_from_custom_scopes(
             self._elements.CODE.upper()))
+    self.admin_text, self.admin_entered_text = (
+        self.get_header_and_value_text_from_custom_scopes(
+            self._elements.ADMIN.upper(),
+            self._locators.PEOPLE_HEADERS_AND_VALUES))
+    self.primary_contact_text, self.primary_contact_entered_text = (
+        self.get_header_and_value_text_from_custom_scopes(
+            self._elements.PRIMARY_CONTACT.upper(),
+            self._locators.PEOPLE_HEADERS_AND_VALUES))
     self.cas_text = self.get_headers_and_values_dict_from_cas_scopes()
     # scope
     self.list_all_headers_text = [
