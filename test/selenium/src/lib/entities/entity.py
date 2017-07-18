@@ -59,7 +59,8 @@ class Representation(object):
         els.ASSIGNEES: "assessor", els.ASSIGNEES_: "assessor",
         els.CREATORS: "creator", els.CREATORS_: "creator",
         els.VERIFIERS: "verifier", els.VERIFIERS_: "verifier",
-        element.AssessmentInfoWidget.COMMENTS_HEADER: "comments"
+        element.AssessmentInfoWidget.COMMENTS_HEADER: "comments",
+        els.PRIMARY_CONTACT: "contact"
     }
     csv_remap_items = {
         csv.REVISION_DATE: "updated_at"
@@ -236,12 +237,12 @@ class PersonEntity(Representation):
       "type", "name", "email"]
   attrs_names_to_repr = [
       "type", "id", "name", "href", "url", "email", "company",
-      "system_wide_role", "updated_at"]
+      "system_wide_role", "updated_at", "ac_role_id"]
 
   def __init__(self, type=None, id=None, name=None, href=None, url=None,
                email=None, company=None, system_wide_role=None,
                updated_at=None, custom_attribute_definitions=None,
-               custom_attribute_values=None):
+               custom_attribute_values=None, ac_role_id=None):
     super(PersonEntity, self).__init__()
     # REST and UI
     self.name = name
@@ -256,6 +257,7 @@ class PersonEntity(Representation):
     # REST
     self.custom_attribute_definitions = custom_attribute_definitions
     self.custom_attribute_values = custom_attribute_values
+    self.ac_role_id = ac_role_id
 
   def __lt__(self, other):
     return self.email < other.email
@@ -340,12 +342,12 @@ class ControlEntity(Entity):
       "updated_at"]
   attrs_names_to_repr = Representation.core_attrs_names_to_repr + [
       "status", "contact", "secondary_contact", "updated_at",
-      "os_state", "custom_attributes"]
+      "os_state", "custom_attributes", "access_control_list"]
 
   def __init__(self, status=None, owners=None, contact=None,
                secondary_contact=None, updated_at=None, os_state=None,
                custom_attribute_definitions=None, custom_attribute_values=None,
-               custom_attributes=None):
+               custom_attributes=None, access_control_list=None):
     super(ControlEntity, self).__init__()
     # REST and UI
     self.status = status  # state (e.g. "Draft")
@@ -359,6 +361,7 @@ class ControlEntity(Entity):
     self.custom_attribute_values = custom_attribute_values
     # additional
     self.custom_attributes = custom_attributes  # map of cas def and values
+    self.access_control_list = access_control_list
 
 
 class ObjectiveEntity(Entity):
@@ -371,12 +374,12 @@ class ObjectiveEntity(Entity):
       "updated_at"]
   attrs_names_to_repr = Representation.core_attrs_names_to_repr + [
       "status", "contact", "secondary_contact", "updated_at",
-      "os_state", "custom_attributes"]
+      "os_state", "custom_attributes", "access_control_list"]
 
   def __init__(self, status=None, owners=None, contact=None,
                secondary_contact=None, updated_at=None, os_state=None,
                custom_attribute_definitions=None, custom_attribute_values=None,
-               custom_attributes=None):
+               custom_attributes=None, access_control_list=None):
     super(ObjectiveEntity, self).__init__()
     # REST and UI
     self.status = status  # state
@@ -390,6 +393,7 @@ class ObjectiveEntity(Entity):
     self.custom_attribute_values = custom_attribute_values
     # additional
     self.custom_attributes = custom_attributes  # map of cas def and values
+    self.access_control_list = access_control_list
 
 
 class AuditEntity(Entity):
@@ -503,12 +507,13 @@ class IssueEntity(Entity):
       "type", "title", "slug", "status", "contact"]
   attrs_names_to_repr = Representation.core_attrs_names_to_repr + [
       "status", "audit", "contact", "secondary_contact", "updated_at",
-      "custom_attributes"]
+      "custom_attributes", "access_control_list"]
 
   def __init__(self, status=None, audit=None, owners=None,
                contact=None, secondary_contact=None, updated_at=None,
                custom_attribute_definitions=None, os_state=None,
-               custom_attribute_values=None, custom_attributes=None):
+               custom_attribute_values=None, custom_attributes=None,
+               access_control_list=None):
     super(IssueEntity, self).__init__()
     # REST and UI
     self.status = status  # state
@@ -523,3 +528,4 @@ class IssueEntity(Entity):
     # additional
     self.audit = audit  # audit title
     self.custom_attributes = custom_attributes  # map of cas def and values
+    self.access_control_list = access_control_list
