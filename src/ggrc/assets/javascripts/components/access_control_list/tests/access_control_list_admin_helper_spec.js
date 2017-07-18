@@ -38,7 +38,7 @@ describe('GGRC.Components.accessControlListAdminHelper', function () {
     it('should add current user as admin', function () {
       instance = new CMS.Models.Assessment({id: 25});
       viewModel.attr('instance', instance);
-      expect(instance.access_control_list).toBe(undefined);
+      expect(instance.access_control_list.length).toEqual(0);
       viewModel.addAdmin();
       expect(instance.access_control_list.length).toEqual(1);
       expect(instance.access_control_list[0].ac_role_id)
