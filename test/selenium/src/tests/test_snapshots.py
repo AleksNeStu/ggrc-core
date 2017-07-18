@@ -512,6 +512,7 @@ class TestSnapshots(base.Test):
         messages.AssertionMessages.
         format_err_msg_equal([expected_control], actual_controls))
 
+  @pytest.mark.skip(reason="Will be fixed in GGRC-2750")
   @pytest.mark.smoke_tests
   def test_export_of_snapshoted_control_from_audit_via_tree_view(
       self, create_tmp_dir, create_audit_with_control_and_update_control,
