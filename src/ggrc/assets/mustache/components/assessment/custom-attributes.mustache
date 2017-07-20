@@ -5,6 +5,7 @@
 {{#items}}
     <inline-edit-control class="info-pane__section"
         (inline-save)="updateGlobalAttribute(%event, %context)"
+        {instance}="instance"
         {dropdown-options}="options"
         {dropdown-class}="dropdownClass"
         {dropdown-no-value}="dropdownNoValue"
@@ -16,7 +17,7 @@
         {type}="type"
         with-read-more="true">
               <confirm-inline-control-title
-                  (set-edit-mode-inline)="setEditModeInline()"
+                  (set-edit-mode-inline)="setEditModeInline(%event)"
                   (set-in-progress)="setInProgressState()"
                   {instance}="instance"
                   {on-state-change-dfd}="onStateChangeDfd"

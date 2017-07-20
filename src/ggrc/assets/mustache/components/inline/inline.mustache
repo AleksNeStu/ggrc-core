@@ -64,12 +64,10 @@
 
   {{#if isShowContent}}
     <div class="inline__content-wrapper">
-      <div class="inline__content {{#if editMode}}inline--hidden{{/if}}">
-        <readonly-inline-content
+        <readonly-inline-content class="inline__content {{#if editMode}}inline--hidden{{/if}}"
           {with-read-more}="withReadMore"
           {value}="context.value">
         </readonly-inline-content>
-      </div>
     </div>
   {{/if}}
 </div>
