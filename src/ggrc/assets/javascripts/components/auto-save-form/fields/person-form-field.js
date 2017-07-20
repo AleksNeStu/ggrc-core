@@ -31,6 +31,7 @@
           }
         }
       },
+      withDetails: false,
       fieldId: null,
       setPerson: function (scope, el, ev) {
         this.attr('_value', ev.selectedItem.serialize());

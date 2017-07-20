@@ -12,20 +12,34 @@
   /**
    * Person List Item Component
    */
-  can.Component.extend({
+  GGRC.Components('personListItem', {
     tag: tag,
     template: tpl,
     viewModel: {
       define: {
+        personId: {
+          type: 'number',
+          set: function (newVal) {
+            this.attr('person', {id: newVal});
+            return newVal;
+          }
+        },
         person: {
-          value: {},
+          Type: CMS.Models.Person,
           set: function (newVal, setVal) {
-            var objectToLoad;
-            if (newVal.email) {
-              setVal(newVal);
+            var actualPerson;
+            if (!newVal.id) {
+              setVal({});
+              return;
+            }
+            actualPerson = CMS.Models.Person.store[newVal.id] || {};
+            if (actualPerson.email) {
+              setVal(actualPerson);
             } else {
-              objectToLoad = new CMS.Models.Person({id: newVal.id});
-              new RefreshQueue().enqueue(objectToLoad).trigger()
+              actualPerson = new CMS.Models.Person({id: newVal.id});
+              new RefreshQueue()
+                .enqueue(actualPerson)
+                .trigger()
                 .done(function (person) {
                   person = Array.isArray(person) ? person[0] : person;
                   setVal(person);
