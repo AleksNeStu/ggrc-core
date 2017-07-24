@@ -12,9 +12,10 @@ from integration.ggrc import api_helper
 from integration.ggrc import TestCase
 from integration.ggrc.generator import ObjectGenerator
 from integration.ggrc.models import factories
+from integration.ggrc.query_helper import WithQueryApi
 
 
-class TestDocumentWithActionMixin(TestCase):
+class TestDocumentWithActionMixin(TestCase, WithQueryApi):
   """Test case for WithAction mixin and Document actions."""
 
   def setUp(self):
@@ -271,6 +272,44 @@ class TestDocumentWithActionMixin(TestCase):
     response = self.api.put(assessment, {"description": "test"})
     self.assert200(response)
 
+  def test_document_indexing(self):
+    """Test document_indexing"""
+    assessment = factories.AssessmentFactory()
+    response = self.api.put(assessment, {"actions": {"add_related": [
+        {
+            "id": None,
+            "type": "Document",
+            "link": "google.com",
+            "title": "google.com",
+            "document_type": "URL"
+        }
+    ]}})
+    self.assert200(response)
+
+    assessments_by_url = self.simple_query(
+        "Assessment",
+        expression=["url", "~", "google.com"]
+    )
+    self.assertEqual(len(assessments_by_url), 1)
+
+    rel_id = response.json["assessment"]["related_destinations"][0]["id"]
+    relationship = all_models.Relationship.query.get(rel_id)
+
+    response = self.api.put(assessment, {"actions": {"remove_related": [
+        {
+            "id": relationship.destination_id,
+            "type": "Document",
+        }
+    ]}})
+
+    self.assert200(response)
+
+    assessments_by_url = self.simple_query(
+        "Assessment",
+        expression=["url", "~", "google.com"]
+    )
+    self.assertFalse(assessments_by_url)
+
 
 class TestCommentWithActionMixin(TestCase):
   """Test case for WithAction mixin and Comment actions."""
@@ -408,7 +447,7 @@ def _create_snapshot():
   return assessment, snapshot
 
 
-class TestSnapshotWithActionMixin(TestCase):
+class TestSnapshotWithActionMixin(TestCase, WithQueryApi):
   """Test case for WithAction mixin and Snapshot actions."""
 
   def setUp(self):
@@ -432,6 +471,10 @@ class TestSnapshotWithActionMixin(TestCase):
     self.assertEqual(relationship.destination_id, snapshot.id)
     self.assertEqual(relationship.destination_type, "Snapshot")
     self.assertEqual(relationship.context_id, assessment.context_id)
+
+    audits = self.simple_query('Audit',
+                               expression=["description", "~", "'control-9'"])
+    self.assertFalse(audits)
 
   def test_wrong_add_snapshot(self):
     """Test wrong add snapshot action."""

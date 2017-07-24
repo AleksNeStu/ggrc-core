@@ -8,13 +8,12 @@ from ggrc.models import Program
 from ggrc.models import all_models
 
 from integration.ggrc import generator
+from integration.ggrc import TestCase
+from integration.ggrc.query_helper import WithQueryApi
 from integration.ggrc.models import factories
-from integration.ggrc.services.test_query.test_basic import (
-    BaseQueryAPITestCase
-)
 
 
-class TestAuditActions(BaseQueryAPITestCase):
+class TestAuditActions(TestCase, WithQueryApi):
   """Test Audit related actions"""
 
   def setUp(self):

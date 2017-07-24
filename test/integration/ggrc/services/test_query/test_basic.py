@@ -22,6 +22,7 @@ from ggrc.models import CustomAttributeDefinition as CAD, all_models
 from ggrc.snapshotter.rules import Types
 
 from integration.ggrc import TestCase, generator
+from integration.ggrc.query_helper import WithQueryApi
 from integration.ggrc.models import factories
 
 
@@ -30,76 +31,9 @@ DATE_FORMAT_REQUEST = "%m/%d/%Y"
 DATE_FORMAT_RESPONSE = "%Y-%m-%d"
 
 
-# pylint: disable=super-on-old-class; false positive
-class BaseQueryAPITestCase(TestCase):
-  """Base class for /query api tests with utility methods."""
-
-  def setUp(self):
-    """Log in before performing queries."""
-    # we don't call super as TestCase.setUp clears the DB
-    # super(BaseQueryAPITestCase, self).setUp()
-    self.client.get("/login")
-    self.generator = generator.ObjectGenerator()
-
-  def _post(self, data):
-    """Make a POST to /query endpoint."""
-    if not isinstance(data, list):
-      data = [data]
-    headers = {"Content-Type": "application/json", }
-    return self.client.post("/query", data=json.dumps(data), headers=headers)
-
-  def _get_first_result_set(self, data, *keys):
-    """Post data, get response, get values from it like in obj["a"]["b"]."""
-    response = self._post(data)
-    self.assert200(response)
-    result = json.loads(response.data)[0]
-    for key in keys:
-      result = result.get(key)
-      self.assertIsNot(result, None)
-    return result
-
-  @staticmethod
-  def _make_query_dict_base(object_name, type_=None, filters=None, limit=None,
-                            order_by=None):
-    """Make a dict with query for object_name with optional parameters."""
-    query = {
-        "object_name": object_name,
-        "filters": filters if filters else {"expression": {}},
-    }
-    if type_:
-      query["type"] = type_
-    if limit:
-      query["limit"] = limit
-    if order_by:
-      query["order_by"] = order_by
-    return query
-
-  @staticmethod
-  def make_filter_expression(expression):
-    """Convert a three-tuple to a simple expression filter."""
-    left, op_name, right = expression
-    return {"left": left, "op": {"name": op_name}, "right": right}
-
-  @classmethod
-  def _make_query_dict(cls, object_name, expression=None, *args, **kwargs):
-    """Make a dict with query for object_name with expression shortcut.
-
-    expression should be in format: (left, op_name, right), like
-    ("title", "=", "hello").
-    """
-
-    if expression:
-      filters = {"expression": cls.make_filter_expression(expression)}
-    else:
-      filters = None
-
-    return cls._make_query_dict_base(object_name, filters=filters, *args,
-                                     **kwargs)
-
-
 # pylint: disable=too-many-public-methods
 @ddt.ddt
-class TestAdvancedQueryAPI(BaseQueryAPITestCase):
+class TestAdvancedQueryAPI(TestCase, WithQueryApi):
   """Basic tests for /query api."""
 
   @classmethod
@@ -108,6 +42,10 @@ class TestAdvancedQueryAPI(BaseQueryAPITestCase):
     TestCase.clear_data()
     # This imported file could be simplified a bit to speed up testing.
     cls._import_file("data_for_export_testing.csv")
+
+  def setUp(self):
+    self.client.get("/login")
+    self.generator = generator.ObjectGenerator()
 
   def test_basic_query_eq(self):
     """Filter by = operator."""
@@ -931,7 +869,7 @@ class TestAdvancedQueryAPI(BaseQueryAPITestCase):
     self.assertEqual(result_count, 1)
 
 
-class TestQueryAssessmentCA(BaseQueryAPITestCase):
+class TestQueryAssessmentCA(TestCase, WithQueryApi):
   """Test filtering assessments by CAs"""
 
   def setUp(self):
@@ -1026,7 +964,7 @@ class TestQueryAssessmentCA(BaseQueryAPITestCase):
                           ["Assessment with text", "Assessment with date"])
 
 
-class TestSortingQuery(BaseQueryAPITestCase):
+class TestSortingQuery(TestCase, WithQueryApi):
   """Test sorting is correct requested with query API"""
   def setUp(self):
     TestCase.clear_data()
@@ -1156,7 +1094,7 @@ class TestSortingQuery(BaseQueryAPITestCase):
                          ["Assessment_2", "Assessment_1"])
 
 
-class TestQueryAssessmentByEvidenceURL(BaseQueryAPITestCase):
+class TestQueryAssessmentByEvidenceURL(TestCase, WithQueryApi):
   """Test assessments filtering by Evidence and/or URL"""
   def setUp(self):
     """Set up test cases for all tests."""
@@ -1194,7 +1132,7 @@ class TestQueryAssessmentByEvidenceURL(BaseQueryAPITestCase):
                            "Assessment title 4"])
 
 
-class TestQueryWithCA(BaseQueryAPITestCase):
+class TestQueryWithCA(TestCase, WithQueryApi):
   """Test query API with custom attributes."""
 
   def setUp(self):
@@ -1361,7 +1299,7 @@ class TestQueryWithCA(BaseQueryAPITestCase):
     self.assertEqual(response.json['message'], "Invalid filter data")
 
 
-class TestQueryWithUnicode(BaseQueryAPITestCase):
+class TestQueryWithUnicode(TestCase, WithQueryApi):
   """Test query API with unicode values."""
 
   CAD_TITLE1 = u"CA список" + "X" * 200

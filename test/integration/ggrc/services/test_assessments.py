@@ -7,19 +7,19 @@ import random
 
 from ddt import data, ddt
 
+from integration.ggrc import TestCase
+from integration.ggrc.query_helper import WithQueryApi
 from integration.ggrc.models import factories
-from integration.ggrc.services.test_query.test_basic import (
-    BaseQueryAPITestCase
-)
 
 
 @ddt
-class TestCollection(BaseQueryAPITestCase):
+class TestCollection(TestCase, WithQueryApi):
 
   """Test for collection assessment objects."""
 
   def setUp(self):
     super(TestCollection, self).setUp()
+    self.client.get("/login")
     self.clear_data()
     self.expected_ids = []
     assessments = [factories.AssessmentFactory() for _ in range(10)]

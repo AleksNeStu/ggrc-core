@@ -12,20 +12,21 @@ from ggrc import db
 from ggrc.models import all_models
 from ggrc.data_platform import computed_attributes
 
+from integration.ggrc import TestCase
 from integration.ggrc.api_helper import Api
+from integration.ggrc.query_helper import WithQueryApi
 import integration.ggrc.generator
 from integration.ggrc.models import factories
-from integration.ggrc.services.test_query.test_basic import (
-    BaseQueryAPITestCase)
 
 
-class TestWithLastAssessmentDate(BaseQueryAPITestCase):
+class TestWithLastAssessmentDate(TestCase, WithQueryApi):
   """Integration test suite for WithLastAssessmentDate functionality."""
 
   def setUp(self):
     self.clear_data()
     super(TestWithLastAssessmentDate, self).setUp()
     self.generator = integration.ggrc.generator.ObjectGenerator()
+    self.client.get("/login")
     self.api = Api()
 
     program = factories.ProgramFactory(title="Last Assessment Date")
