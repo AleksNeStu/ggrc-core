@@ -302,7 +302,8 @@ class AutoStatusChangeable(object):
 
         handlers = {
             "Document": cls.handle_first_class_edit,
-            "Person": cls.handle_person_edit
+            "Person": cls.handle_person_edit,
+            "Snapshot": cls.handle_first_class_edit
         }
         for k in handlers.keys():
           if k in endpoints:

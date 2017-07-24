@@ -435,11 +435,13 @@ def handle_relationship_altered(rel):
   if asmt.type != u"Assessment":
     asmt, other = other, asmt
 
-  if other.type not in (u"Document", u"Person"):
+  if other.type not in (u"Document", u"Person", u"Snapshot"):
     return
 
   if asmt.status != Statusable.START_STATE:
     _add_assessment_updated_notif(asmt)
+  else:
+    _add_state_change_notif(asmt, Transitions.TO_STARTED, remove_existing=True)
 
   # when modified, a done Assessment gets automatically reopened
   if asmt.status in Statusable.DONE_STATES:
