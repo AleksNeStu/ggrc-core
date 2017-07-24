@@ -162,8 +162,7 @@
         this.attr('autoSaveScheduled', false);
 
         this.attr('saving', true);
-
-        this.saveCallback(toSave)
+        this.saveCallback(new can.Map(toSave))
           .done(function () {
             if (self.attr('autoSaveAfterSave')) {
               self.attr('autoSaveAfterSave', false);
