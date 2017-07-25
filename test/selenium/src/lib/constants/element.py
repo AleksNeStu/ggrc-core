@@ -256,7 +256,7 @@ class ObjectStates(object):
 
 class BaseStates(object):
   """Common states for Audit and Assessment objects."""
-  IN_PROGRESS = "In progress"
+  IN_PROGRESS = "In Progress"
   COMPLETED = "Completed"
 
 
