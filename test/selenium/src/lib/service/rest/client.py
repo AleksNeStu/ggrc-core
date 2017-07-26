@@ -10,7 +10,7 @@ import urlparse
 import requests
 
 from lib import environment
-from lib.constants import url, templates
+from lib.constants import url
 from lib.service.rest.template_provider import TemplateProvider
 
 
@@ -24,9 +24,9 @@ class RestClient(object):
                   'FAIL': [400, 404, 500]}
 
   def __init__(self, endpoint):
+    self.is_api = "" if endpoint == url.QUERY else url.API
     self.url = urlparse.urljoin(environment.APP_URL,
-                                "/".join([url.API, endpoint]))
-    self._count = templates.COUNT
+                                "/".join([self.is_api, endpoint]))
     self.session_cookie = None
 
   def get_session_cookie(self):
@@ -58,10 +58,8 @@ class RestClient(object):
     """Create object or make other operations used POST request and
     return raw response.
     """
-    if type == self._count:
-      self.url = urlparse.urljoin(environment.APP_URL, url.QUERY)
     req_headers = self.generate_req_headers()
-    req_body = self.generate_body(type=type, **kwargs)
+    req_body = self.generate_body(type_name=type, **kwargs)
     resp = requests.post(url=self.url, data=req_body, headers=req_headers)
     return resp
 
@@ -94,14 +92,13 @@ class RestClient(object):
     resp = requests.get(url=obj_url, headers=req_headers)
     return {"resp_body": resp.text, "resp_headers": resp.headers}
 
-  def generate_body(self, type, **kwargs):
+  def generate_body(self, type_name, **kwargs):
     """Generate body of HTTP request based on JSON representation."""
-    if type == self._count:
-      return json.dumps([TemplateProvider.generate_template_as_dict(
-          json_tmpl_name=type, **kwargs)[self._count]])
-    else:
-      return json.dumps([TemplateProvider.generate_template_as_dict(
-          json_tmpl_name=type, **kwargs)])
+    body = TemplateProvider.generate_template_as_dict(
+        json_tmpl_name=type_name, **kwargs)
+    if not self.is_api:
+      body = body[type_name]
+    return json.dumps([body])
 
   @staticmethod
   def update_body(body, **kwargs):
