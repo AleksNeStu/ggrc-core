@@ -7,10 +7,10 @@
 
 import pytest
 
+import lib.utils.help_utils
 from lib import dynamic_fixtures
-from lib.utils import selenium_utils
 from lib.page import dashboard
-
+from lib.utils import selenium_utils
 
 # pylint: disable=redefined-outer-name
 pytest_plugins = "selenium", "xdist", "xvfb", "timeout", "flask", \
@@ -22,7 +22,9 @@ def _common_fixtures(fixturename):
   common fixtures.
   """
   dynamic_fixtures.generate_common_fixtures(fixturename)
-  return dynamic_fixtures.dict_executed_fixtures[fixturename]
+  fixture = dynamic_fixtures.dict_executed_fixtures[fixturename]
+  return (lib.utils.help_utils.get_single_obj(fixture)
+          if not lib.utils.help_utils.is_multiple_objs(fixture) else fixture)
 
 
 @pytest.fixture(scope="function")
@@ -62,16 +64,6 @@ def chrome_options(chrome_options, create_tmp_dir):
   return chrome_options
 
 
-@pytest.yield_fixture(scope="function")
-def dynamic_new_assessment_template(request):
-  """Dynamically create new Assessment Template under Audit object according
-  to fixturename. Fixturename is indirect parameter that get from
-  'request.param' and have to be string or boolean.
-  Return: lib.entities.entity.AssessmentTemplateEntity
-  """
-  yield _common_fixtures(request.param)[0] if request.param else None
-
-
 @pytest.fixture(scope="function")
 def my_work_dashboard(selenium):
   """Open My Work Dashboard URL and
@@ -101,7 +93,7 @@ def new_org_group_ui(selenium, request):
   """Create new Org Group object via UI (LHN).
   Return: lib.page.widget.OrgGroupInfo
   """
-  yield _common_fixtures(request.fixturename)[0]
+  yield _common_fixtures(request.fixturename)
 
 
 @pytest.fixture(scope="function")
@@ -109,7 +101,7 @@ def new_risk_ui(selenium, request):
   """Create new Risk Group object via UI (LHN).
   Return: lib.page.widget.Risks
   """
-  yield _common_fixtures(request.fixturename)[0]
+  yield _common_fixtures(request.fixturename)
 
 
 @pytest.fixture(scope="function")
@@ -117,7 +109,7 @@ def new_program_rest(request):
   """Create new Program object via REST API.
   Return: lib.entities.entity.ProgramEntity
   """
-  yield _common_fixtures(request.fixturename)[0]
+  yield _common_fixtures(request.fixturename)
 
 
 @pytest.fixture(scope="function")
@@ -125,7 +117,7 @@ def new_control_rest(request):
   """Create new Control object via REST API.
   Return: lib.entities.entity.ControlEntity
   """
-  yield _common_fixtures(request.fixturename)[0]
+  yield _common_fixtures(request.fixturename)
 
 
 @pytest.fixture(scope="function")
@@ -141,7 +133,7 @@ def new_objective_rest(request):
   """Create new Objective object via REST API.
   Return: lib.entities.entity.ObjectiveEntity
   """
-  yield _common_fixtures(request.fixturename)[0]
+  yield _common_fixtures(request.fixturename)
 
 
 @pytest.fixture(scope="function")
@@ -157,7 +149,7 @@ def new_audit_rest(request):
   """Create new Audit under Program object via REST API.
   Return: lib.entities.entity.AuditEntity
   """
-  yield _common_fixtures(request.fixturename)[0]
+  yield _common_fixtures(request.fixturename)
 
 
 @pytest.fixture(scope="function")
@@ -165,7 +157,7 @@ def new_assessment_rest(request):
   """Create new Assessment under Audit object via REST API.
   Return: lib.entities.entity.AssessmentEntity
   """
-  yield _common_fixtures(request.fixturename)[0]
+  yield _common_fixtures(request.fixturename)
 
 
 @pytest.fixture(scope="function")
@@ -173,7 +165,7 @@ def new_issue_rest(request):
   """Create new Issue under Audit object via REST API.
   Return: lib.entities.entity.IssueEntity
   """
-  yield _common_fixtures(request.fixturename)[0]
+  yield _common_fixtures(request.fixturename)
 
 
 @pytest.fixture(scope="function")
@@ -181,7 +173,7 @@ def new_assessment_template_rest(request):
   """Create new Assessment Template under Audit object via REST API.
   Return: lib.entities.entity.AssessmentTemplateEntity
   """
-  yield _common_fixtures(request.fixturename)[0]
+  yield _common_fixtures(request.fixturename)
 
 
 @pytest.fixture(scope="function")
@@ -189,7 +181,7 @@ def new_assessment_template_with_cas_rest(request):
   """Create new Assessment Template with CAs under Audit object via REST API.
   Return: lib.entities.entity.AssessmentTemplateEntity
   """
-  yield _common_fixtures(request.fixturename)[0]
+  yield _common_fixtures(request.fixturename)
 
 
 @pytest.fixture(scope="function")
@@ -240,6 +232,23 @@ def dynamic_create_audit_with_control(request):
 
 
 @pytest.fixture(scope="function")
+def dynamic_object(request):
+  """Create object by passed indirect parameter that get from 'request.param'
+  and have to be string or boolean. Return singular or plural object's form
+  according to length of the list objects.
+  """
+  yield _common_fixtures(request.param) if request.param else None
+
+
+@pytest.fixture(scope="function")
+def dynamic_relationships(request):
+  """Create relationships between source and destinations objects by passed
+  indirect parameter that get from 'request.param' and have to be string
+  or boolean."""
+  yield _common_fixtures(request.param) if request.param else None
+
+
+@pytest.fixture(scope="function")
 def create_audit_with_control(request):
   """Create Program and Control, map Control to Program, create Audit
   under Program via REST API and return dictionary of executed fixtures.
@@ -263,16 +272,3 @@ def create_audit_with_control_and_delete_control(request):
   fixtures.
   """
   yield _snapshots_fixtures(request.fixturename)
-
-
-@pytest.fixture(scope="function")
-def dynamic_object(request):
-  """Create object by passed indirect parameter in test."""
-  yield _common_fixtures(request.param)
-
-
-@pytest.fixture(scope="function")
-def dynamic_relationships(request):
-  """Create relationships between source and destinations objects by passed
-  indirect parameter in test."""
-  yield _common_fixtures(request.param)
