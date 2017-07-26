@@ -17,6 +17,5 @@ from lib.constants import (
   test_runner,
   settings,
   messages,
-  roles,
-  templates
+  roles
 )
