@@ -27,7 +27,7 @@ class AssertionMessages(CommonMessages):
   err_three_entities_diff = (
       _line + "\nFULL:" + _triple_diff + "\nSAME:" + _triple_diff + "\nDIFF:" +
       _triple_diff)
-  entities_cls = tuple(entity.Entity.all_entities_classes())
+  all_entities_classes = tuple(entity.Entity().all_entities_classes())
 
   @classmethod
   def diff_error_msg(cls, left, right):
@@ -41,7 +41,7 @@ class AssertionMessages(CommonMessages):
     """Check if entities are instances of entities and have needed attributes
     and keys to make result error comparison message.
     """
-    return (isinstance(left and right, cls.entities_cls) and
+    return (isinstance(left and right, cls.all_entities_classes) and
             hasattr(left and right, "diff_info") and
             getattr(left, "diff_info") and getattr(right, "diff_info"))
 
@@ -60,13 +60,13 @@ class AssertionMessages(CommonMessages):
     # comparison of entities
     assertion_error_msg = cls.err_common.format(left, right)
     # processing of entity
-    if isinstance(left and right, cls.entities_cls):
+    if isinstance(left and right, cls.all_entities_classes):
       if not cls.is_entities_have_err_info(left, right):
         cls.set_entities_diff_info(left, right)
       assertion_error_msg = cls.diff_error_msg(left, right)
     # processing list of entities
     if (isinstance(left and right, list) and
-            all(isinstance(_left and _right, cls.entities_cls)
+            all(isinstance(_left and _right, cls.all_entities_classes)
                 for _left, _right in zip(left, right))):
       assertion_error_msg = ""
       for _left, _right in zip(sorted(left), sorted(right)):
@@ -84,13 +84,15 @@ class AssertionMessages(CommonMessages):
     # comparison of entities
     assertion_error_msg = cls.err_contains.format(left, right)
     # processing of entity
-    if isinstance(left and right, cls.entities_cls):
+    if isinstance(left and right, cls.all_entities_classes):
       if not cls.is_entities_have_err_info(left, right):
         cls.set_entities_diff_info(left, right)
       assertion_error_msg = cls.diff_error_msg(left, right)
     # processing list of entities
-    if (isinstance(left, cls.entities_cls) and isinstance(right, list) and
-            all(isinstance(_right, cls.entities_cls) for _right in right)):
+    if (isinstance(left, cls.all_entities_classes) and
+            isinstance(right, list) and
+            all(isinstance(_right, cls.all_entities_classes)
+                for _right in right)):
       assertion_error_msg = ""
       for _right in right:
         left = copy.copy(left)

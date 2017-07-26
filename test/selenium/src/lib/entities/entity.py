@@ -5,6 +5,7 @@
 # pylint: disable=too-few-public-methods
 
 from datetime import datetime
+import pytest
 
 from lib.utils import string_utils
 
@@ -75,7 +76,14 @@ class Representation(object):
     """
     from lib.entities import entities_factory
     return (entities_factory.EntitiesFactory().
-            convert_obj_repr_from_rest_to_ui(obj=self))
+            convert_objs_repr_from_rest_to_ui(obj_or_objs=self))
+
+  def repr_snapshot(self, parent_obj):
+    """Convert entity's attributes values to Snapshot representation."""
+    from lib.entities import entities_factory
+    return (entities_factory.EntitiesFactory().
+            convert_objs_repr_to_snapshot(
+                obj_or_objs=self, parent_obj=parent_obj))
 
   def update_attrs(self, is_replace_attrs=True, is_allow_none=True,
                    is_replace_dicts_values=False, **attrs):
@@ -87,7 +95,7 @@ class Representation(object):
     from lib.entities import entities_factory
     return (entities_factory.EntitiesFactory().
             update_objs_attrs_values_by_entered_data(
-                objs=self, is_replace_attrs_values=is_replace_attrs,
+                obj_or_objs=self, is_replace_attrs_values=is_replace_attrs,
                 is_allow_none_values=is_allow_none,
                 is_replace_values_of_dicts=is_replace_dicts_values, **attrs))
 
@@ -110,17 +118,8 @@ class Representation(object):
                 attr_name in other.__dict__.keys()):
           self_attr_value = getattr(self, attr_name)
           other_attr_value = getattr(other, attr_name)
-          # get 'is_equal' of attrs' values according to their names
-          if attr_name == "custom_attributes":
-            is_equal = self.compare_cas(self_attr_value, other_attr_value)
-          elif attr_name in ["updated_at", "created_at"]:
-            is_equal = self.compare_datetime(
-                self_attr_value, other_attr_value)
-          elif attr_name == "comments":
-            is_equal = self.compare_comments(
-                self_attr_value, other_attr_value)
-          else:
-            is_equal = self_attr_value == other_attr_value
+          is_equal = self.is_attrs_equal(
+              attr_name, self_attr_value, other_attr_value)
         if is_equal:
           self_equal[attr_name] = self_attr_value
           other_equal[attr_name] = other_attr_value
@@ -134,6 +133,22 @@ class Representation(object):
             "self_diff": {"equal": self_equal, "diff": self_diff},
             "other_diff": {"equal": other_equal, "diff": other_diff}
             }
+
+  @classmethod
+  def is_attrs_equal(cls, attr_name, self_attr_value, other_attr_value):
+    """Compare entities' attributes according to attributes' names and values,
+    if is equal then return 'True' and vise versa.
+    """
+    is_equal = False
+    if attr_name == "custom_attributes":
+      is_equal = cls.compare_cas(self_attr_value, other_attr_value)
+    elif attr_name in ["updated_at", "created_at"]:
+      is_equal = cls.compare_datetime(self_attr_value, other_attr_value)
+    elif attr_name == "comments":
+      is_equal = cls.compare_comments(self_attr_value, other_attr_value)
+    else:
+      is_equal = self_attr_value == other_attr_value
+    return is_equal
 
   @staticmethod
   def compare_cas(self_cas, other_cas):
@@ -191,6 +206,39 @@ class Representation(object):
   def attrs_values_types_error(self_attr, other_attr, expected_types):
     raise ValueError("'{}' have to be isinstance of classes: {}\n".
                      format((self_attr, other_attr), expected_types))
+
+  @classmethod
+  def issue_assert(cls, expected_objs, actual_objs, issue_msg,
+                   **exclude_attrs):
+    """Assert list of self (expected) and other (actual) objects according to
+    dictionary of attributes to exclude due to exist issue providing
+    description of it.
+    """
+    from lib.constants import messages
+    expected_objs = string_utils.convert_to_list(expected_objs)
+    actual_objs = string_utils.convert_to_list(actual_objs)
+    expected_exclude_attrs = [
+        {k: getattr(expected_obj, k) for k in exclude_attrs.iterkeys()}
+        for expected_obj in expected_objs]
+    actual_exclude_attrs = [
+        {k: getattr(actual_obj, k) for k in exclude_attrs.iterkeys()}
+        for actual_obj in actual_objs]
+    expected_objs_wo_exclude_attrs = [
+        expected_obj.update_attrs(**exclude_attrs)
+        for expected_obj in expected_objs]
+    actual_objs_wo_exclude_attrs = [
+        actual_obj.update_attrs(**exclude_attrs)
+        for actual_obj in actual_objs]
+    assert expected_objs_wo_exclude_attrs == actual_objs_wo_exclude_attrs, (
+        messages.AssertionMessages.format_err_msg_equal(
+            expected_objs_wo_exclude_attrs, actual_objs_wo_exclude_attrs))
+    return (True if all(all((exp_k == act_k and cls.is_attrs_equal(
+        attr_name=exp_k, self_attr_value=expected_exclude_attr[exp_k],
+        other_attr_value=actual_exclude_attr[exp_k])) for exp_k, act_k
+        in zip(expected_exclude_attr.keys(), actual_exclude_attr.keys()))
+        for expected_exclude_attr, actual_exclude_attr
+        in zip(expected_exclude_attrs, actual_exclude_attrs))
+        else pytest.xfail(reason=issue_msg))
 
   def __eq__(self, other):
     return self.extended_equal(other)
@@ -367,10 +415,10 @@ class ControlEntity(Entity):
 
   attrs_names_to_compare = [
       "custom_attributes", "os_state", "slug", "status", "title", "type",
-      "updated_at"]
+      "updated_at", "owners"]
   attrs_names_to_repr = Representation.core_attrs_names_to_repr + [
       "status", "contact", "secondary_contact", "updated_at",
-      "os_state", "custom_attributes", "access_control_list"]
+      "os_state", "custom_attributes", "access_control_list", "owners"]
 
   def __init__(self, status=None, owners=None, contact=None,
                secondary_contact=None, updated_at=None, os_state=None,
