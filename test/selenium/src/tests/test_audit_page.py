@@ -10,9 +10,8 @@ import pytest
 
 from lib import base
 from lib.constants import messages
-from lib.entities import entities_factory
+from lib.entities import entities_factory, entity
 from lib.service import webui_service
-from lib.utils import string_utils
 
 
 class TestAuditPage(base.Test):
@@ -101,17 +100,17 @@ class TestAuditPage(base.Test):
 
   @pytest.mark.smoke_tests
   @pytest.mark.parametrize(
-      "dynamic_new_assessment_template",
+      "dynamic_object",
       [None, "new_assessment_template_rest",
        "new_assessment_template_with_cas_rest"],
       ids=["Assessments generation without Assessment Template",
            "Assessments generation based on Assessment Template without LCAs",
            "Assessments generation based on Assessment Template with LCAs"],
-      indirect=["dynamic_new_assessment_template"])
+      indirect=["dynamic_object"])
   def test_asmts_generation(
       self, new_program_rest, new_controls_rest,
       map_new_program_rest_to_new_controls_rest, new_audit_rest,
-      dynamic_new_assessment_template, selenium
+      dynamic_object, selenium
   ):
     """Check if Assessments can be generated from Audit page via Assessments
     widget using Assessment template and Controls.
@@ -119,16 +118,17 @@ class TestAuditPage(base.Test):
     - Program, Controls created via REST API.
     - Controls mapped to Program via REST API.
     - Audit created under Program via REST API.
-    - Assessment Template with CAs created under Audit via REST API.
+    Test parameters:
+    - 'dynamic_object'.
     """
     expected_asmts = (entities_factory.AssessmentsFactory().generate(
         objs_under_asmt=new_controls_rest, audit=new_audit_rest,
-        asmt_tmpl=dynamic_new_assessment_template))
+        asmt_tmpl=dynamic_object))
     expected_asmts = [
         expected_asmt.repr_ui() for expected_asmt in expected_asmts]
     (webui_service.AssessmentsService(selenium).generate_objs_via_tree_view(
         src_obj=new_audit_rest, objs_under_asmt=new_controls_rest,
-        asmt_tmpl_obj=dynamic_new_assessment_template))
+        asmt_tmpl_obj=dynamic_object))
     actual_asmts_tab_count = (webui_service.AssessmentsService(selenium).
                               get_count_objs_from_tab(src_obj=new_audit_rest))
     assert len(expected_asmts) == actual_asmts_tab_count
@@ -206,6 +206,7 @@ class TestAuditPage(base.Test):
         messages.AssertionMessages.
         format_err_msg_equal([expected_asmt_tmpl], actual_asmt_tmpls))
 
+  @pytest.mark.xfail(strict=True)
   @pytest.mark.smoke_tests
   @pytest.mark.cloning
   def test_clonable_not_audit_related_objs_move_to_cloned_audit(
@@ -220,21 +221,16 @@ class TestAuditPage(base.Test):
     # due to 'actual_control.custom_attributes = {None: None}'
     expected_control = (create_and_clone_audit["control"].
                         repr_ui().update_attrs(custom_attributes={None: None}))
-    # due to 'actual_program.manager = None',
-    #        'actual_program.custom_attributes = {None: None}'
+    # due to 'actual_program.custom_attributes = {None: None}'
     expected_program = (create_and_clone_audit["program"].
-                        repr_ui().update_attrs(manager=None,
-                                               custom_attributes={None: None}))
+                        repr_ui().update_attrs(custom_attributes={None: None}))
     actual_controls = (webui_service.ControlsService(selenium).
                        get_list_objs_from_tree_view(src_obj=actual_audit))
     actual_programs = (webui_service.ProgramsService(selenium).
                        get_list_objs_from_tree_view(src_obj=actual_audit))
-    expected_objs = (
-        string_utils.convert_list_elements_to_list(
-            [[expected_control], [expected_program]]))
-    actual_objs = (
-        string_utils.convert_list_elements_to_list(
-            [actual_controls, actual_programs]))
-    assert expected_objs == actual_objs, (
+    assert [expected_control] == actual_controls, (
         messages.AssertionMessages.
-        format_err_msg_equal(expected_objs, actual_objs))
+        format_err_msg_equal([expected_control], actual_controls))
+    entity.Entity.issue_assert(
+        expected_objs=[expected_program], actual_objs=actual_programs,
+        issue_msg="Issue in app GGRC-2381", manager=None)
