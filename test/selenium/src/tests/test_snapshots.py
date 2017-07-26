@@ -6,8 +6,6 @@
 # pylint: disable=unused-argument
 # pylint: disable=too-many-arguments
 
-import copy
-
 import pytest
 
 from lib import base
@@ -17,7 +15,7 @@ from lib.entities import entity
 from lib.factory import get_ui_service
 from lib.page import dashboard
 from lib.service import webui_service
-from lib.utils import selenium_utils, string_utils
+from lib.utils import selenium_utils
 from lib.utils.filter_utils import FilterUtils
 
 
@@ -46,29 +44,6 @@ class TestSnapshots(base.Test):
         "updated_control": audit_with_one_control["update_control_rest"][0],
         "second_control": new_control_rest
     }
-
-  @staticmethod
-  def assert_for_snapshotable_controls(expected_controls, actual_controls):
-    """Specific assert method for snapshotable Controls due of issue
-    in app GGRC-2344.
-    """
-    expected_controls = string_utils.convert_to_list(expected_controls)
-    actual_controls = string_utils.convert_to_list(actual_controls)
-    expected_controls_wo_cas = [
-        copy.deepcopy(expected_control).update_attrs(
-            custom_attributes={None: None})
-        for expected_control in expected_controls]
-    actual_controls_wo_cas = [
-        copy.deepcopy(actual_control).update_attrs(
-            custom_attributes={None: None})
-        for actual_control in actual_controls]
-    assert expected_controls_wo_cas == actual_controls_wo_cas, (
-        messages.AssertionMessages.
-        format_err_msg_equal(expected_controls_wo_cas, actual_controls_wo_cas))
-    assert (True if (all(entity.Entity.compare_cas(
-        exp_ctrl.custom_attributes, act_ctrl.custom_attributes) for
-        exp_ctrl, act_ctrl in zip(expected_controls, actual_controls))) else
-        pytest.xfail(reason="Issue in app GGRC-2344"))
 
   @pytest.mark.smoke_tests
   def test_audit_contains_readonly_ver_of_control(
@@ -148,7 +123,9 @@ class TestSnapshots(base.Test):
     assert is_control_openable is is_openable
     assert (True if is_control_updateable is is_updateable else
             pytest.xfail(reason="Issue in app GGRC-1773"))
-    self.assert_for_snapshotable_controls(expected_control, actual_control)
+    entity.Entity.issue_assert(
+        expected_objs=expected_control, actual_objs=actual_control,
+        issue_msg="Issue in app GGRC-2344", custom_attributes={None: None})
 
   @pytest.mark.smoke_tests
   @pytest.mark.parametrize(
@@ -218,7 +195,9 @@ class TestSnapshots(base.Test):
         get_list_objs_from_info_panels(src_obj=audit, objs=expected_control))
     assert is_control_openable is is_openable
     assert is_control_updateable is is_updateable
-    self.assert_for_snapshotable_controls(expected_control, actual_control)
+    entity.Entity.issue_assert(
+        expected_objs=expected_control, actual_objs=actual_control,
+        issue_msg="Issue in app GGRC-2344", custom_attributes={None: None})
 
   @pytest.mark.smoke_tests
   def test_mapped_to_program_controls_does_not_added_to_existing_audit(
@@ -364,7 +343,7 @@ class TestSnapshots(base.Test):
     "Actual snapshotable control is not found for asmt"
     """
     audit_with_one_control = create_audit_with_control_and_update_control
-    source_obj = dynamic_object[0]
+    source_obj = dynamic_object
     # due to 'actual_control.custom_attributes = {None: None}'
     expected_control = (audit_with_one_control[version_of_ctrl][0].repr_ui().
                         update_attrs(custom_attributes={None: None}))
@@ -464,7 +443,7 @@ class TestSnapshots(base.Test):
     expected_control = (
         create_audit_with_control_and_update_control["new_control_rest"][0].
         repr_ui().update_attrs(custom_attributes={None: None}))
-    source_obj = dynamic_object[0]
+    source_obj = dynamic_object
     control_service = webui_service.ControlsService(selenium)
     control_service.map_objs_via_tree_view(src_obj=source_obj,
                                            dest_objs=[expected_control])
@@ -498,7 +477,7 @@ class TestSnapshots(base.Test):
         audit_with_one_control["new_control_rest"][0].
         repr_ui().update_attrs(custom_attributes={None: None}))
     audit = audit_with_one_control["new_audit_rest"][0]
-    existing_obj = dynamic_object[0]
+    existing_obj = dynamic_object
     existing_obj_service = get_ui_service(existing_obj.type)(selenium)
     (existing_obj_service.map_objs_via_tree_view_item(
         src_obj=audit, dest_objs=[expected_control]))
@@ -512,34 +491,52 @@ class TestSnapshots(base.Test):
         messages.AssertionMessages.
         format_err_msg_equal([expected_control], actual_controls))
 
-  @pytest.mark.skip(reason="Will be fixed in GGRC-2750")
+  @pytest.mark.xfail(strict=True)
   @pytest.mark.smoke_tests
-  def test_export_of_snapshoted_control_from_audit_via_tree_view(
+  @pytest.mark.parametrize(
+      "dynamic_object, dynamic_relationships",
+      [(None, None),
+       ("new_issue_rest",
+        "map_new_issue_rest_to_new_control_rest_snapshot"),
+       pytest.mark.xfail(reason="Issue GGRC-1909", strict=True)(
+           ("new_assessment_rest",
+            "map_new_assessment_rest_to_new_control_rest_snapshot"))],
+      ids=["Export of snapshoted Control from Audit's Info Page "
+           "via mapped Controls' Tree View",
+           "Export of snapshoted Control from Issue's Info Page "
+           "via mapped Controls' Tree View",
+           "Export of snapshoted Control from Assessment's Info Page "
+           "via mapped Controls' Tree View"],
+      indirect=["dynamic_object", "dynamic_relationships"])
+  @pytest.mark.smoke_tests
+  def test_export_of_snapshoted_control_from_src_objs_pages_via_tree_view(
       self, create_tmp_dir, create_audit_with_control_and_update_control,
-      selenium
+      dynamic_object, dynamic_relationships, selenium
   ):
-    """Check if snapshoted Control can be exported from Audit via Tree View.
+    """Check if snapshoted Control can be exported from (Audit's, Issue's,
+    Assessment's) Info Page via mapped Controls's Tree View.
     Preconditions:
     - Execution and return of fixtures:
       - 'create_tmp_dir';
       - 'create_audit_and_update_first_of_two_original_controls'.
-    Test parameters: None
+    Test parameters:
+    - 'dynamic_object';
+    - 'dynamic_relationships'.
     """
     audit_with_one_control = create_audit_with_control_and_update_control
-    audit = audit_with_one_control["new_audit_rest"][0]
+    dynamic_object = (dynamic_object if dynamic_object
+                      else audit_with_one_control["new_audit_rest"][0])
     # due to 'actual_control.custom_attributes = {None: None}'
     expected_control = (audit_with_one_control["new_control_rest"][0].
                         repr_ui().update_attrs(custom_attributes={None: None}))
     export_service = webui_service.BaseWebUiService(
         selenium, objects.get_plural(expected_control.type))
-    export_service.export_objs_via_tree_view(src_obj=audit)
+    export_service.export_objs_via_tree_view(src_obj=dynamic_object)
     actual_controls = export_service.get_list_objs_from_csv(
         path_to_export_dir=create_tmp_dir)
-    actual_controls = [
-        actual_control.repr_ui() for actual_control in actual_controls]
-    assert [expected_control] == actual_controls, (
-        messages.AssertionMessages.
-        format_err_msg_equal([expected_control], actual_controls))
+    entity.Entity.issue_assert(
+        expected_objs=[expected_control], actual_objs=actual_controls,
+        issue_msg="Issue in app GGRC-2750", owners={None: None})
 
   @pytest.mark.smoke_tests
   @pytest.mark.parametrize(
@@ -564,7 +561,7 @@ class TestSnapshots(base.Test):
     snapshoted_control = create_audit_with_control_and_update_control[
         "new_control_rest"][0]
     # due to 'actual_control.custom_attributes = {None: None}'
-    expected_obj = (dynamic_object[0].repr_ui().update_attrs(
+    expected_obj = (dynamic_object.repr_ui().update_attrs(
         custom_attributes={None: None}))
     expected_obj_service = get_ui_service(expected_obj.type)(selenium)
     (webui_service.ControlsService(selenium).map_objs_via_tree_view(
@@ -604,7 +601,7 @@ class TestSnapshots(base.Test):
         audit_with_one_control["new_control_rest"][0].
         repr_ui().update_attrs(custom_attributes={None: None}))
     audit = audit_with_one_control["new_audit_rest"][0]
-    existing_obj = dynamic_object[0]
+    existing_obj = dynamic_object
     existing_obj_service = get_ui_service(existing_obj.type)(selenium)
     (existing_obj_service.map_objs_via_tree_view_item(
         src_obj=audit, dest_objs=[control]))
