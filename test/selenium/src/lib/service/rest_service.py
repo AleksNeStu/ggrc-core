@@ -8,9 +8,9 @@ import json
 from requests import exceptions
 
 from lib import environment, factory
-from lib.constants import url, objects, templates, messages
-from lib.entities.entities_factory import ObjectPersonsFactory
-from lib.service.rest.client import RestClient
+from lib.constants import url, objects, messages
+from lib.entities.entities_factory import ObjectPersonsFactory, EntitiesFactory
+from lib.service.rest import client, query
 from lib.utils import string_utils
 
 
@@ -18,7 +18,7 @@ class BaseRestService(object):
   """Base class for business layer's services objects."""
   def __init__(self, endpoint):
     self.endpoint = endpoint
-    self.client = RestClient(self.endpoint)
+    self.client = client.RestClient(self.endpoint)
     self.entities_factory_cls = factory.get_cls_entity_factory(
         object_name=self.endpoint)
 
@@ -61,12 +61,13 @@ class BaseRestService(object):
                 **dict({k: v for k, v in new_obj.__dict__.iteritems() if
                         k != "href"}.items() + attrs_for_template.items()))
         ) for old_obj, new_obj in zip(list_objs_to_update, list_new_objs)]
-    return [self.set_obj_attrs(new_attrs, new_obj) for
+    return [self.set_obj_attrs(attrs=new_attrs, obj=new_obj) for
             new_attrs, new_obj in zip(list_new_attrs, list_new_objs)]
 
   @staticmethod
   def get_items_from_resp(response):
     """Check response from server and get items {key: value} from it."""
+    # pylint: disable=superfluous-parens
     def get_extra_items(response):
       """Get extra items {key: value} that used in entities."""
       extra = {}
@@ -76,15 +77,32 @@ class BaseRestService(object):
         extra.update(
             {"url": environment.APP_URL + response.get("viewLink")[1:]})
       return extra
-    resp = json.loads(response.text)
-    if response.status_code == 200:  # check response from server
-      if (isinstance(resp, list) and
-              len(resp[0]) == 2 and isinstance(resp[0][1], dict)):
-        resp = resp[0][1]  # [[201, {"k": "v"}]] to {"k": "v"}
-      resp = resp.itervalues().next()  # {"obj": {"k": "v"}} to {"k": "v"}
-      return dict(resp.items() + get_extra_items(resp).items())
+    resp_text = json.loads(response.text)
+    resp_status_code = response.status_code
+    req_method = response.request.method
+    is_query_resp = False
+    # check response from server
+    if resp_status_code == client.RestClient.STATUS_CODES["OK"]:
+      # 'POST' request methods
+      if req_method == "POST" and isinstance(resp_text, list):
+        # REST API: [[201, {resp}]] to {resp}
+        if len(resp_text[0]) == 2 and resp_text[0][0] == 201:
+          resp_text = resp_text[0][1]
+        # QUERY API: [[{resp}]] to {resp}
+        elif len(resp_text[0]) == 1 and resp_text[0] != 201:
+          is_query_resp = True
+          resp_text = resp_text[0]
+      # 'PUT' request methods
+      if req_method == "PUT":
+        pass
+    # {resp} == {key: {value}}
+    if isinstance(resp_text, dict) and len(resp_text) == 1:
+      # {key: {value}} to {value}
+      resp_text = resp_text.itervalues().next()
+      return (dict(resp_text.items() + ({}.items() if is_query_resp
+              else get_extra_items(resp_text).items())))
     else:
-      resp_code, resp_message = resp[0]
+      resp_code, resp_message = resp_text[0]
       raise exceptions.ContentDecodingError(
           messages.ExceptionsMessages.err_server_response.
           format(resp_code, resp_message))
@@ -115,7 +133,7 @@ class BaseRestService(object):
         entity_factory=self.entities_factory_cls(), count=count,
         attrs_to_factory=factory_params, **attrs_for_template)
     return self.entities_factory_cls().filter_objs_attrs(
-        objs=list_objs,
+        obj_or_objs=list_objs,
         attrs_to_include=self.entities_factory_cls().obj_attrs_names)
 
   def update_objs(self, objs, factory_params=None, **attrs_for_template):
@@ -127,7 +145,7 @@ class BaseRestService(object):
         list_objs_to_update=string_utils.convert_to_list(objs),
         attrs_to_factory=factory_params, **attrs_for_template)
     return self.entities_factory_cls().filter_objs_attrs(
-        objs=list_objs,
+        obj_or_objs=list_objs,
         attrs_to_include=self.entities_factory_cls().obj_attrs_names)
 
   def delete_objs(self, objs):
@@ -140,7 +158,7 @@ class HelpRestService(object):
   """Help class for interaction with business layer's services objects."""
   def __init__(self, endpoint):
     self.endpoint = endpoint
-    self.client = RestClient(self.endpoint)
+    self.client = client.RestClient(self.endpoint)
 
 
 class ControlsService(BaseRestService):
@@ -237,11 +255,15 @@ class ObjectsInfoService(HelpRestService):
   def __init__(self):
     super(ObjectsInfoService, self).__init__(url.QUERY)
 
-  def get_total_count_objs(self, obj_name):
-    """Get and return total count of existing objects in system
-    according to type of object.
+  def get_snapshoted_obj(self, origin_obj, paren_obj):
+    """Get and return snapshoted object according to 'origin_obj' and
+    'paren_obj'.
     """
-    resp = self.client.create_object(type=templates.COUNT,
-                                     object_name=obj_name)
-    dict_resp = json.loads(resp.text)[0]
-    return dict_resp.get(obj_name).get("total")
+    snapshoted_obj_item = (
+        BaseRestService.get_items_from_resp(self.client.create_object(
+            type=self.endpoint, object_name=EntitiesFactory().obj_snapshot,
+            filters=query.Query.expression_get_snapshoted_obj(
+                obj_type=origin_obj.type, obj_id=origin_obj.id,
+                parent_type=paren_obj.type,
+                parent_id=paren_obj.id))).get("values")[0])
+    return EntitiesFactory.convert_dict_to_obj_repr(snapshoted_obj_item)
