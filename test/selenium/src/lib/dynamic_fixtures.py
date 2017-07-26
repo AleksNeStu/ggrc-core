@@ -10,7 +10,8 @@ import copy
 from lib import factory
 from lib.constants import element, objects
 from lib.constants.test import batch
-from lib.entities.entities_factory import CustomAttributeDefinitionsFactory
+from lib.entities.entities_factory import (
+    CustomAttributeDefinitionsFactory, EntitiesFactory)
 from lib.page.widget import info_widget
 from lib.service import rest_service
 from lib.utils import conftest_utils, test_utils, string_utils
@@ -22,6 +23,14 @@ def _get_fixture_from_dict_fixtures(fixture):
   """Get value of fixture by key (fixture name) from dictionary of
   executed fixtures."""
   global dict_executed_fixtures
+  # extend executed fixtures using exist fixture in snapshot representation
+  if fixture.endswith("_snapshot"):
+    origin_obj = _get_fixture_from_dict_fixtures(
+        fixture.replace("_snapshot", ""))
+    parent_obj = _get_fixture_from_dict_fixtures("new_audit_rest")[0]
+    dict_executed_fixtures.update(
+        {fixture: EntitiesFactory.convert_objs_repr_to_snapshot(
+            obj_or_objs=origin_obj, parent_obj=parent_obj)})
   return {k: v for k, v in dict_executed_fixtures.iteritems()
           if k == fixture}[fixture]
 
@@ -239,7 +248,7 @@ def generate_common_fixtures(*fixtures):  # noqa: ignore=C901
         new_objs = new_ui_fixture(
             web_driver=dict_executed_fixtures["selenium"], fixture=fixture)
         dict_executed_fixtures.update({fixture: new_objs})
-      elif fixture.endswith("_rest"):
+      elif fixture.endswith(("_rest", "_snapshot")):
         if fixture.startswith("new_"):
           new_objs = new_rest_fixture(fixture=fixture)
           dict_executed_fixtures.update({fixture: new_objs})
