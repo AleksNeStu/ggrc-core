@@ -404,7 +404,7 @@ class ProgramModalSetVisibleFields(CommonModalSetVisibleFields):
   DEFAULT_SET_FIELDS = (
       CommonModalSetVisibleFields.TITLE, CommonModalSetVisibleFields.CODE,
       CommonModalSetVisibleFields.STATE,
-      CommonModalSetVisibleFields.LAST_UPDATED, REVIEW_STATE)
+      CommonModalSetVisibleFields.LAST_UPDATED, REVIEW_STATE, MANAGER)
 
 
 class MappingStatusAttrs(namedtuple('_MappingStatusAttrs',
