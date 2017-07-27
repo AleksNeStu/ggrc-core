@@ -9,13 +9,13 @@
       <a href="#" ($click)="unsetPerson">
         <i class="fa fa-fw fa-times" aria-hidden="true"></i>
       </a>
-      <person-info {person-obj}="_value"></person-info>
+      <person-list-item {person-id}="_value" {with-Details}="withDetails"></person-list-item>
     </div>
   {{else}}
     <autocomplete
-        {{#if disabled}}disabled{{/if}}
+      {{#if disabled}}disabled{{/if}}
       search-items-type="Person"
-      can-item-selected="setPerson"
+      (item-selected)="setPerson(%event)"
       placeholder="Select person"
     ></autocomplete>
   {{/if}}

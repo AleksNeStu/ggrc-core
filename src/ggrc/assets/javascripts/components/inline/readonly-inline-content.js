@@ -3,7 +3,7 @@
     Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
 */
 
-(function (can) {
+(function (can, GGRC) {
   'use strict';
 
   GGRC.Components('readonlyInlineContent', {
@@ -13,7 +13,8 @@
     ),
     viewModel: {
       withReadMore: false,
-      value: '@'
+      value: '@',
+      withDetails: false
     }
   });
-})(window.can);
+})(window.can, window.GGRC);

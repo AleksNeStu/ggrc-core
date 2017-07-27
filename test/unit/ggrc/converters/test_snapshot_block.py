@@ -33,13 +33,13 @@ class TestSnapshotBlockConverter(unittest.TestCase):
   def _dummy_cad_snapshots(cls):
     return cls._mock_snapshot_factory([{
         "id": 44,
-        "custom_attribute_definitions": [
+        "global_attributes": [
             {"id": 1, "title": "CCC"},
             {"id": 2, "title": "BBB"},
         ],
     }, {
         "id": 45,
-        "custom_attribute_definitions": [
+        "global_attributes": [
             {"id": 1, "title": "CCC"},
             {"id": 3, "title": "AAA"},
             {"id": 4, "title": "DDD"},
@@ -85,19 +85,6 @@ class TestSnapshotBlockConverter(unittest.TestCase):
     self.block.snapshots = self._dummy_cad_snapshots()
     self.assertEqual(
         self.block._cad_map.items(),
-        [
-            (3, {"id": 3, "title": "AAA"}),
-            (2, {"id": 2, "title": "BBB"}),
-            (1, {"id": 1, "title": "CCC"}),
-            (4, {"id": 4, "title": "DDD"}),
-        ]
-    )
-
-  def test_cad_name_map(self):
-    """Test gathering name map for all custom attribute definitions."""
-    self.block.snapshots = self._dummy_cad_snapshots()
-    self.assertEqual(
-        self.block._cad_name_map.items(),
         [
             (3, "AAA"),
             (2, "BBB"),
@@ -223,50 +210,6 @@ class TestSnapshotBlockConverter(unittest.TestCase):
     }
     self.assertEqual(self.block.get_value_string(value), expected_value)
 
-  def test_invalid_cav_dict(self):
-    """Test getting ca value from invalid cav representation."""
-    with self.assertRaises(TypeError):
-      self.block.get_cav_value_string("XX")
-    with self.assertRaises(KeyError):
-      self.block.get_cav_value_string({})
-
-  @ddt.data(
-      (None, ""),
-      ({"custom_attribute_id": 2, "attribute_value": None}, ""),
-      ({"custom_attribute_id": 2, "attribute_value": "2012-05-22"},
-       "05/22/2012"),
-      ({"custom_attribute_id": 2, "attribute_value": ""}, ""),
-      ({"custom_attribute_id": 1, "attribute_value": True}, "yes"),
-      ({"custom_attribute_id": 1, "attribute_value": "1"}, "yes"),
-      ({"custom_attribute_id": 1, "attribute_value": "0"}, "no"),
-      ({"custom_attribute_id": 3, "attribute_value":
-        "Person", "attribute_object_id": 4}, "user@example.com"),
-      # If the original object was deleted from the system we do not store all
-      # of its values in he revision. Proper thing would be to go through
-      # revisions of this object and use those static values. But we do not
-      # currently support that.
-      ({"custom_attribute_id": 3, "attribute_value": "Bad Option",
-        "attribute_object_id": 4}, ""),
-  )
-  @ddt.unpack
-  def test_get_cav_value_string(self, value, expected_value):
-    """Test get value string function for custom attributes."""
-    self.block._cad_map = OrderedDict(
-        [
-            (3, {"id": 3, "title": "AAA", "attribute_type": "Map:Person"}),
-            (2, {"id": 2, "title": "BBB", "attribute_type": "Date"}),
-            (1, {"id": 1, "title": "CCC", "attribute_type": "Checkbox"}),
-            (4, {"id": 4, "title": "DDD", "attribute_type": "Map:Person"}),
-            (5, {"id": 5, "title": "DDD", "attribute_type": "Text"}),
-        ]
-    )
-    self.block._stub_cache = {
-        "Person": {
-            4: "user@example.com"
-        }
-    }
-    self.assertEqual(self.block.get_cav_value_string(value), expected_value)
-
   @ddt.data(
       ({"name": "1", "third": "2", "other": "3", }, ["1", "3", "2"]),
       ({"name": "1", "third": "2", }, ["1", "", "2"]),
@@ -284,45 +227,18 @@ class TestSnapshotBlockConverter(unittest.TestCase):
 
   @ddt.data(
       ({}, ["", "", ""]),
-      ({"custom_attribute_values": []}, ["", "", ""]),
-      (
-          {
-              "custom_attribute_values": [{
-                  "custom_attribute_id": 5,
-                  "attribute_value": "five",
-              }, {
-                  "custom_attribute_id": 3,
-                  "attribute_value": "three",
-              }]
-          },
-          ["three", "", "five"]
-      ),
-      (
-          {
-              "custom_attribute_values": [{
-                  "custom_attribute_id": 5,
-                  "attribute_value": "five",
-              }, {
-                  "custom_attribute_id": 8,
-                  "attribute_value": "eight",
-              }]
-          },
-          ["", "", "five"]
-      ),
+      ({"global_attributes": []}, ["", "", ""]),
+      ({"global_attributes": [{"id": 5, "values": [{"value": "five"}]},
+                              {"id": 3, "values": [{"value": "three"}]}]},
+       ["three", "", "five"]),
+      ({"global_attributes": [{"id": 5, "values": [{"value": "five"}]},
+                              {"id": 8, "values": [{"value": "eight"}]}]},
+       ["", "", "five"]),
   )
   @ddt.unpack
   def test_cav_attr_line(self, content, expected_line):
     """Test get custom attribute CSV values."""
-    self.block.get_cav_value_string = lambda x: (
-        x.get("attribute_value") if x else ""
-    )
-    self.block._cad_map = OrderedDict(
-        [
-            (3, {"id": 3, "title": "AAA"}),
-            (2, {"id": 2, "title": "BBB"}),
-            (5, {"id": 5, "title": "DDD"}),
-        ]
-    )
+    self.block._cad_map = OrderedDict([(3, "AAA"), (2, "BBB"), (5, "DDD")])
     self.assertEqual(self.block._cav_attr_line(content), expected_line)
 
   def test_header_list(self):
@@ -334,7 +250,7 @@ class TestSnapshotBlockConverter(unittest.TestCase):
         ("key_1", "BBB"),
         ("key_4", "CCC"),
     ])
-    self.block._cad_name_map = OrderedDict([
+    self.block._cad_map = OrderedDict([
         (3, "A"),
         (2, "B"),
         (1, "C"),

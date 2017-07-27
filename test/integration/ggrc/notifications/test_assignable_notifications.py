@@ -17,8 +17,6 @@ from sqlalchemy import and_
 
 from ggrc import db
 from ggrc.models import Assessment
-from ggrc.models import CustomAttributeDefinition
-from ggrc.models import CustomAttributeValue
 from ggrc.models import Notification
 from ggrc.models import NotificationType
 from ggrc.models import Revision
@@ -1031,56 +1029,38 @@ class TestAssignableNotificationUsingAPI(TestAssignableNotification):
   def test_changing_custom_attributes_triggers_change_notification(self, _):
     """Test that updating Assessment's CA value results in change notification.
     """
-    CAD(definition_type="assessment", title="CA 1",)
-    cad2 = CAD(definition_type="assessment", title="CA 2",)
-
+    CAD(definition_type="assessment", title="CA 1")
+    cad2_id = CAD(definition_type="assessment", title="CA 2").id
     self.import_file("assessment_with_templates.csv")
+    Notification.query.delete()
     asmts = {asmt.slug: asmt for asmt in Assessment.query}
-
     self.client.get("/_notifications/send_daily_digest")
     self.assertEqual(self._get_notifications().count(), 0)
 
-    # set initial CA value on the Assessment (also to put it into "In Progress"
-    cad2 = CustomAttributeDefinition.query.filter(
-        CustomAttributeDefinition.title == "CA 2").one()
-    val2 = CustomAttributeValue(attribute_value="1a2b3", custom_attribute=cad2)
-
     asmt4 = Assessment.query.get(asmts["A 4"].id)
     self.api_helper.modify_object(
-        asmt4,
-        {
-            "custom_attribute_values": [{
-                "attributable_id": asmt4.id,
-                "attributable_type": "Assessment",
-                "id": val2.id,
-                "custom_attribute_id": cad2.id,
-                "attribute_value": val2.attribute_value,
-            }]
+        asmt4, {
+            "global_attributes": [{
+                "id": cad2_id,
+                "values": [{"value": "1a2b3"}],
+            }],
         }
     )
-
     # there should still be no notifications...
     self.assertEqual(
         self._get_notifications(notif_type="assessment_updated").count(), 0)
 
     # now change the CA value and check if notification gets generated
-    cad2 = CustomAttributeDefinition.query.filter(
-        CustomAttributeDefinition.title == "CA 2").one()
-    val2 = CustomAttributeValue(attribute_value="NEW", custom_attribute=cad2)
-
+    started = self._get_notifications(notif_type="assessment_started").all()
+    self.assertEqual(1, len(started))
+    db.session.delete(started[0])
+    db.session.commit()
     asmt4 = Assessment.query.get(asmts["A 4"].id)
-    self.api_helper.modify_object(
-        asmt4,
-        {
-            "custom_attribute_values": [{
-                "attributable_id": asmt4.id,
-                "attributable_type": "Assessment",
-                "custom_attribute_id": cad2.id,
-                "id": val2.id,
-                "attribute_value": val2.attribute_value,
-            }]
-        }
-    )
+    vals = asmt4.global_attributes
+    for val in vals:
+      if val["id"] == cad2_id:
+        val["values"][0]["value"] = "NEW"
+    self.api_helper.modify_object(asmt4, {"global_attributes": vals})
 
     notifs = self._get_notifications(notif_type="assessment_updated").all()
     self.assertEqual(len(notifs), 1)

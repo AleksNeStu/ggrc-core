@@ -3,16 +3,20 @@
 
 """Custom attribute definition module"""
 
+import itertools
+
 from cached_property import cached_property
-import flask
+from sqlalchemy import event
 from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy.orm import validates
 from sqlalchemy.sql.schema import UniqueConstraint
+import flask
 
 from ggrc import db
 from ggrc.models.mixins import attributevalidator
 from ggrc.models import mixins
 from ggrc.models.custom_attribute_value import CustomAttributeValue
+from ggrc.models.mixins import customattributable
 from ggrc.access_control import role as acr
 from ggrc.models.exceptions import ValidationError
 from ggrc.models import reflection
@@ -43,10 +47,9 @@ class CustomAttributeDefinition(attributevalidator.AttributeValidator,
                                      cascade='all, delete-orphan')
 
   @cached_property
-  def inflector_model_name_dict(self):  # pylint: disable=no-self-use
+  def inflector_model_dict(self):  # pylint: disable=no-self-use
     from ggrc.models import all_models
-    return {m._inflector.table_singular: m.__name__
-            for m in all_models.all_models}
+    return {m._inflector.table_singular: m for m in all_models.all_models}
 
   @property
   def definition_attr(self):
@@ -122,11 +125,22 @@ class CustomAttributeDefinition(attributevalidator.AttributeValidator,
     DATE = "Date"
     MAP = "Map"
 
-  class MultiChoiceMandatoryFlags(object):
+  class MultiChoiceMandatoryFlags(dict):
     """Enum representing flags in multi_choice_mandatory bitmaps."""
     # pylint: disable=too-few-public-methods
     COMMENT_REQUIRED = 0b01
     EVIDENCE_REQUIRED = 0b10
+
+    def __init__(self, mask):
+      """Initialize flag instance."""
+      self.comment_required = bool(mask & self.COMMENT_REQUIRED)
+      self.evidence_required = bool(mask & self.EVIDENCE_REQUIRED)
+      super(
+          CustomAttributeDefinition.MultiChoiceMandatoryFlags,
+          self
+      ).__init__(
+          **self.__dict__
+      )
 
   VALID_TYPES = {
       "Text": "Text",
@@ -173,6 +187,10 @@ class CustomAttributeDefinition(attributevalidator.AttributeValidator,
       value = ",".join(part.strip() for part in value.split(","))
 
     return value
+
+  @property
+  def is_local(self):
+    return bool(self.definition_id)
 
   def validate_assessment_title(self, name):
     """Check assessment title uniqueness.
@@ -245,7 +263,6 @@ class CustomAttributeDefinition(attributevalidator.AttributeValidator,
       definition_type = value.lower()
     else:
       return value
-
     if name in self._get_reserved_names(definition_type):
       raise ValueError(u"Attribute '{}' is reserved for this object type."
                        .format(name))
@@ -255,7 +272,7 @@ class CustomAttributeDefinition(attributevalidator.AttributeValidator,
       raise ValueError(u"Global custom attribute '{}' "
                        u"already exists for this object type"
                        .format(name))
-    model_name = self.inflector_model_name_dict[definition_type]
+    model_name = self.inflector_model_dict[definition_type].__name__
     acrs = {i.lower() for i in acr.get_custom_roles_for(model_name).values()}
     if name in acrs:
       raise ValueError(u"Custom Role with a name of '{}' "
@@ -266,6 +283,44 @@ class CustomAttributeDefinition(attributevalidator.AttributeValidator,
       self.validate_assessment_title(name)
 
     return value
+
+  @property
+  def options(self):
+    """Parse mandatory comment and evidence flags from dropdown CA definition.
+
+    Returns:
+      {option_value: Flags} - a dict from dropdown options values to Flags
+                              objects where Flags.comment_required and
+                              Flags.evidence_required correspond to the values
+                              from multi_choice_mandatory bitmasks
+    """
+    mc_options = []
+    if self.multi_choice_options:
+      mc_options = self.multi_choice_options.split(",")
+    masks = itertools.cycle([0])
+    if self.multi_choice_mandatory:
+      masks = (int(m) for m in self.multi_choice_mandatory.split(","))
+    flags = (self.MultiChoiceMandatoryFlags(m) for m in masks)
+    return dict(itertools.izip(mc_options, flags))
+
+  def log_json(self):
+    """Custom log_json for CustomAttributeDefinition model.
+
+    * populates data by options
+    * mandataory field should be only Boolean
+    * field in list "helptext", "placeholder", "title" can't be None
+      If it's None it should be empty string.
+    """
+    data = super(CustomAttributeDefinition, self).log_json()
+    data["options"] = self.options
+    # FIXME: this should be fixed in the proper way
+    # mandatory should be always boolean, rather if self.mandatory = 1 or 0
+    # log json should collect only True or False
+    data["mandatory"] = bool(self.mandatory)
+    # This fields shouldn't be empty
+    for field in ("helptext", "placeholder", "title"):
+      data[field] = data.get(field) or ""
+    return data
 
 
 class CustomAttributeMapable(object):
@@ -289,3 +344,39 @@ class CustomAttributeMapable(object):
         foreign_keys="CustomAttributeValue.attribute_object_id",
         backref='attribute_{0}'.format(cls.__name__),
         viewonly=True)
+
+
+def _get_cadable_objs(target):
+  """Return list of custom attributable objects in db session.
+
+  That objects may have the wrong declared attr.
+  """
+  cad_modes = {k: v for k, v in target.inflector_model_dict.iteritems()
+               if issubclass(v, customattributable.CustomAttributable)}
+  definition_model = cad_modes.get(target.definition_type)
+  if not definition_model:
+    return
+  for obj in db.session:
+    if not isinstance(obj, definition_model):
+      continue
+    if target.definition_id and obj.id != target.definition_id:
+      continue
+    yield obj
+
+
+# pylint:disable=unused-argument
+@event.listens_for(CustomAttributeDefinition, "after_insert")
+@event.listens_for(CustomAttributeDefinition, "after_update")
+def append_cads_to_instances(mapper, connection, target):
+  """Insert CAD to CustomAttributable instance in session."""
+  for obj in _get_cadable_objs(target):
+    if target not in obj.custom_attribute_definitions:
+      obj.custom_attribute_definitions.append(target)
+
+
+@event.listens_for(CustomAttributeDefinition, "after_delete")
+def remove_cads_from_instances(mapper, connection, target):
+  """Insert CAD to CustomAttributable instance in session."""
+  for obj in _get_cadable_objs(target):
+    if target in obj.custom_attribute_definitions:
+      obj.custom_attribute_definitions.remove(target)

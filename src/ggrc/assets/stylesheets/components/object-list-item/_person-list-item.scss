@@ -1,0 +1,17 @@
+/*
+ * Copyright (C) 2017 Google Inc.
+ * Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
+ */
+
+/* Person List Item Component CSS spec */
+
+.person-list-item {
+  display: flex;
+  box-sizing: border-box;
+  list-style: none;
+
+  &__title {
+    display: flex;
+    flex-wrap: wrap;
+  }
+}

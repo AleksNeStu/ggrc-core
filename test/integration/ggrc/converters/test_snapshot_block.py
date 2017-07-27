@@ -27,7 +27,7 @@ class TestSnapshotBlockConverter(TestCase):
     with factories.single_commit():
       snapshots = self._create_snapshots(
           factories.AuditFactory(),
-          [factories.ControlFactory()],
+          factories.ControlFactory(),
       )
 
     converter = mock.MagicMock()
@@ -42,7 +42,8 @@ class TestSnapshotBlockConverter(TestCase):
     with factories.single_commit():
       snapshots = self._create_snapshots(
           factories.AuditFactory(),
-          [factories.ControlFactory(), factories.ControlFactory()],
+          factories.ControlFactory(),
+          factories.ControlFactory(),
       )
     converter = mock.MagicMock()
     ids = [s.id for s in snapshots]
@@ -60,7 +61,8 @@ class TestSnapshotBlockConverter(TestCase):
     with factories.single_commit():
       snapshots = self._create_snapshots(
           factories.AuditFactory(),
-          [factories.ControlFactory(), factories.PolicyFactory()],
+          factories.ControlFactory(),
+          factories.PolicyFactory(),
       )
     converter = mock.MagicMock()
     ids = [s.id for s in snapshots]

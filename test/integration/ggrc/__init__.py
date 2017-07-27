@@ -347,7 +347,7 @@ class TestCase(BaseTestCase, object):
     )
     return revisions
 
-  def _create_snapshots(self, audit, objects):
+  def _create_snapshots(self, audit, *objects):
     """Create snapshots of latest object revisions for given objects."""
     # This commit is needed if we're using factories with single_commit, so
     # that the latest revisions will be fetched properly.

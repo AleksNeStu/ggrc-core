@@ -9,6 +9,9 @@
       <form-validation-icon {validation}="validation"></form-validation-icon>
       <div class="field__title form-field__title">
         <label class="field__title-text" for="form-field-{{id}}">{{title}}</label>
+        {{#if required}}
+          <span class="field__title-required"><i class="fa fa-asterisk"></i></span>
+        {{/if}}
         {{#if helptext}}
           <i class="fa fa-question-circle field__title-helper-text" rel="tooltip" title="{{helptext}}"></i>
         {{/if}}
@@ -30,11 +33,11 @@
           class="form-field__content"
         ></auto-save-form-field-view>
       {{/if}}
-      {{#unless validation.valid}}
-        <div class="form-field__validation-hint-placeholder">
-            <button class="btn btn-small btn-link btn-link-nopadding" ($click)="showRequiredInfoModal(%event, %context)">Add required info</button>
-        </div>
-      {{/unless}}
+      {{#if validation.hasMissingInfo}}
+            <div class="form-field__validation-hint-placeholder">
+                <button class="btn btn-small btn-link btn-link-nopadding" ($click)="showRequiredInfoModal(%event, %context)">Add required info</button>
+            </div>
+      {{/if}}
     </div>
   {{/each}}
 </div>

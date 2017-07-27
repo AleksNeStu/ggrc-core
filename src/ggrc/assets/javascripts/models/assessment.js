@@ -91,14 +91,7 @@
       display_attr_names: ['title', 'status', 'assignees', 'verifiers',
         'updated_at']
     },
-    info_pane_options: {
-    },
-    confirmEditModal: {
-      title: 'Confirm moving Assessment to "In Progress"',
-      description: 'You are about to move Assessment from ' +
-      '"{{status}}" to "In Progress" - are you sure about that?',
-      button: 'Confirm'
-    },
+    info_pane_options: {},
     assignable_list: [{
       title: 'Creator(s)',
       type: 'creator',
@@ -144,29 +137,15 @@
         }
       );
     },
-    prepareAttributes: function (attrs) {
-      return attrs[this.root_object] ? attrs[this.root_object] : attrs;
-    },
     /**
      * Assessment specific AJAX data parsing logic
      * @param {Object} attributes - hash of Model key->values
      * @return {Object} - parsed object with normalized data
      */
     parseModel: function (attributes) {
-      var values;
-      var definitions;
-      attributes = this.prepareAttributes(attributes);
-      values = attributes.custom_attribute_values || [];
-      definitions = attributes.custom_attribute_definitions || [];
-
-      if (!definitions.length) {
-        return attributes;
-      }
-
-      attributes.custom_attribute_values =
-        GGRC.Utils.CustomAttributes
-          .prepareCustomAttributes(definitions, values);
-      return attributes;
+      return attributes[this.root_object] ?
+        attributes[this.root_object] :
+        attributes;
     },
     model: function (attributes, oldModel) {
       var model;
@@ -189,11 +168,6 @@
       model = oldModel && can.isFunction(oldModel.attr) ?
         oldModel.attr(attributes) :
           new this(attributes);
-
-      // This is a temporary solution
-      if (attributes.documents) {
-        model.attr('documents', attributes.documents, true);
-      }
 
       if (attributes.assignees) {
         this.leaveUniqueAssignees(model, attributes, 'Verifier');
@@ -360,7 +334,7 @@
           .fail(function () {
             dfd.reject.apply(dfd, arguments);
           });
-          }, 300, {trailing: false})
+          }, 100, {trailing: false})
         };
       }
       dfd = this._pending_refresh.dfd;

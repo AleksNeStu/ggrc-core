@@ -3,19 +3,20 @@
 
 """Custom attribute value model"""
 
-from collections import namedtuple
-
 from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy import and_
 from sqlalchemy import or_
 from sqlalchemy import orm
 from sqlalchemy.orm import foreign
+from sqlalchemy import event
 
 from ggrc import builder
 from ggrc import db
 from ggrc.models.mixins import Base
 from ggrc.models.revision import Revision
 from ggrc.models import reflection
+from ggrc.models.object_document import Documentable
+from ggrc.models.comment import Commentable
 from ggrc import utils
 from ggrc.fulltext.mixin import Indexed
 from ggrc.fulltext import get_indexer
@@ -250,6 +251,9 @@ class CustomAttributeValue(Base, Indexed, db.Model):
     if self.attribute_value and ":" in self.attribute_value:
       value, id_ = self.attribute_value.split(":")
       self.attribute_value = value
+      if not id_.isdigit():
+        raise ValueError("Person id should be Integer.")
+      id_ = int(id_)
       self.attribute_object_id = id_
 
   def _validate_dropdown(self):
@@ -314,73 +318,40 @@ class CustomAttributeValue(Base, Indexed, db.Model):
               "evidence" - missing mandatory evidence.
 
     """
-    failed_preconditions = []
-    if self.custom_attribute.mandatory and self.is_empty:
-      failed_preconditions += ["value"]
+    failed_preconditions = {
+        "value": bool(self.custom_attribute.mandatory and self.is_empty)
+    }
     if (self.custom_attribute.attribute_type ==
             self.custom_attribute.ValidTypes.DROPDOWN):
-      failed_preconditions += self._check_dropdown_requirements()
-    return failed_preconditions or None
+      failed_preconditions.update(self._check_dropdown_requirements())
+    return failed_preconditions
 
   def _check_dropdown_requirements(self):
     """Check mandatory comment and mandatory evidence for dropdown CAV."""
-    failed_preconditions = []
-    options_to_flags = self._multi_choice_options_to_flags(
-        self.custom_attribute,
-    )
+    options_to_flags = self.custom_attribute.options
     flags = options_to_flags.get(self.attribute_value)
-    if flags:
-      if flags.comment_required:
-        failed_preconditions += self._check_mandatory_comment()
-      if flags.evidence_required:
-        failed_preconditions += self.attributable.check_mandatory_evidence()
+    if not flags:
+      return {}
+    failed_preconditions = {}
+    if flags.comment_required and isinstance(self.attributable, Commentable):
+      failed_preconditions["comment"] = not any(
+          self.custom_attribute_id == c.custom_attribute_definition_id and
+          self.latest_revision.id == c.revision_id
+          for c in self.attributable.comments)
+    if flags.evidence_required and isinstance(self.attributable, Documentable):
+      evidences_count = len(self.attributable.document_evidence)
+      cav_evidence_count = self.attributable.cav_evidence_count
+      failed_preconditions["evidence"] = evidences_count < cav_evidence_count
     return failed_preconditions
 
-  def _check_mandatory_comment(self):
-    """Check presence of mandatory comment."""
-    if hasattr(self.attributable, "comments"):
-      comment_found = any(
-          self.custom_attribute_id == (comment
-                                       .custom_attribute_definition_id) and
-          self.latest_revision.id == comment.revision_id
-          for comment in self.attributable.comments
-      )
-    else:
-      comment_found = False
-    if not comment_found:
-      return ["comment"]
-    else:
-      return []
 
-  @staticmethod
-  def _multi_choice_options_to_flags(cad):
-    """Parse mandatory comment and evidence flags from dropdown CA definition.
+ACTIONS = ['after_insert', 'after_delete', 'after_update']
 
-    Args:
-      cad - a CA definition object
 
-    Returns:
-      {option_value: Flags} - a dict from dropdown options values to Flags
-                              objects where Flags.comment_required and
-                              Flags.evidence_required correspond to the values
-                              from multi_choice_mandatory bitmasks
-    """
-    flags = namedtuple("Flags", ["comment_required", "evidence_required"])
+def runner(mapper, content, target):
+  if target.attributable:
+    target.attributable.invalidate_evidence_found()
 
-    def make_flags(multi_choice_mandatory):
-      flags_mask = int(multi_choice_mandatory)
-      return flags(comment_required=flags_mask & (cad
-                                                  .MultiChoiceMandatoryFlags
-                                                  .COMMENT_REQUIRED),
-                   evidence_required=flags_mask & (cad
-                                                   .MultiChoiceMandatoryFlags
-                                                   .EVIDENCE_REQUIRED))
 
-    if not cad.multi_choice_options or not cad.multi_choice_mandatory:
-      return {}
-    else:
-      return dict(zip(
-          cad.multi_choice_options.split(","),
-          (make_flags(mask)
-           for mask in cad.multi_choice_mandatory.split(",")),
-      ))
+for action in ACTIONS:
+  event.listen(CustomAttributeValue, action, runner)

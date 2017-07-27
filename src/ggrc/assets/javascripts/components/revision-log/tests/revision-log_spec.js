@@ -18,7 +18,8 @@ describe('GGRC.Components.revisionLog', function () {
 
   describe('defining default scope values', function () {
     it('sets the instance to null', function () {
-      expect(viewModel.attr('instance')).toBeNull();
+      expect(JSON.stringify(viewModel.attr('instance').attr()))
+        .toBe(JSON.stringify({}));
     });
 
     it('sets the change history to an empty array', function () {
@@ -30,7 +31,7 @@ describe('GGRC.Components.revisionLog', function () {
     var dfdFetchData;
 
     beforeEach(function () {
-      dfdFetchData = new can.Deferred();
+      dfdFetchData = can.Deferred();
       spyOn(viewModel, '_fetchRevisionsData').and.returnValue(dfdFetchData);
     });
 
@@ -328,19 +329,19 @@ describe('GGRC.Components.revisionLog', function () {
 
   describe('_objectCADiff() method', function () {
     it('detects set attributes', function () {
-      var oldValues = [];
-      var oldDefs = [];
+      var oldAttrs = [];
       var newValues = [{
-        custom_attribute_id: 1,
-        attribute_value: 'custom value'
+        id: 1,
+        value: 'custom value'
       }];
-      var newDefs = [{
+      var newAttrs = [{
         id: 1,
         title: 'CA',
-        attribute_type: 'text'
+        attribute_type: 'Text',
+        values: newValues
       }];
       var result = viewModel
-        ._objectCADiff(oldValues, oldDefs, newValues, newDefs);
+        ._objectCADiff(oldAttrs, newAttrs);
       expect(result).toEqual([{
         fieldName: 'CA',
         origVal: '—',
@@ -350,18 +351,18 @@ describe('GGRC.Components.revisionLog', function () {
 
     it('detects unset attributes', function () {
       var oldValues = [{
-        custom_attribute_id: 1,
-        attribute_value: 'custom value'
+        id: 1,
+        value: 'custom value'
       }];
-      var oldDefs = [{
+      var oldAttrs = [{
         id: 1,
         title: 'CA',
-        attribute_type: 'text'
+        attribute_type: 'Text',
+        values: oldValues
       }];
-      var newValues = [];
-      var newDefs = [];
+      var newAttrs = [];
       var result = viewModel
-        ._objectCADiff(oldValues, oldDefs, newValues, newDefs);
+        ._objectCADiff(oldAttrs, newAttrs);
       expect(result).toEqual([{
         fieldName: 'CA',
         origVal: 'custom value',
@@ -371,43 +372,62 @@ describe('GGRC.Components.revisionLog', function () {
 
     it('detects multiple changed attributes', function () {
       var oldValues = [{
-        custom_attribute_id: 1,
-        attribute_value: 'v1'
+        id: 1,
+        value: 'v1'
       }, {
-        custom_attribute_id: 2,
-        attribute_value: 'v2'
+        id: 2,
+        value: 'v2'
       }, {
-        custom_attribute_id: 3,
-        attribute_value: 'v3'
+        id: 3,
+        value: 'v3'
       }];
 
-      var oldDefs = [{
+      var oldAttrs = [{
         id: 1,
         title: 'CA1',
-        attribute_type: 'text'
+        attribute_type: 'text',
+        values: [oldValues[0]]
       }, {
         id: 2,
         title: 'CA2',
-        attribute_type: 'text'
+        attribute_type: 'text',
+        values: [oldValues[1]]
       }, {
         id: 3,
         title: 'CA3',
-        attribute_type: 'text'
+        attribute_type: 'text',
+        values: [oldValues[2]]
       }];
 
       var newValues = [{
-        custom_attribute_id: 1,
-        attribute_value: 'v3'
+        id: 1,
+        value: 'v3'
       }, {
-        custom_attribute_id: 2,
-        attribute_value: 'v4'
+        id: 2,
+        value: 'v4'
       }, {
-        custom_attribute_id: 3,
-        attribute_value: 'v3'
+        id: 3,
+        value: 'v3'
+      }];
+      var newAttrs = [{
+        id: 1,
+        title: 'CA1',
+        attribute_type: 'text',
+        values: [newValues[0]]
+      }, {
+        id: 2,
+        title: 'CA2',
+        attribute_type: 'text',
+        values: [newValues[1]]
+      }, {
+        id: 3,
+        title: 'CA3',
+        attribute_type: 'text',
+        values: [newValues[2]]
       }];
 
       var result = viewModel
-        ._objectCADiff(oldValues, oldDefs, newValues, oldDefs);
+        ._objectCADiff(oldAttrs, newAttrs);
       expect(result).toEqual([{
         fieldName: 'CA1',
         origVal: 'v1',

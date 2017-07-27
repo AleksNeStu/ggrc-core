@@ -3,6 +3,7 @@
 
 """Integration tests for Assessment"""
 
+import itertools
 import collections
 import datetime
 
@@ -114,6 +115,50 @@ class TestAssessment(ggrc.TestCase):
     assessment = all_models.Assessment.query.first()
     self.assertEqual(assessment.audit_id, correct_audit_id)
 
+  def test_get_cads(self):
+    """Test get local and global cads by api."""
+    glob_val = "Glob_value"
+    local_val = "Local_value"
+    with factories.single_commit():
+      asmt = factories.AssessmentFactory()
+      global_cav = factories.CustomAttributeValueFactory(
+          attributable=asmt,
+          attribute_value=glob_val,
+          custom_attribute=factories.CustomAttributeDefinitionFactory(
+              definition_type='assessment',
+          )
+      )
+      global_cav_custom_attribute_id = global_cav.custom_attribute_id
+      global_cav_id = global_cav.id
+      local_cav = factories.CustomAttributeValueFactory(
+          attributable=asmt,
+          attribute_value=local_val,
+          custom_attribute=factories.CustomAttributeDefinitionFactory(
+              definition_type='assessment',
+              definition_id=asmt.id,
+          )
+      )
+      local_cav_custom_attribute_id = local_cav.custom_attribute_id
+      local_cav_id = local_cav.id
+    response = self.api.get(asmt, asmt.id)
+    self.assertIn('assessment', response.json)
+
+    self.assertIn('local_attributes', response.json['assessment'])
+    self.assertEqual(1, len(response.json['assessment']['local_attributes']))
+    local_data = response.json['assessment']['local_attributes'][0]
+    self.assertEqual(local_cav_custom_attribute_id, local_data['id'])
+    self.assertEqual(1, len(local_data['values']))
+    self.assertEqual(local_cav_id, local_data['values'][0]['id'])
+    self.assertEqual(local_val, local_data['values'][0]['value'])
+
+    self.assertIn('global_attributes', response.json['assessment'])
+    self.assertEqual(1, len(response.json['assessment']['global_attributes']))
+    global_data = response.json['assessment']['global_attributes'][0]
+    self.assertEqual(global_cav_custom_attribute_id, global_data['id'])
+    self.assertEqual(1, len(global_data['values']))
+    self.assertEqual(global_cav_id, global_data['values'][0]['id'])
+    self.assertEqual(glob_val, global_data['values'][0]['value'])
+
 
 @base.with_memcache
 class TestAssessmentUpdates(ggrc.TestCase):
@@ -152,6 +197,54 @@ class TestAssessmentUpdates(ggrc.TestCase):
 
     self.assessment_id = assessment.id
     self.assessment = all_models.Assessment.query.get(self.assessment_id)
+
+  def test_update_cads(self):
+    """Test update local and global cads by api."""
+    glob_val = "Glob_value"
+    local_val = "Local_value"
+
+    new_glob_val = "New_Glob_value"
+    new_local_val = "New_Local_value"
+    with factories.single_commit():
+      asmt = factories.AssessmentFactory()
+      global_cav = factories.CustomAttributeValueFactory(
+          attributable=asmt,
+          attribute_value=glob_val,
+          custom_attribute=factories.CustomAttributeDefinitionFactory(
+              definition_type='assessment',
+          )
+      )
+      global_cav_custom_attribute_id = global_cav.custom_attribute_id
+      global_cav_id = global_cav.id
+      local_cav = factories.CustomAttributeValueFactory(
+          attributable=asmt,
+          attribute_value=local_val,
+          custom_attribute=factories.CustomAttributeDefinitionFactory(
+              definition_type='assessment',
+              definition_id=asmt.id,
+          )
+      )
+      local_cav_custom_attribute_id = local_cav.custom_attribute_id
+      local_cav_id = local_cav.id
+    response = self.api.put(asmt, {
+        'local_attributes': [{
+            'id': local_cav_custom_attribute_id,
+            'values': [{'id': local_cav_id, 'value': new_local_val}]
+        }],
+        'global_attributes': [{
+            'id': global_cav_custom_attribute_id,
+            'values': [{'id': global_cav_id, 'value': new_glob_val}]
+        }],
+    })
+    self.assert200(response)
+    self.assertEqual(new_local_val,
+                     all_models.CustomAttributeValue.query.get(
+                         local_cav_id
+                     ).attribute_value)
+    self.assertEqual(new_glob_val,
+                     all_models.CustomAttributeValue.query.get(
+                         global_cav_id
+                     ).attribute_value)
 
   # pylint: disable=invalid-name
   def test_updated_at_changes_after_comment(self):
@@ -208,7 +301,7 @@ class TestAssessmentGeneration(ggrc.TestCase):
     with factories.single_commit():
       self.audit = factories.AuditFactory()
       self.control = factories.ControlFactory(test_plan="Control Test Plan")
-      self.snapshot = self._create_snapshots(self.audit, [self.control])[0]
+      self.snapshot = self._create_snapshots(self.audit, self.control)[0]
 
   def assessment_post(self, template=None, extra_data=None):
     """Helper function to POST an assessment"""
@@ -315,8 +408,7 @@ class TestAssessmentGeneration(ggrc.TestCase):
         procedure_description="Assessment Template Test Plan"
     )
 
-    custom_attribute_definitions = [
-        # Global CAs
+    global_cads = [
         {
             "definition_type": "assessment",
             "title": "rich_test_gca",
@@ -329,7 +421,8 @@ class TestAssessmentGeneration(ggrc.TestCase):
             "attribute_type": "Checkbox",
             "multi_choice_options": "test checkbox label"
         },
-        # Local CAs
+    ]
+    local_cads = [
         {
             "definition_type": "assessment_template",
             "definition_id": template.id,
@@ -353,15 +446,15 @@ class TestAssessmentGeneration(ggrc.TestCase):
         },
     ]
 
-    for attribute in custom_attribute_definitions:
+    for attribute in itertools.chain(local_cads, global_cads):
       factories.CustomAttributeDefinitionFactory(**attribute)
     response = self.assessment_post(template)
     self.assertListEqual(
-        [u'test text field', u'test RTF', u'test checkbox', u'rich_test_gca',
-         u'checkbox1_gca'],
-        [cad['title'] for cad in
-         response.json["assessment"]["custom_attribute_definitions"]]
-    )
+        [u'test text field', u'test RTF', u'test checkbox'],
+        [c['title'] for c in response.json["assessment"]["local_attributes"]])
+    self.assertListEqual(
+        [u'rich_test_gca', u'checkbox1_gca'],
+        [c['title'] for c in response.json["assessment"]["global_attributes"]])
 
   def assert_assignees(self, role, response, *users):
     self.assertEqual(list(users),

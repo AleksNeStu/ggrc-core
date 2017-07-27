@@ -3,6 +3,7 @@
 
 """Integration test for AutoStatusChangeable mixin"""
 
+import copy
 from ggrc import models
 
 from integration.ggrc import TestCase
@@ -195,24 +196,23 @@ class TestMixinAutoStatusChangeable(TestCase):
     # state is set to final
     assessment = self.create_simple_assessment()
 
-    custom_attribute_values = [{
-        "custom_attribute_id": ca_def.id,
-        "attribute_value": "Person:" + str(person_id),
-    }]
-    self.api_helper.modify_object(assessment, {
-        "custom_attribute_values": custom_attribute_values
-    })
+    global_attributes = [{"id": ca_def.id,
+                          "values": [{"value": person_id}]}]
+
+    self.api_helper.modify_object(
+        assessment,
+        {
+            "global_attributes": global_attributes,
+        },
+    )
 
     assessment = self.change_status(assessment, assessment.FINAL_STATE)
     assessment = self.refresh_object(assessment)
-
     # now change the Person CA and check what happens with the status
-    custom_attribute_values = [{
-        "custom_attribute_id": ca_def.id,
-        "attribute_value": "Person:" + str(another_person.id),  # make a change
-    }]
+    global_attributes = copy.copy(assessment.global_attributes)
+    global_attributes[0]["values"][0]['value'] = another_person.id
     self.api_helper.modify_object(assessment, {
-        "custom_attribute_values": custom_attribute_values
+        "global_attributes": global_attributes
     })
 
     assessment = self.refresh_object(assessment)
@@ -222,12 +222,10 @@ class TestMixinAutoStatusChangeable(TestCase):
     assessment = self.change_status(assessment, assessment.DONE_STATE)
     assessment = self.refresh_object(assessment)
 
-    custom_attribute_values = [{
-        "custom_attribute_id": ca_def.id,
-        "attribute_value": "Person:" + str(person_id),  # make a change
-    }]
+    global_attributes = copy.copy(assessment.global_attributes)
+    global_attributes[0]["values"][0]['value'] = person_id
     self.api_helper.modify_object(assessment, {
-        "custom_attribute_values": custom_attribute_values
+        "global_attributes": global_attributes
     })
 
     assessment = self.refresh_object(assessment)

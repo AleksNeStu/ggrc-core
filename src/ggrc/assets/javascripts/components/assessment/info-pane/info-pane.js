@@ -191,10 +191,14 @@
       },
       initializeFormFields: function () {
         this.attr('formFields',
-          GGRC.Utils.CustomAttributes.convertValuesToFormFields(
-            this.attr('instance.custom_attribute_values')
-          )
+            this.attr('instance.local_attributes')
+              .map(GGRC.Utils.CustomAttributes.prepareLocalAttribute)
         );
+      },
+      initGlobalAttributes: function () {
+        return this.attr('globalAttributes',
+          this.attr('instance.global_attributes')
+            .map(GGRC.Utils.CustomAttributes.prepareGlobalAttribute));
       },
       onFormSave: function () {
         this.attr('triggerFormSaveCbs').fire();
@@ -227,26 +231,43 @@
             });
           });
       },
-      saveFormFields: function (formFields) {
-        var caValues = can.makeArray(
-          this.attr('instance.custom_attribute_values')
-        );
-        Object.keys(formFields).forEach(function (fieldId) {
+      saveGlobalAttributes: function (event) {
+        var globalAttributes = event.globalAttributes;
+        var caValues = this.attr('instance.global_attributes');
+        can.Map.keys(globalAttributes).forEach(function (fieldId) {
           var caValue =
-            caValues
-              .find(function (item) {
-                return item.def.id === Number(fieldId);
-              });
+            caValues.filter(function (item) {
+              return item.id === Number(fieldId);
+            })[0];
           if (!caValue) {
             console.error('Corrupted Date: ', caValues);
             return;
           }
-          caValue.attr('attribute_value',
-            GGRC.Utils.CustomAttributes.convertToCaValue(
-              caValue.attr('attributeType'),
-              formFields[fieldId]
-            )
-          );
+          if (caValue.attr('values').length) {
+            caValue.attr('values')[0].attr('value', globalAttributes[fieldId]);
+          } else {
+            caValue.attr('values').push({value: globalAttributes[fieldId]});
+          }
+        });
+
+        return this.attr('instance').save();
+      },
+      saveFormFields: function (formFields) {
+        var caValues = this.attr('instance.local_attributes');
+        can.Map.keys(formFields).forEach(function (fieldId) {
+          var caValue =
+            caValues.filter(function (item) {
+              return item.id === Number(fieldId);
+            })[0];
+          if (!caValue) {
+            console.error('Corrupted Date: ', caValues);
+            return;
+          }
+          if (caValue.attr('values').length) {
+            caValue.attr('values')[0].attr('value', formFields[fieldId]);
+          } else {
+            caValue.attr('values').push({value: formFields[fieldId]});
+          }
         });
 
         return this.attr('instance').save();
@@ -286,6 +307,7 @@
     },
     init: function () {
       this.viewModel.initializeFormFields();
+      this.viewModel.initGlobalAttributes();
       this.viewModel.updateRelatedItems();
     },
     events: {

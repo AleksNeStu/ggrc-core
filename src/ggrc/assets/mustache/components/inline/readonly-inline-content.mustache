@@ -5,15 +5,15 @@
 
 {{#switch type}}
   {{#case 'text'}}
-    {{> /static/mustache/components/inline/simple-readonly-text.mustache}}
+    {{> '/static/mustache/components/inline/simple-readonly-text.mustache'}}
   {{/case}}
 
   {{#case 'input'}}
-    {{> /static/mustache/components/inline/simple-readonly-text.mustache}}
+    {{> '/static/mustache/components/inline/simple-readonly-text.mustache'}}
   {{/case}}
 
   {{#case 'dropdown'}}
-    {{> /static/mustache/components/inline/simple-readonly-text.mustache}}
+    {{> '/static/mustache/components/inline/simple-readonly-text.mustache'}}
   {{/case}}
 
   {{#case 'checkbox'}}
@@ -32,7 +32,7 @@
 
   {{#case 'person'}}
     {{#if context.value}}
-      <person-info {person-obj}="context.value"></person-info>
+      <person-list-item {person-id}="context.value" {with-details}="withDetails"></person-list-item>
     {{else}}
       <span class="empty-message">No person</span>
     {{/if}}

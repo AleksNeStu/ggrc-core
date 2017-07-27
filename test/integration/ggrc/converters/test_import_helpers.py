@@ -736,7 +736,7 @@ class TestGetObjectColumnDefinitions(TestCase):
 
 
 class TestRiskAssessmentColumnDefinitions(TestCase):
-  """Test default column difinitions for risk assessment objcts."""
+  """Test default column difinitions for risk assessment objects."""
 
   @classmethod
   def setUpClass(cls):

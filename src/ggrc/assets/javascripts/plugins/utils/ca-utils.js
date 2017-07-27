@@ -233,6 +233,106 @@
       };
     }
 
+    function prepareLocalAttribute(attr) {
+      var options;
+      var value;
+      var validation;
+      var validationConfig;
+      var type;
+      var isValid;
+      var isDropdown;
+      var showValidation;
+      var validationMap;
+      var hasMissingInfo;
+
+      if (!attr || !attr.values) {
+        console.warn('Attribute is mandatory argument');
+        return {};
+      }
+
+      options = can.Map.keys(attr.options || {});
+      type = getCustomAttributeType(attr.attribute_type);
+      value = new can.Map(attr.values[0] || {});
+      validationMap = new can.Map(value.attr('preconditions_failed') || {});
+      isDropdown = type === 'dropdown';
+      showValidation = attr.mandatory || isDropdown;
+      isValid = showValidation ? !attr.attr('is_preconditions_failed') : true;
+
+      if (isDropdown) {
+        validationConfig = attr.options || {};
+        hasMissingInfo = validationMap.attr('comment') ||
+          validationMap.attr('evidence');
+      }
+      validation = {
+        show: showValidation,
+        valid: isValid,
+        hasMissingInfo: hasMissingInfo
+      };
+      return {
+        type: type,
+        id: attr.id,
+        value: value.attr('value'),
+        title: attr.title,
+        placeholder: attr.placeholder,
+        options: options,
+        helptext: attr.helptext,
+        required: attr.mandatory,
+        isDropdown: isDropdown,
+        validation: validation,
+        validationConfig: validationConfig,
+        errorsMap: {
+          value: false,
+          comment: false,
+          evidence: false
+        },
+        valueId: can.compute(function () {
+          return value.attr('id');
+        })
+      };
+    }
+
+    function prepareGlobalAttribute(attr) {
+      var options;
+      var value;
+      var type;
+
+      if (!attr || !attr.values) {
+        console.warn('Attribute is mandatory argument');
+        return {};
+      }
+
+      options = can.Map.keys(attr.options || {});
+      type = getCustomAttributeType(attr.attribute_type);
+      value = new can.Map(attr.values[0] || {});
+
+      return {
+        type: type,
+        id: attr.id,
+        value: value.value,
+        title: attr.title,
+        placeholder: attr.placeholder,
+        options: options,
+        helptext: attr.helptext
+      };
+    }
+
+    /**
+     * Simple function to update Custom Attributes
+     * Temporary as Custom Attributes doesn't support multiple values value parameter is single object
+     * @param {can.Map} attr - attribute to update
+     * @param {Object} value - updated value object
+     */
+    function updateAttribute(attr, value) {
+      if (!attr || !attr.values) {
+        console.warn('Attribute is mandatory argument');
+        return;
+      }
+      // Start Temporary: Till Custom Attributes support only single Value we transform passed "value" object to Array
+      value = can.makeArray(value);
+      // End of Temporary
+      attr.values.replace(value);
+    }
+
     return {
       convertFromCaValue: convertFromCaValue,
       convertToCaValue: convertToCaValue,
@@ -240,7 +340,10 @@
       prepareCustomAttributes: prepareCustomAttributes,
       isEmptyCustomAttribute: isEmptyCustomAttribute,
       getCustomAttributeType: getCustomAttributeType,
-      convertToFormViewField: convertToFormViewField
+      convertToFormViewField: convertToFormViewField,
+      prepareLocalAttribute: prepareLocalAttribute,
+      prepareGlobalAttribute: prepareGlobalAttribute,
+      updateAttribute: updateAttribute
     };
   })();
 })(window.GGRC, window.can, window._);

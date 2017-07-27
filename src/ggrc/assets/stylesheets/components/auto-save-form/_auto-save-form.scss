@@ -51,11 +51,6 @@ auto-save-form {
       box-sizing: border-box;
     }
 
-    .form-field__title {
-      padding: 0 8px 0 0;
-      width: 100%;
-    }
-
     .form-field__content {
       max-width: 100%;
     }
@@ -84,6 +79,24 @@ auto-save-form {
     line-height: 28px;
     min-height: 28px;
     box-sizing: border-box;
+    padding: 0 8px 0 0;
+    width: 100%;
+  }
+
+  &__title-required {
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    align-self: flex-start;
+
+    .fa {
+      display:inline-flex;
+      font-size: 11px;
+      color: $icon-color-empty;
+    }
+
   }
 
   &__title-text {

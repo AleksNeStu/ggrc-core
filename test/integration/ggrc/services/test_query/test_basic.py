@@ -7,6 +7,7 @@
 
 """Tests for /query api endpoint."""
 
+import itertools
 import unittest
 
 from datetime import datetime
@@ -40,6 +41,28 @@ class BaseQueryAPITestCase(TestCase):
     # super(BaseQueryAPITestCase, self).setUp()
     self.client.get("/login")
     self.generator = generator.ObjectGenerator()
+
+  def _assert_custom_attributes(self, data, attr, **kwargs):
+    self._assert_in_custom_attributes(data, attr, *kwargs.keys())
+    for key, val in kwargs.iteritems():
+      self.assertEqual(val, data[attr][key])
+
+  def _assert_in_custom_attributes(self, data, attr, *args):
+    self.assertIn(attr, data)
+    for key in args:
+      self.assertIn(key, [i['title'] for i in data[attr]])
+
+  def assert_local_cads(self, data, **kwargs):
+    self._assert_custom_attributes(data, "local_attributes", **kwargs)
+
+  def assert_global_cads(self, data, **kwargs):
+    self._assert_custom_attributes(data, "global_attributes", **kwargs)
+
+  def assert_in_local_cads(self, data, *args):
+    self._assert_custom_attributes(data, "local_attributes", *args)
+
+  def assert_in_global_cads(self, data, *args):
+    self._assert_in_custom_attributes(data, "global_attributes", *args)
 
   def _post(self, data):
     """Make a POST to /query endpoint."""
@@ -942,7 +965,8 @@ class TestQueryAssessmentCA(BaseQueryAPITestCase):
     self._check_csv_response(response, {})
     self.client.get("/login")
 
-  def _generate_special_assessments(self):
+  @staticmethod
+  def _generate_special_assessments():
     """Generate two Assessments for two local CADs with same name."""
     assessment_with_date = None
     assessment_with_text = None
@@ -1205,7 +1229,8 @@ class TestQueryWithCA(BaseQueryAPITestCase):
     self._check_csv_response(response, {})
     self.client.get("/login")
 
-  def _generate_cad(self):
+  @staticmethod
+  def _generate_cad():
     """Generate custom attribute definitions."""
     factories.CustomAttributeDefinitionFactory(
         title="CA dropdown",
@@ -1227,21 +1252,6 @@ class TestQueryWithCA(BaseQueryAPITestCase):
         attribute_type="Map:Person",
     )
 
-  @staticmethod
-  def _flatten_cav(data):
-    """Unpack CAVs and put them in data as object attributes."""
-    cad_names = dict(db.session.query(CAD.id, CAD.title))
-    for entry in data:
-      for cav in entry.get("custom_attribute_values", []):
-        entry[cad_names[cav["custom_attribute_id"]]] = cav["attribute_value"]
-    return data
-
-  def _get_first_result_set(self, *args, **kwargs):
-    """Call this method from super and flatten CAVs additionally."""
-    return self._flatten_cav(
-        super(TestQueryWithCA, self)._get_first_result_set(*args, **kwargs),
-    )
-
   def test_single_ca_sorting(self):
     """Results get sorted by single custom attribute field."""
 
@@ -1259,8 +1269,12 @@ class TestQueryWithCA(BaseQueryAPITestCase):
                               order_by=[{"name": "CA text"}]),
         "Program", "values",
     )
-
-    keys = [program["CA text"] for program in programs]
+    keys = []
+    for program in programs:
+      self.assert_in_global_cads(program, "CA text")
+      for attr in program["global_attributes"]:
+        if attr["title"] == "CA text":
+          keys.append(attr["values"][0]["value"])
     self.assertEqual(keys, sorted(keys))
 
   def test_mixed_ca_sorting(self):
@@ -1273,7 +1287,13 @@ class TestQueryWithCA(BaseQueryAPITestCase):
         "Program", "values",
     )
 
-    keys = [(program["CA text"], program["title"]) for program in programs]
+    keys = []
+    for program in programs:
+      self.assert_in_global_cads(program, "CA text")
+      for attr in program["global_attributes"]:
+        if attr["title"] == "CA text":
+          keys.append((attr["values"][0]["value"], attr['title']))
+
     self.assertEqual(keys, sorted(keys))
 
     programs = self._get_first_result_set(
@@ -1283,7 +1303,13 @@ class TestQueryWithCA(BaseQueryAPITestCase):
         "Program", "values",
     )
 
-    keys = [(program["title"], program["CA text"]) for program in programs]
+    keys = []
+    for program in programs:
+      self.assert_in_global_cads(program, "CA text")
+      for attr in program["global_attributes"]:
+        if attr["title"] == "CA text":
+          keys.append((program['title'], attr["values"][0]["value"]))
+
     self.assertEqual(keys, sorted(keys))
 
   def test_multiple_ca_sorting(self):
@@ -1296,7 +1322,16 @@ class TestQueryWithCA(BaseQueryAPITestCase):
         "Program", "values",
     )
 
-    keys = [(prog["CA text"], prog["CA dropdown"]) for prog in programs]
+    keys = []
+    for program in programs:
+      self.assert_in_global_cads(
+          program, "CA text", "CA dropdown")
+      res = []
+      for key in ("CA text", "CA dropdown"):
+        for attr in program["global_attributes"]:
+          if attr["title"] == key:
+            res.append(attr["values"][0]["value"])
+      keys.append(tuple(res))
     self.assertEqual(keys, sorted(keys))
 
   def test_ca_query_eq(self):
@@ -1393,8 +1428,10 @@ class TestQueryWithUnicode(BaseQueryAPITestCase):
     """Unpack CAVs and put them in data as object attributes."""
     cad_names = dict(db.session.query(CAD.id, CAD.title))
     for entry in data:
-      for cav in entry.get("custom_attribute_values", []):
-        entry[cad_names[cav["custom_attribute_id"]]] = cav["attribute_value"]
+      for cav in itertools.chain(entry.get("global_attributes", []),
+                                 entry.get("local_attributes", [])):
+        for value in cav['values']:
+          entry[cad_names[cav["id"]]] = value["value"]
     return data
 
   def setUp(self):

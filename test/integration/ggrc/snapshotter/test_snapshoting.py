@@ -294,7 +294,7 @@ class TestSnapshoting(SnapshotterBaseTestCase):
         "attributable": control,
         "attribute_value": "CA value 1",
     }
-    factories.CustomAttributeValueFactory(**cav)
+    val_id = factories.CustomAttributeValueFactory(**cav).id
     self.create_mapping(program, control)
     control = self.refresh_object(control)
     self.create_audit(program)
@@ -306,39 +306,40 @@ class TestSnapshoting(SnapshotterBaseTestCase):
             models.Snapshot.parent_id == audit.id
         ).count(), 1)
     control = self.refresh_object(control)
+    control_id = control.id
     cad2 = models.CustomAttributeDefinition.query.filter(
         models.CustomAttributeDefinition.title == "control text field 1"
     ).one()
-    val2 = models.CustomAttributeValue(attribute_value="CA value 1",
-                                       custom_attribute=cad2)
-    self.api.modify_object(control, {
-        "custom_attribute_values": [{
-            "attributable_id": control.id,
-            "attributable_type": "Assessment",
-            "id": val2.id,
-            "custom_attribute_id": cad2.id,
-            "attribute_value": "CA value 1 EDIT 1",
-        }]
-    })
+    self.api.modify_object(
+        control,
+        {
+            'global_attributes': [{
+                'id': cad2.id,
+                "values": [{
+                    'id': val_id,
+                    'value': "CA value 1 EDIT 1",
+                }],
+            }]
+        })
     control_snapshot = db.session.query(models.Snapshot).filter(
         models.Snapshot.child_type == "Control",
-        models.Snapshot.child_id == control.id
+        models.Snapshot.child_id == control_id
     ).first()
-    cav = control_snapshot.revision.content["custom_attribute_values"][0]
-    self.assertEqual(cav["attribute_value"], "CA value 1")
+    cav = control_snapshot.revision.content["global_attributes"][0]
+    self.assertEqual(cav["values"][0]["value"], "CA value 1")
 
     self.api.modify_object(control_snapshot, {"update_revision": "latest"})
 
     expected = [
-        (control, "CA value 1 EDIT 1"),
+        (control_id, "CA value 1 EDIT 1"),
     ]
-    for obj, expected_title in expected:
+    for obj_id, expected_title in expected:
       snapshot = db.session.query(models.Snapshot).filter(
-          models.Snapshot.child_type == obj.__class__.__name__,
-          models.Snapshot.child_id == obj.id
+          models.Snapshot.child_type == "Control",
+          models.Snapshot.child_id == obj_id
       ).first()
-      cav = snapshot.revision.content["custom_attribute_values"][0]
-      self.assertEquals(cav["attribute_value"], expected_title)
+      cav = snapshot.revision.content["global_attributes"][0]["values"][0]
+      self.assertEqual(cav["value"], expected_title)
 
     control_snapshot_revisions = db.session.query(models.Revision).filter(
         models.Revision.resource_type == "Snapshot",
@@ -481,7 +482,7 @@ class TestSnapshoting(SnapshotterBaseTestCase):
         models.Snapshot.child_type == control.__class__.__name__,
         models.Snapshot.child_id == control.id).one()
 
-    for field in update_data.keys():
+    for field in update_data:
       self.assertEqual(
           getattr(control_snapshot, field),
           getattr(control_snapshot_updated, field)

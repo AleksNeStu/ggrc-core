@@ -13,34 +13,40 @@
         {{#switch type}}
           {{#case 'dropdown'}}
             <dropdown-form-field {value}="value"
+              class="inline__content-input"
               {options}="dropdownOptions"
               (value-changed)="fieldValueChanged(%event)"
             ></dropdown-form-field>
           {{/case}}
           {{#case 'input'}}
             <text-form-field {value}="value"
+              class="inline__content-input"
               {placeholder}="placeholder"
               (value-changed)="fieldValueChanged(%event)"
             ></text-form-field>
           {{/case}}
           {{#case 'text'}}
             <rich-text-form-field {value}="value"
+              class="inline__content-input"
               {placeholder}="placeholder"
               (value-changed)="fieldValueChanged(%event)"
             ></rich-text-form-field>
           {{/case}}
            {{#case 'checkbox'}}
             <checkbox-form-field {value}="value"
+              class="inline__content-input"
               (value-changed)="fieldValueChanged(%event)"
             ></checkbox-form-field>
           {{/case}}
            {{#case 'date'}}
             <date-form-field {value}="value"
+              class="inline__content-input"
               (value-changed)="fieldValueChanged(%event)"
             ></date-form-field>
           {{/case}}
           {{#case 'person'}}
             <person-form-field {value}="value"
+              class="inline__content-input"
               (value-changed)="fieldValueChanged(%event)"
             ></person-form-field>
           {{/case}}
@@ -48,7 +54,7 @@
 
         <ul class="inline__controls">
           <li class="inline__controls-item">
-            <a class="inline__controls-link" href="javascript://" ($click)="save()">
+            <a class="inline__controls-link" href="javascript://" ($click)="updateFieldValue()">
               <i class="fa fa-check"></i>
             </a>
           </li>
@@ -64,12 +70,10 @@
 
   {{#if isShowContent}}
     <div class="inline__content-wrapper">
-      <div class="inline__content {{#if editMode}}inline--hidden{{/if}}">
-        <readonly-inline-content
+        <readonly-inline-content class="inline__content {{#if editMode}}inline--hidden{{/if}}"
           {with-read-more}="withReadMore"
           {value}="context.value">
         </readonly-inline-content>
-      </div>
     </div>
   {{/if}}
 </div>

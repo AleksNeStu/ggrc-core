@@ -94,15 +94,19 @@ def get_searchable_attributes(attributes, cad_dict, content):
     value = attr.get_attribute_revisioned_value(content)
     searchable_values[attr.alias] = value
 
-  cav_list = content.get("custom_attributes", [])
-
-  for cav in cav_list:
-    cad = cad_dict.get(cav["custom_attribute_id"])
-    if cad:
-      if cad.attribute_type == "Map:Person":
-        searchable_values[cad.title] = cav.get("attribute_object")
-      else:
-        searchable_values[cad.title] = cav["attribute_value"]
+  cad_list = itertools.chain(
+      content.get("local_attributes", []),
+      content.get("global_attributes", [])
+  )
+  for cad_item in cad_list:
+    cad = cad_dict.get(cad_item["id"])
+    if not cad:
+      continue
+    vals = [c.get("value") for c in cad_item["values"]]
+    if cad.attribute_type.startswith("Map:"):
+      cav_type = cad.attribute_type.lstrip("Map:")
+      vals = [{"type": cav_type, "id": i} for i in vals]
+    searchable_values[cad.title] = vals
   return searchable_values
 
 
@@ -160,16 +164,17 @@ def insert_records(payload):
   db.session.commit()
 
 
-def get_person_data(rec, person):
+def get_person_data(rec, people):
   """Get list of Person properties for fulltext indexing
   """
   indexer = get_indexer()
   builder = indexer.get_builder(models.Person)
-  subprops = builder.build_person_subprops(person)
-  for key, val in subprops.items():
-    newrec = rec.copy()
-    newrec.update({"subproperty": key, "content": val})
-    yield newrec
+  for person in people:
+    subprops = builder.build_person_subprops(person)
+    for key, val in subprops.items():
+      newrec = rec.copy()
+      newrec.update({"subproperty": key, "content": val})
+      yield newrec
 
 
 def get_person_sort_subprop(rec, people):
@@ -184,19 +189,41 @@ def get_person_sort_subprop(rec, people):
     yield newrec
 
 
-def get_access_control_role_data(rec, ac_list_item):
+def get_access_control_role_data(rec, ac_list):
   """Get list of access control data for fulltext indexing
   """
   indexer = get_indexer()
   builder = indexer.get_builder(models.Person)
-  ac_role_name, person_id = (builder.get_ac_role_person_id(ac_list_item))
-  if ac_role_name:
+  for ac_list_item in ac_list:
+    ac_role_name, person_id = (builder.get_ac_role_person_id(ac_list_item))
+    if not ac_role_name:
+      continue
     for key, val in builder.build_person_subprops({"id": person_id}).items():
       newrec = rec.copy()
       newrec.update({"property": ac_role_name,
                      "subproperty": key,
                      "content": val})
       yield newrec
+
+
+def get_list_value(rec, list_value):
+  for idx, item in enumerate(list_value):
+    new_rec = rec.copy()
+    new_rec.update({
+        "subproperty": str(idx) if len(list_value) > 1 else "",
+        "content": str(item),
+    })
+    yield new_rec
+
+
+def get_sort_value(rec, list_value):
+  if len(list_value) > 1:
+    new_rec = rec.copy()
+    new_rec.update({
+        "subproperty": "__sort__",
+        "content": sorted(str(i) for i in list_value),
+    })
+    yield new_rec
 
 
 def get_access_control_sort_subprop(rec, access_control_list):
@@ -227,14 +254,16 @@ def get_category_sort_subprop(rec, category_list):
   yield newrec
 
 
-def get_category_data(rec, category_item):
+def get_category_data(rec, category_list):
   """Get category's name for fulltext indexing
   """
-  newrec = rec.copy()
-  newrec.update({
-      "content": category_item.get("display_name"),
-      "subproperty": "{}-category".format(category_item.get("id"))})
-  yield newrec
+
+  for category_item in category_list:
+    newrec = rec.copy()
+    newrec.update({
+        "content": category_item.get("display_name"),
+        "subproperty": "{}-category".format(category_item.get("id"))})
+    yield newrec
 
 
 def get_properties(snapshot):
@@ -262,10 +291,10 @@ def get_record_value(prop, val, rec):
   rec["content"] = val
   # check custom values at first
   if isinstance(val, dict) and val.get("type") == "Person":
-    return itertools.chain(get_person_data(rec, val),
+    return itertools.chain(get_person_data(rec, [val]),
                            get_person_sort_subprop(rec, [val]))
   if isinstance(val, list):
-    if all([p.get("type") == "Person" for p in val]):
+    if all([isinstance(p, dict) and p.get("type") == "Person" for p in val]):
       sort_getter = get_person_sort_subprop
       item_getter = get_person_data
     elif prop == "access_control_list":
@@ -275,10 +304,9 @@ def get_record_value(prop, val, rec):
       sort_getter = get_category_sort_subprop
       item_getter = get_category_data
     else:
-      return []
-    results = [item_getter(rec, i) for i in val]
-    results.append(sort_getter(rec, val))
-    return itertools.chain(*results)
+      sort_getter = get_sort_value
+      item_getter = get_list_value
+    return itertools.chain(item_getter(rec, val), sort_getter(rec, val))
   if isinstance(val, dict) and "title" in val:
     rec["content"] = val["title"]
   if isinstance(val, (bool, int, long)):

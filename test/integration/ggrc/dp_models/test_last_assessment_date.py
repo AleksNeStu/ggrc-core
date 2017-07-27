@@ -86,9 +86,9 @@ class TestLastAssessmentDate(TestCase):
       audit_0 = factories.AuditFactory(title="Audit_0", contact=person)
       audit_1 = factories.AuditFactory(title="Audit_1", contact=person)
       audit_0_snapshots = self._create_snapshots(
-          audit_0, controls[:2] + objectives[:1])
+          audit_0, *controls[:2] + objectives[:1])
       audit_1_snapshots = self._create_snapshots(
-          audit_1, controls[1:4] + objectives)
+          audit_1, *controls[1:4] + objectives)
       assessment_0 = factories.AssessmentFactory(
           title="Assessment_0", audit=audit_0)
       assessment_1 = factories.AssessmentFactory(

@@ -40,6 +40,7 @@
     events: {
       inserted: function (el, ev) {
         this.element.find('.autocomplete--input').ggrc_autocomplete({
+          noToolTips: true,
           appendTo: this.element.find('.autocomplete--wrapper')
         });
       },

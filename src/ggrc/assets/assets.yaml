@@ -170,7 +170,6 @@ dashboard-js-files:
   - components/read-more/read-more.js
   - components/assessment/urls-list.js
   - components/assessment/custom-attributes.js
-  - components/assessment/inline.js
   - components/comment/comment-add-form.js
   - components/comment/comment-input.js
   - components/comment/comment-add-button.js
@@ -192,9 +191,8 @@ dashboard-js-files:
   - components/related-objects/related-issues.js
   - components/object-state-toolbar/object-state-toolbar.js
   - components/object-list/object-list.js
-  - components/ca-object/ca-object.js
+  - components/form/form-required-check.js
   - components/form/form-validation-icon.js
-  - components/ca-object/ca-object-value-mapper.js
   - components/ca-object/ca-object-modal-content.js
   - components/related-objects/related-objects.js
   - components/reusable-objects/reusable-objects-list.js
@@ -364,13 +362,6 @@ dashboard-js-template-files:
   - components/assessment/mapped-objects/mapped-comments.mustache
   - components/assessment/urls-list.mustache
   - components/assessment/custom-attributes.mustache
-  - components/assessment/inline/inline.mustache
-  - components/assessment/inline/text.mustache
-  - components/assessment/inline/input.mustache
-  - components/assessment/inline/dropdown.mustache
-  - components/assessment/inline/date.mustache
-  - components/assessment/inline/person.mustache
-  - components/assessment/inline/checkbox.mustache
   - components/comment/comment-add-form.mustache
   - components/comment/comment-input.mustache
   - components/object-list/object-list.mustache

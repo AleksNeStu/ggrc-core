@@ -81,6 +81,8 @@
         this.attr('content.contextScope.errorsMap.comment', false);
         this.attr('content.contextScope.validation.valid',
           !this.attr('content.contextScope.errorsMap.evidence'));
+        this.attr('content.contextScope.validation.hasMissingInfo',
+          this.attr('content.contextScope.errorsMap.evidence'));
         this.attr('state.open', false);
         this.attr('state.save', false);
 

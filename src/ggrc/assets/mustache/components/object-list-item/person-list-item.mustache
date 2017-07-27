@@ -3,17 +3,17 @@
     Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
 }}
 {{#if personEmail}}
-    <div class="flex-box">
-        <div class="person-holder">
+    <div class="person-list-item">
+        <div class="person-list-item__title person-holder">
             {{#if withDetails}}
                 {{#if showOnlyEmail}}
-                    <a data-test-id="text_manager_7a906d2e" href='mailto:{{personEmail}}'
-                        target="_blank"><span class="person-name person-tooltip-trigger" data-placement="top">
-                        {{personEmail}}
-                    </span></a>
+                    <a data-test-id="text_manager_7a906d2e" href='mailto:{{personEmail}}' target="_blank">
+                        <span class="person-name person-tooltip-trigger" data-placement="top">{{personEmail}}</span>
+                    </a>
                 {{else}}
-                    <a data-test-id="text_manager_7a906d2e" href="/people/{{person.id}}"><span
-                            class="person-name person-tooltip-trigger" data-placement="top">{{personName}}</span></a>
+                    <a data-test-id="text_manager_7a906d2e" href="/people/{{person.id}}">
+                        <span class="person-name person-tooltip-trigger" data-placement="top">{{personName}}</span>
+                    </a>
                 {{/if}}
             {{else}}
                 {{#if showOnlyEmail}}
@@ -25,27 +25,26 @@
             {{#if hasNoAccess}}
                 <span class="user-disabled">(Inactive user)</span>
             {{/if}}
-            <div class="custom-popover-content">
-                <div class="preview-container person-preview">
-                    <div class="profile-info">
-                        <ul>
-                            <li><h4>{{personName}}
-                            {{#if hasNoAccess}}
-                                <span class="user-disabled">(Inactive user)</span>
-                            {{/if}}
-                            </h4></li>
-                            <li><strong>Email:</strong> <a href="mailto:{{personEmail}}" target="_blank">{{personEmail}}</a></li>
-                        {{#if person.company}}
-                            <li><strong>Company:</strong> {{person.company}}</li>{{/if}}
-                        </ul>
-                        <a class="info-action" href="/people/{{person.id}}">View profile <i
-                                class="fa fa-long-arrow-right"></i></a>
-                    </div>
-                </div>
-            </div>
+            {{#if withDetails}}
+              <div class="custom-popover-content">
+                  <div class="preview-container person-preview">
+                      <div class="profile-info">
+                          <ul>
+                              <li><h4>{{personName}}
+                              {{#if hasNoAccess}}
+                                  <span class="user-disabled">(Inactive user)</span>
+                              {{/if}}
+                              </h4></li>
+                              <li><strong>Email:</strong>&nbsp;<a href="mailto:{{personEmail}}" target="_blank">{{personEmail}}</a></li>
+                          {{#if person.company}}
+                              <li><strong>Company:</strong>&nbsp;{{person.company}}</li>{{/if}}
+                          </ul>
+                          <a class="info-action" href="/people/{{person.id}}">View profile&nbsp;<i class="fa fa-long-arrow-right"></i></a>
+                      </div>
+                  </div>
+              </div>
+            {{/if}}
         </div>
-
         <content/>
-
     </div>
 {{/if}}

@@ -92,10 +92,24 @@ class Commentable(object):
   ]
 
   @classmethod
-  def indexed_query(cls):
-    return super(Commentable, cls).indexed_query().options(
-        orm.Load(cls).subqueryload("comments").load_only("id", "description")
+  def _populate_by_comments(cls, query):
+    return query.options(
+        orm.Load(
+            cls
+        ).subqueryload(
+            "comments"
+        ).undefer_group(
+            "Comment_complete"
+        ),
     )
+
+  @classmethod
+  def eager_query(cls):
+    return cls._populate_by_comments(super(Commentable, cls).eager_query())
+
+  @classmethod
+  def indexed_query(cls):
+    return cls._populate_by_comments(super(Commentable, cls).indexed_query())
 
   @declared_attr
   def comments(cls):  # pylint: disable=no-self-argument

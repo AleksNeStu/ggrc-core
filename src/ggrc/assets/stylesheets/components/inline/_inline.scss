@@ -31,7 +31,7 @@ inline-edit-control {
     }
 
     .inline__content {
-      border-radius: 2px;
+      border-radius: 0;
       width: 100%;
       box-sizing: border-box;
       display: block;
@@ -50,12 +50,11 @@ inline-edit-control {
       }
 
       &.inline--active {
-        border-radius: 2px 2px 0 2px;
-        padding: 2px 2px 2px 4px;
-        border: 1px solid $warmGray;
+        padding: 0;
+        border-color: transparent;
         position: absolute;
         z-index: 1;
-        background: $white;
+        background: transparent;
         line-height: 18px;
 
         &:hover {
@@ -92,15 +91,13 @@ inline-edit-control {
       display: block;
       position: absolute;
       text-align: center;
-      border-left: 1px solid $warmGray;
       top: auto;
-      right: -1px;
+      bottom: -31px;
+      right: 0;
       border: 1px solid $warmGray;
-      border-top: none;
       background: $white;
       box-sizing: border-box;
       height: 32px;
-      bottom: -33px;
       line-height: 32px;
       margin: 0;
       padding: 0;

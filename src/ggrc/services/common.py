@@ -1083,6 +1083,16 @@ class Resource(ModelView):
     memcache_client.delete(get_cache_key(None, id=obj.id, type=obj.type))
 
   def json_create(self, obj, src):
+    cad = ggrc.models.CustomAttributeDefinition
+    if isinstance(obj, ggrc.models.mixins.CustomAttributable):
+
+      type_name = obj.__class__._inflector.table_singular
+      obj.custom_attribute_definitions = cad.query.filter(
+          cad.definition_id.is_(None),
+          cad.definition_type == type_name,
+      ).order_by(
+          cad.id
+      ).all()
     ggrc.builder.json.create(obj, src)
 
   def get_context_id_from_json(self, src):

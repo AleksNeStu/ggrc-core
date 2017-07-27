@@ -31,7 +31,7 @@ class CustomAttributeMock(object):
     """Generate a custom attribute definition."""
     definition = factories.CustomAttributeDefinitionFactory(
         attribute_type=self.attribute_type,
-        definition_type=self.attributable.__class__.__name__,
+        definition_type=self.attributable._inflector.table_singular,
         definition_id=None if self.global_ else self.attributable.id,
         mandatory=self.mandatory,
         multi_choice_options=(self.dropdown_parameters[0]
@@ -82,8 +82,8 @@ class TestPreconditionsFailed(TestCase):
     preconditions_failed = self.assessment.preconditions_failed
 
     self.assertEqual(preconditions_failed, False)
-    self.assertFalse(ca_text.value.preconditions_failed)
-    self.assertFalse(ca_cbox.value.preconditions_failed)
+    self.assertFalse(any(ca_text.value.preconditions_failed.values()))
+    self.assertFalse(any(ca_cbox.value.preconditions_failed.values()))
 
   def test_preconditions_failed_with_mandatory_empty_ca(self):
     """Preconditions failed if mandatory CA is empty."""
@@ -92,8 +92,9 @@ class TestPreconditionsFailed(TestCase):
     preconditions_failed = self.assessment.preconditions_failed
 
     self.assertEqual(preconditions_failed, True)
-    self.assertEqual(ca.value.preconditions_failed,
-                     ["value"])
+    self.assertEqual(
+        [k for k, v in ca.value.preconditions_failed.items() if v],
+        ["value"])
 
   def test_preconditions_failed_with_mandatory_filled_ca(self):
     """No preconditions failed if mandatory CA is filled."""
@@ -102,7 +103,7 @@ class TestPreconditionsFailed(TestCase):
     preconditions_failed = self.assessment.preconditions_failed
 
     self.assertEqual(preconditions_failed, False)
-    self.assertFalse(ca.value.preconditions_failed)
+    self.assertFalse(any(ca.value.preconditions_failed.values()))
 
   def test_preconditions_failed_with_mandatory_empty_global_ca(self):
     """Preconditions failed if global mandatory CA is empty."""
@@ -112,7 +113,11 @@ class TestPreconditionsFailed(TestCase):
     preconditions_failed = self.assessment.preconditions_failed
 
     self.assertEqual(preconditions_failed, True)
-    self.assertEqual(ca.value.preconditions_failed, ["value"])
+    self.assertEqual(
+        [k for k, v in ca.value.preconditions_failed.items() if v],
+        ["value"])
+    self.assertTrue(
+        self.assessment.global_attributes[0]['is_preconditions_failed'])
 
   def test_preconditions_failed_with_mandatory_filled_global_ca(self):
     """No preconditions failed if global mandatory CA is filled."""
@@ -122,7 +127,7 @@ class TestPreconditionsFailed(TestCase):
     preconditions_failed = self.assessment.preconditions_failed
 
     self.assertEqual(preconditions_failed, False)
-    self.assertFalse(ca.value.preconditions_failed)
+    self.assertFalse(any(ca.value.preconditions_failed.values()))
 
   def test_preconditions_failed_with_missing_mandatory_comment(self):
     """Preconditions failed if comment required by CA is missing."""
@@ -136,7 +141,9 @@ class TestPreconditionsFailed(TestCase):
     preconditions_failed = self.assessment.preconditions_failed
 
     self.assertEqual(preconditions_failed, True)
-    self.assertEqual(ca.value.preconditions_failed, ["comment"])
+    self.assertEqual(
+        [k for k, v in ca.value.preconditions_failed.items() if v],
+        ["comment"])
 
   def test_preconditions_failed_with_missing_mandatory_evidence(self):
     """Preconditions failed if evidence required by CA is missing."""
@@ -150,7 +157,9 @@ class TestPreconditionsFailed(TestCase):
     preconditions_failed = self.assessment.preconditions_failed
 
     self.assertEqual(preconditions_failed, True)
-    self.assertEqual(ca.value.preconditions_failed, ["evidence"])
+    self.assertEqual(
+        [k for k, v in ca.value.preconditions_failed.items() if v],
+        ["evidence"])
 
   def test_preconditions_failed_with_present_mandatory_comment(self):
     """No preconditions failed if comment required by CA is present."""
@@ -160,6 +169,7 @@ class TestPreconditionsFailed(TestCase):
         dropdown_parameters=("foo,comment_required", "0,1"),
         value=None,  # the value is made with generator to store revision too
     )
+
     _, ca.value = GENERATOR.generate_custom_attribute_value(
         custom_attribute_id=ca.definition.id,
         attributable=self.assessment,
@@ -184,7 +194,9 @@ class TestPreconditionsFailed(TestCase):
     preconditions_failed = self.assessment.preconditions_failed
 
     self.assertEqual(preconditions_failed, False)
-    self.assertFalse(ca.value.preconditions_failed)
+    self.assertFalse(any(ca.value.preconditions_failed.values()))
+    self.assertFalse(
+        self.assessment.local_attributes[0]['is_preconditions_failed'])
 
   def test_preconditions_failed_with_present_mandatory_evidence(self):
     """No preconditions failed if evidence required by CA is present."""
@@ -205,7 +217,7 @@ class TestPreconditionsFailed(TestCase):
     preconditions_failed = self.assessment.preconditions_failed
 
     self.assertEqual(preconditions_failed, False)
-    self.assertFalse(ca.value.preconditions_failed)
+    self.assertFalse(any(ca.value.preconditions_failed.values()))
 
   def test_preconditions_failed_with_mandatory_comment_and_evidence(self):
     """Preconditions failed with mandatory comment and evidence missing."""
@@ -219,7 +231,8 @@ class TestPreconditionsFailed(TestCase):
     preconditions_failed = self.assessment.preconditions_failed
 
     self.assertEqual(preconditions_failed, True)
-    self.assertEqual(set(ca.value.preconditions_failed),
+    self.assertEqual(set([k for k, v in
+                          ca.value.preconditions_failed.items() if v]),
                      {"comment", "evidence"})
 
   def test_preconditions_failed_with_changed_value(self):
@@ -252,17 +265,17 @@ class TestPreconditionsFailed(TestCase):
     )
 
     # new CA value not requiring comment
-    self.assessment.custom_attribute_values = [{
-        "attribute_value": "foo",
-        "custom_attribute_id": ca.definition.id,
+    self.assessment.local_attributes = [{
+        "id": ca.definition.id,
+        "values": [{"value": "foo"}]
     }]
     GENERATOR.api.modify_object(self.assessment, {})
 
     # new CA value requiring comment; the old comment should be considered
     # invalid
-    self.assessment.custom_attribute_values = [{
-        "attribute_value": "comment_required",
-        "custom_attribute_id": ca.definition.id,
+    self.assessment.local_attributes = [{
+        "id": ca.definition.id,
+        "values": [{"value": "comment_required"}]
     }]
     GENERATOR.api.modify_object(self.assessment, {})
 
@@ -296,8 +309,12 @@ class TestPreconditionsFailed(TestCase):
     preconditions_failed = self.assessment.preconditions_failed
 
     self.assertEqual(preconditions_failed, True)
-    self.assertEqual(ca1.value.preconditions_failed, ["evidence"])
-    self.assertEqual(ca2.value.preconditions_failed, ["evidence"])
+    self.assertEqual(
+        [k for k, v in ca1.value.preconditions_failed.items() if v],
+        ["evidence"])
+    self.assertEqual(
+        [k for k, v in ca2.value.preconditions_failed.items() if v],
+        ["evidence"])
 
   def test_preconditions_failed_with_several_mandatory_evidences(self):
     """No preconditions failed if evidences required by CAs are present"""
@@ -334,5 +351,5 @@ class TestPreconditionsFailed(TestCase):
     preconditions_failed = self.assessment.preconditions_failed
 
     self.assertEqual(preconditions_failed, False)
-    self.assertFalse(ca1.value.preconditions_failed)
-    self.assertFalse(ca2.value.preconditions_failed)
+    self.assertFalse(any(ca1.value.preconditions_failed.values()))
+    self.assertFalse(any(ca2.value.preconditions_failed.values()))

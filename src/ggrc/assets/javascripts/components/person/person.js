@@ -19,7 +19,7 @@
       '/components/person/person.mustache'
     ),
 
-    scope: {
+    viewModel: {
       personObj: null,
       emptyText: '@',
       define: {
@@ -27,7 +27,7 @@
           type: 'number'
         },
         editable: {
-          type: 'boolean'
+          type: 'htmlbool'
         }
       }
     },
@@ -43,7 +43,7 @@
      * @param {Object} options - the component instantiation options
      */
     init: function (element, options) {
-      var scope = this.scope;
+      var scope = this.viewModel;
       var personId = scope.attr('personId');
       var person = scope.attr('personObj');
       var personModel;
@@ -116,5 +116,5 @@
     }
   };
 
-  GGRC.Components('personItem', component, true);
+  GGRC.Components('personItem', component);
 })(window.GGRC, window.can);

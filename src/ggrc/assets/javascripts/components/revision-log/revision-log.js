@@ -44,7 +44,7 @@
           Value: can.List
         }
       },
-      instance: null,
+      instance: {},
       isLoading: true,
 
       fetchItems: function () {
@@ -281,7 +281,12 @@
           updatedAt: null,
           changes: []
         };
-        var attrDefs = GGRC.model_attr_defs[rev2.resource_type];
+        var attrDefs = (GGRC.model_attr_defs[rev2.resource_type] || [])
+          // Remove Redundant Evidence and Urls config - should be fixed on he backend
+          .filter(function (item) {
+            return item.display_name !== 'Evidence' &&
+              item.display_name !== 'Url';
+          });
 
         diff.madeBy = rev2.modified_by;
         diff.updatedAt = rev2.updated_at;
@@ -327,47 +332,58 @@
         }.bind(this));
         diff.changes = diff.changes.concat(
           this._objectCADiff(
-            rev1.content.custom_attributes,
-            rev1.content.custom_attribute_definitions,
-            rev2.content.custom_attributes,
-            rev2.content.custom_attribute_definitions));
+            rev1.content.local_attributes || [],
+            rev2.content.local_attributes || []),
+          this._objectCADiff(
+            rev1.content.global_attributes || [],
+            rev2.content.global_attributes || [])
+          );
+
+        console.info('Diff is: ', diff);
         return diff;
       },
-      _objectCADiff: function (origValues, origDefs, newValues, newDefs) {
+      _objectCADiff: function (oldAttrs, newAttrs) {
         var ids;
-        var defs;
-        var showValue = function (value, def) {
-          var obj;
-          switch (def.attribute_type) {
+        function showValue(attr) {
+          var value;
+          var person;
+          attr = attr || {};
+          value = attr.values ? attr.values[0] : {};
+          value = value && value.value ? value.value : false;
+          switch (attr.attribute_type) {
             case 'Checkbox':
-              return value.attribute_value ? '✓' : undefined;
+              return value ? '✓' : undefined;
             case 'Map:Person':
-              obj = CMS.Models.Person
-                .findInCacheById(value.attribute_object_id);
-              if (obj === undefined) {
-                return value.attribute_value;
-              }
-              return obj.name || obj.email || value.attribute_value;
+              person = CMS.Models.Person
+                .findInCacheById(value);
+              return person ? person.attr('name') ||
+                person.attr('email') :
+                value;
             default:
-              return value.attribute_value;
+              return value;
           }
-        };
+        }
+        function findAttr(attrs, id) {
+          return (attrs || []).filter(function (attr) {
+            return attr.id === id;
+          })[0];
+        }
 
-        origValues = _.indexBy(origValues, 'custom_attribute_id');
-        origDefs = _.indexBy(origDefs, 'id');
-        newValues = _.indexBy(newValues, 'custom_attribute_id');
-        newDefs = _.indexBy(newDefs, 'id');
-
-        ids = _.unique(_.keys(origValues).concat(_.keys(newValues)));
-        defs = _.merge(origDefs, newDefs);
-
+        ids = newAttrs
+          .concat(oldAttrs)
+          .map(function (attr) {
+            return attr.id;
+          })
+          .filter(function (attr, index, arr) {
+            return arr.indexOf(attr) === index;
+          });
         return _.chain(ids)
           .map(function (id) {
-            var def = defs[id];
+            var attr = findAttr(newAttrs, id) || findAttr(oldAttrs, id);
             var diff = {
-              fieldName: def.title,
-              origVal: showValue(origValues[id] || {}, def) || '—',
-              newVal: showValue(newValues[id] || {}, def) || '—'
+              fieldName: attr.title,
+              origVal: showValue(findAttr(oldAttrs, id)) || '—',
+              newVal: showValue(findAttr(newAttrs, id)) || '—'
             };
             if (diff.origVal === diff.newVal) {
               return undefined;

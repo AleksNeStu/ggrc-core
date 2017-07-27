@@ -217,15 +217,15 @@ def relate_ca(assessment, template):
   ).order_by(
       all_models.CustomAttributeDefinition.id
   )
-  for definition in ca_definitions:
-    cad = all_models.CustomAttributeDefinition(
-        title=definition.title,
-        definition=assessment,
-        attribute_type=definition.attribute_type,
-        multi_choice_options=definition.multi_choice_options,
-        multi_choice_mandatory=definition.multi_choice_mandatory,
-        mandatory=definition.mandatory,
-        helptext=definition.helptext,
-        placeholder=definition.placeholder,
-    )
-    db.session.add(cad)
+  assessment.custom_attribute_definitions = [
+      all_models.CustomAttributeDefinition(
+          title=definition.title,
+          definition=assessment,
+          attribute_type=definition.attribute_type,
+          multi_choice_options=definition.multi_choice_options,
+          multi_choice_mandatory=definition.multi_choice_mandatory,
+          mandatory=definition.mandatory,
+          helptext=definition.helptext,
+          placeholder=definition.placeholder,
+      ) for definition in ca_definitions
+  ] + assessment.custom_attribute_definitions

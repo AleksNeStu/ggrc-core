@@ -15,7 +15,6 @@ from collections import namedtuple
 from datetime import date
 from functools import partial
 from itertools import chain, izip
-from numbers import Number
 from operator import attrgetter
 
 from enum import Enum
@@ -283,39 +282,24 @@ def _ca_values_changed(obj):
   Returns:
     (bool) True if there is a change to any of the CA values, False otherwise.
   """
-  def stringify_if_number(val):
-    """Convert a maybe-number to a string so that e.g. u"1" will match 1."""
-    if isinstance(val, bool):
-      return val
-    return str(val) if isinstance(val, Number) else val
+  requred_parents = [models.mixins.customattributable.CustomAttributable,
+                     models.mixins.assignable.Assignable]
+  if not all(isinstance(obj, p) for p in requred_parents):
+    return False
 
-  rev = db.session.query(models.Revision) \
-                  .filter_by(resource_id=obj.id, resource_type=obj.type) \
-                  .order_by(models.Revision.id.desc()) \
-                  .first()
-
-  old_cavs = rev.content.get("custom_attribute_values", []) if rev else []
-  new_cavs = getattr(obj, "custom_attribute_values", [])
-
-  # It can happen that CAV objects have no IDs - we ignore those, as those
-  # cannot be considered "changed".
-  old_cavs = (IdValPair(cav["id"], cav["attribute_value"]) for cav in old_cavs
-              if cav["id"] is not None)
-  new_cavs = (IdValPair(cav.id, cav.attribute_value) for cav in new_cavs
-              if cav.id is not None)
-
-  for old, new in _align_by_ids(old_cavs, new_cavs):
-    # one of the items is None only in an (unlikely) scenario when a CA was
-    # added/removed - we do not consider that as a CA value change
-    if old is None or new is None:
-      continue
-
-    old_val = stringify_if_number(old.val)
-    new_val = stringify_if_number(new.val)
-    if old_val != new_val:
-      return True
-
-  return False
+  rev = db.session.query(
+      models.Revision
+  ).filter_by(
+      resource_id=obj.id,
+      resource_type=obj.type
+  ).order_by(
+      models.Revision.id.desc()
+  ).first()
+  content = rev.content if rev else {}
+  return any([
+      obj.global_attributes != (content.get("global_attributes") or []),
+      obj.local_attributes != (content.get("local_attributes") or []),
+  ])
 
 
 def _align_by_ids(items, items2):

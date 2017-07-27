@@ -6,11 +6,12 @@ describe('GGRC.Components.personFormField', function () {
     viewModel = GGRC.Components
       .getViewModel('personFormField');
     spyOn(viewModel, 'dispatch');
-    viewModel.attr('fieldId', 'id');
+    viewModel.attr('fieldId', 1);
   });
 
-  it('does not fire valueChanged event on first value assignation', function () {
-    viewModel.attr('value', '');
+  it('does not fire valueChanged' +
+    ' event on first value assignation', function () {
+    viewModel.attr('value', 1);
     expect(viewModel.dispatch).not.toHaveBeenCalled();
   });
 
@@ -20,25 +21,25 @@ describe('GGRC.Components.personFormField', function () {
   });
 
   it('does not fire valueChanged event if value wasn\'t changed', function () {
-    viewModel.attr('value', {});
-    viewModel.attr('_value', {id: 1});
+    viewModel.attr('value', null);
+    viewModel.attr('_value', 1);
     viewModel.dispatch.calls.reset();
-    viewModel.attr('_value', {id: 1});
+    viewModel.attr('_value', 1);
     expect(viewModel.dispatch).not.toHaveBeenCalled();
   });
 
   it('fires valueChanged event on input value change', function () {
-    viewModel.attr('value', '');
-    viewModel.attr('_value', {id: 1});
+    viewModel.attr('value', null);
+    viewModel.attr('_value', 1);
     expect(viewModel.dispatch).toHaveBeenCalledWith({
       type: 'valueChanged',
-      fieldId: 'id',
+      fieldId: 1,
       value: viewModel.attr('_value')
     });
-    viewModel.attr('_value', {id: 2});
+    viewModel.attr('_value', 2);
     expect(viewModel.dispatch).toHaveBeenCalledWith({
       type: 'valueChanged',
-      fieldId: 'id',
+      fieldId: 1,
       value: viewModel.attr('_value')
     });
   });
@@ -50,7 +51,7 @@ describe('GGRC.Components.personFormField', function () {
     viewModel.unsetPerson(null, null, new Event('mock'));
     expect(viewModel.dispatch).toHaveBeenCalledWith({
       type: 'valueChanged',
-      fieldId: 'id',
+      fieldId: 1,
       value: null
     });
   });

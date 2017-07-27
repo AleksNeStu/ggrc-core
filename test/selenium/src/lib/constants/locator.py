@@ -695,8 +695,9 @@ class WidgetInfoAssessment(WidgetInfoPanel):
   WIDGET = Common.INFO_WIDGET
   TOGGLE = ' [class*="fa-caret"]'
   # Base
-  CAS_HEADERS_AND_VALUES = (By.CSS_SELECTOR,
-                            WIDGET + " auto-save-form .flex-size-1")
+  CAS_HEADERS_AND_VALUES = (
+      By.CSS_SELECTOR,
+      WIDGET + " assessment-custom-attributes inline-edit-control")
   CAS_CHECKBOXES = (By.CSS_SELECTOR, '[class*="wrapper"] [type="checkbox"]')
   MAPPED_OBJECTS_TITLES_AND_DESCRIPTIONS = (
       By.CSS_SELECTOR, WIDGET + " .mapped-objects__item-body")

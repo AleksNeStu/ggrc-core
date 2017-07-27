@@ -6,21 +6,21 @@
 describe('GGRC.Components.personItem', function () {
   'use strict';
 
-  var Component;  // the component under test
+  var Component; // the component under test
 
   beforeAll(function () {
     Component = GGRC.Components.get('personItem');
   });
 
   describe('defining default scope values', function () {
-    var scope;
+    var viewModel; // the viewModel under test
 
     beforeAll(function () {
-      scope = Component.prototype.scope;
+      viewModel = GGRC.Components.getViewModel('personItem');
     });
 
     it('sets the personObj to null', function () {
-      expect(scope().personObj).toBeNull();
+      expect(viewModel.attr('personObj')).toBeNull();
     });
   });
 
