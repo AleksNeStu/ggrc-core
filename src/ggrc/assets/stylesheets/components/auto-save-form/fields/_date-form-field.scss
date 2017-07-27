@@ -38,4 +38,30 @@ date-form-field {
       }
     }
   }
+  &.inline__content-input {
+    .datepicker__calendar {
+      &.datepicker__calendar--top {
+        bottom: auto;
+      }
+    }
+    .input-wrapper {
+      datepicker {
+        .datepicker__input-wrapper {
+          input {
+            border-color: #ccc;
+            box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+            transition: border linear .2s, box-shadow linear .2s;
+            background: #fff;
+
+            &[readonly] {
+
+              &:focus {
+                border-color: #ccc;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
 }

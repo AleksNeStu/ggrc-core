@@ -46,4 +46,18 @@ person-form-field {
       }
     }
   }
+  &.inline__content-input {
+    .input-wrapper {
+      input {
+        background: #fff;
+
+        &:focus {
+          border-color: #ccc;
+          box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+          transition: border linear .2s, box-shadow linear .2s;
+
+        }
+      }
+    }
+  }
 }
