@@ -64,18 +64,20 @@ class CommonInfo(base.Widget):
               if header_text in scope.text), [None, None]))
     return header_and_value
 
-  def get_headers_and_values_dict_from_cas_scopes(self):  # noqa: ignore=C901
+  def get_headers_and_values_dict_from_cas_scopes(self, is_gcas_not_lcas=True):  # noqa: ignore=C901
     """Get text of all CAs headers and values elements scopes and convert it to
-    dictionary.
+    dictionary. If 'is_gcas_not_lcas' then get GCAs, if not 'is_gcas_not_lcas'
+    then get LCAs.
     Example:
     :return {'ca_header1': 'ca_value1', 'ca_header2': 'ca_value2', ...}
     """
     # pylint: disable=invalid-name
     # pylint: disable=too-many-branches
-    if not self.cas_headers_and_values:
+    if not self.cas_headers_and_values and not is_gcas_not_lcas:
       selenium_utils.wait_for_js_to_load(self._driver)
-      self.cas_headers_and_values = self._driver.find_elements(
-          *self._locators.CAS_HEADERS_AND_VALUES)
+      cas_locator = (self._locators.CAS_HEADERS_AND_VALUES if is_gcas_not_lcas
+                     else self._locators.LCAS_HEADERS_AND_VALUES)
+      self.cas_headers_and_values = self._driver.find_elements(*cas_locator)
     dict_cas_scopes = {None: None}
     if len(self.cas_headers_and_values) >= 1:
       list_text_cas_scopes = []
@@ -260,7 +262,10 @@ class Assessments(InfoPanel):
     self.mapped_objects_descriptions_text = [
         mapped_el.find_element(*self._locators.MAPPED_OBJECT_DESCRIPTION).text
         for mapped_el in self.mapped_objects_titles_and_descriptions]
+    # LCAs and GCAs
     self.cas_text = self.get_headers_and_values_dict_from_cas_scopes()
+    self.cas_text.update(self.get_headers_and_values_dict_from_cas_scopes(
+        is_gcas_not_lcas=False))
     # people section
     self.creators_text, self.creators_entered_text = (
         self.get_header_and_value_text_from_custom_scopes(
