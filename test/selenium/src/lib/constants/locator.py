@@ -587,6 +587,7 @@ class CommonWidgetInfo(object):
   _HEADERS_AND_VALUES = (_INFO_WIDGET_XPATH +
                          '//div[starts-with(./@class, "span")]//h6/..')
   HEADERS_AND_VALUES = (By.XPATH, _HEADERS_AND_VALUES)
+  LCAS_HEADERS_AND_VALUES = None  # due to exist only for WidgetInfoAssessment
   CAS_HEADERS_AND_VALUES = (By.XPATH, _INFO_WIDGET_XPATH + "//inline-edit/div")
   CAS_CHECKBOXES = (By.XPATH, _INFO_WIDGET_XPATH + "//inline-edit//input["
                                                    "@type='checkbox']")
@@ -697,8 +698,12 @@ class WidgetInfoAssessment(WidgetInfoPanel):
   WIDGET = Common.INFO_WIDGET
   TOGGLE = ' [class*="fa-caret"]'
   # Base
-  CAS_HEADERS_AND_VALUES = (By.CSS_SELECTOR,
-                            WIDGET + " auto-save-form .flex-size-1")
+  LCAS_HEADERS_AND_VALUES = (
+      By.CSS_SELECTOR,
+      WIDGET + " .field-wrapper.flex-size-1")
+  CAS_HEADERS_AND_VALUES = (
+      By.CSS_SELECTOR,
+      WIDGET + " assessment-custom-attributes inline-edit-control")
   CAS_CHECKBOXES = (By.CSS_SELECTOR, '[class*="wrapper"] [type="checkbox"]')
   MAPPED_OBJECTS_TITLES_AND_DESCRIPTIONS = (
       By.CSS_SELECTOR, WIDGET + " .mapped-objects__item-body")
