@@ -73,11 +73,12 @@ class CommonInfo(base.Widget):
     """
     # pylint: disable=invalid-name
     # pylint: disable=too-many-branches
-    if not self.cas_headers_and_values and not is_gcas_not_lcas:
-      selenium_utils.wait_for_js_to_load(self._driver)
-      cas_locator = (self._locators.CAS_HEADERS_AND_VALUES if is_gcas_not_lcas
-                     else self._locators.LCAS_HEADERS_AND_VALUES)
-      self.cas_headers_and_values = self._driver.find_elements(*cas_locator)
+    # if not self.cas_headers_and_values and not is_gcas_not_lcas:
+    selenium_utils.wait_for_js_to_load(self._driver)
+    cas_locator = (self._locators.CAS_HEADERS_AND_VALUES if is_gcas_not_lcas
+                   else self._locators.LCAS_HEADERS_AND_VALUES)
+    self.cas_headers_and_values = self._driver.find_elements(*cas_locator)
+
     dict_cas_scopes = {None: None}
     if len(self.cas_headers_and_values) >= 1:
       list_text_cas_scopes = []
