@@ -4,15 +4,19 @@
 # pylint: disable=too-few-public-methods
 
 import re
+
+import pytest
+
 from selenium import webdriver
 from selenium.webdriver.common import keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote import webelement
 
 from lib import constants, exception, mixin
-from lib.constants import url
+from lib.constants import url, messages
 from lib.constants.element import MappingStatusAttrs
 from lib.constants.locator import CommonDropdownMenu
+from lib.entities.entity import Entity
 from lib.utils import selenium_utils
 
 
@@ -43,6 +47,33 @@ class CustomDriver(webdriver.Chrome):
 
 class Test(InstanceRepresentation):
   __metaclass__ = mixin.MetaTestDecorator
+
+  @staticmethod
+  def extended_assert(expected_objs, actual_objs, issue_msg,
+                      **exclude_attrs):
+    """Perform extended assert for expected and actual objects according to
+    dictionary of attributes to exclude and providing issue's message.
+    Initially, based on original objects prepare expected and actual
+    collections to performing of extended comparison procedure ('split_objs'),
+    where:
+    'exp_objs_wo_ex_attrs', 'act_objs_wo_ex_attrs' - list objects w/o excluding
+    attributes;
+    'exp_ex_attrs', 'act_ex_attrs' - list dictionaries w/ excluding attributes
+    (items which contain attributes' names and values);
+    'issue_msg' - issue message for pytest xfail procedure;
+    '**exclude_attrs' - excluding attributes.
+    Finally, make pytest assert for objects, then xfail assert for attributes.
+    """
+    split_objs = (Entity.prepare_entities_excluding_attrs(
+        expected_objs=expected_objs, actual_objs=actual_objs, **exclude_attrs))
+    assert (split_objs["exp_objs_wo_ex_attrs"] ==
+            split_objs["act_objs_wo_ex_attrs"]), (
+        messages.AssertionMessages.format_err_msg_equal(
+            split_objs["exp_objs_wo_ex_attrs"],
+            split_objs["act_objs_wo_ex_attrs"]))
+    assert (True if Entity.is_list_of_attrs_equal(
+        split_objs["exp_ex_attrs"], split_objs["act_ex_attrs"])
+        else pytest.xfail(reason=issue_msg))
 
 
 class TestUtil(InstanceRepresentation):
@@ -453,9 +484,6 @@ class MultiInputField(Element):
 class MultiInputItem(Element):
   """Representing single item in multi input field."""
   _locators = constants.locator.MultiInputItem
-
-  def __init__(self, driver, loc_or_el):
-    super(MultiInputItem, self).__init__(driver, loc_or_el)
 
   @property
   def link(self):

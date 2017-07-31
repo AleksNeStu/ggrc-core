@@ -5,13 +5,13 @@
 # pylint: disable=invalid-name
 # pylint: disable=unused-argument
 # pylint: disable=too-many-arguments
+# pylint: disable=too-many-locals
 
 import pytest
 
 from lib import base
 from lib.constants import messages, objects
 from lib.constants.element import Lhn, MappingStatusAttrs
-from lib.entities import entity
 from lib.factory import get_ui_service
 from lib.page import dashboard
 from lib.service import webui_service
@@ -123,7 +123,7 @@ class TestSnapshots(base.Test):
     assert is_control_openable is is_openable
     assert (True if is_control_updateable is is_updateable else
             pytest.xfail(reason="Issue in app GGRC-1773"))
-    entity.Entity.issue_assert(
+    self.extended_assert(
         expected_objs=expected_control, actual_objs=actual_control,
         issue_msg="Issue in app GGRC-2344", custom_attributes={None: None})
 
@@ -195,7 +195,7 @@ class TestSnapshots(base.Test):
         get_list_objs_from_info_panels(src_obj=audit, objs=expected_control))
     assert is_control_openable is is_openable
     assert is_control_updateable is is_updateable
-    entity.Entity.issue_assert(
+    self.extended_assert(
         expected_objs=expected_control, actual_objs=actual_control,
         issue_msg="Issue in app GGRC-2344", custom_attributes={None: None})
 
@@ -534,7 +534,7 @@ class TestSnapshots(base.Test):
     export_service.export_objs_via_tree_view(src_obj=dynamic_object)
     actual_controls = export_service.get_list_objs_from_csv(
         path_to_export_dir=create_tmp_dir)
-    entity.Entity.issue_assert(
+    self.extended_assert(
         expected_objs=[expected_control], actual_objs=actual_controls,
         issue_msg="Issue in app GGRC-2750", owners={None: None})
 

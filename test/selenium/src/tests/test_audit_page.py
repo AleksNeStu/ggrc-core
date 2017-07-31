@@ -10,7 +10,7 @@ import pytest
 
 from lib import base
 from lib.constants import messages
-from lib.entities import entities_factory, entity
+from lib.entities import entities_factory
 from lib.service import webui_service
 
 
@@ -231,6 +231,6 @@ class TestAuditPage(base.Test):
     assert [expected_control] == actual_controls, (
         messages.AssertionMessages.
         format_err_msg_equal([expected_control], actual_controls))
-    entity.Entity.issue_assert(
+    self.extended_assert(
         expected_objs=[expected_program], actual_objs=actual_programs,
         issue_msg="Issue in app GGRC-2381", manager=None)

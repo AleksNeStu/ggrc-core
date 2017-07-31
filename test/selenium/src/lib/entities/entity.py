@@ -7,8 +7,6 @@
 import copy
 from datetime import datetime
 
-import pytest
-
 from lib.utils import string_utils, help_utils
 
 
@@ -361,6 +359,17 @@ class Representation(object):
       is_equal = self_attr_value == other_attr_value
     return is_equal
 
+  @classmethod
+  def is_list_of_attrs_equal(cls, self_list_attrs, other_list_attrs):
+    """Compare list of entities' attributes according to attributes' names and
+    values, if is equal then return 'True' and vise versa.
+    """
+    return (all(all((self_k == other_k and cls.is_attrs_equal(
+        attr_name=self_k, self_attr_value=self_attr[self_k],
+        other_attr_value=other_attr[self_k])) for self_k, other_k
+        in zip(self_attr.keys(), other_attr.keys()))
+        for self_attr, other_attr in zip(self_list_attrs, other_list_attrs)))
+
   @staticmethod
   def compare_cas(self_cas, other_cas):
     """Compare entities' 'custom_attributes' attributes."""
@@ -433,7 +442,8 @@ class Representation(object):
           self_attr_value = getattr(self, attr_name)
           other_attr_value = getattr(other, attr_name)
           is_equal = self.is_attrs_equal(
-              attr_name, self_attr_value, other_attr_value)
+              attr_name=attr_name, self_attr_value=self_attr_value,
+              other_attr_value=other_attr_value)
         if is_equal:
           self_equal[attr_name] = self_attr_value
           other_equal[attr_name] = other_attr_value
@@ -449,37 +459,31 @@ class Representation(object):
             }
 
   @classmethod
-  def issue_assert(cls, expected_objs, actual_objs, issue_msg,
-                   **exclude_attrs):
-    """Assert list of self (expected) and other (actual) objects according to
-    dictionary of attributes to exclude due to exist issue providing
-    description of it.
+  def prepare_entities_excluding_attrs(cls, expected_objs, actual_objs,
+                                       **exclude_attrs):
+    """Prepare objects to compare excluding attributes. Return (expected and
+    actual), list of objects w/o excluding attributes, and list of dictionaries
+    (simple collections) w/ excluding attributes.
     """
-    from lib.constants import messages
+    # pylint: disable=invalid-name
     expected_objs = string_utils.convert_to_list(expected_objs)
     actual_objs = string_utils.convert_to_list(actual_objs)
-    expected_exclude_attrs = [
+    expected_excluded_attrs = [
         {k: getattr(expected_obj, k) for k in exclude_attrs.iterkeys()}
         for expected_obj in expected_objs]
-    actual_exclude_attrs = [
+    actual_excluded_attrs = [
         {k: getattr(actual_obj, k) for k in exclude_attrs.iterkeys()}
         for actual_obj in actual_objs]
-    expected_objs_wo_exclude_attrs = [
+    expected_objs_wo_excluded_attrs = [
         expected_obj.update_attrs(**exclude_attrs)
         for expected_obj in expected_objs]
-    actual_objs_wo_exclude_attrs = [
+    actual_objs_wo_excluded_attrs = [
         actual_obj.update_attrs(**exclude_attrs)
         for actual_obj in actual_objs]
-    assert expected_objs_wo_exclude_attrs == actual_objs_wo_exclude_attrs, (
-        messages.AssertionMessages.format_err_msg_equal(
-            expected_objs_wo_exclude_attrs, actual_objs_wo_exclude_attrs))
-    return (True if all(all((exp_k == act_k and cls.is_attrs_equal(
-        attr_name=exp_k, self_attr_value=expected_exclude_attr[exp_k],
-        other_attr_value=actual_exclude_attr[exp_k])) for exp_k, act_k
-        in zip(expected_exclude_attr.keys(), actual_exclude_attr.keys()))
-        for expected_exclude_attr, actual_exclude_attr
-        in zip(expected_exclude_attrs, actual_exclude_attrs))
-        else pytest.xfail(reason=issue_msg))
+    return {"exp_objs_wo_ex_attrs": expected_objs_wo_excluded_attrs,
+            "act_objs_wo_ex_attrs": actual_objs_wo_excluded_attrs,
+            "exp_ex_attrs": expected_excluded_attrs,
+            "act_ex_attrs": actual_excluded_attrs}
 
 
 class Entity(Representation):
