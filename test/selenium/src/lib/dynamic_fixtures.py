@@ -10,8 +10,8 @@ import copy
 from lib import factory
 from lib.constants import element, objects
 from lib.constants.test import batch
-from lib.entities.entities_factory import (
-    CustomAttributeDefinitionsFactory, EntitiesFactory)
+from lib.entities.entities_factory import CustomAttributeDefinitionsFactory
+from lib.entities.entity import Entity
 from lib.page.widget import info_widget
 from lib.service import rest_service
 from lib.utils import conftest_utils, test_utils, string_utils
@@ -29,7 +29,7 @@ def _get_fixture_from_dict_fixtures(fixture):
         fixture.replace("_snapshot", ""))
     parent_obj = _get_fixture_from_dict_fixtures("new_audit_rest")[0]
     dict_executed_fixtures.update(
-        {fixture: EntitiesFactory.convert_objs_repr_to_snapshot(
+        {fixture: Entity.convert_objs_repr_to_snapshot(
             obj_or_objs=origin_obj, parent_obj=parent_obj)})
   return {k: v for k, v in dict_executed_fixtures.iteritems()
           if k == fixture}[fixture]

@@ -10,6 +10,7 @@ from requests import exceptions
 from lib import environment, factory
 from lib.constants import url, objects, messages
 from lib.entities.entities_factory import ObjectPersonsFactory, EntitiesFactory
+from lib.entities.entity import Entity
 from lib.service.rest import client, query
 from lib.utils import string_utils
 
@@ -132,7 +133,7 @@ class BaseRestService(object):
     list_objs = self.create_list_objs(
         entity_factory=self.entities_factory_cls(), count=count,
         attrs_to_factory=factory_params, **attrs_for_template)
-    return self.entities_factory_cls().filter_objs_attrs(
+    return Entity.filter_objs_attrs(
         obj_or_objs=list_objs,
         attrs_to_include=self.entities_factory_cls().obj_attrs_names)
 
@@ -144,7 +145,7 @@ class BaseRestService(object):
         entity_factory=self.entities_factory_cls(),
         list_objs_to_update=string_utils.convert_to_list(objs),
         attrs_to_factory=factory_params, **attrs_for_template)
-    return self.entities_factory_cls().filter_objs_attrs(
+    return Entity.filter_objs_attrs(
         obj_or_objs=list_objs,
         attrs_to_include=self.entities_factory_cls().obj_attrs_names)
 
@@ -261,9 +262,9 @@ class ObjectsInfoService(HelpRestService):
     """
     snapshoted_obj_item = (
         BaseRestService.get_items_from_resp(self.client.create_object(
-            type=self.endpoint, object_name=EntitiesFactory().obj_snapshot,
+            type=self.endpoint, object_name=EntitiesFactory.obj_snapshot,
             filters=query.Query.expression_get_snapshoted_obj(
                 obj_type=origin_obj.type, obj_id=origin_obj.id,
                 parent_type=paren_obj.type,
                 parent_id=paren_obj.id))).get("values")[0])
-    return EntitiesFactory.convert_dict_to_obj_repr(snapshoted_obj_item)
+    return Entity.convert_dict_to_obj_repr(snapshoted_obj_item)

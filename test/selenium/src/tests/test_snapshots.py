@@ -635,14 +635,12 @@ class TestSnapshots(base.Test):
     """
     mapped_audit = create_audit_with_control_and_update_control[
         'new_audit_rest'][0]
-    source_obj = (dynamic_object[0].repr_ui().update_attrs(
-        custom_attributes={None: None}))
-    obj_service = get_ui_service(source_obj.type)(selenium)
+    obj_service = get_ui_service(dynamic_object.type)(selenium)
     objs_types_from_mapper = (
         obj_service.get_objs_available_to_map_via_mapper(src_obj=mapped_audit))
     objs_types_from_add_widget = (
         obj_service.get_objs_available_to_map_via_add_widget(
-            src_obj=source_obj))
+            src_obj=dynamic_object))
     expected_objs_types = sorted(
         objects.get_normal_form(snap_obj)
         for snap_obj in objects.ALL_SNAPSHOTABLE_OBJS)
