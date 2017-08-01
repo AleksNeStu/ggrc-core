@@ -123,9 +123,8 @@ class TestSnapshots(base.Test):
     assert is_control_openable is is_openable
     assert (True if is_control_updateable is is_updateable else
             pytest.xfail(reason="Issue in app GGRC-1773"))
-    self.extended_assert(
-        expected_objs=expected_control, actual_objs=actual_control,
-        issue_msg="Issue in app GGRC-2344", custom_attributes={None: None})
+    self.extended_assert(expected_control, actual_control,
+                         "Issue in app GGRC-2344", "custom_attributes")
 
   @pytest.mark.smoke_tests
   @pytest.mark.parametrize(
@@ -195,9 +194,8 @@ class TestSnapshots(base.Test):
         get_list_objs_from_info_panels(src_obj=audit, objs=expected_control))
     assert is_control_openable is is_openable
     assert is_control_updateable is is_updateable
-    self.extended_assert(
-        expected_objs=expected_control, actual_objs=actual_control,
-        issue_msg="Issue in app GGRC-2344", custom_attributes={None: None})
+    self.extended_assert(expected_control, actual_control,
+                         "Issue in app GGRC-2344", "custom_attributes")
 
   @pytest.mark.smoke_tests
   def test_mapped_to_program_controls_does_not_added_to_existing_audit(
@@ -534,9 +532,8 @@ class TestSnapshots(base.Test):
     export_service.export_objs_via_tree_view(src_obj=dynamic_object)
     actual_controls = export_service.get_list_objs_from_csv(
         path_to_export_dir=create_tmp_dir)
-    self.extended_assert(
-        expected_objs=[expected_control], actual_objs=actual_controls,
-        issue_msg="Issue in app GGRC-2750", owners={None: None})
+    self.extended_assert([expected_control], actual_controls,
+                         "Issue in app GGRC-2750", "owners")
 
   @pytest.mark.smoke_tests
   @pytest.mark.parametrize(

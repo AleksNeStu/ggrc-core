@@ -49,8 +49,7 @@ class Test(InstanceRepresentation):
   __metaclass__ = mixin.MetaTestDecorator
 
   @staticmethod
-  def extended_assert(expected_objs, actual_objs, issue_msg,
-                      **exclude_attrs):
+  def extended_assert(expected_objs, actual_objs, issue_msg, *exclude_attrs):
     """Perform extended assert for expected and actual objects according to
     dictionary of attributes to exclude and providing issue's message.
     Initially, based on original objects prepare expected and actual
@@ -61,11 +60,11 @@ class Test(InstanceRepresentation):
     'exp_ex_attrs', 'act_ex_attrs' - list dictionaries w/ excluding attributes
     (items which contain attributes' names and values);
     'issue_msg' - issue message for pytest xfail procedure;
-    '**exclude_attrs' - excluding attributes.
+    'exclude_attrs' - list of excluding attributes names.
     Finally, make pytest assert for objects, then xfail assert for attributes.
     """
-    split_objs = (Entity.prepare_entities_excluding_attrs(
-        expected_objs=expected_objs, actual_objs=actual_objs, **exclude_attrs))
+    split_objs = Entity.extract_excluding_attrs(
+        expected_objs, actual_objs, *exclude_attrs)
     assert (split_objs["exp_objs_wo_ex_attrs"] ==
             split_objs["act_objs_wo_ex_attrs"]), (
         messages.AssertionMessages.format_err_msg_equal(

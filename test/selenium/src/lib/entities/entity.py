@@ -459,27 +459,33 @@ class Representation(object):
             }
 
   @classmethod
-  def prepare_entities_excluding_attrs(cls, expected_objs, actual_objs,
-                                       **exclude_attrs):
-    """Prepare objects to compare excluding attributes. Return (expected and
-    actual), list of objects w/o excluding attributes, and list of dictionaries
-    (simple collections) w/ excluding attributes.
+  def extract_excluding_attrs(cls, expected_objs, actual_objs, *exclude_attrs):
+    """Extract dictionary which contains collections to compare according to
+    exclude attributes.
+    Where:
+    'exp_objs_wo_ex_attrs', 'act_objs_wo_ex_attrs' - list objects w/o excluding
+    attributes;
+    'exp_ex_attrs', 'act_ex_attrs' - list dictionaries w/ excluding attributes
+    (items which contain attributes' names and values);
+    ''*exclude_attrs' - tuple of excluding attributes names.
     """
     # pylint: disable=invalid-name
     expected_objs = string_utils.convert_to_list(expected_objs)
     actual_objs = string_utils.convert_to_list(actual_objs)
     expected_excluded_attrs = [
-        {k: getattr(expected_obj, k) for k in exclude_attrs.iterkeys()}
+        dict([(attr, getattr(expected_obj, attr)) for attr in exclude_attrs])
         for expected_obj in expected_objs]
     actual_excluded_attrs = [
-        {k: getattr(actual_obj, k) for k in exclude_attrs.iterkeys()}
+        dict([(attr, getattr(actual_obj, attr)) for attr in exclude_attrs])
         for actual_obj in actual_objs]
     expected_objs_wo_excluded_attrs = [
-        expected_obj.update_attrs(**exclude_attrs)
-        for expected_obj in expected_objs]
+        expected_obj.update_attrs(**dict(
+            [(attr, ({None: None} if attr == "custom_attributes" else None))
+             for attr in exclude_attrs])) for expected_obj in expected_objs]
     actual_objs_wo_excluded_attrs = [
-        actual_obj.update_attrs(**exclude_attrs)
-        for actual_obj in actual_objs]
+        actual_obj.update_attrs(**dict(
+            [(attr, ({None: None} if attr == "custom_attributes" else None))
+             for attr in exclude_attrs])) for actual_obj in actual_objs]
     return {"exp_objs_wo_ex_attrs": expected_objs_wo_excluded_attrs,
             "act_objs_wo_ex_attrs": actual_objs_wo_excluded_attrs,
             "exp_ex_attrs": expected_excluded_attrs,

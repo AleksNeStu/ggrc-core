@@ -231,6 +231,5 @@ class TestAuditPage(base.Test):
     assert [expected_control] == actual_controls, (
         messages.AssertionMessages.
         format_err_msg_equal([expected_control], actual_controls))
-    self.extended_assert(
-        expected_objs=[expected_program], actual_objs=actual_programs,
-        issue_msg="Issue in app GGRC-2381", manager=None)
+    self.extended_assert([expected_program], actual_programs,
+                         "Issue in app GGRC-2381", "manager")
