@@ -190,10 +190,33 @@
           .replace(this.loadUrls());
       },
       initializeFormFields: function () {
+        var cads = this.attr('instance.custom_attribute_definitions');
+        var cavs = this.attr('instance.custom_attribute_values');
+        var locals = [];
+        var globals = [];
+        var cad_map = {};
+        var i;
+        var cav;
+        for (i=0; i<cads.length; i++) {
+          cad_map[cads[i].id] = cads[i]
+        }
+        for (i=0; i<cavs.length; i++) {
+          cav = cavs[i];
+          if (cad_map[cav.custom_attribute_id].definition_id === null) {
+            globals.push(cav);
+          } else {
+            locals.push(cav);
+          }
+        }
+
         this.attr('formFields',
-          GGRC.Utils.CustomAttributes.convertValuesToFormFields(
-            this.attr('instance.custom_attribute_values')
-          )
+          GGRC.Utils.CustomAttributes.convertValuesToFormFields(cavs)
+        );
+        this.attr('formFieldsLocal',
+          GGRC.Utils.CustomAttributes.convertValuesToFormFields(locals)
+        );
+        this.attr('formFieldsGlobal',
+          GGRC.Utils.CustomAttributes.convertValuesToFormFields(globals)
         );
       },
       onFormSave: function () {

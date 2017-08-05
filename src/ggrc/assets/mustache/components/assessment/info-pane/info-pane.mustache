@@ -134,7 +134,7 @@
                           {{/unless}}
                         </div>
                     </div>
-                    <auto-save-form {fields}="formFields"
+                    <auto-save-form {fields}="formFieldsLocal"
                                     {edit-mode}="editMode"
                                     {save-callback}="@saveFormFields"
                                     {trigger-save-cbs}="triggerFormSaveCbs"
@@ -173,6 +173,21 @@
                 <div class="info-pane__section">
                     <assessment-people {instance}="instance">
                     </assessment-people>
+                </div>
+                <div class="info-pane__section">
+                    <auto-save-form {fields}="formFieldsGlobal"
+                                    {edit-mode}="editMode"
+                                    {save-callback}="@saveFormFields"
+                                    {trigger-save-cbs}="triggerFormSaveCbs"
+                                    {^fields-to-save-available}="formState.fieldsToSaveAvailable"
+                                    {^saving}="formState.saving"
+                                    {^all-saved}="formState.allSaved"
+                                    {^form-saved-deferred}="formState.formSavedDeferred"
+                                    {^is-dirty}="formState.isDirty"
+                                    {^has-validation-errors}="instance.hasValidationErrors"
+                                    {evidence-amount}="evidences.length"
+                                    (validation-changed)="showRequiredInfoModal(%event)"
+                    ></auto-save-form>
                 </div>
                 <div class="info-pane__section">
                     <div class="info-pane__section-title">
