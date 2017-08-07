@@ -173,6 +173,9 @@
                 <div class="info-pane__section">
                     <assessment-people {instance}="instance">
                     </assessment-people>
+                    <assessment-custom-attributes (on-update-attributes)="saveGlobalAttributes(%event)"
+                                                  {items}="globalAttributes"
+                    ></assessment-custom-attributes>
                 </div>
                 <div class="info-pane__section">
                     <auto-save-form {fields}="formFieldsGlobal"

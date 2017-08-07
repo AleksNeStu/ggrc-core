@@ -190,34 +190,13 @@
           .replace(this.loadUrls());
       },
       initializeFormFields: function () {
-        var cads = this.attr('instance.custom_attribute_definitions');
         var cavs = this.attr('instance.custom_attribute_values');
-        var locals = [];
-        var globals = [];
-        var cad_map = {};
-        var i;
-        var cav;
-        for (i=0; i<cads.length; i++) {
-          cad_map[cads[i].id] = cads[i]
-        }
-        for (i=0; i<cavs.length; i++) {
-          cav = cavs[i];
-          if (cad_map[cav.custom_attribute_id].definition_id === null) {
-            globals.push(cav);
-          } else {
-            locals.push(cav);
-          }
-        }
-
         this.attr('formFields',
           GGRC.Utils.CustomAttributes.convertValuesToFormFields(cavs)
         );
-        this.attr('formFieldsLocal',
-          GGRC.Utils.CustomAttributes.convertValuesToFormFields(locals)
-        );
-        this.attr('formFieldsGlobal',
-          GGRC.Utils.CustomAttributes.convertValuesToFormFields(globals)
-        );
+      },
+      initGlobalAttributes: function () {
+        return [];
       },
       onFormSave: function () {
         this.attr('triggerFormSaveCbs').fire();
@@ -249,6 +228,35 @@
               });
             });
           });
+      },
+      saveGlobalAttributes: function (event) {
+        var self = this;
+        var globalAttributes = event.globalAttributes;
+        return self.attr('instance')
+          .refresh()
+          .then(function () {
+            var caValues = self.attr('instance.global_attributes');
+
+            can.Map.keys(globalAttributes).forEach(function (fieldId) {
+              var caValue =
+                caValues.filter(function (item) {
+                  return item.id === Number(fieldId);
+                })[0];
+              if (!caValue) {
+                console.error('Corrupted Date: ', caValues);
+                return;
+              }
+              if (caValue.attr('values').length) {
+                caValue.attr('values')[0]
+                  .attr('value', globalAttributes[fieldId]);
+              } else {
+                caValue.attr('values')
+                  .push({value: globalAttributes[fieldId]});
+              }
+            });
+
+          return this.attr('instance').save();
+        });
       },
       saveFormFields: function (formFields) {
         var caValues = can.makeArray(
@@ -309,6 +317,7 @@
     },
     init: function () {
       this.viewModel.initializeFormFields();
+      this.viewModel.initGlobalAttributes();
       this.viewModel.updateRelatedItems();
     },
     events: {

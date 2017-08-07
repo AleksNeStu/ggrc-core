@@ -2,54 +2,18 @@
     Copyright (C) 2017 Google Inc.
     Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
 }}
-{{#each visibleItems}}
-    <ca-object class="flex-box flex-row" {value-id}="id" {def}="def" {(value)}="attribute_value"
-               {(modal})="modal" {type}="attributeType" {validation}="validation">
-        <i class="fa validation-icon {{iconCls}}"></i>
-        <div class="flex-box flex-col custom-attribute__body">
-            <div class="inline-edit__title">
-              <span class="inline-edit__title-body {{titleCls}}">
-                {{def.title}}
-                {{#if def.helptext}}
-                  <i class="fa fa-question-circle" rel="tooltip" title="{{def.helptext}}"></i>
-                {{/if}}
-              </span>
-              {{^if isLocked}}
-                {{#if value}}
-                  {{#is_allowed 'update' instance context='for'}}
-                    <span class="inline-edit__extra-controls">
-                      <i ($click)="addComment" class="fa fa-edit" rel="tooltip" title="Add comment"></i>
-                    </span>
-                  {{/is_allowed}}
-                {{/if}}
-              {{/if}}
-            </div>
-            <ca-object-value-mapper {(value)}="attribute_value" {type}="type" {(value-obj)}="attribute_object" {def}="def">
-                <assessment-inline-edit
-                        {(value)}="input.value"
-                        {options}="input.options"
-                        {type}="input.type"
-                        {title-text}="input.title"
-                        {placeholder}="input.placeholder"
-                        {(is-saving)}="isSaving"
-                  {{#if isLocked}}
-                        readonly="isLocked"
-                  {{else}}
-                    {{^is_allowed 'update' instance context='for'}}
-                        readonly="true"
-                    {{/is_allowed}}
-                  {{/if}}
-                        can-before-edit="instance.confirmBeginEdit"
-                ></assessment-inline-edit>
-            </ca-object-value-mapper>
-        </div>
-    </ca-object>
+{{#each items}}
+    <inline-edit-control class="info-pane__section"
+            (inline-save)="updateGlobalAttribute(%event, %context)"
+            {dropdown-options}="options"
+            {dropdown-class}="dropdownClass"
+            {dropdown-no-value}="dropdownNoValue"
+            {edit-mode}="editMode"
+            {is-allow-edit}="isAllowEdit"
+            {is-loading}="isLoading"
+            {value}="value"
+            {type}="type"
+            with-read-more="true">
+        <div class="info-pane__section-title">{{title}}</div>
+    </inline-edit-control>
 {{/each}}
-{{#if isOverLimit}}
-  <div class="flex-box flex-row limit-button-container">
-    <button class="btn btn-link" ($click)="toggleShowAll()">{{showAllButtonText}}</button>
-  </div>
-{{/if}}
-<simple-modal {(state)}="modal.state" {modal-title}="modal.modalTitle" {instance}="instance">
-    <ca-object-modal-content content="modal.content" state="state" {ca-ids}="modal.caIds"></ca-object-modal-content>
-</simple-modal>
