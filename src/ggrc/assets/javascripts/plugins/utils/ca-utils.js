@@ -80,7 +80,7 @@
 
       if (type === 'person') {
         if (valueObj) {
-          return valueObj;
+          return valueObj.id;
         }
         return null;
       }
@@ -170,9 +170,8 @@
       }
 
       if (type === 'person') {
-        if (value && value instanceof can.Map) {
-          value = value.serialize();
-          return 'Person:' + value.id;
+        if (value) {
+          return 'Person:' + value;
         }
         return 'Person:None';
       }
@@ -233,14 +232,52 @@
       };
     }
 
+    function getAttributes(values, onlyLocal) {
+      return (values || []).filter(function (value) {
+        return !onlyLocal ?
+        value.def.definition_id === null :
+        value.def.definition_id !== null;
+      });
+    }
+    function updateCustomAttributeValue(ca, value) {
+      var id;
+      if (ca.attr('attributeType') === 'person') {
+        id = value || null;
+        ca.attr('attribute_value', 'Person');
+        ca.attr('attribute_object', {id: id, type: 'Person'});
+      } else {
+        ca.attr('attribute_value',
+          GGRC.Utils.CustomAttributes.convertToCaValue(
+            ca.attr('attributeType'), value)
+        );
+      }
+    }
+
+    function applyChangesToCustomAttributeValue(values, changes) {
+      var caValues = can.makeArray(values);
+      can.Map.keys(changes).forEach(function (fieldId) {
+        var caValue =
+          caValues
+            .find(function (item) {
+              return item.def.id === Number(fieldId);
+            });
+        if (!caValue) {
+          console.error('Corrupted Date: ', caValues);
+          return;
+        }
+        updateCustomAttributeValue(caValue, changes[fieldId]);
+      });
+    }
     return {
       convertFromCaValue: convertFromCaValue,
       convertToCaValue: convertToCaValue,
       convertValuesToFormFields: convertValuesToFormFields,
       prepareCustomAttributes: prepareCustomAttributes,
       isEmptyCustomAttribute: isEmptyCustomAttribute,
+      getAttributes: getAttributes,
       getCustomAttributeType: getCustomAttributeType,
-      convertToFormViewField: convertToFormViewField
+      convertToFormViewField: convertToFormViewField,
+      applyChangesToCustomAttributeValue: applyChangesToCustomAttributeValue
     };
   })();
 })(window.GGRC, window.can, window._);

@@ -134,11 +134,7 @@
                           {{/unless}}
                         </div>
                     </div>
-                    <form-required-check {fields}="formFields"
-                            {evidence-amount}="evidences.length"
-                            {^has-validation-errors}="instance.hasValidationErrors"
-                            (validation-changed)="showRequiredInfoModal(%event)">
-                      <auto-save-form {fields}="formFields"
+                    <auto-save-form {fields}="formFields"
                                     {edit-mode}="editMode"
                                     {save-callback}="@saveFormFields"
                                     {trigger-save-cbs}="triggerFormSaveCbs"
@@ -147,10 +143,12 @@
                                     {^all-saved}="formState.allSaved"
                                     {^form-saved-deferred}="formState.formSavedDeferred"
                                     {^is-dirty}="formState.isDirty"
-                                    (value-changed)="performValidation(%event)"
-                      ></auto-save-form>
-                      <!-- Modal Window to fix validation issues of CA fields -->
-                      <simple-modal {(state)}="modal.state"
+                                    {^has-validation-errors}="instance.hasValidationErrors"
+                                    {evidence-amount}="evidences.length"
+                                    (validation-changed)="showRequiredInfoModal(%event)"
+                    ></auto-save-form>
+                    <!-- Modal Window to fix validation issues of CA fields -->
+                    <simple-modal {(state)}="modal.state"
                                   {modal-title}="modal.modalTitle"
                                   {instance}="instance"
                                   {is-disabled}="isUpdatingEvidences">
@@ -163,8 +161,7 @@
                                                  (before-comment-created)="addItems(%event, 'comments')"
                                                  (after-comment-created)="updateItems('comments')"
                         ></ca-object-modal-content>
-                      </simple-modal>
-                    </form-required-check>
+                    </simple-modal>
                     <!-- End of Modal Window -->
                     <assessment-controls-toolbar class="assessment-controls-toolbar"
                                                  {instance}="instance"

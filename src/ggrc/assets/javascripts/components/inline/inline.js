@@ -3,7 +3,7 @@
     Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
 */
 
-(function (can, $) {
+(function (can, GGRC) {
   'use strict';
 
   GGRC.Components('inlineEditControl', {
@@ -42,11 +42,11 @@
         this.attr('editMode', true);
       },
       setPerson: function (scope, el, ev) {
-        this.attr('context.value', ev.selectedItem.serialize());
+        this.attr('context.value', ev.selectedItem.serialize().id);
       },
       unsetPerson: function (scope, el, ev) {
         ev.preventDefault();
-        this.attr('context.value', undefined);
+        this.attr('context.value', null);
       },
       save: function () {
         var oldValue = this.attr('value');
@@ -94,7 +94,7 @@
           this.viewModel.updateContext();
         }
       },
-      '{window} click': function (el, ev) {
+      '{window} mousedown': function (el, ev) {
         var viewModel = this.viewModel;
         var isInside;
         var editMode;
@@ -115,4 +115,4 @@
       }
     }
   });
-})(window.can, window.can.$);
+})(window.can, window.GGRC);
