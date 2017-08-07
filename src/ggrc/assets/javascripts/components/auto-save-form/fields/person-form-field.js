@@ -33,7 +33,7 @@
       },
       withDetails: false,
       fieldId: null,
-      setPerson: function (scope, el, ev) {
+      setPerson: function (ev) {
         this.attr('_value', ev.selectedItem.serialize());
       },
       unsetPerson: function (scope, el, ev) {
