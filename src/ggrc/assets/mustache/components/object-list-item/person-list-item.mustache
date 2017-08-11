@@ -6,21 +6,11 @@
     <div class="person-list-item">
         <div class="person-list-item__title person-holder">
             {{#if withDetails}}
-                {{#if showOnlyEmail}}
-                    <a data-test-id="text_manager_7a906d2e" href='mailto:{{personEmail}}' target="_blank">
-                        <span class="person-name person-tooltip-trigger" data-placement="top">{{personEmail}}</span>
-                    </a>
-                {{else}}
-                    <a data-test-id="text_manager_7a906d2e" href="/people/{{person.id}}">
-                        <span class="person-name person-tooltip-trigger" data-placement="top">{{personName}}</span>
-                    </a>
-                {{/if}}
+                <a data-test-id="text_manager_7a906d2e" href='mailto:{{personEmail}}' target="_blank">
+                    <span class="person-name person-tooltip-trigger" data-placement="top">{{personEmail}}</span>
+                </a>
             {{else}}
-                {{#if showOnlyEmail}}
-                    <span class="person-name person-without-details">{{personEmail}}</span>
-                {{else}}
-                    <span class="person-name person-without-details">{{personName}}</span>
-                {{/if}}
+                <span class="person-name person-without-details">{{personEmail}}</span>
             {{/if}}
             {{#if hasNoAccess}}
                 <span class="user-disabled">(Inactive user)</span>

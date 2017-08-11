@@ -62,11 +62,6 @@
             return this.attr('person.name') || this.attr('personEmail');
           }
         },
-        showOnlyEmail: {
-          get: function () {
-            return this.attr('person.show_email') || false;
-          }
-        },
         hasNoAccess: {
           get: function () {
             return this.attr('person.system_wide_role') === 'No Access';
