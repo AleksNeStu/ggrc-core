@@ -40,7 +40,6 @@
       if (this._super) {
         this._super.apply(this, arguments);
       }
-      this.validatePresenceOf('audit');
       this.validateNonBlank('title');
     }
   }, {

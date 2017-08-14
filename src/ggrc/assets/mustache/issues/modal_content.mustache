@@ -19,30 +19,6 @@
       <input data-id="title_txtbx" tabindex="1" class="input-block-level" placeholder="Enter Title" name="title" type="text" value="{{title}}" autofocus>
       {{#instance.computed_errors.title}}<label class="help-inline warning">{{this}}</label>{{/instance.computed_errors.title}}
     </div>
-    {{#if new_object_form}}
-      <div class="span3">
-        <label>
-          Audit
-          <span class="required">*</span>
-          <i class="fa fa-question-circle" rel="tooltip" title="Audit for this Issue"></i>
-        </label>
-        {{#using audit=instance.audit }}
-          <input tabindex="2" class="input-block-level" name="audit.title" data-permission-type="update" data-lookup="Audit" data-template="/directives/autocomplete_result.mustache" placeholder="Choose Audit" type="text" null-if-empty="false" value="{{firstnonempty audit.title ''}}" disabled="disabled" />
-        {{/using}}
-      </div>
-      {{#assessment}}
-      <div class="span3">
-          <label>
-            Assessment
-            <span class="required">*</span>
-            <i class="fa fa-question-circle" rel="tooltip" title="Assessment for this Issue"></i>
-          </label>
-          <input tabindex="999" readonly="readonly" class="input-block-level" data-lookup="Assessment" type="text" value="{{firstexist title ''}}" />
-      </div>
-      {{/assessment}}
-    {{else}}
-      <div class="span6"></div>
-    {{/if}}
   </div>
 
   <div class="row-fluid">
@@ -132,6 +108,30 @@
     </div>
   </div>
 </form>
+<div class="ggrc-form">
+  <div class="ggrc-form-item">
+    {{#if instance.audit.title}}
+      <div class="ggrc-form-item__multiple-row">
+        <label class="ggrc-form-item__label">
+          Audit
+        </label>
+        <div>
+          {{instance.audit.title}}
+        </div>
+      </div>
+    {{/if}}
+    {{#if assessment.title}}
+      <div class="ggrc-form-item__multiple-row">
+        <label class="ggrc-form-item__label">
+          Assessment
+        </label>
+        <div>
+          {{assessment.title}}
+        </div>
+      </div>
+    {{/if}}
+  </div>
+</div>
 {{/instance}}
 </div>
 {{!/div}}
