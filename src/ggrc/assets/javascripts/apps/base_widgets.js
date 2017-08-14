@@ -54,14 +54,14 @@
   var snapshotWidgetsConfig = GGRC.config.snapshotable_objects || [];
   // Items allowed for relationship mapping
   var excludeMappingConfig = [
-    'AssessmentTemplate',
-    'Issue'
+    'AssessmentTemplate'
   ];
   // Extra Tree View Widgets require to be rendered on Audit View
   var auditInclusion = [
     'Assessment',
     'Person',
-    'Program'
+    'Program',
+    'Issue'
   ];
   var baseWidgetsByType;
 
@@ -75,11 +75,11 @@
     Contract: _.difference(filteredTypes,
       ['Contract', 'Policy', 'Regulation', 'Standard']),
     Control: filteredTypes,
-    Assessment: snapshotWidgetsConfig.concat('Audit').sort(),
+    Assessment: snapshotWidgetsConfig.concat(['Audit', 'Issue']).sort(),
     AssessmentTemplate: ['Audit'],
     DataAsset: filteredTypes,
     Facility: filteredTypes,
-    Issue: snapshotWidgetsConfig.concat('Audit').sort(),
+    Issue: _(filteredTypes).difference(['Project']).sort().value(),
     Market: filteredTypes,
     Objective: filteredTypes,
     OrgGroup: filteredTypes,
@@ -89,7 +89,7 @@
     Process: filteredTypes,
     Product: filteredTypes,
     Program: _.difference(filteredTypes, ['Program']),
-    Project: filteredTypes,
+    Project: _.difference(filteredTypes, ['Issue']),
     Regulation: _.difference(filteredTypes,
       ['Contract', 'Policy', 'Regulation', 'Standard']),
     Section: filteredTypes,

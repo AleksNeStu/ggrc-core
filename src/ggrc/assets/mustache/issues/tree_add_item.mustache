@@ -3,29 +3,21 @@
     Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
 }}
 
-{{#is_allowed 'create' model.shortName context=parent_instance.context}}
-  <a href="javascript://"
-     class="action-button create-button"
-     rel="tooltip"
-     data-placement="left"
-     data-toggle="modal-ajax-form"
-     data-original-title="Create {{model.shortName}}"
-     data-modal-reset="reset"
-     data-modal-class="modal-wide"
-     data-object-singular="{{model.model_singular}}"
-     data-object-plural="{{model.table_plural}}"
-     data-object-params='{
-      "audit": {
-        "id": {{parent_instance.id}},
-        "type": "{{json_escape parent_instance.type}}"
-      },
-      "context": {
-        "id": {{parent_instance.context.id}},
-        "type": "{{json_escape parent_instance.context.type}}"
-      },
-      "audit_title": "{{json_escape parent_instance.title}}"
-    }'
-  >
-    Create
+{{#is_allowed_to_map parent_instance model.shortName}}
+{{#if allow_mapping_or_creating}}
+{{^if parent_instance.archived}}
+    <a
+    class="section-add btn btn-mini action-button map-button"
+    href="javascript://"
+    rel="tooltip"
+    data-placement="left"
+    data-toggle="unified-mapper"
+    data-join-option-type="{{model.shortName}}"
+    data-join-object-id="{{parent_instance.id}}"
+    data-join-object-type="{{parent_instance.class.shortName}}"
+    data-original-title="Map {{firstnonempty title_singular model.title_singular 'Object'}} to this {{firstnonempty parent_instance.class.title_singular 'Object'}}">
+      Map
   </a>
-{{/is_allowed}}
+{{/if}}
+{{/if}}
+{{/is_allowed_to_map}}

@@ -29,7 +29,7 @@ describe('GGRC.VM.ObjectOperationsBaseVM', function () {
 
       result = baseVM.availableTypes();
       expect(GGRC.Mappings.getMappingTypes).toHaveBeenCalledWith('testObject',
-        [], ['test1', 'test2']);
+        ['Issue'], ['test1', 'test2']);
       expect(result).toEqual('types');
     });
   });

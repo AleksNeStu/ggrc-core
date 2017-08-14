@@ -345,16 +345,20 @@
       var hasWidget;
       var canonicalMapping;
 
-      // NOTE: the names in every type pair must be sorted alphabetically!
       var FORBIDDEN = Object.freeze({
-        'audit issue': true,
-        'audit program': true,
-        'audit request': true,
-        'program riskassessment': true,
-        'assessmenttemplate cacheable': true,
-        'cacheable person': true,
-        'person risk': true,
-        'person threat': true
+        oneWay: Object.freeze({
+          'issue audit': true // mapping audit to issue is not allowed
+        }),
+        // NOTE: the names in every type pair must be sorted alphabetically!
+        twoWay: Object.freeze({
+          'audit program': true,
+          'audit request': true,
+          'program riskassessment': true,
+          'assessmenttemplate cacheable': true,
+          'cacheable person': true,
+          'person risk': true,
+          'person threat': true
+        })
       });
 
       if (target instanceof can.Model) {
@@ -363,13 +367,22 @@
         targetType = target.type || target;
       }
       sourceType = source.constructor.shortName || source;
+      types = [sourceType.toLowerCase(), targetType.toLowerCase()];
 
+      // One-way check
+      // special case check:
+      // - mapping an Audit to a Issue is not allowed
+      // (but vice versa is allowed)
+      if (FORBIDDEN.oneWay[types.join(' ')]) {
+        return false;
+      }
+
+      // Two-way check:
       // special case check:
       // - mapping an Audit to a Program is not allowed
       // - mapping an Audit to a Request is not allowed
       // (and vice versa)
-      types = [sourceType.toLowerCase(), targetType.toLowerCase()].sort();
-      if (FORBIDDEN[types.join(' ')]) {
+      if (FORBIDDEN.twoWay[types.sort().join(' ')]) {
         return false;
       }
 

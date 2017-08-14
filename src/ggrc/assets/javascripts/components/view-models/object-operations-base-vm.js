@@ -26,7 +26,7 @@
     availableTypes: function () {
       var types = GGRC.Mappings.getMappingTypes(
         this.attr('object'),
-        [],
+        ['Issue'],
         GGRC.Utils.Snapshots.inScopeModels);
       return types;
     },

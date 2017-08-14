@@ -87,6 +87,7 @@
           'Control',
           'DataAsset',
           'Facility',
+          'Issue',
           'Market',
           'Objective',
           'OrgGroup',
