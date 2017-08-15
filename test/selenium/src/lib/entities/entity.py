@@ -131,7 +131,7 @@ class Representation(object):
               "verifier", "created_by", "modified_by", "Assessor", "Creator",
               "Verifier"
           ]:
-            converted_attr_value = unicode(attr_value.get("name"))
+            converted_attr_value = unicode(attr_value.get("email"))
           if attr_name in ["custom_attribute_definitions", "program", "audit",
                            "objects_under_assessment"]:
             converted_attr_value = (

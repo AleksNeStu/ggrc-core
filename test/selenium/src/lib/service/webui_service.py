@@ -6,7 +6,7 @@ import os
 import re
 
 from lib import factory
-from lib.constants import objects, url, path, messages, roles, element, regex
+from lib.constants import objects, url, path, messages, element, regex
 from lib.entities.entity import Entity
 from lib.page import dashboard
 from lib.page.widget.info_widget import SnapshotableInfoPanel
@@ -68,8 +68,6 @@ class BaseWebUiService(object):
                  for k, v in comment.iteritems()} for comment in val]
           # convert multiple values to list of strings and split if need it
           if key in ["owners", "assessor", "creator", "verifier"]:
-            # convert CSV like u'user@example.com' to u'Example User'
-            val = val if val != url.DEFAULT_USER_EMAIL else roles.DEFAULT_USER
             # split multiple values if need 'Ex1, Ex2 F' to ['Ex1', 'Ex2 F']
             scope[key] = val.split(", ")
           # convert 'slug' from CSV for snapshoted objects u'*23eb72ac-4d9d'
