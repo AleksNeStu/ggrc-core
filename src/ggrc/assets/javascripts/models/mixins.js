@@ -206,10 +206,20 @@
     }
   });
 
+  function getAllowedMappings(allowed) {
+    return _.union(
+      GGRC.config.snapshotable_objects,
+      ['Issue'],
+      allowed || []
+    );
+  }
+
   can.Model.Mixin('mapping-limit', {
-    getAllowedMappings: function () {
-      return GGRC.config.snapshotable_objects || [];
-    }
+    getAllowedMappings: getAllowedMappings
+  }, {});
+
+  can.Model.Mixin('mapping-limit-issue', {
+    getAllowedMappings: _.partial(getAllowedMappings, ['Program', 'Project'])
   }, {});
   /**
    * A mixin to use for objects that can have their status automatically

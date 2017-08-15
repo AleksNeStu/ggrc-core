@@ -6,6 +6,7 @@
   can.Model.Cacheable('CMS.Models.Issue', {
     root_object: 'issue',
     root_collection: 'issues',
+    category: 'governance',
     findOne: 'GET /api/issues/{id}',
     findAll: 'GET /api/issues',
     update: 'PUT /api/issues/{id}',
@@ -14,7 +15,7 @@
     mixins: [
       'ca_update',
       'timeboxed',
-      'mapping-limit',
+      'mapping-limit-issue',
       'inScopeObjects'
     ],
     is_custom_attributable: true,
