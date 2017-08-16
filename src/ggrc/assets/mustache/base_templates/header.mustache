@@ -68,13 +68,18 @@
             </li>
 
             {{#is_info_pin}}
-              {{#is_allowed_to_map page_instance instance}}
-                {{^options.is_in_selector}}
-                  {{#isNotInScopeModel instance.type}}
-                    {{> '/static/mustache/base_objects/unmap.mustache'}}
-                  {{/isNotInScopeModel}}
-                {{/options.is_in_selector}}
-              {{/is_allowed_to_map}}
+              <issue-unmap-dropdown-item
+                {page_instance}="page_instance"
+                {instance}="instance"
+                {options}="options">
+                  {{#is_allowed_to_map page_instance instance}}
+                    {{^options.is_in_selector}}
+                      {{#isNotInScopeModel instance.type}}
+                        {{> '/static/mustache/base_objects/unmap.mustache'}}
+                      {{/isNotInScopeModel}}
+                    {{/options.is_in_selector}}
+                  {{/is_allowed_to_map}}
+              </issue-unmap-dropdown-item>
               {{#if instance.viewLink}}
                 {{#is_allowed "view_object_page" instance}}
                   <li>

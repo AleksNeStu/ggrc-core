@@ -15,6 +15,7 @@
       objectProp: '@',
       destination: {},
       source: {},
+      preventClick: false,
       unmapInstance: function () {
         var self = this;
         this.dispatch({type: 'beforeUnmap', item: this.attr('source')});
@@ -58,6 +59,10 @@
     },
     events: {
       click: function () {
+        if (this.viewModel.attr('preventClick')) {
+          return;
+        }
+
         this.viewModel.unmapInstance();
       }
     }

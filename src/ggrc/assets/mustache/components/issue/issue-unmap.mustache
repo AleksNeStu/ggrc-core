@@ -1,0 +1,16 @@
+{{!
+  Copyright (C) 2017 Google Inc.
+  Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
+}}
+
+<unmap-button
+  prevent-click="true"
+  {source}="issueInstance"
+  {destination}="target">
+    <issue-unmap-item
+      (unmap-issue)="unmapInstance()"
+      {issue-instance}="issueInstance"
+      {target}="target">
+        <content></content>
+    </issue-unmap-item>
+</unmap-button>

@@ -1,0 +1,14 @@
+{{!
+  Copyright (C) 2017 Google Inc.
+  Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
+}}
+
+{{#if canUnmap}}
+  <content></content>
+{{/if}}
+<issue-unmap-related-assessments
+  (modal-clossed)="modalClossed()"
+  {show-related-assessments}="showRelatedAssessments"
+  {issue-instance}="issueInstance"
+  {target}="target">
+</issue-unmap-related-assessments>

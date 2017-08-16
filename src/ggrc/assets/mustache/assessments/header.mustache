@@ -72,6 +72,10 @@ Copyright (C) 2017 Google Inc.
                     </li>
 
                     {{#is_info_pin}}
+                    <issue-unmap-dropdown-item
+                        {page_instance}="page_instance"
+                        {instance}="instance">
+                    </issue-unmap-dropdown-item>
                     {{#if instance.viewLink}}
                         {{#is_allowed "view_object_page" instance}}
                             <li>

@@ -1,0 +1,59 @@
+{{!
+  Copyright (C) 2017 Google Inc.
+  Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
+}}
+
+{{#if canUnmap}}
+  <content></content>
+{{/if}}
+
+<simple-modal modal-title="modalTitle" state="modalState" replace-content="true">
+  <div class="simple-modal__header flex-box flex-row">
+        <div class="simple-modal__header-text flex-size-1">
+            <div class="simple-modal__title">
+                <div class="simple-modal__title__name">
+                  {{modalTitle}}
+                </div>
+            </div>
+        </div>
+        <button class="btn btn-small btn-icon" can-click="hide">
+            <i class="fa fa-times black"></i>
+        </button>
+    </div>
+    <div style="max-height: 700px;" class="simple-modal__body {{#if isLoading}}loading{{/if}}">
+        <div>
+            <label>
+                Related Assessments
+            </label>
+            <div class="modal-mapped-objects">
+                <object-list {items}="relatedAssessments">
+                    <div class="modal-mapped-objects-item">
+                        <div class="modal-mapped-objects-item__details">
+                            <business-object-list-item
+                                ($click)="openObject({.})"
+                                {instance}="{.}">
+                            </business-object-list-item>
+                        </div>
+                    </div>
+                </object-list>
+            </div>
+        </div>
+        <div>
+            <label>
+                Related snapshots
+            </label>
+            <div class="modal-mapped-objects">
+                <object-list {items}="relatedSnapshots">
+                    <div class="modal-mapped-objects-item">
+                        <div class="modal-mapped-objects-item__details">
+                            <business-object-list-item
+                                ($click)="openObject({.})"
+                                {instance}="{.}">
+                            </business-object-list-item>
+                        </div>
+                    </div>
+                </object-list>
+            </div>
+        </div>
+    </div>
+</simple-modal>

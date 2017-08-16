@@ -347,7 +347,9 @@
 
       var FORBIDDEN = Object.freeze({
         oneWay: Object.freeze({
-          'issue audit': true // mapping audit to issue is not allowed
+          // mapping audit to issue is not allowed,
+          // but unmap can be possible
+          'issue audit': !(options && options.isIssueUnmap)
         }),
         // NOTE: the names in every type pair must be sorted alphabetically!
         twoWay: Object.freeze({

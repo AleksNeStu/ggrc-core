@@ -1,0 +1,32 @@
+{{!
+  Copyright (C) 2017 Google Inc.
+  Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
+}}
+
+{{#if issueUnmap}}
+  {{#is page_instance.type "Issue"}}
+    <issue-unmap
+      {issue-instance}="page_instance"
+      {target}="instance">
+        <li class="border">
+          <span class="unmap-link">
+            <i class="fa fa-ban"></i>Unmap from Issue
+          </span>
+        </li>
+    </issue-unmap>
+  {{else}}
+    {{#if visibleIssueUnmap}}
+      <issue-unmap
+        {issue-instance}="instance"
+        {target}="page_instance">
+          <li class="border">
+            <span class="unmap-link">
+              <i class="fa fa-ban"></i>Unmap an Issue
+            </span>
+          </li>
+      </issue-unmap>
+    {{/if}}
+  {{/is}}
+{{else}}
+  <content></content>
+{{/if}}
