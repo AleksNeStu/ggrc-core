@@ -202,7 +202,7 @@ class AssessmentsService(BaseRestService):
     'Creator', 'Assessor' to them via REST API and return list of created
     objects with filtered attributes.
     """
-    objs = BaseRestService(url.ASSESSMENTS).create_objs(
+    objs = BaseRestService(self.endpoint).create_objs(
         count, factory_params, **attrs_for_template)
     assignees = [assignee for obj in objs for assignee in obj.assignees]
     if assignees:

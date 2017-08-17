@@ -10,8 +10,7 @@
 import pytest
 
 from lib import base
-from lib.base import Test
-from lib.constants import messages, roles
+from lib.constants import roles
 from lib.constants.element import AssessmentStates
 from lib.entities import entities_factory
 from lib.service import webui_service, rest_service
@@ -48,9 +47,7 @@ class TestAssessmentsWorkflow(base.Test):
         get_list_objs_from_info_panels(
             src_obj=new_audit_rest, objs=expected_asmt).update_attrs(
             comments={"created_at": None}, is_replace_dicts_values=True))
-    assert expected_asmt == actual_asmt, (
-        messages.AssertionMessages.
-        format_err_msg_equal(expected_asmt, actual_asmt))
+    self.extended_assert_w_excluded_attrs(expected_asmt, actual_asmt)
 
   @pytest.mark.smoke_tests
   def test_asmt_related_asmts(
@@ -165,7 +162,7 @@ class TestAssessmentsWorkflow(base.Test):
     assessments_service = webui_service.AssessmentsService(selenium)
     getattr(assessments_service, action)(expected_asmt)
     actual_asmt = assessments_service.get_obj_from_info_page(expected_asmt)
-    Test.extended_assert_w_excluded_attrs(
+    self.extended_assert_w_excluded_attrs(
         expected_asmt.update_attrs(status=expected_final_state.title(),
                                    title=actual_asmt.title,
                                    verified=actual_asmt.verified).repr_ui(),

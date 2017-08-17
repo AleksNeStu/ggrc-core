@@ -297,6 +297,12 @@ class Representation(object):
                   string_utils.convert_to_list(origin_obj_attr_value) +
                   string_utils.convert_to_list(obj_attr_value))
             setattr(obj, obj_attr_name, obj_attr_value)
+            if obj_attr_name in ["creator", "assessor", "verifier"]:
+              from lib.entities.entities_factory import ObjectPersonsFactory
+              if not isinstance(obj.assignees, dict):
+                obj.assignees = dict()
+              obj.assignees[obj_attr_name.capitalize()] = (
+                  [ObjectPersonsFactory().default().__dict__])
           if is_replace_values_of_dicts and isinstance(_obj_attr_value, dict):
             obj_attr_value = string_utils.exchange_dicts_items(
                 transform_dict=_obj_attr_value,

@@ -8,7 +8,7 @@ import uuid
 from collections import defaultdict
 
 import re
-from datetime import datetime
+from datetime import datetime, timedelta
 
 BLANK = ''
 COMMA = ','  # comma is used as delimiter for multi-choice values
@@ -172,6 +172,11 @@ def convert_str_to_datetime(datetime_str):
     # u'07/02/2017 04:34:05 PM UTC'
     if len(datetime_parts) == 4 and ":" in datetime_str:
       datetime_format = "%m/%d/%Y %I:%M:%S %p %Z"
+      # u'07/02/2017 04:34:05 PM +03'
+      if datetime_parts[3].upper() != 'UTC':
+        datetime_obj = datetime.strptime(
+            " ".join(datetime_parts[:3]), "%m/%d/%Y %I:%M:%S %p")
+        return datetime_obj + timedelta(hours=int(datetime_parts[3]))
   # REST and CSV like datetime
   if "/" not in datetime_str and any(_ in datetime_str for _ in ["-", ":"]):
     # u'2017-07-02T16:34:05' and u'2017-07-02 16:34:05'

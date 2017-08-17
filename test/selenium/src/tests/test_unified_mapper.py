@@ -8,7 +8,6 @@
 import pytest
 
 from lib import base
-from lib.constants import messages
 from lib.service import webui_service
 
 
@@ -37,6 +36,5 @@ class TestProgramPage(base.Test):
     assert len(expected_controls) == actual_controls_tab_count
     actual_controls = (webui_service.ControlsService(selenium).
                        get_list_objs_from_tree_view(src_obj=new_program_rest))
-    assert sorted(expected_controls) == sorted(actual_controls), (
-        messages.AssertionMessages.
-        format_err_msg_equal(expected_controls, actual_controls))
+    self.extended_assert_w_excluded_attrs(
+        sorted(expected_controls), sorted(actual_controls))
