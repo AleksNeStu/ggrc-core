@@ -91,6 +91,31 @@ class TestCAD(TestCase):
     ]
     self.assertEqual([search_value], contents)
 
+  def test_checkbox_fulltext_no_cav(self):
+    """Test filter by checkbox value without cav."""
+
+    title = "checkbox"
+    search_value = "No"
+    checkbox_type = all_models.CustomAttributeDefinition.ValidTypes.CHECKBOX
+    with factories.single_commit():
+      market = factories.MarketFactory()
+      factories.CustomAttributeDefinitionFactory(
+          title=title,
+          definition_type="market",
+          attribute_type=checkbox_type)
+
+    views.do_reindex()
+
+    contents = [
+        i.content
+        for i in mysql.MysqlRecordProperty.query.filter(
+            mysql.MysqlRecordProperty.property == title,
+            mysql.MysqlRecordProperty.type == market.type,
+            mysql.MysqlRecordProperty.key == market.id,
+        )
+    ]
+    self.assertEqual([search_value], contents)
+
   def test_unique_key(self):
     """Test object property uniqueness."""
     db.session.add(mysql.MysqlRecordProperty(
