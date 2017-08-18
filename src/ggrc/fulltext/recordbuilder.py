@@ -162,23 +162,18 @@ class RecordBuilder(object):
     content = ":".join(sorted(sort_values))
     return {"__sort__": content}
 
-  def get_custom_attribute_properties(self, obj):
+  def get_custom_attribute_properties(self, definition, value):
     """Get property value in case of indexing CA
     """
     # The name of the attribute property needs to be unique for each object,
     # the value comes from the custom_attribute_value
-    attribute_name = obj.custom_attribute.title
+    attribute_name = definition.title
     properties = {}
-    if (obj.custom_attribute.attribute_type == "Map:Person" and
-            obj.attribute_object_id):
-      properties[attribute_name] = self.build_person_subprops(
-          obj.attribute_object)
-      properties[attribute_name].update(self.build_list_sort_subprop(
-          [obj.attribute_object]))
+    if value and definition.attribute_type == "Map:Person":
+      properties[attribute_name] = self.build_person_subprops(value)
+      properties[attribute_name].update(self.build_list_sort_subprop([value]))
     else:
-      properties[attribute_name] = {
-          "": obj.custom_attribute.get_indexed_value(obj.attribute_value)
-      }
+      properties[attribute_name] = {"": definition.get_indexed_value(value)}
     return properties
 
   def as_record(self, obj):  # noqa  # pylint:disable=too-many-branches
@@ -199,8 +194,16 @@ class RecordBuilder(object):
 
     properties = self._get_properties(obj)
     if isinstance(obj, CustomAttributable):
-      for custom_attr in obj.custom_attribute_values:
-        properties.update(self.get_custom_attribute_properties(custom_attr))
+      cavs = {v.custom_attribute_id: v for v in obj.custom_attribute_values}
+      for cad in obj.custom_attribute_definitions:
+        cav = cavs.get(cad.id)
+        if not cav:
+          value = cad.default_value
+        elif cad.attribute_type == "Map:Person":
+          value = cav.attribute_object if cav.attribute_object_id else None
+        else:
+          value = cav.attribute_value
+        properties.update(self.get_custom_attribute_properties(cad, value))
 
     return Record(
         # This logic saves custom attribute values as attributes of the object

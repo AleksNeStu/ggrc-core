@@ -60,6 +60,10 @@ class CustomAttributeDefinition(attributevalidator.AttributeValidator,
   def value_mapping(self):
     return self.ValidTypes.DEFAULT_VALUE_MAPPING.get(self.attribute_type) or {}
 
+  @property
+  def default_value(self):
+    return self.ValidTypes.DEFAULT_VALUE.get(self.attribute_type)
+
   def get_indexed_value(self, value):
     return self.value_mapping.get(value, value)
 
@@ -128,6 +132,12 @@ class CustomAttributeDefinition(attributevalidator.AttributeValidator,
     CHECKBOX = "Checkbox"
     DATE = "Date"
     MAP = "Map"
+
+    DEFAULT_VALUE = {
+        CHECKBOX: 0,
+        RICH_TEXT: "",
+        TEXT: "",
+    }
 
     DEFAULT_VALUE_MAPPING = {
         CHECKBOX: {

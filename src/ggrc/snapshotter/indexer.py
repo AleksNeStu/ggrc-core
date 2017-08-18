@@ -65,21 +65,27 @@ def _get_custom_attribute_dict():
                                         attribute definition attributes.
   """
   # pylint: disable=protected-access
-  cadef_klass_names = {getattr(all_models, klass)._inflector.table_singular
-                       for klass in Types.all}
+  cadef_klass_names = {
+      getattr(all_models, c)._inflector.table_singular: c for c in Types.all
+  }
 
   query = models.CustomAttributeDefinition.query.filter(
-      models.CustomAttributeDefinition.definition_type.in_(cadef_klass_names)
+      models.CustomAttributeDefinition.definition_type.in_(
+          cadef_klass_names.keys()
+      )
   )
-  return {cad.id: cad for cad in query}
+  cads = defaultdict(list)
+  for cad in query:
+    cads[cadef_klass_names[cad.definition_type]].append(cad)
+  return cads
 
 
-def get_searchable_attributes(attributes, cad_dict, content):
+def get_searchable_attributes(attributes, cads, content):
   """Get all searchable attributes for a given object that should be indexed
 
   Args:
     attributes: Attributes that should be extracted from some model
-    cad_dict: dict from CAD id to CAD object with title and type defined
+    cads: list of CAD instances
     content: dictionary (JSON) representation of an object
   Return:
     Dict of "key": "value" from objects revision
@@ -89,17 +95,17 @@ def get_searchable_attributes(attributes, cad_dict, content):
     value = attr.get_attribute_revisioned_value(content)
     searchable_values[attr.alias] = value
 
-  cav_list = content.get("custom_attributes", [])
-
-  for cav in cav_list:
-    cad = cad_dict.get(cav["custom_attribute_id"])
-    if cad:
-      if cad.attribute_type == "Map:Person":
-        searchable_values[cad.title] = cav.get("attribute_object")
-      else:
-        searchable_values[cad.title] = cad.get_indexed_value(
-            cav["attribute_value"]
-        )
+  cav_dict = {v["custom_attribute_id"]: v
+              for v in content.get("custom_attributes", [])}
+  for cad in cads:
+    cav = cav_dict.get(cad.id)
+    if not cav:
+      value = cad.default_value
+    elif cad.attribute_type == "Map:Person":
+      value = cav.get("attribute_object")
+    else:
+      value = cav["attribute_value"]
+    searchable_values[cad.title] = cad.get_indexed_value(value)
   return searchable_values
 
 
@@ -336,7 +342,7 @@ def reindex_pairs(pairs):
         "child_id": snapshot.child_id,
         "revision": get_searchable_attributes(
             CLASS_PROPERTIES[revision.resource_type],
-            cad_dict,
+            cad_dict[revision.resource_type],
             revision.content)
     }
   search_payload = []
