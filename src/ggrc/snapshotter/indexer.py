@@ -100,12 +100,12 @@ def get_searchable_attributes(attributes, cads, content):
   for cad in cads:
     cav = cav_dict.get(cad.id)
     if not cav:
-      value = cad.default_value
+      value = cad.get_indexed_value(cad.default_value)
     elif cad.attribute_type == "Map:Person":
       value = cav.get("attribute_object")
     else:
-      value = cav["attribute_value"]
-    searchable_values[cad.title] = cad.get_indexed_value(value)
+      value = cad.get_indexed_value(cav["attribute_value"])
+    searchable_values[cad.title] = value
   return searchable_values
 
 
