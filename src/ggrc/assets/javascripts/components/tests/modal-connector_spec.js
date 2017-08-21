@@ -9,7 +9,6 @@ describe('GGRC.Components.modalConnector', function () {
   var Component;
   var viewModel;
   var events;
-  var handler;
 
   beforeAll(function () {
     Component = GGRC.Components.get('modalConnector');
@@ -19,6 +18,7 @@ describe('GGRC.Components.modalConnector', function () {
     viewModel = new can.Map();
   });
   describe('init() method', function () {
+    var handler;
     var that;
     var reifiedInstance;
     var binding;
@@ -292,111 +292,224 @@ describe('GGRC.Components.modalConnector', function () {
       expect(that.viewModel.parent_instance._changes.length).toEqual(2);
     });
   });
-  describe('get_mapping() method', function () {
-    var relatedObjectsAsSource;
-    var responseSnapshotTitle = 'SnapshotTitle';
-    var responseSnapshotUrl = '/someTypeS/123';
+
+  describe('buildQuery() method', function () {
     var handler;
-    var that;
+    var eventScope;
+    var viewModel;
 
     beforeEach(function () {
-      var assessment;
-      var snapshotResponse = [
-        {
-          Snapshot: {
-            values: [
-              {
-                type: 'Snapshot',
-                child_id: 123
-              }
-            ]
-          }
-        }
-      ];
-
-      assessment = new CMS.Models.Assessment();
-
-      relatedObjectsAsSource = new can.List([
-        {
-          instance: {
-            type: 'Audit',
-            id: 5
-          }
-        },
-        {
-          instance: {
-            type: 'Snapshot',
-            id: 123
-          }
-        },
-        {
-          instance: {
-            type: 'Document',
-            id: 432
-          }
-        }
-      ]);
-
-      // stubs
-      assessment.get_binding = function () {
-        return assessment;
+      viewModel = new (can.Map.extend(Component.prototype.viewModel));
+      eventScope = {
+        viewModel: viewModel,
       };
-
-      assessment.refresh_instances = function () {
-        return can.Deferred().resolve(relatedObjectsAsSource);
-      };
-
-      viewModel.attr('instance', assessment);
-      that = {
-        viewModel: viewModel
-      };
-
-      // spyon
-      spyOn(GGRC.Utils.QueryAPI, 'makeRequest').and.returnValue(
-        can.Deferred().resolve(snapshotResponse)
-      );
-
-      spyOn(GGRC.Utils.Snapshots, 'toObject').and.returnValue(
-        {
-          title: responseSnapshotTitle,
-          originalLink: responseSnapshotUrl
-        }
-      );
-      handler = events.get_mapping.bind(that);
+      handler = events.buildQuery.bind(eventScope);
     });
 
-    it('get_mapping() should update snapshot objcets',
-      function (done) {
-        var dfd = handler();
-        var snapshotItem = relatedObjectsAsSource[1].instance;
+    it('returns array which contains one item', function () {
+      eventScope = {
+        viewModel: viewModel,
+      };
+      handler = events.buildQuery.bind(eventScope);
+    });
 
-        dfd.done(function () {
-          // should be called only once because list has only one snapshot
-          expect(GGRC.Utils.QueryAPI.makeRequest.calls.count()).toEqual(1);
-          expect(GGRC.Utils.Snapshots.toObject.calls.count()).toEqual(1);
+    describe('returns as a first array item a query param which contains',
+    function () {
+      var type;
 
-          expect(snapshotItem.attr('title')).toEqual(responseSnapshotTitle);
-          expect(snapshotItem.attr('viewLink')).toEqual(responseSnapshotUrl);
-          done();
+      beforeEach(function () {
+        type = 'Type';
+      });
+
+      it('object_name equals to type', function () {
+        var result = _.flow(handler, _.first)(type);
+        expect(result.object_name).toBe(type);
+      });
+
+      it('filters.expression.op.name equals to "relevant"', function () {
+        var result = _.flow(handler, _.first)(type);
+        expect(result.filters.expression.op.name).toBe('relevant');
+      });
+
+      it('filters.expression.object_name equals to instance.type', function () {
+        var result;
+        var instanceType = 'instanceType';
+
+        viewModel.attr('instance', {type: instanceType});
+        result = _.flow(handler, _.first)(type);
+
+        expect(result.filters.expression.object_name).toBe(instanceType);
+      });
+
+      it('filters.expression.ids array contains only id from instance.id ' +
+      'converted to string',
+      function () {
+        var result;
+        var instanceId = 12345;
+
+        viewModel.attr('instance', {id: instanceId});
+        result = _.flow(handler, _.first)(type);
+
+        expect(result.filters.expression.ids.length).toBe(1);
+        expect(result.filters.expression.ids[0]).toBe(String(instanceId));
+      });
+
+      it('has default order_by object', function () {
+        var expectedOrderByObject = {
+          keys: [],
+          order: '',
+          compare: null,
+        };
+        var result = _.flow(handler, _.first)(type);
+        expect(result.filters.order_by).toEqual(expectedOrderByObject);
+      });
+    });
+  });
+
+  describe('getMappedObjects() method', function () {
+    var handler;
+    var eventScope;
+    var makeRequestDfd;
+    var makeRequest;
+    var ORDER;
+
+    beforeAll(function () {
+      ORDER = {
+        FIRST: 0,
+        SECOND: 1,
+        THIRD: 2,
+      };
+    });
+
+    beforeEach(function () {
+      makeRequestDfd = can.Deferred();
+      makeRequest = spyOn(
+        GGRC.Utils.QueryAPI, 'makeRequest'
+      ).and.returnValue(makeRequestDfd);
+      eventScope = {
+        viewModel: {},
+        buildQuery: jasmine.createSpy('buildQuery'),
+      };
+      handler = events.getMappedObjects.bind(eventScope);
+    });
+
+    describe('makes request which', function () {
+      var getParam;
+
+      beforeAll(function () {
+        getParam = function (spy, index) {
+          return spy.calls.argsFor(0)[index];
+        };
+      });
+
+      it('contains query to Audit', function () {
+        var object = {type: 'Audit'};
+        var data;
+
+        eventScope.buildQuery.and.returnValue([object]);
+        handler();
+        data = getParam(makeRequest, ORDER.FIRST).data;
+
+        expect(eventScope.buildQuery).toHaveBeenCalledWith(object.type);
+        expect(data[ORDER.FIRST]).toBe(object);
+      });
+
+      it('contains query to Issue', function () {
+        var object = {type: 'Issue'};
+        var data;
+
+        eventScope.buildQuery.and.returnValue([object]);
+        handler();
+        data = getParam(makeRequest, ORDER.FIRST).data;
+
+        expect(eventScope.buildQuery).toHaveBeenCalledWith(object.type);
+        expect(data[ORDER.SECOND]).toBe(object);
+      });
+
+      it('contains query to Snapshot', function () {
+        var object = {type: 'Snapshot'};
+        var data;
+
+        eventScope.buildQuery.and.returnValue([object]);
+        handler();
+        data = getParam(makeRequest, ORDER.FIRST).data;
+
+        expect(eventScope.buildQuery).toHaveBeenCalledWith(object.type);
+        expect(data[ORDER.SECOND]).toBe(object);
+      });
+    });
+
+    describe('when request was resolved', function () {
+      var response;
+
+      beforeEach(function () {
+        response = [
+          {Audit: {values: [{data: 1}, {data: 2}]}},
+          {Issue: {values: [{data: 2}, {data: 3}]}},
+          {Snapshot: {values: [{data: 3}, {data: 4}]}},
+        ];
+        makeRequestDfd.resolve(response);
+        eventScope.buildQuery.and.returnValue([]);
+        spyOn(GGRC.Utils.Snapshots, 'toObject').and.returnValue({
+          'class': 'class',
+          title: 'title',
+          description: 'description',
+          originalLink: 'originalLink',
         });
-      }
-    );
+      });
 
-    it('result list should not contain objects with "Document" type',
-      function (done) {
-        var dfd = handler();
+      describe('returns a list which', function () {
+        it('contains values for Audit type',
+        function (done) {
+          handler()
+            .then(function (list) {
+              var objects = response[ORDER.FIRST].Audit.values;
 
-        dfd.done(function (list) {
-          list = _.map(list, function (item) {
-            return item.instance;
-          });
-          expect(list)
-            .not.toContain(jasmine.objectContaining({
-              type: 'Document'
-            }));
-          done();
+              _.each(objects, function (object) {
+                expect(list).toContain(object);
+              });
+
+              done();
+            });
         });
-      }
-    );
+
+        it('contains values for Issue type',
+        function (done) {
+          handler()
+            .then(function (list) {
+              var objects = response[ORDER.SECOND].Issue.values;
+
+              _.each(objects, function (object) {
+                expect(list).toContain(object);
+              });
+
+              done();
+            });
+        });
+
+        it('contains values for Snapshot type converted to Object type',
+        function (done) {
+          handler()
+            .then(function (list) {
+              var objects = response[ORDER.THIRD].Snapshot.values;
+              _.each(objects, function (snapshot) {
+                var convertedObject = GGRC.Utils.Snapshots.toObject(snapshot);
+
+                snapshot.class = convertedObject.class;
+                snapshot.snapshot_object_class = 'snapshot-object';
+                snapshot.title = convertedObject.title;
+                snapshot.description = convertedObject.description;
+                snapshot.viewLink = convertedObject.originalLink;
+              });
+
+              _.each(objects, function (object) {
+                expect(list).toContain(object);
+              });
+
+              done();
+            });
+        });
+      });
+    });
   });
 });

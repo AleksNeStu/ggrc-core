@@ -120,8 +120,9 @@
                   parent_instance="instance"
                   instance="instance"
                   mapping="related_objects_as_source"
-                  from-binding="true"
+                  from-query-api="true"
                   {type}="instance.assessment_type"
+                  {new-instance}="instance.isNew"
                   deferred="true"
                   {^changes}="mappedObjectsChanges">
             <label class="ggrc-form-item__label">
