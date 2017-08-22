@@ -20,7 +20,7 @@ describe('can.mustache.helper.date', function () {
 
   it('returns datetime when stringy truthy value is passed in', function () {
     var timezone = moment(
-      '2015-05-03T12:34:45Z').tz(moment.tz.guess()).format('z');
+      '2015-05-03T12:34:45Z').tz(moment.tz.guess()).format('Z');
     testDate = new Date(2015, 4, 3, 7, 34, 56);
 
     expect(
@@ -29,7 +29,7 @@ describe('can.mustache.helper.date', function () {
 
   it('returns datetime when stringy falsey value is passed in', function () {
     var timezone = moment(
-      '2015-05-03T12:34:45Z').tz(moment.tz.guess()).format('z');
+      '2015-05-03T12:34:45Z').tz(moment.tz.guess()).format('Z');
     testDate = new Date(2015, 4, 3, 7, 34, 56);
 
     expect(
@@ -38,7 +38,7 @@ describe('can.mustache.helper.date', function () {
 
   it('returns datetime when false value is passed in', function () {
     var timezone = moment(
-      '2015-05-03T12:34:45Z').tz(moment.tz.guess()).format('z');
+      '2015-05-03T12:34:45Z').tz(moment.tz.guess()).format('Z');
     testDate = new Date(2015, 4, 3, 7, 34, 56);
 
     expect(
@@ -47,7 +47,7 @@ describe('can.mustache.helper.date', function () {
 
   it('returns datetime when random values are passed in', function () {
     var timezone = moment(
-      '2015-05-03T12:34:45Z').tz(moment.tz.guess()).format('z');
+      '2015-05-03T12:34:45Z').tz(moment.tz.guess()).format('Z');
     testDate = new Date(2015, 4, 3, 7, 34, 56);
 
     expect(

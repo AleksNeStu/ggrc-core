@@ -1306,7 +1306,7 @@ function localizeDate(date, options, tmpl, allowNonISO) {
 
 can.each({
   localize_date: 'MM/DD/YYYY',
-  localize_datetime: 'MM/DD/YYYY hh:mm:ss A'
+  localize_datetime: 'MM/DD/YYYY hh:mm:ss A Z'
 }, function (tmpl, fn) {
   Mustache.registerHelper(fn, function (date, allowNonISO, options) {
     // allowNonIso was not passed

@@ -123,7 +123,7 @@
       if (hideTime === true) {
         return inst.format('MM/DD/YYYY');
       }
-      return inst.tz(currentTimezone).format('MM/DD/YYYY hh:mm:ss A z');
+      return inst.tz(currentTimezone).format('MM/DD/YYYY hh:mm:ss A Z');
     },
     getPickerElement: function (picker) {
       return _.find(_.values(picker), function (val) {
