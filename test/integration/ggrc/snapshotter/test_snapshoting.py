@@ -282,13 +282,13 @@ class TestSnapshoting(SnapshotterBaseTestCase):
     4. Run refresh on control's snapshot object
     5. Verify control's CA is changed
     """
-    custom_attribute_defs = self.create_custom_attribute_definitions()
     program = self.create_object(models.Program, {
         "title": "Test Program Snapshot 1"
     })
     control = self.create_object(models.Control, {
         "title": "Test Control Snapshot 1"
     })
+    custom_attribute_defs = self.create_custom_attribute_definitions()
     cav = {
         "custom_attribute": custom_attribute_defs["control"],
         "attributable": control,

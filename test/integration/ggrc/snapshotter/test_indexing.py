@@ -49,7 +49,6 @@ class TestSnapshotIndexing(SnapshotterBaseTestCase):
 
   def test_create_indexing(self):
     """Test that creating objects results in full index"""
-    custom_attribute_defs = self.create_custom_attribute_definitions()
 
     self._import_file("snapshotter_create.csv")
 
@@ -65,6 +64,7 @@ class TestSnapshotIndexing(SnapshotterBaseTestCase):
     process = db.session.query(models.Process).filter(
         models.Process.slug == "proc-2"
     ).one()
+    custom_attribute_defs = self.create_custom_attribute_definitions()
     custom_attribute_values = [
         {
             "custom_attribute": custom_attribute_defs["control"],
