@@ -60,29 +60,44 @@ import '../components/unified-mapper/mapper-results';
     openMapper: function (data, disableMapper, btn) {
       var self = this;
       var isSearch = /unified-search/ig.test(data.toggle);
+      var specialConfigs;
 
       if (disableMapper || isMapperOpen) {
         return;
       }
 
-      if (!data.join_object_type) {
+      if (
+          _.isUndefined(data.join_object_type) ||
+          _.isNull(data.join_object_type)
+      ) {
         throw new Error(OBJECT_REQUIRED_MESSAGE);
       }
 
+      specialConfigs = [{
+        types: ['Issue'],
+        // set config like for common objects
+        config: getConfigForCommonObjects(data).generalConfig
+      }];
+
       if (GGRC.Utils.Snapshots
           .isInScopeModel(data.join_object_type) && !isSearch) {
+        // each object type will be perceived as a snapshot, except types with
+        // special config
+        openForSnapshots(data, specialConfigs);
         isMapperOpen = true;
-        openForSnapshots(data);
       } else {
         openForCommonObjects(data, isSearch);
       }
 
-      function openForSnapshots(data) {
-        var config;
+      function openForSnapshots(data, specialConfigs) {
+        var config = getBaseConfig();
         var inScopeObject;
 
+        _.extend(config.generalConfig, {useSnapshots: true});
+        _.extend(config, {specialConfigs: specialConfigs || {}});
+
         if (data.is_new) {
-          config = {
+          _.extend(config.generalConfig, {
             object: data.join_object_type,
             type: data.join_option_type,
             relevantTo: [{
@@ -90,18 +105,20 @@ import '../components/unified-mapper/mapper-results';
               type: data.snapshot_scope_type,
               id: data.snapshot_scope_id
             }]
-          };
+          });
           self.launch(btn, can.extend(config, data));
           return;
         }
 
-        if (!data.join_object_id) {
+        if (
+          _.isUndefined(data.join_object_id) ||
+          _.isNull(data.join_object_id)
+        ) {
           throw new Error(OBJECT_REQUIRED_MESSAGE);
         }
 
         inScopeObject =
           CMS.Models[data.join_object_type].store[data.join_object_id];
-
         inScopeObject.updateScopeObject().then(function () {
           var scopeObject = inScopeObject.attr('scopeObject');
 
@@ -113,7 +130,7 @@ import '../components/unified-mapper/mapper-results';
             return;
           }
 
-          config = {
+          _.extend(config.generalConfig, {
             object: data.join_object_type,
             'join-object-id': data.join_object_id,
             type: data.join_option_type,
@@ -123,23 +140,47 @@ import '../components/unified-mapper/mapper-results';
               id: scopeObject.id,
               title: scopeObject.title
             }]
-          };
+          });
 
           self.launch(btn, can.extend(config, data));
         });
       }
 
       function openForCommonObjects(data, isSearch) {
-        var config = {
-          object: data.join_object_type,
-          type: data.join_option_type,
-          'join-object-id': data.join_object_id
-        };
+        var config = getConfigForCommonObjects(data);
+
         if (isSearch) {
           GGRC.Controllers.ObjectSearch.launch(btn, can.extend(config, data));
         } else {
           self.launch(btn, can.extend(config, data));
         }
+      }
+
+      function getBaseConfig() {
+        return {
+          generalConfig: {
+            useSnapshots: false,
+            object: '',
+            type: '',
+            'join-object-id': null,
+            // if set then each mapped object will be relevant to
+            // relevantTo object (for example, snapshots relevant to Audit (at 08/2017))
+            relevantTo: null
+          },
+          specialConfigs: []
+        };
+      }
+
+      function getConfigForCommonObjects(data) {
+        var base = getBaseConfig();
+
+        _.extend(base.generalConfig, {
+          object: data.join_object_type,
+          type: data.join_option_type,
+          'join-object-id': data.join_object_id
+        });
+
+        return base;
       }
     }
   }, {

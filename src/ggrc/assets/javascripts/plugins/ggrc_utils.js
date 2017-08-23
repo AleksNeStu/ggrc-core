@@ -456,6 +456,35 @@
       return originalText.replace(/<[^>]*>?/g, '').trim();
     },
     /**
+     * Merge objects in a queue to one common object.
+     * If clean param is true then clear queue.
+     *
+     * @example
+     * var queue = [{a: 1}, {b: 2}, {a: 3}];
+     *
+     * // returns {a: 3, b: 2}
+     * resolveQueue(queue)
+     *
+     * @example
+     * var queue = [{a: 1}, {b: 2}, {a: 3}];
+     *
+     * // returns {a: 3, b: 2}; now queue = []
+     * resolveQueue(queue, true)
+     *
+     * @param {Object[]} queue - Array of objects.
+     * @param {Boolean} clean - Determines whether need to clear a queue.
+     * @return {Object} - Common object.
+     */
+    resolveQueue: function (queue, clean) {
+      var commonObj = _.merge.apply(_, queue) || {};
+
+      if (clean) {
+        queue.splice(0);
+      }
+
+      return commonObj;
+    },
+    /**
      * A function that returns the highest role in an array of strings of roles
      * or a comma-separated string of roles.
      *

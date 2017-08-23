@@ -3,7 +3,7 @@
  Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
  */
 
-(function (can, $) {
+(function (can, $, utils) {
   'use strict';
 
   var DEFAULT_OBJECT_MAP = {
@@ -54,13 +54,19 @@
     template: can.view(GGRC.mustache_path +
       '/components/object-mapper/object-mapper.mustache'),
     viewModel: function (attrs, parentViewModel) {
+      var config = {
+        general: parentViewModel.attr('generalConfig'),
+        special: parentViewModel.attr('specialConfigs')
+      };
+
       return GGRC.VM.ObjectOperationsBaseVM.extend({
-        join_object_id: attrs.joinObjectId ||
+        join_object_id: config.general['join-object-id'] ||
           (GGRC.page_instance() && GGRC.page_instance().id),
-        object: attrs.object,
-        type: getDefaultType(attrs.type, attrs.object),
-        relevantTo: parentViewModel.attr('relevantTo'),
-        useSnapshots: GGRC.Utils.Snapshots.isInScopeModel(attrs.object),
+        object: config.general.object,
+        type: getDefaultType(config.general.type, config.general.object),
+        config: config,
+        pendingConfigQueue: [],
+        useSnapshots: config.general.useSnapshots,
         isLoadingOrSaving: function () {
           return this.attr('is_saving') ||
           //  disable changing of object type while loading
@@ -83,6 +89,32 @@
           }
           return GGRC.Utils.Snapshots.isSnapshotParent(this.attr('object')) ||
             GGRC.Utils.Snapshots.isSnapshotParent(this.attr('type'));
+        },
+        prepareConfig: function (config) {
+          /**
+           * We don't want to apply config immediately
+           * (Because CanJs will be rerender mustache template immediately).
+           * For the reason we add config in pending queue.
+           */
+          this.pendingConfigQueue.push(config);
+
+          // But we want to render mapping immediately
+          this.update({
+            relevantTo: config.relevantTo
+          });
+        },
+        onSubmit: function () {
+          var queue = can.makeArray(
+            this.attr('pendingConfigQueue')
+          ).map(function (config) {
+            return config.serialize();
+          });
+
+          var resolvedConfigQueue = utils.resolveQueue(queue, true);
+
+          this.update(resolvedConfigQueue);
+          // calls base version
+          this._super.apply(this, arguments);
         }
       });
     },
@@ -283,4 +315,4 @@
       }
     }
   });
-})(window.can, window.can.$);
+})(window.can, window.can.$, GGRC.Utils);

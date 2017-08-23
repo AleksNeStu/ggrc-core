@@ -9,7 +9,6 @@ describe('GGRC utils allowed_to_map() method', function () {
   var allowedToMap;
   var fakeOptions;
   var fakeProgram;
-  var fakeRequest;
   var fakeAudit;
 
   beforeAll(function () {
@@ -213,4 +212,53 @@ describe('GGRC utils peopleWithRoleName() method', function () {
       expect(result).toEqual([]);
     }
   );
+});
+
+describe('GGRC utils resolveQueue() method', function () {
+  var method;
+
+  beforeAll(function () {
+    method = GGRC.Utils.resolveQueue;
+  });
+
+  it('returns empty object if queue is empty', function () {
+    var result = method([]);
+    var expected = {};
+
+    expect(result).toEqual(expected);
+  });
+
+  it('returns merged object if queue has objects', function () {
+    var result = method([{a: 1}, {b: 2}, {a: 3}]);
+    var expected = {
+      a: 3,
+      b: 2
+    };
+
+    expect(result).toEqual(expected);
+  });
+
+  it('returns object like first item of queue if queue has single item',
+  function () {
+    var result = method([{a: 1}]);
+    var expected = {a: 1};
+
+    expect(result).toEqual(expected);
+    expect(result).not.toBe(expected);
+  });
+
+  it('does not modify original queue if a clean param is falsy', function () {
+    var queue = [{a: 1}];
+    var expectedQueue = queue.slice();
+
+    method(queue);
+    expect(queue).toEqual(expectedQueue);
+  });
+
+  it('clears original queue if clean param is truthy', function () {
+    var queue = [{a: 1}];
+
+    method(queue, true);
+    expect(queue).toEqual([]);
+  });
 });

@@ -21,7 +21,12 @@ describe('GGRC.Components.objectMapper', function () {
   describe('viewModel() method', function () {
     var parentViewModel;
     beforeEach(function () {
-      parentViewModel = new can.Map();
+      parentViewModel = new can.Map({
+        generalConfig: {
+          useSnapshots: false
+        },
+        specialConfigs: []
+      });
     });
     it('returns object with function "isLoadingOrSaving"', function () {
       var result = Component.prototype.viewModel({}, parentViewModel)();
@@ -29,10 +34,9 @@ describe('GGRC.Components.objectMapper', function () {
     });
 
     describe('initializes useSnapshots flag', function () {
-      it('with true if using in-scope model', function () {
+      it('with true if set with help a general config', function () {
         var result;
-        spyOn(GGRC.Utils.Snapshots, 'isInScopeModel')
-          .and.returnValue(true);
+        parentViewModel.generalConfig.useSnapshots = true;
         result = Component.prototype.viewModel({}, parentViewModel)();
         expect(result.attr('useSnapshots')).toEqual(true);
       });
@@ -63,6 +67,61 @@ describe('GGRC.Components.objectMapper', function () {
         viewModel.attr('is_saving', false);
         viewModel.attr('is_loading', false);
         expect(viewModel.isLoadingOrSaving()).toEqual(false);
+      });
+    });
+
+    describe('onSubmit() method', function () {
+      var vm;
+      var queue;
+
+      beforeEach(function () {
+        vm = new Component.prototype.viewModel({}, parentViewModel)();
+        queue = [{
+          a: 1
+        }, {
+          a: 2
+        }, {
+          b: 3
+        }];
+        vm.attr('pendingConfigQueue', queue);
+        spyOn(vm, 'update');
+      });
+
+      it('updates VM with help resolved configs from pendingConfigQueue ' +
+      'to one common config',
+      function () {
+        vm.onSubmit();
+
+        expect(vm.update).toHaveBeenCalledWith(
+          GGRC.Utils.resolveQueue(queue)
+        );
+      });
+    });
+
+    describe('prepareConfig() method', function () {
+      var vm;
+
+      beforeEach(function () {
+        vm = new Component.prototype.viewModel({}, parentViewModel)();
+        spyOn(vm, 'update');
+      });
+
+      it('pushes config to pending config queue', function () {
+        var config = {};
+        var addedConfig;
+
+        vm.prepareConfig(config);
+        addedConfig = vm.attr('pendingConfigQueue')[0].serialize();
+        expect(addedConfig).toEqual(config);
+      });
+
+      it('updates relatedTo field for VM', function () {
+        var config = {
+          relevantTo: [{}]
+        };
+        vm.prepareConfig(config);
+
+        expect(vm.update).toHaveBeenCalledWith(config);
       });
     });
   });
@@ -419,10 +478,10 @@ describe('GGRC.Components.objectMapper', function () {
       result = helper.call(viewModel);
       expect(result).toEqual('Programs');
     });
-    it('returns "Objects" if type.title_plural is undefined', function () {
+    it('returns "Objects" if type.title_plural is null', function () {
       var result;
       viewModel.attr({
-        type: undefined
+        type: null
       });
       result = helper.call(viewModel);
       expect(result).toEqual('Objects');
