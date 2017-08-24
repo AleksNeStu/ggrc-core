@@ -7,8 +7,6 @@ import string
 import uuid
 from collections import defaultdict
 
-import re
-from datetime import datetime
 
 BLANK = ''
 COMMA = ','  # comma is used as delimiter for multi-choice values
@@ -175,36 +173,6 @@ def get_first_word_from_str(line):
 def dict_keys_to_upper_case(dictionary):
   """Convert keys of dictionary to upper case."""
   return {k.upper(): v for k, v in dictionary.iteritems()}
-
-
-def convert_str_to_datetime(datetime_str):
-  """Convert datetime corresponding to 'datetime_str', picking appropriate
-  format and parsing according to it and return datetime objects like:
-  '2017-07-02 16:34:05', '2017-07-02 00:00:00', e.t.c.
-  """
-  delimeter = "T" if bool(re.search(r"\dT\d", datetime_str)) else " "
-  datetime_parts = datetime_str.split(delimeter)
-  # UI like u'07/02/2017' as default
-  datetime_format = "%m/%d/%Y"
-  # UI like datetime
-  if "/" in datetime_str and "-" not in datetime_str:
-    # u'07/02/2017 04:34:05 PM UTC'
-    if len(datetime_parts) == 4 and ":" in datetime_str:
-      datetime_format = "%m/%d/%Y %I:%M:%S %p %Z"
-      # u'07/02/2017 04:34:05 PM +03'
-      if datetime_parts[3].upper() != 'UTC':
-        from dateutil import parser
-        return parser.parse(datetime_str)
-  # REST and CSV like datetime
-  if "/" not in datetime_str and any(_ in datetime_str for _ in ["-", ":"]):
-    # u'2017-07-02T16:34:05' and u'2017-07-02 16:34:05'
-    if len(datetime_parts) == 2:
-      datetime_format = ("%Y-%m-%dT%H:%M:%S" if "T" in datetime_str
-                         else "%Y-%m-%d %H:%M:%S")
-    # due to issue GGRC-3130
-    elif len(datetime_parts) == 1:
-      datetime_format = "%Y-%m-%d"
-  return datetime.strptime(datetime_str, datetime_format)
 
 
 def update_dicts_values(dic, old_values_list, new_value):

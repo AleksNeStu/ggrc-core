@@ -1,6 +1,9 @@
 # Copyright (C) 2017 Google Inc.
 # Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
 """Utils for filter operations."""
+
+from dateutil import parser
+
 import string_utils
 from lib.constants import value_aliases as alias
 from lib.constants.element import AdminWidgetCustomAttributes
@@ -69,7 +72,7 @@ class FilterUtils(object):
       values_to_filter = [person.name, person.email]
     elif ca_type == AdminWidgetCustomAttributes.DATE:
       date_formats = ["%m/%d/%Y", "%m/%Y", "%Y-%m-%d", "%Y-%m", "%Y"]
-      date = string_utils.convert_str_to_datetime(ca_val).date()
+      date = parser.parse(ca_val).date()
       values_to_filter = [date.strftime(_format) for _format in date_formats]
     else:
       values_to_filter = [ca_val]

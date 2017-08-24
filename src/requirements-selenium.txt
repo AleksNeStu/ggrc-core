@@ -21,3 +21,4 @@ pytest-cov==2.5.1
 pytest-capturelog==0.7
 pytest-xvfb==1.0.0
 pytest-repeat==0.4.1
+python-dateutil==2.6.1
