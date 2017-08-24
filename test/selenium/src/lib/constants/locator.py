@@ -734,8 +734,8 @@ class WidgetInfoAssessment(WidgetInfoPanel):
   # Code section
   _CODE = "assessment-inline-item[prop-name='slug'] "
   CODE_CSS = (By.CSS_SELECTOR, _CODE)
-  CODE_HEADER_CSS = (By.CSS_SELECTOR, _CODE + " .info-pane__section-title")
-  CODE_VALUE_CSS = (By.CSS_SELECTOR, _CODE + " .inline__content-wrapper")
+  CODE_HEADER_CSS = (By.CSS_SELECTOR, _CODE + ".ggrc-form__title")
+  CODE_VALUE_CSS = (By.CSS_SELECTOR, _CODE + ".read-more__body")
   # comments section
   COMMENTS_CSS = (By.CSS_SELECTOR, ".assessment-comments")
   # asmt tab container
