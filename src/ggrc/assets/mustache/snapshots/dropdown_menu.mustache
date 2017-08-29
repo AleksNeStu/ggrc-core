@@ -73,7 +73,7 @@ TODO: Temporary disabled until snapshot view is added.
             </li>
             {{^if instance.snapshot.archived}}
               {{#is_info_pin}}
-                {{#if_instance_of page_instance "Assessment"}}
+                {{#if_instance_of page_instance "Assessment|Issue"}}
                   {{#is_allowed_to_map page_instance instance}}
                     {{^options.is_in_selector}}
                        {{#isNotInScopeModel instance.type}}
