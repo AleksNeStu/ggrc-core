@@ -10,9 +10,9 @@
 import pytest
 
 from lib import base
-from lib.constants import messages, roles, value_aliases as alias
+from lib.constants import messages, roles, element, value_aliases as alias
 from lib.constants.element import AssessmentStates
-from lib.entities import entities_factory
+from lib.entities import entities_factory, entity
 from lib.entities.entities_factory import CustomAttributeDefinitionsFactory
 from lib.service import rest_service, webui_service
 from lib.utils.filter_utils import FilterUtils
@@ -194,15 +194,22 @@ class TestAssessmentsWorkflow(base.Test):
     Preconditions:
     - Program created via REST API.
     - Audit created via REST API.
-    - Assessment created via REST API.
+    - Assessments created via REST API.
     - Global Custom Attributes for Assessment created via REST API.
+    - Set revers value of GCA with Checkbox type for second Assessment.
     """
     custom_attr_values = (
         CustomAttributeDefinitionsFactory().generate_ca_values(
             list_ca_def_objs=new_cas_for_assessments_rest))
+    checkbox_id = entity.Entity.filter_objs_by_attrs(
+        objs=new_cas_for_assessments_rest,
+        attribute_type = element.AdminWidgetCustomAttributes.CHECKBOX).id
     expected_asmt = new_assessments_rest[0]
     (rest_service.AssessmentsService().update_obj(
         obj=expected_asmt, custom_attributes=custom_attr_values))
+    (rest_service.AssessmentsService().update_obj(
+        obj=new_assessments_rest[1], custom_attributes=
+        {checkbox_id: not custom_attr_values[checkbox_id]}))
     filter_exprs = FilterUtils().get_filter_exprs_by_cas(
         expected_asmt.custom_attribute_definitions, custom_attr_values,
         operator)

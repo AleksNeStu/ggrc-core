@@ -133,9 +133,8 @@ class BaseRestService(object):
     list_objs = self.create_list_objs(
         entity_factory=self.entities_factory_cls(), count=count,
         attrs_to_factory=factory_params, **attrs_for_template)
-    return Entity.filter_objs_attrs(
-        obj_or_objs=list_objs,
-        attrs_to_include=self.entities_factory_cls().obj_attrs_names)
+    return Entity.filter_objs_by_attrs(
+        list_objs, True, tuple(self.entities_factory_cls().obj_attrs_names))
 
   def update_objs(self, objs, factory_params=None, **attrs_for_template):
     """Update existing objects via REST API and return list of updated objects
@@ -145,9 +144,8 @@ class BaseRestService(object):
         entity_factory=self.entities_factory_cls(),
         list_objs_to_update=string_utils.convert_to_list(objs),
         attrs_to_factory=factory_params, **attrs_for_template)
-    return Entity.filter_objs_attrs(
-        obj_or_objs=list_objs,
-        attrs_to_include=self.entities_factory_cls().obj_attrs_names)
+    return Entity.filter_objs_by_attrs(
+        list_objs, True, tuple(self.entities_factory_cls().obj_attrs_names))
 
   def delete_objs(self, objs):
     """Delete existing objects via REST API."""

@@ -26,7 +26,7 @@ class Representation(object):
     attributes of one entered entity, else get attributes of all entities.
     """
     all_entities_cls = (string_utils.convert_to_list(entity) if entity
-                        else Entity.all_entities_classes())
+                        else list(Entity.all_entities_classes()))
     all_entities_attrs_names = string_utils.convert_list_elements_to_list(
         [entity_cls().__dict__.keys() for entity_cls in all_entities_cls])
     return list(set(all_entities_attrs_names))
@@ -341,6 +341,60 @@ class Representation(object):
             isinstance(obj_or_objs, list) else
             filter_obj_attrs(obj_or_objs, attrs_to_include))
 
+  @staticmethod
+  def filter_objs_by_attrs(
+      obj_or_objs, attrs_names_to_in, attrs_items_to_in,
+      attrs_names_to_ex=None, attrs_items_to_ex=None,
+      is_delete_extra_attrs=False):
+    """Filter objects by attributes' names and (or) items and return matched
+    according to plurality.
+    'obj_or_objs' - object or list objects;
+    '*attrs_names' - attributes' names;
+    '**attrs' - attributes' items (names and values).
+    """
+    # pylint: disable=expression-not-assigned
+    def delete_obj_attrs(obj, attrs_names_to_include):
+      """Delete object's attributes according to 'attrs_names_to_include'."""
+      obj = copy.deepcopy(obj)
+      [delattr(obj, obj_attr_name) for obj_attr_name in obj.__dict__.keys()
+       if obj_attr_name not in attrs_names_to_include]
+      return obj
+
+    list_objs = string_utils.convert_to_list(obj_or_objs)
+    for obj in list_objs:
+      if isinstance(obj, Entity.all_entities_classes()):
+        if isinstance(attrs_names_to_in, tuple):
+          list_objs = [obj for obj in list_objs if all(
+              attr_name in obj.__dict__.keys()
+              for attr_name in attrs_names_to_in) and
+              (string_utils.is_subset_of_dicts(
+
+                attrs_items_to_in, obj.__dict__))]
+          if attrs_names_to_ex and isinstance(attrs_names_to_ex, tuple):
+            list_objs = [obj for obj in list_objs if all(
+                attr_name not in obj.__dict__.keys() for attr_name in
+                attrs_names_to_ex)]
+
+
+
+
+
+
+
+
+    #      and
+    #         (
+    #      if attrs_items else
+    #
+    #      if attrs_names else True))]
+    # # if is_delete_extra_attrs:
+    #   attrs_names = list(*attrs_names) + dict(**attrs_items).keys()
+    #   matched_objs = [delete_obj_attrs(obj, attrs_names)
+    #                   for obj in list_objs]
+    return (help_utils.get_single_obj(matched_objs)
+            if not help_utils.is_multiple_objs(matched_objs) else matched_objs)
+
+
   def __eq__(self, other):
     """Extended equal procedure fore self and other entities."""
     comparison = Representation.compare_entities(self, other)
@@ -519,11 +573,11 @@ class Entity(Representation):
 
   @staticmethod
   def all_entities_classes():
-    """Explicitly return list of all entities' classes."""
-    return [
+    """Explicitly return tuple of all entities' classes."""
+    return (
         PersonEntity, CustomAttributeEntity, ProgramEntity, ControlEntity,
         AuditEntity, AssessmentEntity, AssessmentTemplateEntity, IssueEntity,
-        CommentEntity]
+        CommentEntity, ObjectiveEntity)
 
   def __lt__(self, other):
     return self.slug < other.slug

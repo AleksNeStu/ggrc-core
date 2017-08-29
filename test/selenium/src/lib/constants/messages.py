@@ -26,7 +26,6 @@ class AssertionMessages(CommonMessages):
   err_three_entities_diff = (
       _line + "\nFULL:" + _triple_diff + "\nSAME:" + _triple_diff + "\nDIFF:" +
       _triple_diff)
-  _all_entities_classes = tuple(Entity.all_entities_classes())
 
   @classmethod
   def diff_error_msg(cls, left, right):
@@ -41,7 +40,7 @@ class AssertionMessages(CommonMessages):
     and keys to make result error comparison message.
     """
     return (
-        isinstance(left and right, cls._all_entities_classes) and
+        isinstance(left and right, Entity.all_entities_classes()) and
         hasattr(left and right, "diff_info") and
         getattr(left, "diff_info") and getattr(right, "diff_info"))
 
@@ -60,13 +59,13 @@ class AssertionMessages(CommonMessages):
     # comparison of entities
     assertion_error_msg = cls.err_common.format(left, right)
     # processing of entity
-    if isinstance(left and right, cls._all_entities_classes):
+    if isinstance(left and right, Entity.all_entities_classes()):
       if not cls.is_entities_have_err_info(left, right):
         cls.set_entities_diff_info(left, right)
       assertion_error_msg = cls.diff_error_msg(left, right)
     # processing list of entities
     if (isinstance(left and right, list) and
-        all(isinstance(_left and _right, cls._all_entities_classes)
+        all(isinstance(_left and _right, Entity.all_entities_classes())
             for _left, _right in zip(left, right))):
       assertion_error_msg = ""
       for _left, _right in zip(sorted(left), sorted(right)):
@@ -84,14 +83,14 @@ class AssertionMessages(CommonMessages):
     # comparison of entities
     assertion_error_msg = cls.err_contains.format(left, right)
     # processing of entity
-    if isinstance(left and right, cls._all_entities_classes):
+    if isinstance(left and right, Entity.all_entities_classes()):
       if not cls.is_entities_have_err_info(left, right):
         cls.set_entities_diff_info(left, right)
       assertion_error_msg = cls.diff_error_msg(left, right)
     # processing list of entities
-    if (isinstance(left, cls._all_entities_classes) and
+    if (isinstance(left, Entity.all_entities_classes()) and
             isinstance(right, list) and
-            all(isinstance(_right, cls._all_entities_classes)
+            all(isinstance(_right, Entity.all_entities_classes())
                 for _right in right)):
       assertion_error_msg = ""
       for _right in right:
