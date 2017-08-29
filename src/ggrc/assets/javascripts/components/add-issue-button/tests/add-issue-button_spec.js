@@ -3,6 +3,8 @@
  Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
  */
 
+import '../add-issue-button';
+
 describe('GGRC.Components.addIssueButton', function () {
   'use strict';
 
@@ -63,6 +65,52 @@ describe('GGRC.Components.addIssueButton', function () {
             .toHaveBeenCalledWith('refreshInstance');
         }
       );
+    });
+  });
+
+  describe('prepareJSON get() method', function () {
+    var isJson;
+
+    beforeEach(function () {
+      viewModel.attr('relatedInstance', {
+        'class': {},
+      });
+    });
+
+    beforeAll(function () {
+      isJson = function (str) {
+        return !_.isError(_.attempt(JSON.parse, str));
+      };
+    });
+
+    it('returns json-format string', function () {
+      var result = viewModel.attr('prepareJSON');
+      expect(isJson(result)).toBe(true);
+    });
+
+    describe('for returned json-format string', function () {
+      it('sets assessment field', function () {
+        var result;
+        var relatedInstance = {
+          title: 'title',
+          id: 1,
+          type: 'type',
+          'class': {
+            title_singular: 'title singular',
+            table_singular: 'table singular',
+          },
+        };
+
+        viewModel.attr('relatedInstance', relatedInstance);
+        result = viewModel.attr('prepareJSON');
+        expect(JSON.parse(result).assessment).toEqual({
+          title: relatedInstance.title,
+          id: relatedInstance.id,
+          type: relatedInstance.type,
+          title_singular: relatedInstance.class.title_singular,
+          table_singular: relatedInstance.class.table_singular,
+        });
+      });
     });
   });
 });

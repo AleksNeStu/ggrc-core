@@ -18,13 +18,7 @@
         prepareJSON: {
           get: function () {
             var instance = this.attr('relatedInstance');
-            var audit = instance.attr('audit');
             var json = {
-              audit: {title: audit.title, id: audit.id, type: audit.type},
-              context: {
-                type: audit.attr('context.type'),
-                id: audit.attr('context.id')
-              },
               assessment: {
                 title: instance.title,
                 id: instance.id,
