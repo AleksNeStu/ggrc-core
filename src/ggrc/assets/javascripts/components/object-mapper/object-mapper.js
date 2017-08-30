@@ -55,18 +55,22 @@
       '/components/object-mapper/object-mapper.mustache'),
     viewModel: function (attrs, parentViewModel) {
       var config = {
-        general: parentViewModel.attr('generalConfig'),
-        special: parentViewModel.attr('specialConfigs')
+        general: parentViewModel.attr('general'),
+        special: parentViewModel.attr('special')
       };
 
+      var resolvedConfig = GGRC.VM.ObjectOperationsBaseVM.extractConfig(
+        config.general.type,
+        config
+      );
+
       return GGRC.VM.ObjectOperationsBaseVM.extend({
-        join_object_id: config.general['join-object-id'] ||
-          (GGRC.page_instance() && GGRC.page_instance().id),
-        object: config.general.object,
-        type: getDefaultType(config.general.type, config.general.object),
+        join_object_id: resolvedConfig['join-object-id'] ||
+           (GGRC.page_instance() && GGRC.page_instance().id),
+        object: resolvedConfig.object,
+        type: getDefaultType(resolvedConfig.type, resolvedConfig.object),
         config: config,
-        pendingConfigQueue: [],
-        useSnapshots: config.general.useSnapshots,
+        useSnapshots: resolvedConfig.useSnapshots,
         isLoadingOrSaving: function () {
           return this.attr('is_saving') ||
           //  disable changing of object type while loading
@@ -77,42 +81,51 @@
         deferred_list: [],
         deferred: false,
         allowedToCreate: function () {
-          // Don't allow to create new instances for "In Scope" Objects
+          // Don't allow to create new instances for "In Scope" Objects that
+          // are snapshots
+          var snapUtils = utils.Snapshots;
           var isInScopeModel =
-            GGRC.Utils.Snapshots.isInScopeModel(this.attr('object'));
-          return !isInScopeModel;
+            snapUtils.isInScopeModel(this.attr('object'));
+          var allow =
+            !isInScopeModel || (
+               isInScopeModel &&
+               !snapUtils.isSnapshotModel(this.attr('type'))
+            );
+          return allow;
+        },
+        showAsSnapshots: function () {
+          if (this.attr('freezedConfigTillSubmit.useSnapshots')) {
+            return true;
+          }
+          return false;
         },
         showWarning: function () {
-          // Never show warning for In Scope Objects
-          if (GGRC.Utils.Snapshots.isInScopeModel(this.attr('object'))) {
-            return false;
-          }
-          return GGRC.Utils.Snapshots.isSnapshotParent(this.attr('object')) ||
-            GGRC.Utils.Snapshots.isSnapshotParent(this.attr('type'));
-        },
-        prepareConfig: function (config) {
-          /**
-           * We don't want to apply config immediately
-           * (Because CanJs will be rerender mustache template immediately).
-           * For the reason we add config in pending queue.
-           */
-          this.pendingConfigQueue.push(config);
+          var isInScopeSrc =
+            utils.Snapshots.isInScopeModel(this.attr('object'));
+          var isSnapshotParentSrc =
+            utils.Snapshots.isSnapshotParent(this.attr('object'));
+          var isSnapshotParentDst =
+            utils.Snapshots.isSnapshotParent(this.attr('type'));
+          var isSnapshotModelSrc =
+            utils.Snapshots.isSnapshotModel(this.attr('object'));
+          var isSnapshotModelDst =
+            utils.Snapshots.isSnapshotModel(this.attr('type'));
 
-          // But we want to render mapping immediately
-          this.update({
-            relevantTo: config.relevantTo
-          });
+          var result =
+            // Dont show message if source is inScope model, for example Assessment.
+            !isInScopeSrc &&
+            // Show message if source is snapshotParent and destination is snapshotable.
+            ((isSnapshotParentSrc && isSnapshotModelDst) ||
+            // Show message if destination is snapshotParent and source is snapshotable.
+            (isSnapshotParentDst && isSnapshotModelSrc));
+
+          return result;
+        },
+        updateFreezedConfigToLatest: function () {
+          this.attr('freezedConfigTillSubmit', this.attr('currConfig'));
         },
         onSubmit: function () {
-          var queue = can.makeArray(
-            this.attr('pendingConfigQueue')
-          ).map(function (config) {
-            return config.serialize();
-          });
-
-          var resolvedConfigQueue = utils.resolveQueue(queue, true);
-
-          this.update(resolvedConfigQueue);
+          this.updateFreezedConfigToLatest();
           // calls base version
           this._super.apply(this, arguments);
         }
@@ -121,6 +134,7 @@
 
     events: {
       '.create-control modal:success': function (el, ev, model) {
+        this.viewModel.updateFreezedConfigToLatest();
         this.viewModel.attr('newEntries').push(model);
         this.mapObjects(this.viewModel.attr('newEntries'));
       },

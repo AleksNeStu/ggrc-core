@@ -145,7 +145,7 @@
   <collapsible-panel {soft-mode}="true" {title-text}="'Search Results ({{*totalObjects}})'" {(expanded)}="showResults">
     <div class="search-results">
       <mapper-results
-        class="{{#useSnapshots}}snapshot-list{{/useSnapshots}}"
+        class="{{#if showAsSnapshots}}snapshot-list{{/if}}"
         base-instance="parentInstance"
         {(is-loading)}="is_loading"
         object="object"

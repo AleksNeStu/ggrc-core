@@ -196,4 +196,41 @@ describe('GGRC.VM.ObjectOperationsBaseVM', function () {
       expect(vm.update).toHaveBeenCalledWith(config);
     });
   });
+
+  describe('extractConfig() method', function () {
+    var method;
+    var config;
+
+    beforeAll(function () {
+      method = GGRC.VM.ObjectOperationsBaseVM.extractConfig;
+    });
+
+    beforeEach(function () {
+      config = {
+        general: {},
+        special: [{
+          types: ['T1', 'T2'],
+          config: {}
+        }, {
+          types: ['T3'],
+          config: {
+            field: 1,
+            field2: 2
+          }
+        }]
+      };
+    });
+
+    it('extracts general config if there is no special config for type',
+    function () {
+      var result = method('T0', config);
+      expect(result).toBe(config.general);
+    });
+
+    it('extracts special config if there is special config for type',
+    function () {
+      var result = method('T2', config);
+      expect(result).toEqual(config.special[0].config);
+    });
+  });
 });

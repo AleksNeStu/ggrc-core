@@ -81,8 +81,8 @@ describe('GGRC.Controllers.ObjectMapper', function () {
           expect(fakeCtrlInst.launch).toHaveBeenCalledWith(
             btn,
             jasmine.objectContaining({
-              generalConfig: jasmine.any(Object),
-              specialConfigs: jasmine.any(Array)
+              general: jasmine.any(Object),
+              special: jasmine.any(Array)
             })
           );
 
@@ -104,14 +104,14 @@ describe('GGRC.Controllers.ObjectMapper', function () {
         updateScopeObject.then(function () {
           expect(args[1]).toEqual(
             jasmine.objectContaining({
-              generalConfig: jasmine.objectContaining({
+              general: jasmine.objectContaining({
                 object: fakeData.join_object_type,
                 type: fakeData.join_option_type,
                 relevantTo: jasmine.any(Array)
               })
             })
           );
-          expect(args[1].generalConfig['join-object-id']).toBeNull();
+          expect(args[1].general['join-object-id']).toBeNull();
           done();
         });
       });
