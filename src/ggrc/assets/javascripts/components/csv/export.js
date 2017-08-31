@@ -297,11 +297,11 @@
       }
     },
     helpers: {
-      first_panel: function (options) {
+      if_first_panel: function (options) {
         if (Number(this.attr('panel_number')) > 0) {
-          return options.fn();
+          return options.inverse();
         }
-        return options.inverse();
+        return options.fn();
       }
     }
   });

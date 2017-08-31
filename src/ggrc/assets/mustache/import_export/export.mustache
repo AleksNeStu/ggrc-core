@@ -6,15 +6,6 @@
 <csv-export filename="Export Objects">
 <div class="info no-space">
   <div class="choose-object-wrap">
-    <div class="row-fluid">
-      <div class="span12">
-        <div class="report-title">
-          <h2 class="title">
-            Export Objects
-          </h2>
-        </div>
-      </div>
-    </div>
 
     <export-group panels="export.panels">
       <div class="relevant-filter-group">
@@ -23,13 +14,15 @@
             <export-panel type="{{type}}" item="." panel_number="{{@index}}">
               <div class="row-fluid">
                 <div class="span4">
-                  <h6>Export object type</h6>
-                  <div class="single-line-filter">
-                    {{#first_panel}}
+                  <div class="flex-box">
+                    <h6>Export object type</h6>
+                    {{^if_first_panel}}
                       <button type="submit" class="remove_filter_group">
                         <i class="fa fa-trash"></i>
                       </button>
-                    {{/first_panel}}
+                    {{/if_first_panel}}
+                  </div>
+                  <div class="single-line-filter">
                     <select can-value="type" class="input-block-level option-type-selector">
                       {{#exportable}}
                         <option value="{{model_singular}}" label="{{title_plural}}"></option>

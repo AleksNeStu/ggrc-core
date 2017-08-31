@@ -254,9 +254,18 @@ form.import {
   }
 }
 
+#export_view .info {
+  -webkit-box-shadow: none;
+  box-shadow: none;
+}
+
 .export-group__actions-wrap {
   margin-top: 6px;
   & > .btn-success {
     background-color: $btnGreen;
   }
+}
+
+.remove_filter_group {
+  margin: 0 0 5px 10px;
 }
