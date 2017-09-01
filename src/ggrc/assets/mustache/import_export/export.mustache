@@ -4,10 +4,10 @@
 }}
 
 <csv-export filename="Export Objects">
-<div class="info no-space">
+<div class="info">
   <div class="choose-object-wrap">
 
-    <export-group panels="export.panels">
+    <export-group panels="export.panels" {export}="export">
       <div class="relevant-filter-group">
         {{#each panels.items}}
           <div class="new-relevant-block">
@@ -55,18 +55,27 @@
           </div>
         {{/each}}
       </div>
-      <div class="export-group__actions-wrap">
-        <a href="#" id="addAnotherObjectType" class="addFilterRule btn btn-small btn-white">Add Object Type</a>
-        {{^export.loading}}
-          <button type="submit" id="export-csv-button" class="btn btn-green btn-small">
-            Export Objects
-          </button>
-        {{/loading }}
-        {{#export.loading}}
-          <span {{attach_spinner '{ "radius": 4, "length": 4, "width": 2 }' 'display:inline-block; top: -3px; left: 30px;' }}></span>
-        {{/loading }}
-      </div>
     </export-group>
+  </div>
+</div>
+<div class="export-group__actions-wrap">
+  <div class="export-format-wrap">
+    <h6>Export format</h6>
+    <select class="export-format" can-value="export.chosenFormat">
+        <option value="gdrive" label="Google Sheet"></option>
+        <option value="csv" label="CSV File"></option>
+    </select>
+  </div>
+  <div class="export-buttons-wrap">
+    <a href="#" id="addAnotherObjectType" class="addFilterRule btn btn-small btn-white">Add Object Type</a>
+    {{^export.loading}}
+      <button type="submit" id="export-csv-button" class="btn btn-green btn-small">
+        Export Objects
+      </button>
+    {{/loading }}
+    {{#export.loading}}
+      <span {{attach_spinner '{ "radius": 4, "length": 4, "width": 2 }' 'display:inline-block; top: -3px; left: 30px;' }}></span>
+    {{/loading }}
   </div>
 </div>
 </csv-export>

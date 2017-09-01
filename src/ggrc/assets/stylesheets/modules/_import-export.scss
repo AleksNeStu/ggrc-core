@@ -259,10 +259,33 @@ form.import {
   box-shadow: none;
 }
 
+.export-add-filter-button {
+  margin: 20px 0 0 30px;
+}
+
 .export-group__actions-wrap {
-  margin-top: 6px;
+  display: flex;
+  align-items: flex-end;
+  margin: 30px 0;
   & > .btn-success {
     background-color: $btnGreen;
+  }
+
+  .export-format-wrap {
+    width: 25%;
+
+    h6 {
+      padding-bottom: 6px;
+    }
+
+    select {
+      width: 100%;
+      margin: 0;
+    }
+  }
+
+  .export-buttons-wrap {
+    margin-left: 20px;
   }
 }
 
