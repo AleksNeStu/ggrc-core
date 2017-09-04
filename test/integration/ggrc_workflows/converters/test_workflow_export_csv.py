@@ -3,12 +3,11 @@
 
 """Tests for workflow object exports."""
 
-from ggrc import db
-
 from os.path import abspath, dirname, join
-from flask.json import dumps
 
-from ggrc.app import app  # NOQA
+from flask.json import dumps
+from ggrc import db
+from ggrc.app import app  # NOQA  # pylint: disable=unused-import
 from ggrc_workflows.models import Workflow, TaskGroup
 from integration.ggrc import TestCase
 from integration.ggrc_workflows.generator import WorkflowsGenerator
@@ -31,7 +30,10 @@ class TestExportEmptyTemplate(TestCase):
 
   def test_single_object_export(self):
     """Test empty exports for workflow only."""
-    data = [{"object_name": "Workflow", "fields": "all"}]
+    data = {
+        "export_to": "csv",
+        "objects": [{"object_name": "Workflow", "fields": "all"}]
+    }
 
     response = self.client.post("/_service/export_csv",
                                 data=dumps(data), headers=self.headers)
@@ -48,9 +50,12 @@ class TestExportEmptyTemplate(TestCase):
         {"object_name": "CycleTaskGroup", "fields": "all"},
         {"object_name": "CycleTaskGroupObjectTask", "fields": "all"},
     ]
-
+    request_body = {
+        "export_to": "csv",
+        "objects": data
+    }
     response = self.client.post("/_service/export_csv",
-                                data=dumps(data), headers=self.headers)
+                                data=dumps(request_body), headers=self.headers)
     self.assertEqual(response.status_code, 200)
     self.assertIn("Workflow,", response.data)
     self.assertIn("Task Group,", response.data)
@@ -84,8 +89,8 @@ class TestExportMultipleObjects(TestCase):
     workflows = db.session.query(Workflow).join(TaskGroup).filter(
         Workflow.id == TaskGroup.workflow_id,
         Workflow.status == 'Draft').all()
-    for wf in workflows:
-      gen.activate_workflow(wf)
+    for workflow in workflows:
+      gen.activate_workflow(workflow)
 
   def setUp(self):
     self.clear_data()
@@ -99,8 +104,7 @@ class TestExportMultipleObjects(TestCase):
     self.activate()
 
   def export_csv(self, data):
-    response = self.client.post("/_service/export_csv", data=dumps(data),
-                                headers=self.headers)
+    response = super(TestExportMultipleObjects, self).export_csv(data)
     self.assert200(response)
     return response
 

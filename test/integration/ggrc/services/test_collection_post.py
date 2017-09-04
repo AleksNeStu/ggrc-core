@@ -19,7 +19,7 @@ class TestCollectionPost(TestCase):
     return response.headers['Location'][16:]
 
   @staticmethod
-  def headers(*args, **kwargs):
+  def get_headers(*args, **kwargs):
     """Get request headers."""
     ret = list(args)
     ret.append(('X-Requested-By', 'Unit Tests'))
@@ -35,12 +35,12 @@ class TestCollectionPost(TestCase):
         self.mock_url(),
         content_type='application/json',
         data=data,
-        headers=self.headers(),
+        headers=self.get_headers(),
     )
     self.assertStatus(response, 201)
     self.assertIn('Location', response.headers)
     response = self.client.get(
-        self.get_location(response), headers=self.headers())
+        self.get_location(response), headers=self.get_headers())
     self.assert200(response)
     self.assertIn('Content-Type', response.headers)
     self.assertEqual('application/json', response.headers['Content-Type'])
@@ -48,7 +48,7 @@ class TestCollectionPost(TestCase):
     self.assertIn('foo', response.json['services_test_mock_model'])
     self.assertEqual('bar', response.json['services_test_mock_model']['foo'])
     # check the collection, too
-    response = self.client.get(self.mock_url(), headers=self.headers())
+    response = self.client.get(self.mock_url(), headers=self.get_headers())
     self.assert200(response)
     self.assertEqual(
         1, len(response.json['test_model_collection']['test_model']))
@@ -64,13 +64,13 @@ class TestCollectionPost(TestCase):
         self.mock_url(),
         content_type='application/json',
         data=data,
-        headers=self.headers(),
+        headers=self.get_headers(),
     )
     self.assert200(response)
     self.assertEqual(type(response.json), list)
     self.assertEqual(len(response.json), 1)
 
-    response = self.client.get(self.mock_url(), headers=self.headers())
+    response = self.client.get(self.mock_url(), headers=self.get_headers())
     self.assert200(response)
     self.assertEqual(
         1, len(response.json['test_model_collection']['test_model']))
@@ -88,7 +88,7 @@ class TestCollectionPost(TestCase):
         self.mock_url(),
         content_type='application/json',
         data=data,
-        headers=self.headers(),
+        headers=self.get_headers(),
     )
     self.assert200(response)
     self.assertEqual(type(response.json), list)
@@ -97,7 +97,7 @@ class TestCollectionPost(TestCase):
         'bar1', response.json[0][1]['services_test_mock_model']['foo'])
     self.assertEqual(
         'bar2', response.json[1][1]['services_test_mock_model']['foo'])
-    response = self.client.get(self.mock_url(), headers=self.headers())
+    response = self.client.get(self.mock_url(), headers=self.get_headers())
     self.assert200(response)
     self.assertEqual(
         2, len(response.json['test_model_collection']['test_model']))
@@ -119,12 +119,12 @@ class TestCollectionPost(TestCase):
         self.mock_url(),
         content_type='application/json',
         data=data,
-        headers=self.headers(),
+        headers=self.get_headers(),
     )
 
     self.assertEqual(400, response.status_code)
     self.assertEqual([400], [i[0] for i in response.json])
-    response = self.client.get(self.mock_url(), headers=self.headers())
+    response = self.client.get(self.mock_url(), headers=self.get_headers())
     self.assert200(response)
     self.assertEqual(
         0, len(response.json['test_model_collection']['test_model']))
@@ -135,7 +135,7 @@ class TestCollectionPost(TestCase):
         self.mock_url(),
         content_type='application/json',
         data='This is most definitely not valid content.',
-        headers=self.headers(),
+        headers=self.get_headers(),
     )
     self.assert400(response)
     self.assertEqual(
@@ -150,7 +150,7 @@ class TestCollectionPost(TestCase):
         self.mock_url(),
         content_type='text/plain',
         data="Doesn't matter, now does it?",
-        headers=self.headers(),
+        headers=self.get_headers(),
     )
     self.assertStatus(response, 415)
 
@@ -177,7 +177,7 @@ class TestCollectionPost(TestCase):
         "/api/relationships",
         content_type='application/json',
         data=data,
-        headers=self.headers(),
+        headers=self.get_headers(),
     )
 
     self.assert200(response)
@@ -209,7 +209,7 @@ class TestCollectionPost(TestCase):
         "/api/relationships",
         content_type='application/json',
         data=data,
-        headers=self.headers(),
+        headers=self.get_headers(),
     )
 
     self.assert200(response)

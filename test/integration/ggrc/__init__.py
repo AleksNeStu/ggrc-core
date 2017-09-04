@@ -136,6 +136,7 @@ class TestCase(BaseTestCase, object):
   def setUp(self):
     self.clear_data()
     self._custom_headers = {}
+    self.headers = {}
 
   def tearDown(self):  # pylint: disable=no-self-use
     db.session.remove()
@@ -248,14 +249,21 @@ class TestCase(BaseTestCase, object):
     return post action response to export_csv service with data argument as
     sended data
     """
-    headers = {
-        'Content-Type': 'application/json',
-        "X-requested-by": "GGRC",
-        "X-export-view": "blocks",
+    if not hasattr(self, "headers") or not self.headers:
+      self.headers = {
+          'Content-Type': 'application/json',
+          "X-requested-by": "GGRC",
+          "X-export-view": "blocks",
+      }
+    if hasattr(self, "_custom_headers"):
+      self.headers.update(self._custom_headers)
+    request_body = {
+        "export_to": "csv",
+        "objects": data
     }
-    headers.update(self._custom_headers)
-    return self.client.post("/_service/export_csv", data=json.dumps(data),
-                            headers=headers)
+    return self.client.post("/_service/export_csv",
+                            data=json.dumps(request_body),
+                            headers=self.headers)
 
   def export_parsed_csv(self, data):
     """returns the dict of list of dict
