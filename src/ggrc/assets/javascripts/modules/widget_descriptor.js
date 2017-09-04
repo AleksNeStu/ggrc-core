@@ -97,6 +97,8 @@
     */
     make_tree_view: function (instance, farModel, extenders, id) {
       var descriptor;
+      var objectVersionConfig = GGRC.Utils.ObjectVersions
+        .getWidgetConfig(id);
       // Should not even try to create descriptor if configuration options are missing
       if (!instance || !farModel) {
         console
@@ -106,7 +108,9 @@
       descriptor = {
         widgetType: 'treeview',
         treeViewDepth: 2,
-        widget_id: farModel.table_singular,
+        widget_id: objectVersionConfig.isObjectVersion ?
+          objectVersionConfig.widgetId :
+          farModel.table_singular,
         widget_guard: function () {
           if (
             farModel.title_plural === 'Audits' &&
@@ -117,30 +121,35 @@
           return true;
         },
         widget_name: function () {
+          var farModelName = objectVersionConfig.isObjectVersion ?
+            objectVersionConfig.widgetName :
+            farModel.title_plural;
           var $objectArea = $('.object-area');
           if (
             $objectArea.hasClass('dashboard-area') ||
             instance.constructor.title_singular === 'Person'
           ) {
             if (/dashboard/.test(window.location)) {
-              return 'My ' + farModel.title_plural;
+              return 'My ' + farModelName;
             }
-            return farModel.title_plural;
+            return farModelName;
           } else if (farModel.title_plural === 'Audits') {
             return 'Mapped Audits';
           }
           return (
             farModel.title_plural === 'References' ?
                                          'Linked ' : 'Mapped '
-          ) + farModel.title_plural;
+          ) + farModelName;
         },
         widget_icon: farModel.table_singular,
         object_category: farModel.category || 'default',
         model: farModel,
+        objectVersion: objectVersionConfig.isObjectVersion,
         content_controller_options: {
           draw_children: true,
           parent_instance: instance,
-          model: farModel
+          model: farModel,
+          objectVersion: objectVersionConfig.isObjectVersion
         }
       };
 
@@ -148,7 +157,7 @@
 
       return new this(
         instance.constructor.shortName + ':' +
-        id ? id : farModel.table_singular,
+        id || instance.constructor.shortName,
         descriptor
       );
     },

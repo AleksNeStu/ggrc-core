@@ -33,9 +33,11 @@
       var modelsList = TreeViewUtils.getModelsForSubTier(modelName);
       var displayList = modelsList.map(function (model) {
         return {
+          widgetName: GGRC.Utils.ObjectVersions
+            .getWidgetConfig(model).widgetName,
           name: model,
           display: true
-        }
+        };
       });
 
       this.attr('childModelsList', displayList);

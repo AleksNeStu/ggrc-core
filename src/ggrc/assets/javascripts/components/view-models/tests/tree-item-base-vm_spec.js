@@ -16,6 +16,12 @@ describe('GGRC.VM.BaseTreeItemVM', function () {
     beforeEach(function () {
       spyOn(GGRC.Utils.TreeView, 'getModelsForSubTier')
         .and.returnValue(['Foo', 'Bar', 'Baz']);
+      spyOn(GGRC.Utils.ObjectVersions, 'getWidgetConfig')
+        .and.callFake(function (model) {
+          return {
+            widgetName: model + 'Widget',
+          };
+        });
 
       vm.attr('instance', {type: 'Type'});
     });
@@ -25,16 +31,28 @@ describe('GGRC.VM.BaseTreeItemVM', function () {
       var displayList;
       vm.initChildTreeDisplay();
 
-      modelsList = can.makeArray(vm.attr('selectedChildModels'));
-      displayList = can.makeArray(vm.attr('childModelsList'));
+      modelsList = vm.attr('selectedChildModels').serialize();
+      displayList = vm.attr('childModelsList').serialize();
 
       expect(modelsList.length).toEqual(3);
       expect(modelsList).toEqual(['Foo', 'Bar', 'Baz']);
 
-      expect(displayList.every(function (item) {
-        return item.display;
-      })).toBeTruthy();
-    })
+      expect(displayList).toEqual([
+        {
+          name: 'Foo',
+          widgetName: 'FooWidget',
+          display: true,
+        }, {
+          name: 'Bar',
+          widgetName: 'BarWidget',
+          display: true,
+        }, {
+          name: 'Baz',
+          widgetName: 'BazWidget',
+          display: true,
+        },
+      ]);
+    });
   });
 
   describe('onExpand() method', function () {

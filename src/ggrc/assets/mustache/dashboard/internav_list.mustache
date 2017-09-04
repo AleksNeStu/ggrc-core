@@ -44,70 +44,72 @@
   <div class="dropdown-menu" role="menu">
     {{#widget_list}}
       <div class="inner-nav-item">
-        {{^if_helpers '\
-          #if' has_count '\
-          and #if' count '\
-          or ^if' has_count '\
-          or #if' force_show '\
-          or #if' instance.constructor.obj_nav_options.show_all_tabs '\
-          or #in_array' internav_display instance.constructor.obj_nav_options.force_show_list}}
+        {{#isNotObjectVersion internav_display}}
+          {{^if_helpers '\
+            #if' has_count '\
+            and #if' count '\
+            or ^if' has_count '\
+            or #if' force_show '\
+            or #if' instance.constructor.obj_nav_options.show_all_tabs '\
+            or #in_array' internav_display instance.constructor.obj_nav_options.force_show_list}}
 
-          {{#if_helpers '\
-            #if_instance_of' instance 'Program' '\
-            and #if_equals' model.shortName 'Audit'}}
-            <a
-              href="{{urlPath}}{{selector}}"
-              rel="tooltip"
-              data-placement="left"
-              data-original-title="Create {{model.title_singular}}"
-              data-toggle="modal-ajax-form"
-              data-modal-reset="reset"
-              data-no-href-load="true"
-              data-modal-class="modal-wide"
-              data-object-singular="{{model.title_singular}}"
-              data-object-plural="{{model.table_plural}}"
-              data-object-params='{
-                  "{{instance.class.table_singular}}": {
-                      "id": {{instance.id}},
-                      "title": "{{json_escape instance.title}}"
-                  },
-                  "context": {
-                      "id": {{firstnonempty instance.context.id "null"}},
-                      "href": "{{instance.context.href}}",
-                      "type": "{{instance.context.type}}"
-                  }
-              }'
-            >
-              <div class="oneline">
-                <i class="fa fa-{{ internav_icon }} color"></i>
-                {{internav_display}}
-              </div>
-            </a>
-          {{else}}
-            <a
-              href="{{urlPath}}{{ selector }}"
-              {{^is_dashboard_or_all}}
-              {{#is_mappable_type instance.type model.shortName}}
-              {{#is_allowed_to_map instance model.shortName}}
-              {{^if_equals model.shortName 'Assessment'}}
-                data-clickable="true"
-                data-toggle="unified-mapper"
-                data-join-option-type="{{model.shortName}}"
-                data-join-object-id="{{instance.id}}"
-                data-join-object-type="{{instance.class.shortName}}"
-              {{/if_equals}}
-              {{/is_allowed_to_map}}
-              {{/is_mappable_type}}
-              {{/is_dashboard_or_all}}
-            >
-              <div class="oneline">
-                <i class="fa fa-{{ internav_icon }} color"></i>
-                {{internav_display}}
-              </div>
-            </a>
+            {{#if_helpers '\
+              #if_instance_of' instance 'Program' '\
+              and #if_equals' model.shortName 'Audit'}}
+              <a
+                href="{{urlPath}}{{selector}}"
+                rel="tooltip"
+                data-placement="left"
+                data-original-title="Create {{model.title_singular}}"
+                data-toggle="modal-ajax-form"
+                data-modal-reset="reset"
+                data-no-href-load="true"
+                data-modal-class="modal-wide"
+                data-object-singular="{{model.title_singular}}"
+                data-object-plural="{{model.table_plural}}"
+                data-object-params='{
+                    "{{instance.class.table_singular}}": {
+                        "id": {{instance.id}},
+                        "title": "{{json_escape instance.title}}"
+                    },
+                    "context": {
+                        "id": {{firstnonempty instance.context.id "null"}},
+                        "href": "{{instance.context.href}}",
+                        "type": "{{instance.context.type}}"
+                    }
+                }'
+              >
+                <div class="oneline">
+                  <i class="fa fa-{{ internav_icon }} color"></i>
+                  {{internav_display}}
+                </div>
+              </a>
+            {{else}}
+              <a
+                href="{{urlPath}}{{ selector }}"
+                {{^is_dashboard_or_all}}
+                {{#is_mappable_type instance.type model.shortName}}
+                {{#is_allowed_to_map instance model.shortName}}
+                {{^if_equals model.shortName 'Assessment'}}
+                  data-clickable="true"
+                  data-toggle="unified-mapper"
+                  data-join-option-type="{{model.shortName}}"
+                  data-join-object-id="{{instance.id}}"
+                  data-join-object-type="{{instance.class.shortName}}"
+                {{/if_equals}}
+                {{/is_allowed_to_map}}
+                {{/is_mappable_type}}
+                {{/is_dashboard_or_all}}
+              >
+                <div class="oneline">
+                  <i class="fa fa-{{ internav_icon }} color"></i>
+                  {{internav_display}}
+                </div>
+              </a>
+            {{/if_helpers}}
+
           {{/if_helpers}}
-
-        {{/if_helpers}}
+        {{/isNotObjectVersion}}
       </div>
     {{/widget_list}}
   </div>

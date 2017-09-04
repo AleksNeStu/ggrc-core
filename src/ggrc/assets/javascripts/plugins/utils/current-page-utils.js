@@ -126,6 +126,13 @@
       var defaults = getDefaultWidgets(widgetList, path);
 
       return defaults.map(function (widgetName) {
+        var isObjectVersion = GGRC.Utils.ObjectVersions
+          .isObjectVersion(widgetName);
+
+        if (isObjectVersion) {
+          return widgetName;
+        }
+
         return widgetList[widgetName]
           .content_controller_options.model.shortName;
       });
@@ -162,24 +169,29 @@
     function initCounts(widgets, type, id) {
       // Request params generation logic should be moved in
       // a separate place
-      var params = can.makeArray(widgets)
-        .map(function (widgetType) {
-          var expression = GGRC.Utils.TreeView
-            .makeRelevantExpression(widgetType, type, id);
-          var param = {};
+      var widgetsObject = GGRC.Utils.ObjectVersions
+        .getWidgetConfigs(can.makeArray(widgets));
 
-          if (SnapshotUtils.isSnapshotRelated(type, widgetType)) {
-            param = QueryAPI.buildParam('Snapshot', {}, expression, null,
-              GGRC.query_parser.parse('child_type = ' + widgetType));
-          } else if (typeof widgetType === 'string') {
-            param = QueryAPI.buildParam(widgetType, {}, expression);
-          } else {
-            param = QueryAPI.buildParam(widgetType.name, {}, expression, null,
-              GGRC.query_parser.parse(widgetType.additionalFilter));
-          }
-          param.type = 'count';
-          return param;
-        });
+      var params = widgetsObject.map(function (widgetObject) {
+        var param;
+        var expression = GGRC.Utils.TreeView
+          .makeRelevantExpression(widgetObject.name, type, id);
+
+        if (SnapshotUtils.isSnapshotRelated(type, widgetObject.name)) {
+          param = QueryAPI.buildParam('Snapshot', {}, expression, null,
+            GGRC.query_parser.parse('child_type = ' + widgetObject.name));
+        } else {
+          param = QueryAPI.buildParam(widgetObject.responseType,
+            {}, expression, null,
+            widgetObject.additionalFilter ?
+              GGRC.query_parser.parse(widgetObject.additionalFilter) :
+              null
+            );
+        }
+
+        param.type = 'count';
+        return param;
+      });
 
       // Perform requests only if params are defined
       if (!params.length) {
@@ -191,10 +203,10 @@
       }).then(function (data) {
         var countsMap = {};
         data.forEach(function (info, i) {
-          var widget = widgets[i];
-          var name = typeof widget === 'string' ? widget : widget.name;
-          var countsName = typeof widget === 'string' ?
-            widget : (widget.countsName || widget.name);
+          var widget = widgetsObject[i];
+          var name = widget.responseType;
+          var countsName = widget.countsName || widget.name;
+
           if (SnapshotUtils.isSnapshotRelated(type, name)) {
             name = 'Snapshot';
           }

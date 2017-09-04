@@ -59,13 +59,27 @@ import template from './templates/tree-widget-container.mustache';
         get: function () {
           var filters = can.makeArray(this.attr('filters'));
           var additionalFilter = this.attr('additionalFilter');
+          var optionsData;
+          var objectVersionfilter;
+          var isObjectVersion = this.attr('options.objectVersion');
 
           if (this.attr('advancedSearch.filter')) {
             return this.attr('advancedSearch.filter');
           }
 
-          if (additionalFilter) {
-            additionalFilter = GGRC.query_parser.parse(additionalFilter);
+          if (isObjectVersion || additionalFilter) {
+            if (isObjectVersion) {
+              optionsData = this.attr('optionsData');
+              objectVersionfilter = optionsData.additionalFilter;
+            }
+            if (additionalFilter) {
+              additionalFilter = objectVersionfilter ?
+                objectVersionfilter + ' AND ' + additionalFilter :
+                additionalFilter;
+            }
+
+            additionalFilter = GGRC.query_parser
+              .parse(additionalFilter || objectVersionfilter);
           }
 
           return filters.filter(function (options) {
@@ -77,6 +91,22 @@ import template from './templates/tree-widget-container.mustache';
         type: String,
         get: function () {
           return this.attr('model').shortName;
+        }
+      },
+      optionsData: {
+        get: function () {
+          var modelName = this.attr('modelName');
+          if (!this.attr('options.objectVersion')) {
+            return {
+              name: modelName,
+              loadItemsModelName: modelName,
+              widgetId: modelName,
+              countsName: modelName
+            };
+          }
+
+          return GGRC.Utils.ObjectVersions
+            .getWidgetConfig(modelName, true);
         }
       },
       statusFilterVisible: {
@@ -142,7 +172,9 @@ import template from './templates/tree-widget-container.mustache';
       addItem: {
         type: String,
         get: function () {
-          return this.attr('options').add_item_view ||
+          return this.attr('options.objectVersion') ?
+            false :
+            this.attr('options').add_item_view ||
             this.attr('model').tree_view_options.add_item_view;
         }
       },
@@ -153,8 +185,9 @@ import template from './templates/tree-widget-container.mustache';
           var parentInstance = this.attr('parent_instance');
           var model = this.attr('model');
 
-          return Snapshots.isSnapshotScope(parentInstance) &&
-            Snapshots.isSnapshotModel(model.model_singular);
+          return (Snapshots.isSnapshotScope(parentInstance) &&
+            Snapshots.isSnapshotModel(model.model_singular)) ||
+            this.attr('options.objectVersion');
         }
       },
       showGenerateAssessments: {
@@ -226,7 +259,7 @@ import template from './templates/tree-widget-container.mustache';
     refreshLoaded: true,
     canOpenInfoPin: true,
     loadItems: function () {
-      var modelName = this.attr('modelName');
+      var optionsData = this.attr('optionsData');
       var pageInfo = this.attr('pageInfo');
       var sortingInfo = this.attr('sortingInfo');
       var parent = this.attr('parent_instance');
@@ -243,11 +276,12 @@ import template from './templates/tree-widget-container.mustache';
       this.attr('loading', true);
 
       return TreeViewUtils
-        .loadFirstTierItems(modelName, parent, page, filter, request)
+        .loadFirstTierItems(optionsData.widgetId, parent, page, filter,
+          request)
         .then(function (data) {
           var total = data.total;
-          var modelName = this.attr('modelName');
-          var countsName = this.attr('options').countsName || modelName;
+          var widget = optionsData.widgetId;
+          var countsName = this.attr('options').countsName || widget;
 
           this.attr('showedItems', data.values);
           this.attr('pageInfo.total', total);
@@ -262,7 +296,7 @@ import template from './templates/tree-widget-container.mustache';
 
           if (this._getFilterByName('status')) {
             CurrentPageUtils
-              .initCounts([modelName], parent.type, parent.id);
+              .initCounts([widget], parent.type, parent.id);
           }
         }.bind(this));
     },
@@ -284,6 +318,7 @@ import template from './templates/tree-widget-container.mustache';
     },
     setColumnsConfiguration: function () {
       var columns = TreeViewUtils.getColumnsForModel(
+        // todo: Fix of col config
         this.attr('model').model_singular,
         this.attr('displayPrefs'),
         true
@@ -296,6 +331,7 @@ import template from './templates/tree-widget-container.mustache';
     },
     onUpdateColumns: function (event) {
       var selectedColumns = event.columns;
+      // todo: fix
       var columns = TreeViewUtils.setColumnsForModel(
         this.attr('model').model_singular,
         selectedColumns,
@@ -343,7 +379,7 @@ import template from './templates/tree-widget-container.mustache';
       var $el = this.attr('$el');
       var counts = CurrentPageUtils.getCounts();
       var countsName = this.attr('options').countsName ||
-        this.attr('model').shortName;
+        this.attr('optionsData.widgetId');
 
       if ($el) {
         can.trigger($el, 'updateCount', [counts.attr(countsName)]);
@@ -387,7 +423,7 @@ import template from './templates/tree-widget-container.mustache';
       this._triggerListeners(true);
     },
     _widgetShown: function () {
-      var modelName = this.attr('modelName');
+      var modelName = this.attr('optionsData').widgetId;
       var loaded = this.attr('loaded');
       var total = this.attr('pageInfo.total');
       var counts = _.get(CurrentPageUtils.getCounts(), modelName);

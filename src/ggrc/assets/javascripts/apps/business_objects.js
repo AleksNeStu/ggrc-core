@@ -121,19 +121,24 @@
       can.each(modelNames, function (name) {
         var w_list;
         var child_model_list = [];
-
+        var objectVersionUtils = GGRC.Utils.ObjectVersions;
+        var widgetConfig = objectVersionUtils.getWidgetConfig(name);
+        name = widgetConfig.name;
         GGRC.tree_view.basic_model_list.push({
           model_name: name,
-          display_name: CMS.Models[name].title_singular
+          display_name: widgetConfig.widgetName
         });
+
         // Initialize child_model_list, and child_display_list each model_type
         w_list = baseWidgetsByType[name];
 
         can.each(w_list, function (item) {
+          var childConfig;
           if (possibleModelType.indexOf(item) !== -1) {
+            childConfig = objectVersionUtils.getWidgetConfig(name);
             child_model_list.push({
-              model_name: item,
-              display_name: CMS.Models[item].title_singular
+              model_name: childConfig.name,
+              display_name: childConfig.widgetName
             });
           }
         });
@@ -746,6 +751,10 @@
       }
 
       can.each(farModels, function (model_name) {
+        var widgetConfig =  GGRC.Utils.ObjectVersions
+          .getWidgetConfig(model_name);
+        model_name = widgetConfig.name;
+
         if ((overriddenModels.all && overriddenModels.all.hasOwnProperty(model_name) && !overriddenModels[model_name]) || (overriddenModels[object.constructor.shortName] && overriddenModels[object.constructor.shortName].hasOwnProperty(model_name) && !overriddenModels[object.constructor.shortName][model_name]))
           return;
         var sources = [],
@@ -754,7 +763,7 @@
 
         far_model = CMS.Models[model_name];
         if (far_model) {
-          widget_id = far_model.table_singular;
+          widget_id = widgetConfig.widgetId;
           descriptor = {
             instance: object,
             far_model: far_model,

@@ -14,6 +14,55 @@ describe('GGRC.Components.treeWidgetContainer', function () {
     CurrentPageUtils = GGRC.Utils.CurrentPage;
   });
 
+  describe('optionsData get() method', function () {
+    var shortModelName = 'ModelName';
+
+    beforeEach(function () {
+      vm.attr('model', {
+        shortName: shortModelName,
+      });
+    });
+
+    describe('if options.objectVersion has a false value', function () {
+      beforeEach(function () {
+        vm.removeAttr('options.objectVersion', null);
+      });
+
+      it('returns appopriate object', function () {
+        var modelName = shortModelName;
+        var expectedResult = {
+          name: modelName,
+          loadItemsModelName: modelName,
+          widgetId: modelName,
+          countsName: modelName,
+        };
+
+        expect(vm.attr('optionsData')).toEqual(expectedResult);
+      });
+    });
+
+    describe('returns widget config which', function () {
+      beforeEach(function () {
+        vm.attr('options.objectVersion', {
+          data: 'Data',
+        });
+      });
+
+      it('returns result of GGRC.Utils.ObjectVersions.getWidgetConfig with ' +
+      'passed params', function () {
+        var expectedResult = {};
+        var getWidgetConfig = spyOn(
+          GGRC.Utils.ObjectVersions,
+          'getWidgetConfig'
+        ).and.returnValue(expectedResult);
+        var result = vm.attr('optionsData');
+
+        expect(result).toBe(expectedResult);
+        expect(getWidgetConfig).toHaveBeenCalledWith(shortModelName, true);
+      });
+    });
+  });
+
   describe('display() method', function () {
     var display;
     var dfd;
@@ -50,6 +99,97 @@ describe('GGRC.Components.treeWidgetContainer', function () {
       vm.attr('loaded', dfd);
       result = display();
       expect(result).toBe(dfd);
+    });
+  });
+
+  describe('addItem get() method', function () {
+    describe('if there is options.objectVersion', function () {
+      beforeEach(function () {
+        vm.attr('options.objectVersion', {data: 1});
+      });
+
+      it('returns false', function () {
+        expect(vm.attr('addItem')).toBe(false);
+      });
+    });
+
+    describe('if there is no options.objectVersion', function () {
+      beforeEach(function () {
+        vm.attr('options.objectVersion', null);
+      });
+
+      it('returns options.add_item_view if it exists', function () {
+        var expectedData = new can.Map({});
+        vm.attr('options.add_item_view', expectedData);
+        expect(vm.attr('addItem')).toBe(expectedData);
+      });
+
+      it('returns model.tree_view_options.add_item_view by default',
+      function () {
+        var expectedData = new can.Map({});
+        vm.attr('options.add_item_view', null);
+        vm.attr('model', {
+          tree_view_options: {
+            add_item_view: expectedData,
+          },
+        });
+        expect(vm.attr('addItem')).toBe(expectedData);
+      });
+    });
+  });
+
+  describe('isSnapshot get() method', function () {
+    var isSnapshotScope;
+    var isSnapshotModel;
+
+    beforeEach(function () {
+      isSnapshotScope = spyOn(GGRC.Utils.Snapshots, 'isSnapshotScope');
+      isSnapshotModel = spyOn(GGRC.Utils.Snapshots, 'isSnapshotModel');
+    });
+
+    describe('if parent_instance is a snapshot scope and ' +
+    'model.model_singular is a snapshot model', function () {
+      beforeEach(function () {
+        vm.attr('parent_instance', {data: 'Data'});
+        vm.attr('model', {model_singular: 'modelSingular'});
+
+        isSnapshotScope.and.returnValue({data: '1'});
+        isSnapshotModel.and.returnValue({data: '2'});
+      });
+
+      it('returns true value', function () {
+        expect(vm.attr('isSnapshots')).toBeTruthy();
+        expect(isSnapshotScope).toHaveBeenCalledWith(
+          vm.attr('parent_instance')
+        );
+        expect(isSnapshotModel).toHaveBeenCalledWith(
+          vm.attr('model.model_singular')
+        );
+      });
+    });
+
+    it('returns options.objectVersion by default', function () {
+      vm.attr('options.objectVersion', {data: 'Data'});
+      expect(vm.attr('isSnapshots')).toBeTruthy();
+    });
+
+    describe('if parent_instance is not a snapshot scope or ' +
+    'model.model_singular is not a snapshot model', function () {
+      beforeEach(function () {
+        isSnapshotScope.and.returnValue(null);
+        isSnapshotModel.and.returnValue(null);
+      });
+
+      it('returns true value if there is options.objectVersion', function () {
+        vm.attr('options.objectVersion', {data: 'Data'});
+        expect(vm.attr('isSnapshots')).toBeTruthy();
+      });
+
+      it('returns false value if there is no options.objectVersion',
+      function () {
+        vm.attr('options.objectVersion', null);
+        expect(vm.attr('isSnapshots')).toBeFalsy();
+      });
     });
   });
 

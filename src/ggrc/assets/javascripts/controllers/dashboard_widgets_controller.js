@@ -44,8 +44,15 @@ CMS.Controllers.Filterable('CMS.Controllers.DashboardWidgets', {
 
     if (this.options.widgetType && this.options.widgetType === 'treeview') {
       var counts = GGRC.Utils.CurrentPage.getCounts();
+
       var countsName = this.options.countsName ||
-        this.options.model.shortName;
+      this.options.model.shortName;
+    
+      if (this.options.objectVersion) {
+        countsName = GGRC.Utils.ObjectVersions
+          .getWidgetConfig(countsName, true)
+          .widgetId;
+      }
 
       this.options.widget_count.attr('count', '' + counts.attr(countsName));
 
