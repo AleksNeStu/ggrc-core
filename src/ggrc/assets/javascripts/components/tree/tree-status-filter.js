@@ -38,6 +38,7 @@
     options: {},
     filters: null,
     filterStates: [],
+    widgetId: null,
     modelName: null,
     displayPrefs: null,
     init: function () {
@@ -45,6 +46,8 @@
       var filter = this.attr('filter');
       var operation = this.attr('operation');
       var depth = this.attr('depth');
+      var filterName = this.attr('widgetId') ||
+        this.attr('modelName');
       var filterStates = StateUtils.getStatesForModel(this.attr('modelName'))
         .map(function (state) {
           return {
@@ -67,7 +70,7 @@
         CMS.Models.DisplayPrefs.getSingleton().then(function (displayPrefs) {
           this.attr('displayPrefs', displayPrefs);
 
-          this.loadTreeStates(this.attr('modelName'));
+          this.loadTreeStates(filterName);
         }.bind(this));
       }
     },
@@ -88,6 +91,8 @@
     },
     saveTreeStates: function (selectedStates) {
       var stateToSave;
+      var filterName = this.attr('widgetId') ||
+        this.attr('modelName');
 
       // in this case we save previous states
       if (!selectedStates) {
@@ -101,8 +106,7 @@
       this.attr('selectedStates', stateToSave);
 
       if (this.attr('useLocalStorage')) {
-        this.attr('displayPrefs').setTreeViewStates(this.attr('modelName'),
-          stateToSave);
+        this.attr('displayPrefs').setTreeViewStates(filterName, stateToSave);
       }
     }
   });

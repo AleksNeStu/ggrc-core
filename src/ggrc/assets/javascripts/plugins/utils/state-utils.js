@@ -8,16 +8,17 @@
   /**
    * Utils for state.
    */
+  var snapshotableObject = GGRC.config.snapshotable_objects;
+  var objectVersions = _.map(snapshotableObject, function (obj) {
+    return obj + '_versions';
+  });
+
   GGRC.Utils.State = (function () {
     var statesModels = [
       {
-        models: [
-          'AccessGroup', 'Clause', 'Contract',
-          'Control', 'DataAsset', 'Facility', 'Market',
-          'Objective', 'OrgGroup', 'Policy', 'Process', 'Product', 'Program',
-          'Project', 'Regulation', 'Risk', 'Section', 'Standard', 'System',
-          'Threat', 'Vendor', 'AssessmentTemplate'
-        ],
+        models: ['Assessment Template', 'Project', 'Program']
+          .concat(snapshotableObject)
+          .concat(objectVersions),
         states: ['Active', 'Draft', 'Deprecated']
       },
       {
