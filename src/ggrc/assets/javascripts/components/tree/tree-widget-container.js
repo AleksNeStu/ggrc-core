@@ -318,10 +318,10 @@ import template from './templates/tree-widget-container.mustache';
     },
     setColumnsConfiguration: function () {
       var columns = TreeViewUtils.getColumnsForModel(
-        // todo: Fix of col config
         this.attr('model').model_singular,
         this.attr('displayPrefs'),
-        true
+        true,
+        this.attr('optionsData').widgetId
       );
 
       this.attr('columns.available', columns.available);
@@ -331,11 +331,11 @@ import template from './templates/tree-widget-container.mustache';
     },
     onUpdateColumns: function (event) {
       var selectedColumns = event.columns;
-      // todo: fix
       var columns = TreeViewUtils.setColumnsForModel(
         this.attr('model').model_singular,
         selectedColumns,
-        this.attr('displayPrefs')
+        this.attr('displayPrefs'),
+        this.attr('optionsData').widgetId
       );
 
       this.attr('columns.selected', columns.selected);

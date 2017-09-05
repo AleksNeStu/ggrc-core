@@ -108,18 +108,20 @@
      * @param {String} modelType - Model type.
      * @param {Object} displayPrefs - Display preferences.
      * @param {Boolean} [includeRichText] - Need to include Rich Text in the configuration
+     * @param {String} modelName - Model name.
      * @return {Object} Table columns configuration.
      */
-    function getColumnsForModel(modelType, displayPrefs, includeRichText) {
+    function getColumnsForModel(modelType, displayPrefs, includeRichText,
+      modelName) {
       var Cacheable = can.Model.Cacheable;
       var Model = CMS.Models[modelType];
       var modelDefinition = Model().class.root_object;
-      var modelName = Model.model_singular;
       var mandatoryAttrNames =
         Model.tree_view_options.mandatory_attr_names ||
         Cacheable.tree_view_options.mandatory_attr_names;
       var savedAttrList = displayPrefs ?
-        displayPrefs.getTreeViewHeaders(modelName) : [];
+        displayPrefs.getTreeViewHeaders(modelName || Model.model_singular) :
+        [];
       var displayAttrNames =
         savedAttrList.length ? savedAttrList :
           (Model.tree_view_options.display_attr_names ||
@@ -230,9 +232,11 @@
      * @param {String} modelType - Model type.
      * @param {Array} columnNames - Array of column names.
      * @param {Object} displayPrefs - Display preferences.
+     * @param {String} modelName - Model name.
      * @return {Object} Table columns configuration.
      */
-    function setColumnsForModel(modelType, columnNames, displayPrefs) {
+    function setColumnsForModel(modelType, columnNames, displayPrefs,
+      modelName) {
       var availableColumns =
         getColumnsForModel(modelType, displayPrefs, true).available;
       var selectedColumns = [];
@@ -252,7 +256,7 @@
 
       if (displayPrefs) {
         displayPrefs.setTreeViewHeaders(
-          CMS.Models[modelType].model_singular,
+          modelName || CMS.Models[modelType].model_singular,
           selectedNames
         );
         displayPrefs.save();
