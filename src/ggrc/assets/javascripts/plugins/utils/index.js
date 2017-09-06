@@ -15,3 +15,4 @@ import './dashboards-utils';
 import './modals';
 import './controllers';
 import './deferred-transaction-utils';
+import './object-versions-utils';
