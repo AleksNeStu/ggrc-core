@@ -74,14 +74,14 @@ import '../components/unified-mapper/mapper-results';
 
       if (GGRC.Utils.Snapshots
           .isInScopeModel(data.join_object_type) && !isSearch) {
-        // each object type will be perceived as a snapshot, except types with
-        // special config
         isMapperOpen = true;
         openForSnapshots(data);
       } else {
         openForCommonObjects(data, isSearch);
       }
 
+      // each object type will be perceived as a snapshot, except types with
+      // special config
       function openForSnapshots(data) {
         var inScopeObject;
         var config = getBaseConfig();

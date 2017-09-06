@@ -54,6 +54,7 @@ describe('GGRC.Controllers.ObjectMapper', function () {
       };
       method = Ctrl.openMapper.bind(fakeCtrlInst);
       spyOn(GGRC.Errors, 'notifier');
+      $('body').trigger('closeMapper');
     });
 
     it('interrupts own work if disableMapper param is true', function () {
