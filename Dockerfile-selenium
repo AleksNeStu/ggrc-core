@@ -2,7 +2,7 @@
 # Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>  
 
 
-FROM selenium/standalone-chrome:3.4.0-chromium
+FROM selenium/standalone-chrome:3.5.3-chromium
 
 USER root
 COPY ./provision/docker/selenium.bashrc.j2 /root/.bashrc
