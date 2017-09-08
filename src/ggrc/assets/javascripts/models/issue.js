@@ -29,7 +29,8 @@
         {attr_title: 'Reference URL', attr_name: 'reference_url'},
         {attr_title: 'Last Deprecated Date', attr_name: 'end_date'}
       ]),
-      attr_view: GGRC.mustache_path + '/base_objects/tree-item-attr.mustache'
+      attr_view: GGRC.mustache_path + '/base_objects/tree-item-attr.mustache',
+      display_attr_names: ['title', 'Admin', 'status'],
     },
     info_pane_options: {
     },
