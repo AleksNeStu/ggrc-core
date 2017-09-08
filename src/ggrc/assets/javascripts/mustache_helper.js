@@ -2658,4 +2658,21 @@ Example:
       return options.fn(options.contexts);
     }
   );
+  Mustache.registerHelper('isNotProhibitedMap',
+    function (fromModel, toModel, options) {
+      var prohibitedMapList = {
+        Issue: ['Assessment', 'Audit']
+      };
+
+      fromModel = Mustache.resolve(fromModel);
+      toModel = Mustache.resolve(toModel);
+
+      if (prohibitedMapList[fromModel]
+        && prohibitedMapList[fromModel].includes(toModel)) {
+        return options.inverse(options.contexts);
+      }
+
+      return options.fn(options.contexts);
+    }
+  );
 })(jQuery, can);

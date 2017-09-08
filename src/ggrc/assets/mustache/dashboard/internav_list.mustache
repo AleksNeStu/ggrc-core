@@ -45,6 +45,7 @@
     {{#widget_list}}
       <div class="inner-nav-item">
         {{#isNotObjectVersion internav_display}}
+          {{#isNotProhibitedMap instance.type model.shortName }}
           {{^if_helpers '\
             #if' has_count '\
             and #if' count '\
@@ -109,6 +110,7 @@
             {{/if_helpers}}
 
           {{/if_helpers}}
+          {{/isNotProhibitedMap}}
         {{/isNotObjectVersion}}
       </div>
     {{/widget_list}}
