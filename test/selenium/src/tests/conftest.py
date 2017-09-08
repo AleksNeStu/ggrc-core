@@ -38,31 +38,31 @@ def selenium(selenium):
   yield selenium
 
 
-@pytest.fixture(scope="function")
-def create_tmp_dir(tmpdir_factory, request):
-  """Create temporary directory for test and return unconditional full path to
-  it according to the next rule:
-  selenium/tmp/'name of test method with parameters'.
-  Example:
-  Test's path to run:
-  selenium/src/tests/test_audit_page.py::TestAuditPage::()::
-  test_asmts_generation[Assessments generation without Assessment Template]
-  Test's temp directory:
-  selenium/tmp/
-  test_asmts_generation[Assessments generation without Assessment Template]
-  """
-  test_name = request.node.name
-  test_tmp_dir = tmpdir_factory.mktemp(test_name, numbered=True)
-  yield test_tmp_dir.strpath
+# @pytest.fixture(scope="function")
+# def create_tmp_dir(tmpdir_factory, request):
+#   """Create temporary directory for test and return unconditional full path to
+#   it according to the next rule:
+#   selenium/tmp/'name of test method with parameters'.
+#   Example:
+#   Test's path to run:
+#   selenium/src/tests/test_audit_page.py::TestAuditPage::()::
+#   test_asmts_generation[Assessments generation without Assessment Template]
+#   Test's temp directory:
+#   selenium/tmp/
+#   test_asmts_generation[Assessments generation without Assessment Template]
+#   """
+#   test_name = request.node.name
+#   test_tmp_dir = tmpdir_factory.mktemp(test_name, numbered=True)
+#   yield test_tmp_dir.strpath
 
 
-@pytest.fixture
-def chrome_options(chrome_options, create_tmp_dir):
-  """Set configuration to run Chrome with specific options."""
-  prefs = {"download.default_directory": create_tmp_dir,
-           "download.prompt_for_download": False}
-  chrome_options.add_experimental_option("prefs", prefs)
-  return chrome_options
+# @pytest.fixture
+# def chrome_options(chrome_options, create_tmp_dir):
+#   """Set configuration to run Chrome with specific options."""
+#   prefs = {"download.default_directory": create_tmp_dir,
+#            "download.prompt_for_download": False}
+#   chrome_options.add_experimental_option("prefs", prefs)
+#   return chrome_options
 
 
 @pytest.yield_fixture(scope="function")

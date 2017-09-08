@@ -23,7 +23,7 @@ RUN rm /usr/sbin/policy-rc.d \
 
 COPY ./provision/docker/01_start_mysql.sh /etc/my_init.d/
 
-RUN /etc/init.d/mysql start \
+RUN find /var/lib/mysql -type f -exec touch {} \; && /etc/init.d/mysql start \
   && mysql -uroot -e "SET PASSWORD FOR 'root'@'localhost' = PASSWORD('root'); \
                       SET PASSWORD FOR 'root'@'127.0.0.1' = PASSWORD('root')" \
   && /etc/init.d/mysql stop \
@@ -54,4 +54,4 @@ COPY ./extras /vagrant/extras
 RUN make setup_dev DEV_PREFIX=/vagrant-dev \
   && make appengine DEV_PREFIX=/vagrant-dev
 
-RUN chown -R vagrant:vagrant /vagrant /vagrant-dev
+#RUN chown -R vagrant:vagrant /vagrant /vagrant-dev

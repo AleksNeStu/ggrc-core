@@ -16,3 +16,14 @@ RUN usermod -u 1000 seluser
 
 WORKDIR /selenium
 USER seluser
+
+RUN sudo apt-get -y install wmaker
+RUN /usr/bin/xscreensaver -no-splash & exec wmaker
+
+RUN sudo apt-get update && sudo apt-get install -y x11vnc xvfb
+RUN sudo mkdir -p $HOME/.vnc
+RUN sudo x11vnc -storepasswd 12345 $HOME/.vnc/passwd
+RUN sudo chown -R seluser:seluser $HOME/.vnc/
+
+EXPOSE 5900
+CMD ["x11vnc", "-forever", "-usepw", "-create"]
