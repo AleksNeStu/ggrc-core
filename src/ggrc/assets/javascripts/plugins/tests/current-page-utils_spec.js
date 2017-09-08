@@ -131,7 +131,7 @@ describe('GGRC Utils CurrentPage', function () {
       spyOn(GGRC.WidgetList, 'get_widget_list_for')
         .and.returnValue({
           control: {},
-          assessment: {},
+          Assessment: {},
           objective: {}
         });
       method = GGRC.Utils.CurrentPage.getWidgetList;
@@ -202,7 +202,7 @@ describe('GGRC Utils CurrentPage', function () {
               }
             }
           },
-          assessment: {
+          Assessment: {
             content_controller_options: {
               model: {
                 shortName: 'Assessment'
