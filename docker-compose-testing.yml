@@ -10,6 +10,8 @@ dev:
   environment:
    - PYTHONDONTWRITEBYTECODE=true
    - NODE_PATH=/vagrant-dev/node_modules/
+  ports:
+   - "7070:8080"
 
 selenium:
   build: .
@@ -20,7 +22,10 @@ selenium:
   links:
    - dev
   environment:
+   - "TZ=America/Los_Angeles"
    - PYTHONDONTWRITEBYTECODE=true
    - PYTHONPATH=/selenium/src
    - SCREEN_WIDTH=1440
    - SCREEN_HEIGHT=900
+  ports:
+   - "5900:5900"

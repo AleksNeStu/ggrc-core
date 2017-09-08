@@ -6,8 +6,29 @@ FROM selenium/standalone-chrome:3.4.0-chromium
 
 USER root
 COPY ./provision/docker/selenium.bashrc.j2 /root/.bashrc
-RUN apt-get update && apt-get install -y python python-pip python-setuptools
 
+# Remove existing downloads and binaries
+RUN rm ~/chromedriver_linux64.zip
+RUN sudo rm /usr/local/bin/chromedriver
+
+# Add Chrome repository
+RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
+RUN sudo sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list'
+
+# Install section
+RUN apt-get update
+RUN apt-get install -y python python-pip python-setuptools curl google-chrome-stable
+
+# Install ChromeDriver
+RUN CHROME_DRIVER_VERSION='curl -sS chromedriver.storage.googleapis.com/LATEST_RELEASE'
+RUN wget -N http://chromedriver.storage.googleapis.com/$CHROME_DRIVER_VERSION/chromedriver_linux64.zip -P ~/
+RUN unzip ~/chromedriver_linux64.zip -d ~/
+RUN rm ~/chromedriver_linux64.zip
+RUN sudo mv -f ~/chromedriver /usr/local/bin/chromedriver
+RUN sudo chown root:root /usr/local/bin/chromedriver
+RUN sudo chmod 0755 /usr/local/bin/chromedriver
+
+# Install requirements
 COPY ./src/requirements-selenium.txt /tmp/requirements.txt
 RUN pip install pip \
   && pip install -r /tmp/requirements.txt
@@ -16,3 +37,13 @@ RUN usermod -u 1000 seluser
 
 WORKDIR /selenium
 USER seluser
+
+# Install and setting VNC and Graaphic manager wmaker
+RUN sudo apt-get -y install wmaker
+RUN /usr/bin/xscreensaver -no-splash & exec wmaker
+RUN sudo apt-get update && sudo apt-get install -y x11vnc xvfb
+RUN sudo mkdir -p $HOME/.vnc
+RUN sudo x11vnc -storepasswd 12345 $HOME/.vnc/passwd
+RUN sudo chown -R seluser:seluser $HOME/.vnc/
+EXPOSE 5900
+CMD ["x11vnc", "-forever", "-usepw", "-create"]
