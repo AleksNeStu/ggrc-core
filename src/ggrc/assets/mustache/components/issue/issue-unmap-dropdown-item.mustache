@@ -4,29 +4,31 @@
 }}
 
 {{#if issueUnmap}}
-  {{#is page_instance.type "Issue"}}
-    <issue-unmap
-      {issue-instance}="page_instance"
-      {target}="instance">
-        <li class="border">
-          <span class="unmap-link">
-            <i class="fa fa-ban"></i>Unmap from Issue
-          </span>
-        </li>
-    </issue-unmap>
-  {{else}}
-    {{#if visibleIssueUnmap}}
+  {{#unless denyUnmap}}
+    {{#is page_instance.type "Issue"}}
       <issue-unmap
-        {issue-instance}="instance"
-        {target}="page_instance">
+        {issue-instance}="page_instance"
+        {target}="instance">
           <li class="border">
             <span class="unmap-link">
-              <i class="fa fa-ban"></i>Unmap an Issue
+              <i class="fa fa-ban"></i>Unmap from Issue
             </span>
           </li>
       </issue-unmap>
-    {{/if}}
-  {{/is}}
+    {{else}}
+      {{#if visibleIssueUnmap}}
+        <issue-unmap
+          {issue-instance}="instance"
+          {target}="page_instance">
+            <li class="border">
+              <span class="unmap-link">
+                <i class="fa fa-ban"></i>Unmap an Issue
+              </span>
+            </li>
+        </issue-unmap>
+      {{/if}}
+    {{/is}}
+  {{/unless}}
 {{else}}
   <content></content>
 {{/if}}

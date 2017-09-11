@@ -23,6 +23,14 @@ import template from
           get: function () {
             return this.attr('page_instance.type') !== 'Person';
           }
+        },
+        denyUnmap: {
+          get: function () {
+            return (this.attr('page_instance.type') === 'Audit'
+                && !this.attr('instance.allow_unmap_from_audit'))
+              || (this.attr('instance.type') === 'Audit'
+                && !this.attr('page_instance.allow_unmap_from_audit'));
+          }
         }
       },
       instance: {},
