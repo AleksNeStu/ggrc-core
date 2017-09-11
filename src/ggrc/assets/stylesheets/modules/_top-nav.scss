@@ -124,6 +124,14 @@ ul.internav {
         padding-bottom: 0;
       }
     }
+    &.version {
+      a {
+        color: $blue;
+        i.color {
+          color: $blue;
+        }
+      }
+    }
   }
 
   a {

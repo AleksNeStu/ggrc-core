@@ -455,6 +455,12 @@
       var widgetOptions;
       var widgetName;
 
+      function getWidgetType(widgetId) {
+        var isObjectVersion = GGRC.Utils.ObjectVersions
+          .isObjectVersion(widgetId);
+        return isObjectVersion ? 'version' : '';
+      }
+
       if (this.delayed_display) {
         clearTimeout(this.delayed_display.timeout);
         this.delayed_display.timeout = setTimeout(this.delayed_display.fn, 50);
@@ -484,6 +490,7 @@
 
       widget.attr({
         internav_icon: icon,
+        widgetType: getWidgetType(widgetOptions.widget_id),
         internav_display: title,
         forceRefetch: widgetOptions && widgetOptions.forceRefetch,
         spinner: this.options.spinners['#' + $widget.attr('id')],
