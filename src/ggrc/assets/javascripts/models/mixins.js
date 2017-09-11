@@ -219,7 +219,7 @@
   }, {});
 
   can.Model.Mixin('mapping-limit-issue', {
-    getAllowedMappings: _.partial(getAllowedMappings, ['Program', 'Project'])
+    getAllowedMappings: _.partial(getAllowedMappings, ['Program', 'Project', 'TaskGroup'])
   }, {});
   /**
    * A mixin to use for objects that can have their status automatically
