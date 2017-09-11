@@ -4,7 +4,7 @@
 }}
 
 <div class="object-state-toolbar">
-  {{#if isInProgressOrNotStarted}}
+  {{#if isActiveState}}
       <button class="btn btn-small btn-darkBlue object-state-toolbar__item"
               ($click)="changeState()">Complete
       </button>
@@ -14,7 +14,7 @@
         <button class="btn btn-small btn-green object-state-toolbar__item"
                 ($click)="changeState('Verified')">Verify</button>
         <button class="btn btn-small btn-red object-state-toolbar__item"
-                ($click)="changeState('In Progress')">Reject
+                ($click)="changeState('Rework Needed')">Needs Rework
         </button>
     {{/if}}
   {{/if}}

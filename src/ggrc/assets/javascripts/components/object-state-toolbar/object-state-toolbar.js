@@ -9,6 +9,7 @@
   var tag = 'object-state-toolbar';
   var tpl = can.view(GGRC.mustache_path +
     '/components/object-state-toolbar/object-state-toolbar.mustache');
+  var activeStates = ['In Progress', 'Rework Needed', 'Not Started'];
   // Helper function - might be some util/helpers method
   function checkIsCurrentUserVerifier(verifiers) {
     return verifiers
@@ -55,9 +56,8 @@
       },
       verifiers: [],
       instance: {},
-      isInProgressOrNotStarted: function () {
-        return this.attr('instance.status') === 'In Progress' ||
-          this.attr('instance.status') === 'Not Started';
+      isActiveState: function () {
+        return activeStates.includes(this.attr('instance.status'));
       },
       isInProgress: function () {
         return this.attr('instance.status') === 'In Progress';
