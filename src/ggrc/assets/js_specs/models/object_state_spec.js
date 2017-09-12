@@ -24,7 +24,7 @@ describe('Model states test', function () {
   });
   it('checks if Assessment has correct statuses', function () {
     var expectedStatuses = ['Not Started', 'In Progress', 'In Review',
-        'Verified', 'Completed'];
+        'Verified', 'Completed', 'Rework Needed'];
     expect(CMS.Models.Assessment.statuses).toEqual(expectedStatuses);
   });
   it('checks if Issue has correct statuses', function () {
