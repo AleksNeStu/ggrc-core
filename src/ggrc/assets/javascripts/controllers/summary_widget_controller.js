@@ -20,6 +20,7 @@ export default can.Control({
       'In Progress': '#3369e8',
       'Not Started': '#9e9e9e',
       'In Review': '#ff9100',
+      'Rework Needed': '#e53935',
     },
     chartOptions: {
       pieSliceText: 'value-and-percentage',
