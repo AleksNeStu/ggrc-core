@@ -2,17 +2,47 @@
 # Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
 
 
-FROM selenium/standalone-chrome:3.5.2-antimony
+FROM selenium/standalone-chrome:3.5.3
 
+# Python requirements
 USER root
 COPY ./provision/docker/selenium.bashrc.j2 /root/.bashrc
 RUN apt-get update && apt-get install -y python python-pip python-setuptools
-
 COPY ./src/requirements-selenium.txt /tmp/requirements.txt
 RUN pip install pip \
   && pip install -r /tmp/requirements.txt
 
-RUN usermod -u 1000 seluser
+# All commands below are worked with no-cache option due to function.sh:
+# docker-compose --file docker-compose-testing.yml --project-name ${PROJECT} \
+#   build --build-arg NO_CACHE=$(date +%s) ${MACHINE_ID}
+ARG NO_CACHE=1
 
-WORKDIR /selenium
+# Google Chrome browser
+RUN CHROME_VERSION="google-chrome-stable"
+RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub \
+  | apt-key add - \
+  && echo "deb http://dl.google.com/linux/chrome/deb/ stable main" \
+  >> /etc/apt/sources.list.d/google-chrome.list \
+  && apt-get update -qqy \
+  && apt-get -qqy install \
+    ${CHROME_VERSION:-google-chrome-stable} \
+  && rm /etc/apt/sources.list.d/google-chrome.list \
+  && rm -rf /var/lib/apt/lists/* /var/cache/apt/*
+
+# Chrome webdriver
 USER seluser
+WORKDIR /selenium
+RUN usermod -u 1000 seluser
+RUN CHROME_DRIVER_VERSION="latest"
+RUN CD_VER=$(if [ ${CHROME_DRIVER_VERSION:-latest} = "latest" ]; then echo\
+  $(wget -qO- https://chromedriver.storage.googleapis.com/LATEST_RELEASE); \
+  else echo $CHROME_DRIVER_VERSION; fi) \
+  && echo "Using chromedriver version: "$CD_VER \
+  && wget --no-verbose -O /tmp/chromedriver_linux64.zip \
+  https://chromedriver.storage.googleapis.com/$CD_VER/chromedriver_linux64.zip\
+  && rm -rf /opt/selenium/chromedriver \
+  && unzip /tmp/chromedriver_linux64.zip -d /opt/selenium \
+  && rm /tmp/chromedriver_linux64.zip \
+  && mv /opt/selenium/chromedriver /opt/selenium/chromedriver-$CD_VER\
+  && chmod 755 /opt/selenium/chromedriver-$CD_VER \
+  && sudo ln -fs /opt/selenium/chromedriver-$CD_VER /usr/bin/chromedriver

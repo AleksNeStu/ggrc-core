@@ -48,9 +48,8 @@ setup () {
 
   git submodule update --init
 
-  docker-compose --file docker-compose-testing.yml \
-    --project-name ${PROJECT} \
-    build ${MACHINE_ID}
+  docker-compose --file docker-compose-testing.yml --project-name ${PROJECT} \
+    build --build-arg NO_CACHE=$(date +%s) ${MACHINE_ID}
 
   docker-compose --file docker-compose-testing.yml \
     --project-name ${PROJECT} \
