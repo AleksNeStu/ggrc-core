@@ -34,28 +34,30 @@ describe('GGRC.Components.exportGroup', function () {
     describe('addPanel() method', function () {
       var method;  // the method under test
       var data;
-      var scope;
+      var viewModel;
 
       beforeEach(function () {
-        scope = new can.Map({
+        viewModel = new can.Map({
           _index: 0,
           panels: {
             items: []
           }
         });
-        method = Component.prototype.events.addPanel.bind({scope: scope});
+        method = Component.prototype.events.addPanel.bind({
+          viewModel: viewModel
+        });
       });
       it('adds panel with "Program" type if data.type is undefined',
         function () {
           data = {};
           method(data);
-          expect(scope.attr('panels.items')[0].type).toEqual('Program');
+          expect(viewModel.attr('panels.items')[0].type).toEqual('Program');
         });
       it('adds panel with type from data if it is defined',
         function () {
           data = {type: 'Audit'};
           method(data);
-          expect(scope.attr('panels.items')[0].type).toEqual('Audit');
+          expect(viewModel.attr('panels.items')[0].type).toEqual('Audit');
         });
       it('adds panel with snapshot_type equal to data.type and' +
       ' type equal to "Snapshot" if it is snapshot', function () {
@@ -64,8 +66,9 @@ describe('GGRC.Components.exportGroup', function () {
           isSnapshots: 'true'
         };
         method(data);
-        expect(scope.attr('panels.items')[0].type).toEqual('Snapshot');
-        expect(scope.attr('panels.items')[0].snapshot_type).toEqual('Control');
+        expect(viewModel.attr('panels.items')[0].type).toEqual('Snapshot');
+        expect(viewModel.attr('panels.items')[0].snapshot_type)
+          .toEqual('Control');
       });
     });
   });

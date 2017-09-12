@@ -33,10 +33,10 @@
     format: 'gdrive'
   });
 
-  can.Component.extend({
+  GGRC.Components('csvTemplate', {
     tag: 'csv-template',
     template: '<content></content>',
-    scope: {
+    viewModel: {
       url: '/_service/export_csv',
       selected: [],
       importable: GGRC.Bootstrap.importable
@@ -44,7 +44,7 @@
     events: {
       '#importSelect change': function (el, ev) {
         var $items = el.find(':selected');
-        var selected = this.scope.attr('selected');
+        var selected = this.viewModel.attr('selected');
 
         $items.each(function () {
           var $item = $(this);
@@ -60,7 +60,7 @@
       '.import-button click': function (el, ev) {
         var data;
         ev.preventDefault();
-        data = _.map(this.scope.attr('selected'), function (el) {
+        data = _.map(this.viewModel.attr('selected'), function (el) {
           return {
             object_name: el.value,
             fields: 'all'
@@ -83,7 +83,7 @@
       },
       '.import-list a click': function (el, ev) {
         var index = el.data('index');
-        var item = this.scope.attr('selected').splice(index, 1)[0];
+        var item = this.viewModel.attr('selected').splice(index, 1)[0];
 
         ev.preventDefault();
 
@@ -97,14 +97,12 @@
     }
   });
 
-  can.Component.extend({
+  GGRC.Components('csvExport', {
     tag: 'csv-export',
     template: '<content></content>',
-    scope: function () {
-      return {
-        isFilterActive: false,
-        'export': new exportModel()
-      };
+    viewModel: {
+      isFilterActive: false,
+      'export': new exportModel()
     },
     events: {
       toggleIndicator: function (currentFilter) {
@@ -113,16 +111,16 @@
             !!currentFilter.expression.op &&
             currentFilter.expression.op.name !== 'text_search' &&
             currentFilter.expression.op.name !== 'exclude_text_search';
-        this.scope.attr('isFilterActive', isExpression);
+        this.viewModel.attr('isFilterActive', isExpression);
       },
       '.tree-filter__expression-holder input keyup': function (el, ev) {
         this.toggleIndicator(GGRC.query_parser.parse(el.val()));
       },
       '.option-type-selector change': function (el, ev) {
-        this.scope.attr('isFilterActive', false);
+        this.viewModel.attr('isFilterActive', false);
       },
       getObjectsForExport: function () {
-        var panels = this.scope.attr('export.panels.items');
+        var panels = this.viewModel.attr('export.panels.items');
 
         return _.map(panels, function (panel, index) {
           var relevantFilter;
@@ -156,17 +154,17 @@
         });
       },
       '#export-csv-button click': function (el, ev) {
-        this.scope.attr('export.loading', true);
+        this.viewModel.attr('export.loading', true);
 
         GGRC.Utils.export_request({
           data: {
             objects: this.getObjectsForExport(),
-            export_to: this.scope.attr('export.chosenFormat')
+            export_to: this.viewModel.attr('export.chosenFormat')
           }
         }).then(function (data) {
           var link;
 
-          if (this.scope.attr('export.chosenFormat') === 'gdrive') {
+          if (this.viewModel.attr('export.chosenFormat') === 'gdrive') {
             data = JSON.parse(data);
             link = 'https://docs.google.com/spreadsheets/d/' + data.id;
 
@@ -178,7 +176,7 @@
               button_view: GGRC.mustache_path + '/modals/close_buttons.mustache'
             });
           } else {
-            GGRC.Utils.download(this.scope.attr('export.filename'), data);
+            GGRC.Utils.download(this.viewModel.attr('export.filename'), data);
           }
         }.bind(this))
         .fail(function (data) {
@@ -187,12 +185,12 @@
           }
         })
         .always(function () {
-          this.scope.attr('export.loading', false);
+          this.viewModel.attr('export.loading', false);
         }.bind(this));
       },
       '#addAnotherObjectType click': function (el, ev) {
         ev.preventDefault();
-        this.scope.attr('export').dispatch('addPanel');
+        this.viewModel.attr('export').dispatch('addPanel');
       }
     }
   });
@@ -200,8 +198,8 @@
   GGRC.Components('exportGroup', {
     tag: 'export-group',
     template: '<content></content>',
-    scope: {
-      _index: 0,
+    viewModel: {
+      index: 0,
       'export': '@'
     },
     events: {
@@ -212,7 +210,7 @@
         });
       },
       addPanel: function (data) {
-        var index = this.scope.attr('_index') + 1;
+        var index = this.viewModel.attr('index') + 1;
         var pm;
 
         data = data || {};
@@ -223,7 +221,7 @@
           data.type = 'Snapshot';
         }
 
-        this.scope.attr('_index', index);
+        this.viewModel.attr('index', index);
         pm = new panelModel(data);
         pm.attr('columns', can.compute(function () {
           var definitions = GGRC.model_attr_defs[pm.attr('type')];
@@ -232,30 +230,28 @@
                    (el.display_name.indexOf('unmap:') === -1);
           });
         }));
-        return this.scope.attr('panels.items').push(pm);
+        return this.viewModel.attr('panels.items').push(pm);
       },
       getIndex: function (el) {
-        return Number(el.closest('export-panel')
-          .control().scope.attr('item.index'));
+        return Number($(el.closest('export-panel'))
+          .viewModel().attr('panel_number'));
       },
       '.remove_filter_group click': function (el, ev) {
-        var elIndex = this.getIndex(el);
-        var index = _.pluck(this.scope.attr('panels.items'), 'index')
-            .indexOf(elIndex);
+        var index = this.getIndex(el);
 
         ev.preventDefault();
-        this.scope.attr('panels.items').splice(index, 1);
+        this.viewModel.attr('panels.items').splice(index, 1);
       },
-      '{scope.export} addPanel': function () {
+      '{viewModel.export} addPanel': function () {
         this.addPanel();
       }
     }
   });
 
-  can.Component.extend({
+  GGRC.Components('exportPanel', {
     tag: 'export-panel',
     template: '<content></content>',
-    scope: {
+    viewModel: {
       exportable: GGRC.Bootstrap.exportable,
       snapshotable_objects: GGRC.config.snapshotable_objects,
       panel_number: '@',
@@ -273,44 +269,44 @@
     },
     events: {
       inserted: function () {
-        var panelNumber = Number(this.scope.attr('panel_number'));
+        var panelNumber = Number(this.viewModel.attr('panel_number'));
 
         if (!panelNumber && url.relevant_id && url.relevant_type) {
-          this.scope.fetch_relevant_data(url.relevant_id, url.relevant_type);
+          this.viewModel.fetch_relevant_data(url.relevant_id, url.relevant_type);
         }
         this.setSelected();
       },
       '[data-action=attribute_select_toggle] click': function (el, ev) {
-        var items = GGRC.model_attr_defs[this.scope.attr('item.type')];
+        var items = GGRC.model_attr_defs[this.viewModel.attr('item.type')];
         var isMapping = el.data('type') === 'mappings';
         var value = el.data('value');
 
         _.each(items, function (item, index) {
           if (isMapping && item.type === 'mapping') {
-            this.scope.attr('item.selected.' + index, value);
+            this.viewModel.attr('item.selected.' + index, value);
           }
           if (!isMapping && item.type !== 'mapping') {
-            this.scope.attr('item.selected.' + index, value);
+            this.viewModel.attr('item.selected.' + index, value);
           }
         }.bind(this));
       },
       setSelected: function () {
-        var selected = _.reduce(this.scope.attr('item').columns(),
+        var selected = _.reduce(this.viewModel.attr('item').columns(),
           function (memo, data, index) {
             memo[index] = true;
             return memo;
           }, {});
-        this.scope.attr('item.selected', selected);
+        this.viewModel.attr('item.selected', selected);
       },
-      '{scope.item} type': function () {
-        this.scope.attr('item.selected', {});
-        this.scope.attr('item.relevant', []);
-        this.scope.attr('item.filter', '');
-        this.scope.attr('item.snapshot_type', '');
-        this.scope.attr('item.has_parent', false);
+      '{viewModel.item} type': function () {
+        this.viewModel.attr('item.selected', {});
+        this.viewModel.attr('item.relevant', []);
+        this.viewModel.attr('item.filter', '');
+        this.viewModel.attr('item.snapshot_type', '');
+        this.viewModel.attr('item.has_parent', false);
 
-        if (this.scope.attr('item.type') === 'Snapshot') {
-          this.scope.attr('item.snapshot_type', 'Control');
+        if (this.viewModel.attr('item.type') === 'Snapshot') {
+          this.viewModel.attr('item.snapshot_type', 'Control');
         }
 
         this.setSelected();
