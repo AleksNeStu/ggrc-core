@@ -7,6 +7,11 @@ This module handles all view related function to import and export pages
 including the import/export api endponts.
 """
 
+import httplib2
+
+from apiclient import discovery
+from apiclient import http
+
 from logging import getLogger
 
 from flask import current_app
@@ -15,6 +20,8 @@ from flask import json
 from flask import render_template
 from werkzeug.exceptions import BadRequest
 
+from ggrc_gdrive_integration import get_credentials
+from ggrc_gdrive_integration import verify_credentials
 from ggrc.app import app
 from ggrc.converters.base import Converter
 from ggrc.converters.import_helper import generate_csv_string
@@ -56,7 +63,9 @@ def handle_export_request():
   try:
     with benchmark("handle export request"):
       data = parse_export_request()
-      query_helper = QueryHelper(data)
+      objects = data.get("objects")
+      export_to = data.get("export_to")
+      query_helper = QueryHelper(objects)
       ids_by_type = query_helper.get_ids()
     with benchmark("Generate CSV array"):
       converter = Converter(ids_by_type=ids_by_type)
@@ -66,12 +75,34 @@ def handle_export_request():
     with benchmark("Make response."):
       object_names = "_".join(converter.get_object_names())
       filename = "{}.csv".format(object_names)
-      headers = [
-          ("Content-Type", "text/csv"),
-          ("Content-Disposition",
-           "attachment; filename='{}'".format(filename)),
-      ]
-      return current_app.make_response((csv_string, 200, headers))
+
+      if export_to == "gdrive":
+        credentials = get_credentials()
+
+        http_auth = credentials.authorize(httplib2.Http())
+        drive_service = discovery.build('drive', 'v3', http=http_auth)
+
+        # make export to sheets
+        file_metadata = {
+            'name': filename,
+            'mimeType': 'application/vnd.google-apps.spreadsheet'
+        }
+        media = http.MediaInMemoryUpload(csv_string,
+                                         mimetype='text/csv',
+                                         resumable=True)
+        gfile = drive_service.files().create(
+            body=file_metadata,
+            media_body=media,
+            fields='id, name, parents').execute()
+        headers = [('Content-Type', 'application/json'), ]
+        return current_app.make_response((json.dumps(gfile), 200, headers))
+      if export_to == "csv":
+        headers = [
+            ("Content-Type", "text/csv"),
+            ("Content-Disposition",
+             "attachment; filename='{}'".format(filename)),
+        ]
+        return current_app.make_response((csv_string, 200, headers))
   except BadQueryException as exception:
     raise BadRequest(exception.message)
   except:  # pylint: disable=bare-except
@@ -80,6 +111,7 @@ def handle_export_request():
 
 
 def check_import_file():
+  """Check if imported file format and type is valid"""
   if "file" not in request.files or not request.files["file"]:
     raise BadRequest("Missing csv file")
   csv_file = request.files["file"]
@@ -102,6 +134,7 @@ def parse_import_request():
 
 
 def handle_import_request():
+  """Import request handler"""
   try:
     dry_run, csv_data = parse_import_request()
     converter = Converter(dry_run=dry_run, csv_data=csv_data)
@@ -140,4 +173,7 @@ def init_converter_views():
   @app.route("/export")
   @login_required
   def export_view():
+    authorize = verify_credentials()
+    if authorize:
+      return authorize
     return render_template("import_export/export.haml")

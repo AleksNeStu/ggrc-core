@@ -1,6 +1,8 @@
 # Copyright (C) 2017 Google Inc.
 # Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
 
+import flask
+
 from flask import Blueprint
 
 from ggrc import db             # noqa
@@ -19,6 +21,8 @@ from ggrc_gdrive_integration.models.object_folder import Folderable
 from ggrc_gdrive_integration.models.object_file import Fileable
 from ggrc_gdrive_integration.models.object_event import Eventable
 import ggrc_gdrive_integration.views
+
+from oauth2client import client
 
 
 blueprint = Blueprint(
@@ -44,31 +48,6 @@ Meeting.late_init_eventable()
 # be the other way around but none of them are actually okay
 Workflow.__bases__ = (Folderable,) + Workflow.__bases__
 Workflow.late_init_folderable()
-
-'''
-Some other spitballs from Dan here:
-
-Folderable.extend_class(Program)
-class ExtendableMixin(object):
-  _publish_attrs = [..]
-
-  def extend_class(cls, target_cls):
-    pass
-
-class ProgramWithGDrive(registry.get_model("Program")):
-  @declared_attr
-  def object_folders(cls):
-    pass
-
-ggrc.services.registry["Program"] = ProgramWithGDrive
-/api/blah
-/api/ggrc_basic_permissions/Program
-
-@Resource.model_get.connect_via(Program)
-def augment_program(programs):
-  for p in programs:
-    p["object_folders"] =
-'''
 
 
 # Initialize views
@@ -119,5 +98,56 @@ class GDriveRoleContributions(RoleContributions):
       },
 
   }
+
+ROLE_CONTRIBUTIONS = GDriveRoleContributions()
+
+
+def get_credentials():
+  """Gets valid user credentials from storage.
+
+  If nothing has been stored, or if the stored credentials are invalid,
+  the OAuth2 flow is completed to obtain the new credentials.
+
+  Returns:
+      Credentials, the obtained credential.
+  """
+  credentials = client.OAuth2Credentials.from_json(
+      flask.session['credentials'])
+  return credentials
+
+
+def verify_credentials():
+  """Verify credentials to gdrive for the current user"""
+  if 'credentials' not in flask.session:
+    return flask.redirect(flask.url_for('authorize_app', _external=True))
+  credentials = client.OAuth2Credentials.from_json(
+      flask.session['credentials'])
+  if credentials.access_token_expired:
+    return flask.redirect(flask.url_for('authorize_app', _external=True))
+  return None
+
+
+@app.route("/authorize")
+def authorize_app():
+  """Redirect to Google API auth page to authorize"""
+  constructor_kwargs = {
+      'redirect_uri': flask.url_for('authorize_app', _external=True),
+      'auth_uri': 'https://accounts.google.com/o/oauth2/auth',
+      'token_uri': 'https://accounts.google.com/o/oauth2/token',
+  }
+  flow = client.OAuth2WebServerFlow(
+      settings.GAPI_CLIENT_ID,
+      settings.GAPI_CLIENT_SECRET,
+      scope='https://www.googleapis.com/auth/drive',
+      **constructor_kwargs)
+  if 'code' not in flask.request.args:
+    auth_uri = flow.step1_get_authorize_url()
+    return flask.redirect(auth_uri)
+  else:
+    auth_code = flask.request.args.get('code')
+    credentials = flow.step2_exchange(auth_code)
+  # store credentials
+  flask.session['credentials'] = credentials.to_json()
+  return flask.redirect(flask.url_for('export_view', _external=True))
 
 ROLE_CONTRIBUTIONS = GDriveRoleContributions()

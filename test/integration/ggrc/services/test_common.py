@@ -51,7 +51,7 @@ class TestServices(TestCase):
     self.assertItemsEqual(allowed, response.headers["Allow"].split(", "))
 
   @staticmethod
-  def headers(*args, **kwargs):
+  def get_headers(*args, **kwargs):
     ret = list(args)
     ret.append(("X-Requested-By", "Unit Tests"))
     ret.extend(kwargs.items())
@@ -72,27 +72,29 @@ class TestServices(TestCase):
                      "X-Requested-By header is REQUIRED.")
 
   def test_empty_collection_get(self):
-    response = self.client.get(self.mock_url(), headers=self.headers())
+    response = self.client.get(self.mock_url(), headers=self.get_headers())
     self.assert200(response)
 
   def test_missing_resource_get(self):
-    response = self.client.get(self.mock_url("foo"), headers=self.headers())
+    response = self.client.get(self.mock_url("foo"),
+                               headers=self.get_headers())
     self.assert404(response)
 
   def test_collection_put(self):
     self.assert_allow(
-        self.client.put(self.mock_url(), headers=self.headers()),
+        self.client.put(self.mock_url(), headers=self.get_headers()),
         COLLECTION_ALLOWED)
 
   def test_collection_delete(self):
     self.assert_allow(
-        self.client.delete(self.mock_url(), headers=self.headers()),
+        self.client.delete(self.mock_url(), headers=self.get_headers()),
         COLLECTION_ALLOWED)
 
   def _prepare_model_for_put(self, foo_param="buzz"):
     """Common object initializing sequence."""
     mock = self.mock_model(foo=foo_param)
-    response = self.client.get(self.mock_url(mock.id), headers=self.headers())
+    response = self.client.get(self.mock_url(mock.id),
+                               headers=self.get_headers())
     self.assert200(response)
     self.assert_required_headers(response)
     return response
@@ -113,14 +115,14 @@ class TestServices(TestCase):
     response = self.client.put(
         url,
         data=json.dumps(obj),
-        headers=self.headers(
+        headers=self.get_headers(
             ("If-Unmodified-Since", original_headers["Last-Modified"]),
             ("If-Match", original_headers["Etag"]),
         ),
         content_type="application/json",
     )
     self.assert200(response)
-    response = self.client.get(url, headers=self.headers())
+    response = self.client.get(url, headers=self.get_headers())
     self.assert200(response)
     self.assertNotEqual(
         original_headers["Last-Modified"], response.headers["Last-Modified"])
@@ -138,7 +140,7 @@ class TestServices(TestCase):
     response = self.client.put(
         url,
         data=json.dumps(obj),
-        headers=self.headers(
+        headers=self.get_headers(
             ("If-Unmodified-Since", original_headers["Last-Modified"]),
             ("If-Match", original_headers["Etag"]),
         ),
@@ -159,7 +161,7 @@ class TestServices(TestCase):
     response = self.client.put(
         url,
         data=json.dumps(obj),
-        headers=self.headers(
+        headers=self.get_headers(
             ("If-Unmodified-Since", original_headers["Last-Modified"]),
             ("If-Match", original_headers["Etag"]),
         ),
@@ -176,7 +178,7 @@ class TestServices(TestCase):
         url,
         content_type="application/json",
         data="This is most definitely not valid content.",
-        headers=self.headers(
+        headers=self.get_headers(
             ("If-Unmodified-Since", response.headers["Last-Modified"]),
             ("If-Match", response.headers["Etag"]))
     )
@@ -199,7 +201,7 @@ class TestServices(TestCase):
           url,
           content_type="application/json",
           data=json.dumps(obj),
-          headers=self.headers(*headers),
+          headers=self.get_headers(*headers),
       )
 
     def check_response_428(response, missing_headers):
@@ -244,7 +246,7 @@ class TestServices(TestCase):
           url,
           content_type="application/json",
           data=json.dumps(obj),
-          headers=self.headers(*headers),
+          headers=self.get_headers(*headers),
       )
 
     def check_response_409(response):
@@ -280,19 +282,19 @@ class TestServices(TestCase):
   def test_options(self):
     mock = self.mock_model()
     response = self.client.open(
-        self.mock_url(mock.id), method="OPTIONS", headers=self.headers())
+        self.mock_url(mock.id), method="OPTIONS", headers=self.get_headers())
     self.assert_options(response, RESOURCE_ALLOWED)
 
   def test_collection_options(self):
     response = self.client.open(
-        self.mock_url(), method="OPTIONS", headers=self.headers())
+        self.mock_url(), method="OPTIONS", headers=self.get_headers())
     self.assert_options(response, COLLECTION_ALLOWED)
 
   def test_get_bad_accept(self):
     mock1 = self.mock_model(foo="baz")
     response = self.client.get(
         self.mock_url(mock1.id),
-        headers=self.headers(("Accept", "text/plain")))
+        headers=self.get_headers(("Accept", "text/plain")))
     self.assertStatus(response, 406)
     self.assertEqual("text/plain", response.headers.get("Content-Type"))
     self.assertEqual("application/json", response.data)
@@ -300,7 +302,7 @@ class TestServices(TestCase):
   def test_collection_get_bad_accept(self):
     response = self.client.get(
         self.mock_url(),
-        headers=self.headers(("Accept", "text/plain")))
+        headers=self.get_headers(("Accept", "text/plain")))
     self.assertStatus(response, 406)
     self.assertEqual("text/plain", response.headers.get("Content-Type"))
     self.assertEqual("application/json", response.data)
@@ -309,12 +311,12 @@ class TestServices(TestCase):
     mock1 = self.mock_model(foo="baz")
     response = self.client.get(
         self.mock_url(mock1.id),
-        headers=self.headers(("Accept", "application/json")))
+        headers=self.get_headers(("Accept", "application/json")))
     self.assert200(response)
     previous_headers = dict(response.headers)
     response = self.client.get(
         self.mock_url(mock1.id),
-        headers=self.headers(
+        headers=self.get_headers(
             ("Accept", "application/json"),
             ("If-None-Match", previous_headers["Etag"]),
         ),

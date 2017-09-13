@@ -5,15 +5,16 @@
 
 """Test request import and updates."""
 
+import csv
+import datetime
+import ddt
+import freezegun
+
 from cStringIO import StringIO
 from collections import OrderedDict
 from itertools import izip
-import csv
-import datetime
 
 from flask.json import dumps
-import ddt
-import freezegun
 
 from ggrc import db
 from ggrc import models
@@ -487,10 +488,6 @@ class TestAssessmentExport(TestCase):
     super(TestAssessmentExport, self).setUp()
     self.client.get("/login")
     self.headers = ObjectGenerator.get_header()
-
-  def export_csv(self, data):
-    return self.client.post("/_service/export_csv", data=dumps(data),
-                            headers=self.headers)
 
   def test_simple_export(self):
     """ Test full assessment export with no warnings

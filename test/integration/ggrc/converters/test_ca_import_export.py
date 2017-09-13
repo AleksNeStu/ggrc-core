@@ -173,13 +173,16 @@ class TestCustomAttributeImportExport(TestCase):
     filename = "custom_attribute_tests.csv"
     self.import_file(filename)
 
-    data = [{
-        "object_name": "Product",
-        "filters": {
-            "expression": {},
-        },
-        "fields": "all",
-    }]
+    data = {
+        "export_to": "csv",
+        "objects": [{
+            "object_name": "Product",
+            "filters": {
+                "expression": {},
+            },
+            "fields": "all",
+        }]
+    }
     response = self.client.post("/_service/export_csv", data=dumps(data),
                                 headers=self.headers)
 
@@ -200,17 +203,20 @@ class TestCustomAttributeImportExport(TestCase):
     from ggrc import views
     views.do_reindex()
 
-    data = [{
-        "object_name": "Product",
-        "filters": {
-            "expression": {
-                "left": "normal text",
-                "op": {"name": "="},
-                "right": "some text",
+    data = {
+        "export_to": "csv",
+        "objects": [{
+            "object_name": "Product",
+            "filters": {
+                "expression": {
+                    "left": "normal text",
+                    "op": {"name": "="},
+                    "right": "some text",
+                },
             },
-        },
-        "fields": "all",
-    }]
+            "fields": "all",
+        }]
+    }
     response = self.client.post("/_service/export_csv", data=dumps(data),
                                 headers=self.headers)
     self.assert200(response)
