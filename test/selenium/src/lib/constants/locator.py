@@ -203,14 +203,17 @@ class ExportPage(object):
   _EXPORT_PAGE = _CONTENT + " #csv_export"
   _EXPORT_PANEL = ".new-relevant-block"
   # general
-  EXPORT_PAGE = (By.CSS_SELECTOR, _EXPORT_PAGE)
-  EXPORT_PANEL = (By.CSS_SELECTOR, _EXPORT_PANEL)
+  EXPORT_PAGE_CSS = (By.CSS_SELECTOR, _EXPORT_PAGE)
+  EXPORT_PANEL_CSS = (By.CSS_SELECTOR, ".choose-object-wrap " + _EXPORT_PANEL)
   # labels
-  TITLE = (By.CSS_SELECTOR, Common.TITLE)
+  TITLE_LBL_CSS = (By.CSS_SELECTOR, Common.TITLE)
   # user input elements
-  BUTTON_ADD_OBJECT_TYPE = (By.CSS_SELECTOR, "#addAnotherObjectType")
-  BUTTON_EXPORT_OBJECTS = (By.CSS_SELECTOR, "#export-csv-button")
-  SPINNER_EXPORT_OBJECTS = (By.CSS_SELECTOR, ".spinner")
+  EXPORT_FORMAT_DD_CSS = (
+      By.CSS_SELECTOR, ".export-format")
+  ADD_OBJECT_TYPE_BTN_CSS = (
+      By.CSS_SELECTOR, "#addAnotherObjectType")
+  EXPORT_OBJECTS_BTN_CSS = (By.CSS_SELECTOR, "#export-csv-button")
+  EXPORT_OBJECTS_SPINNER_CSS = (By.CSS_SELECTOR, ".spinner")
 
 
 class ExtendedInfo(object):

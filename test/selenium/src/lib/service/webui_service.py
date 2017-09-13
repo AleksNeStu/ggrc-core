@@ -183,7 +183,7 @@ class BaseWebUiService(object):
     queries) and export objects to test's temporary directory as CSV file.
     """
     objs_widget = self.open_widget_of_mapped_objs(src_obj)
-    objs_widget.tree_view.open_3bbs().select_export().export_objects()
+    objs_widget.tree_view.open_3bbs().select_export().export_objs_to_csv()
 
   def _get_unified_mapper(self, src_obj):
     """Open generic widget of mapped objects, open unified mapper modal from
