@@ -94,7 +94,7 @@
 
     .pane-header__title {
       padding-right: 24px;
-      flex: 7 7;
+      flex: 6 6;
 
       .pane-header__title-name {
         overflow: hidden;
@@ -106,10 +106,9 @@
 
       .state-value {
         box-sizing: border-box;
-        height: 20px;
         white-space: nowrap;
         margin-right: 8px;
-        line-height: 19px;
+        line-height: 20px;
         display: flex;
         align-items: center;
       }
@@ -123,6 +122,7 @@
     .pane-header__toolbar {
       display: flex;
       flex-direction: row-reverse;
+      padding-top: 30px;
       flex: 3 3;
 
       .form-status {
@@ -134,8 +134,6 @@
       }
 
       .pane-header__toolbar-item {
-        margin-top: 20px;
-
         /* override "sticky-info-panel" margin */
         .details-wrap {
           margin-top: 0px !important;
