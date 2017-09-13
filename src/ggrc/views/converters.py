@@ -20,6 +20,7 @@ from flask import json
 from flask import render_template
 from werkzeug.exceptions import BadRequest
 
+from ggrc import settings
 from ggrc_gdrive_integration import get_credentials
 from ggrc_gdrive_integration import verify_credentials
 from ggrc.app import app
@@ -173,7 +174,8 @@ def init_converter_views():
   @app.route("/export")
   @login_required
   def export_view():
-    authorize = verify_credentials()
-    if authorize:
-      return authorize
+    if settings.GAPI_CLIENT_ID:
+      authorize = verify_credentials()
+      if authorize:
+        return authorize
     return render_template("import_export/export.haml")
