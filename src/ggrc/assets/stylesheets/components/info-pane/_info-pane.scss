@@ -100,7 +100,7 @@
 
     .pane-header__title {
       padding-right: 24px;
-      flex: 7 7;
+      flex: 6 6;
 
       .pane-header__title-name {
         overflow: hidden;
@@ -139,7 +139,7 @@
       }
 
       .pane-header__toolbar-item {
-        margin-top: 20px;
+        margin-top: 30px;
 
         /* override "sticky-info-panel" margin */
         .details-wrap {
