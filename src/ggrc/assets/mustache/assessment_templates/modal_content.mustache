@@ -200,6 +200,18 @@
         </label>
         <input data-id="code_txtbx" tabindex="3" class="input-block-level" name="slug" placeholder="AUDIT-XXX" type="text" value="{{instance.slug}}">
       </div>
+      <div class="span4 hidable">
+        <label>
+          State
+          <i class="fa fa-question-circle" rel="tooltip" title="Indicates the status of this object."></i>
+          <a href="javascript://" class="field-hide" tabindex="-1">hide</a>
+        </label>
+          <dropdown data-test-id="new_program_dropdown_state_036a1fa6"
+                    options-list="model.statuses"
+                    name="instance.status"
+                    tabindex="23">
+          </dropdown>
+      </div>
     </div>
 
     <div class="spacing-top row-fluid hidable">
