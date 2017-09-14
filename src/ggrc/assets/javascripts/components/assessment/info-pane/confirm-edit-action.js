@@ -24,7 +24,7 @@ import '../../inline/base-inline-control-title';
         }.bind(this));
       },
       isInEditableState: function () {
-        var editableStates = ['In Progress', 'Not Started'];
+        var editableStates = ['In Progress', 'Not Started', 'Rework Needed'];
         return _.contains(editableStates, this.attr('instance.status'));
       },
       showConfirm: function () {
