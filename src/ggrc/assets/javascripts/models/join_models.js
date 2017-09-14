@@ -253,6 +253,16 @@
               (!this.source.selfLink && this.destination.type))),
         this.destination_id || (this.destination && this.destination.id),
         this.destination) || this.destination);
+    },
+    unmap: function (cascade) {
+      return $.ajax({
+        type: 'DELETE',
+        url: '/api/relationships/' + this.attr('id') +
+          '?cascade=' + cascade
+      })
+      .done(function () {
+        can.trigger(this.constructor, 'destroyed', this);
+      }.bind(this));
     }
   });
 

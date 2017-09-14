@@ -165,7 +165,6 @@ import '../../components/form/fields/text-form-field';
 import '../../components/global-custom-attributes/global-custom-attributes';
 import '../../components/issue/issue-unmap-item';
 import '../../components/issue/issue-unmap-dropdown-item';
-import '../../components/issue/issue-unmap-related-assessments';
 import '../../components/issue/issue-unmap';
 
 // This modal should be loaded here as it requires some components

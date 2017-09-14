@@ -25,6 +25,7 @@
 
   $.ajaxPrefilter(function (options, originalOptions, jqXHR) {
     var data = originalOptions.data;
+    var resourceUrl = originalOptions.url.split('?')[0];
 
     function attach_provisional_id(prop) {
       jqXHR.done(function (obj) {
@@ -35,8 +36,8 @@
     if (/^\/api\//.test(options.url) && /PUT|POST|DELETE/.test(options.type.toUpperCase())) {
       options.dataType = 'json';
       options.contentType = 'application/json';
-      jqXHR.setRequestHeader('If-Match', (etags[originalOptions.url] || [])[0]);
-      jqXHR.setRequestHeader('If-Unmodified-Since', (etags[originalOptions.url] || [])[1]);
+      jqXHR.setRequestHeader('If-Match', (etags[resourceUrl] || [])[0]);
+      jqXHR.setRequestHeader('If-Unmodified-Since', (etags[resourceUrl] || [])[1]);
       options.data = options.type.toUpperCase() === 'DELETE' ? '' : JSON.stringify(data);
       for (var i in data) {
         if (data.hasOwnProperty(i) && data[i] && data[i].provisional_id) {

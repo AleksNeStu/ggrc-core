@@ -778,6 +778,7 @@ import template from './templates/tree-widget-container.mustache';
       ' refreshTree': function (el, ev) {
         ev.stopPropagation();
 
+        this.viewModel.closeInfoPane();
         this.viewModel.loadItems();
       },
       inserted: function () {

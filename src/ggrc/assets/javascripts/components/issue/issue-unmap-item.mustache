@@ -1,0 +1,79 @@
+{{!
+  Copyright (C) 2017 Google Inc.
+  Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
+}}
+
+{{#if canUnmap}}
+  <content></content>
+{{/if}}
+
+<simple-modal modal-title="modalTitle" state="modalState" replace-content="true" extra-css-class="related-snapshots">
+  <div class="simple-modal__header flex-box flex-row">
+        <div class="simple-modal__header-text flex-size-1">
+            <div class="simple-modal__title">
+                <div class="simple-modal__title__name">
+                  {{modalTitle}}
+                </div>
+            </div>
+        </div>
+        <button class="btn btn-small btn-icon" can-click="hide">
+            <i class="fa fa-times black"></i>
+        </button>
+    </div>
+    <div class="simple-modal__body {{#if isLoading}}loading{{/if}}">
+        <div class="simple-modal__section simple-modal__sub-header-section">
+            <p>
+                This action will also unmap the list of objects:
+            </p>
+        </div>
+        <div class="simple-modal__section">
+            <div class="simple-modal__section-title">
+                Related Audit
+            </div>
+            {{#if relatedAudit.title}}
+                <div class="related-snapshots__audit-container">
+                    <business-object-list-item
+                        ($click)="openObject({relatedAudit})"
+                        {instance}="relatedAudit">
+                    </business-object-list-item>
+                </div>
+            {{/if}}
+        </div>
+        <div class="simple-modal__section">
+            <div class="simple-modal__section-title">
+                Related Snapshots
+            </div>
+            <div class="modal-mapped-objects">
+                <spinner {toggle}="isLoading" class="spinner-wrapper active"
+                         extra-css-class="grid-spinner"></spinner>
+                <object-list {items}="relatedSnapshots">
+                    <div class="modal-mapped-objects-item">
+                        <div class="modal-mapped-objects-item__details">
+                            <business-object-list-item
+                                ($click)="openObject({.})"
+                                {instance}="{.}">
+                            </business-object-list-item>
+                        </div>
+                    </div>
+                </object-list>
+            </div>
+            {{#if paging.total}}
+            <tree-pagination {(paging)}="paging"></tree-pagination>
+            {{/if}}
+        </div>
+    </div>
+    <div class="simple-modal__footer">
+        <div class="simple-modal__toolbar">
+            <button class="btn btn-small btn-red simple-modal__toolbar-item"
+                    ($click)="unmap"
+                    {{#if isLoading}}disabled{{/if}}>
+                Unmap
+            </button>
+            <button class="btn btn-small btn-white simple-modal__toolbar-item"
+                    ($click)="hide"
+                    {{#if isLoading}}disabled{{/if}}>
+                Close
+            </button>
+        </div>
+    </div>
+</simple-modal>
