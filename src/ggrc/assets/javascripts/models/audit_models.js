@@ -341,6 +341,7 @@
         assessors: 'Principal Assignees',
         verifiers: 'Auditors'
       },
+      status: 'Draft',
       // the custom lists of assessor / verifier IDs if "other" is selected for
       // the corresponding default_people setting
       assessorsList: {},
@@ -356,6 +357,7 @@
         {value: 'other', title: 'Others...'}
       ]
     },
+    statuses: ['Draft', 'Deprecated', 'Active'],
     tree_view_options: {
       attr_view: GGRC.mustache_path + '/base_objects/tree-item-attr.mustache'
     },
