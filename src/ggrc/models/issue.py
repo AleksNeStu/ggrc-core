@@ -3,6 +3,9 @@
 
 """Issue Model."""
 
+import itertools
+
+from ggrc import builder
 from ggrc import db
 from ggrc.access_control.roleable import Roleable
 from ggrc.models.deferred import deferred
@@ -49,3 +52,23 @@ class Issue(Roleable, HasObjectState, TestPlanned, CustomAttributable,
   audit_id = deferred(
       db.Column(db.Integer, db.ForeignKey('audits.id'), nullable=True),
       'Issue')
+
+  @builder.simple_property
+  def allow_map_to_audit(self):
+    """False if self.audit or self.audit_id is set, True otherwise."""
+    return self.audit_id is None and self.audit is None
+
+  @builder.simple_property
+  def allow_unmap_from_audit(self):
+    """False if Issue is mapped to any Assessment/Snapshot, True otherwise."""
+    from ggrc.models import all_models
+
+    restricting_types = {all_models.Assessment, all_models.Snapshot}
+    restricting_types = set(m.__name__.lower() for m in restricting_types)
+
+    # pylint: disable=not-an-iterable
+    restricting_srcs = (rel.source_type.lower() in restricting_types
+                        for rel in self.related_sources)
+    restricting_dsts = (rel.destination_type.lower() in restricting_types
+                        for rel in self.related_destinations)
+    return not any(itertools.chain(restricting_srcs, restricting_dsts))
