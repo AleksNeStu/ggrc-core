@@ -36,7 +36,12 @@ class Issue(Roleable, HasObjectState, TestPlanned, CustomAttributable,
   VALID_STATES = BusinessObject.VALID_STATES + (FIXED, FIXED_AND_VERIFIED, )
 
   # REST properties
-  _api_attrs = reflection.ApiAttributes("audit")
+  _api_attrs = reflection.ApiAttributes(
+      reflection.Attribute("audit", create=False, update=False),
+      reflection.Attribute("allow_map_to_audit", create=False, update=False),
+      reflection.Attribute("allow_unmap_from_audit",
+                           create=False, update=False),
+  )
 
   _aliases = {
       "test_plan": {
