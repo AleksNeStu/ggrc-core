@@ -324,8 +324,8 @@ class Assessments(InfoPanel):
   def click_verify(self):
     base.Button(self._driver, WidgetInfoAssessment.BUTTON_VERIFY).click()
 
-  def click_reject(self):
-    base.Button(self._driver, WidgetInfoAssessment.BUTTON_REJECT).click()
+  def click_needs_rework(self):
+    base.Button(self._driver, WidgetInfoAssessment.BUTTON_NEEDS_REWORK).click()
 
 
 class AssessmentTemplates(InfoPanel):

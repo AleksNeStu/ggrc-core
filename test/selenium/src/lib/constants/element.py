@@ -268,6 +268,7 @@ class AssessmentStates(BaseStates):
   NOT_STARTED = "Not Started"
   READY_FOR_REVIEW = "In Review"
   VERIFIED = "Verified"
+  REWORK_NEEDED = "Rework Needed"
 
 
 class IssueStates(ObjectStates):
@@ -300,6 +301,7 @@ class AssessmentInfoWidget(CommonAssessment):
   """Elements' labels and properties for Assessments Info widgets."""
   WIDGET_HEADER = Base.WIDGET_INFO_HEADER_FORMAT.format(CommonAssessment.ASMT)
   TITLE_UPPER = CommonAssessment.TITLE.upper()
+  TITLE_EDITED_PART = "[EDITED]"
   CODE_UPPER = CommonAssessment.CODE.upper()
   COMMENTS_HEADER = "RESPONSES/COMMENTS"
 
