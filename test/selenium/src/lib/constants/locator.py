@@ -807,7 +807,7 @@ class WidgetInfoAssessment(WidgetInfoPanel, CommonAssessment):
   _PNL_STATE = ".pane-header__toolbar"
   BUTTON_COMPLETE = (By.CSS_SELECTOR, _PNL_STATE + " button.btn-darkBlue")
   BUTTON_VERIFY = (By.CSS_SELECTOR, _PNL_STATE + " button.btn-green")
-  BUTTON_REJECT = (By.CSS_SELECTOR, _PNL_STATE + " button.btn-red")
+  BUTTON_NEEDS_REWORK = (By.CSS_SELECTOR, _PNL_STATE + " button.btn-red")
   ICON_VERIFIED = (By.CSS_SELECTOR, "i.verified-icon")
 
   class TabContainer(object):
