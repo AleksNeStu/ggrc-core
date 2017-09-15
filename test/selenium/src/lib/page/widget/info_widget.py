@@ -433,10 +433,10 @@ class Assessments(InfoWidget):
     base.Button(self.info_widget_elem,
                 WidgetInfoAssessment.BUTTON_VERIFY).click()
 
-  def click_reject(self):
-    """Click on 'Reject' button."""
+  def click_needs_rework(self):
+    """Click on 'Needs Rework' button."""
     base.Button(self.info_widget_elem,
-                WidgetInfoAssessment.BUTTON_REJECT).click()
+                WidgetInfoAssessment.BUTTON_NEEDS_REWORK).click()
 
 
 class AssessmentTemplates(InfoWidget):

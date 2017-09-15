@@ -560,8 +560,9 @@ class AssessmentsService(BaseWebUiService):
 
   def reject_assessment(self, obj):
     """Navigate to info page of object according to URL of object then find and
-    click 'Reject' button then return info page of object in new state"""
-    self.open_info_page_of_obj(obj).click_reject()
+    click 'Needs Rework' button then return info page of object in new state.
+    """
+    self.open_info_page_of_obj(obj).click_needs_rework()
     return self.info_widget_cls(self.driver)
 
   def create_obj_and_get_mapped_titles_from_modal(self, src_obj, obj):

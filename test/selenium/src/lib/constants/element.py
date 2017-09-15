@@ -281,6 +281,7 @@ class AssessmentStates(BaseStates):
   NOT_STARTED = "Not Started"
   READY_FOR_REVIEW = "In Review"
   VERIFIED = "Verified"
+  REWORK_NEEDED = "Rework Needed"
 
 
 class IssueStates(ObjectStates):
