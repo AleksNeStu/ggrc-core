@@ -154,8 +154,8 @@ class TestAssessmentsWorkflow(base.Test):
        (("new_assessment_rest", {"status": AssessmentStates.IN_PROGRESS,
                                  "verifier": [roles.DEFAULT_USER]}),
         "reject_assessment",
-        AssessmentStates.READY_FOR_REVIEW, AssessmentStates.IN_PROGRESS, False)
-       ],
+        AssessmentStates.READY_FOR_REVIEW, AssessmentStates.REWORK_NEEDED,
+        False)],
       ids=["Edit asmt w'o verifier 'Not Started' - 'In Progress'",
            "Edit asmt w' verifier 'Not Started' - 'In Progress'",
            "Edit asmt w'o verifier 'In Progress' - 'In Progress'",
@@ -167,10 +167,10 @@ class TestAssessmentsWorkflow(base.Test):
            "Complete asmt w'o verifier 'In Progress' - 'Completed'",
            "Complete asmt w' verifier 'In Progress' - 'In Review'",
            "Verify asmt w' verifier 'In Review' - 'Completed'",
-           "Reject asmt w' verifier 'In Review' - 'In Progress'"],
-      indirect=["dynamic_objects_w_factory_params"])
+           "Reject asmt w' verifier 'In Review' - 'Rework Needed'"],
+      indirect=["dynamic_object_w_factory_params"])
   def test_check_asmt_state_change(
-      self, new_program_rest, new_audit_rest, dynamic_objects_w_factory_params,
+      self, new_program_rest, new_audit_rest, dynamic_object_w_factory_params,
       action, expected_initial_state, expected_final_state, expected_verified,
       selenium
   ):
