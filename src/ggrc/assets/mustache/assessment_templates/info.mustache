@@ -20,8 +20,8 @@
             <h6>Title</h6>
             <h3>{{title}}</h3>
 
-            {{#if type}}
-              <p>{{type.title}}</p>
+            {{#if status}}
+              <span class="state-value {{addclass 'state-' status separator=''}}">{{un_camel_case status}}</span>
             {{/if}}
           </div>
         </div>
