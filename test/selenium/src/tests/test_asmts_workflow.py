@@ -106,47 +106,48 @@ class TestAssessmentsWorkflow(base.Test):
   @pytest.mark.smoke_tests
   @pytest.mark.parametrize(
       ("dynamic_object_w_factory_params", "action",
-       "expected_initial_state", "expected_final_state"),
+       "expected_initial_state", "expected_final_state", "expected_verified"),
       [(("new_assessment_rest", {"status":
                                  AssessmentStates.NOT_STARTED}),
         "edit_obj_via_edit_modal_from_info_page",
-        None, AssessmentStates.IN_PROGRESS),
+        None, AssessmentStates.IN_PROGRESS, False),
        (("new_assessment_rest", {"status": AssessmentStates.NOT_STARTED,
                                  "verifier": [roles.DEFAULT_USER]}),
         "edit_obj_via_edit_modal_from_info_page",
-        None, AssessmentStates.IN_PROGRESS),
+        None, AssessmentStates.IN_PROGRESS, False),
        (("new_assessment_rest", {"status": AssessmentStates.IN_PROGRESS}),
         "edit_obj_via_edit_modal_from_info_page",
-        None, AssessmentStates.IN_PROGRESS),
+        None, AssessmentStates.IN_PROGRESS, False),
        (("new_assessment_rest", {"status": AssessmentStates.IN_PROGRESS,
                                  "verifier": [roles.DEFAULT_USER]}),
         "edit_obj_via_edit_modal_from_info_page",
-        None, AssessmentStates.IN_PROGRESS),
+        None, AssessmentStates.IN_PROGRESS, False),
        (("new_assessment_rest", {"status": AssessmentStates.IN_PROGRESS}),
         "edit_obj_via_edit_modal_from_info_page",
-        AssessmentStates.COMPLETED, AssessmentStates.IN_PROGRESS),
+        AssessmentStates.COMPLETED, AssessmentStates.IN_PROGRESS, False),
        (("new_assessment_rest", {"status": AssessmentStates.IN_PROGRESS,
                                  "verifier": [roles.DEFAULT_USER]}),
         "edit_obj_via_edit_modal_from_info_page",
-        AssessmentStates.COMPLETED, AssessmentStates.IN_PROGRESS),
+        AssessmentStates.COMPLETED, AssessmentStates.IN_PROGRESS, False),
        (("new_assessment_rest", {"status": AssessmentStates.NOT_STARTED}),
-        "complete_assessment", None, AssessmentStates.COMPLETED),
+        "complete_assessment", None, AssessmentStates.COMPLETED, False),
        (("new_assessment_rest", {"status": AssessmentStates.NOT_STARTED,
                                  "verifier": [roles.DEFAULT_USER]}),
-        "complete_assessment", None, AssessmentStates.READY_FOR_REVIEW),
+        "complete_assessment", None, AssessmentStates.READY_FOR_REVIEW, False),
        (("new_assessment_rest", {"status": AssessmentStates.IN_PROGRESS}),
-        "complete_assessment", None, AssessmentStates.COMPLETED),
+        "complete_assessment", None, AssessmentStates.COMPLETED, False),
        (("new_assessment_rest", {"status": AssessmentStates.IN_PROGRESS,
                                  "verifier": [roles.DEFAULT_USER]}),
-        "complete_assessment", None, AssessmentStates.READY_FOR_REVIEW),
+        "complete_assessment", None, AssessmentStates.READY_FOR_REVIEW, False),
        (("new_assessment_rest", {"status": AssessmentStates.IN_PROGRESS,
                                  "verifier": [roles.DEFAULT_USER]}),
         "verify_assessment",
-        AssessmentStates.READY_FOR_REVIEW, AssessmentStates.COMPLETED),
+        AssessmentStates.READY_FOR_REVIEW, AssessmentStates.COMPLETED, True),
        (("new_assessment_rest", {"status": AssessmentStates.IN_PROGRESS,
                                  "verifier": [roles.DEFAULT_USER]}),
         "reject_assessment",
-        AssessmentStates.READY_FOR_REVIEW, AssessmentStates.IN_PROGRESS)],
+        AssessmentStates.READY_FOR_REVIEW, AssessmentStates.REWORK_NEEDED,
+        False)],
       ids=["Edit asmt w'o verifier 'Not Started' - 'In Progress'",
            "Edit asmt w' verifier 'Not Started' - 'In Progress'",
            "Edit asmt w'o verifier 'In Progress' - 'In Progress'",
@@ -158,11 +159,12 @@ class TestAssessmentsWorkflow(base.Test):
            "Complete asmt w'o verifier 'In Progress' - 'Completed'",
            "Complete asmt w' verifier 'In Progress' - 'In Review'",
            "Verify asmt w' verifier 'In Review' - 'Completed'",
-           "Reject asmt w' verifier 'In Review' - 'In Progress'"],
+           "Reject asmt w' verifier 'In Review' - 'Rework Needed'"],
       indirect=["dynamic_object_w_factory_params"])
   def test_check_asmt_state_change(
       self, new_program_rest, new_audit_rest, dynamic_object_w_factory_params,
-      action, expected_initial_state, expected_final_state, selenium
+      action, expected_initial_state, expected_final_state, expected_verified,
+      selenium
   ):
     """Check Assessment workflow status change to correct state.
     Preconditions:
@@ -174,14 +176,17 @@ class TestAssessmentsWorkflow(base.Test):
     if expected_initial_state:
       (rest_service.AssessmentsService().
        update_obj(expected_asmt, status=expected_initial_state))
-    assessments_service = webui_service.AssessmentsService(selenium)
-    getattr(assessments_service, action)(expected_asmt)
-    actual_asmt = assessments_service.get_obj_from_info_page(expected_asmt)
-    self.general_assert(
-        expected_asmt.update_attrs(status=expected_final_state.title(),
-                                   title=actual_asmt.title,
-                                   verified=actual_asmt.verified).repr_ui(),
-        actual_asmt, "updated_at")
+    asmts_ui_service = webui_service.AssessmentsService(selenium)
+    getattr(asmts_ui_service, action)(expected_asmt)
+    expected_asmt = (expected_asmt.update_attrs(
+        title=(element.AssessmentInfoWidget.TITLE_EDITED_PART +
+               expected_asmt.title if "edit" in action
+               else expected_asmt.title),
+        status=expected_final_state.title(),
+        verified=expected_verified).repr_ui())
+    actual_asmt = asmts_ui_service.get_obj_from_info_page(expected_asmt)
+    # 'actual_asmt': updated_at (None)
+    self.general_assert(expected_asmt, actual_asmt, "updated_at")
 
   @pytest.mark.parametrize("operator", [alias.EQUAL_OP, alias.CONTAINS_OP])
   @pytest.mark.smoke_tests
