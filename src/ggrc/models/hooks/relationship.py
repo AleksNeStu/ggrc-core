@@ -58,6 +58,9 @@ def handle_audit_issue_mapping(session, flush_context, instances):
 
   for instance in itertools.chain(session.new, session.dirty):
     if isinstance(instance, all_models.Relationship):
+      if not instance.destination:
+        # TODO: fix Document imports to make this impossible
+        continue
       src, dst = order(instance.source, instance.destination)
       if is_audit_issue(src, dst):
         _handle_new_audit_issue_mapping(audit=src, issue=dst)
