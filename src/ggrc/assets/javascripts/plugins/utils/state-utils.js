@@ -16,7 +16,7 @@
           'Control', 'DataAsset', 'Facility', 'Market',
           'Objective', 'OrgGroup', 'Policy', 'Process', 'Product', 'Program',
           'Project', 'Regulation', 'Risk', 'Section', 'Standard', 'System',
-          'Threat', 'Vendor'
+          'Threat', 'Vendor', 'AssessmentTemplate'
         ],
         states: ['Active', 'Draft', 'Deprecated']
       },
