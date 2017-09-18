@@ -20,9 +20,10 @@ from integration.ggrc.models import factories
 class Generator(object):
   """Generator base class."""
 
-  def __init__(self):
+  def __init__(self, fail_no_json=True):
     self.api = api_helper.Api()
     self.resource = common.Resource()
+    self._fail_no_json = fail_no_json
 
   @staticmethod
   def random_date(start=datetime.date.today(), end=None):
@@ -45,10 +46,12 @@ class Generator(object):
       try:
         response_obj = obj_class.query.get(response.json[obj_name]['id'])
       except TypeError:
-        raise Exception("Invalid response.\nResponse: {}\nError: {}".format(
-            response,
-            response.data
-        ))
+        if self._fail_no_json:
+          raise Exception("Invalid response.\nResponse: {}\nError: {}".format(
+              response,
+              response.data
+          ))
+        response_obj = None
     return response, response_obj
 
   @staticmethod
