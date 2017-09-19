@@ -234,11 +234,9 @@ class AutomapperGenerator(object):
       True if a relationship was created;
       False otherwise.
     """
-    # even though self.cache is defaultdict, self.cache[key] adds key
-    # to self.cache if it is not present, and we should avoid it
-    if dst in self.cache.get(src, set()):
+    if dst in self.related(src):
       return False
-    if src in self.cache.get(dst, set()):
+    if src in self.related(dst):
       return False
 
     self._check_single_audit_restriction(src, dst)
