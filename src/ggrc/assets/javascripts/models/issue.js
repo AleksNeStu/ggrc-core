@@ -45,12 +45,6 @@
       this.validateNonBlank('title');
     }
   }, {
-    form_preload: function (newObjectForm) {
-      var pageInstance = GGRC.page_instance();
-      if (pageInstance && pageInstance.type === 'Audit' && !this.audit) {
-        this.attr('audit', pageInstance);
-      }
-    },
     object_model: function () {
       return CMS.Models[this.attr('object_type')];
     }
