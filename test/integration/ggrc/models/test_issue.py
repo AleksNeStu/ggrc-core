@@ -2,6 +2,7 @@
 # Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
 
 """Tests for Issue model."""
+from ggrc import db
 from ggrc.models import all_models
 from integration.ggrc import generator
 from integration.ggrc import TestCase, Api
@@ -175,3 +176,164 @@ class TestIssueAuditMapping(TestCase):
 
     response = self.generator.api.delete(self.issue_audit_mapping)
     self.assert400(response)
+
+
+class TestIssueUnmap(TestCase):
+  """Test suite to check the rules for Issue-Audit mappings."""
+  def setUp(self):
+    """Setup tests data"""
+    super(TestIssueUnmap, self).setUp()
+    self.generator = generator.ObjectGenerator(fail_no_json=False)
+
+    # TODO: replace this hack with a special test util
+    from ggrc.login import noop
+    noop.login()  # this is needed to pass the permission checks in automapper
+
+    with factories.single_commit():
+      audit = factories.AuditFactory()
+      self.audit_id = audit.id
+      assessments = [
+          factories.AssessmentFactory(audit=audit) for _ in range(2)
+      ]
+
+      controls = [factories.ControlFactory() for _ in range(2)]
+      snapshots = self._create_snapshots(audit, controls)
+      self.snapshot_ids = [s.id for s in snapshots]
+
+      issue = factories.IssueFactory()
+      self.issue_id = issue.id
+
+      factories.RelationshipFactory(source=audit, destination=assessments[0])
+      factories.RelationshipFactory(source=audit, destination=assessments[1])
+      factories.RelationshipFactory(
+          source=assessments[0], destination=snapshots[0]
+      )
+      factories.RelationshipFactory(
+          source=assessments[0], destination=snapshots[1]
+      )
+      factories.RelationshipFactory(
+          source=assessments[1], destination=snapshots[1]
+      )
+      self.unmap_rel_id1 = factories.RelationshipFactory(
+          source=issue, destination=assessments[0]
+      ).id
+      self.unmap_rel_id2 = factories.RelationshipFactory(
+          source=issue, destination=assessments[1]
+      ).id
+
+  def get_relationships(self, obj1_id, obj1_type, obj2_id, obj2_type):
+    """Get relationships between objects"""
+    # pylint: disable=no-self-use
+    return db.session.query(all_models.Relationship.id).filter_by(
+        source_type=obj1_type,
+        source_id=obj1_id,
+        destination_type=obj2_type,
+        destination_id=obj2_id,
+    ).union(
+        db.session.query(all_models.Relationship.id).filter_by(
+            source_type=obj2_type,
+            source_id=obj2_id,
+            destination_type=obj1_type,
+            destination_id=obj1_id,
+        )
+    )
+
+  def test_issue_cascade_unmap(self):
+    """Test cascade unmapping Issue from Assessment"""
+    unmap_rel1 = all_models.Relationship.query.get(self.unmap_rel_id1)
+    response = self.generator.api.delete(unmap_rel1, {"cascade": "true"})
+    self.assert200(response)
+
+    snap0_issue_rel = self.get_relationships(
+        self.snapshot_ids[0], "Snapshot", self.issue_id, "Issue"
+    )
+    self.assertEqual(snap0_issue_rel.count(), 0)
+    self.assertEqual(
+        all_models.Relationship.query.filter_by(id=self.unmap_rel_id1).count(),
+        0
+    )
+    self.assertEqual(all_models.Relationship.query.count(), 8)
+
+    unmap_rel2 = all_models.Relationship.query.get(self.unmap_rel_id2)
+    response = self.generator.api.delete(unmap_rel2, {"cascade": "true"})
+    self.assert200(response)
+
+    snap1_issue_rel = self.get_relationships(
+        self.snapshot_ids[1], "Snapshot", self.issue_id, "Issue"
+    )
+    audit_issue_rel = self.get_relationships(
+        self.audit_id, "Audit", self.issue_id, "Issue"
+    )
+    self.assertEqual(snap1_issue_rel.count(), 0)
+    self.assertEqual(audit_issue_rel.count(), 0)
+    self.assertEqual(
+        all_models.Relationship.query.filter_by(id=self.unmap_rel_id2).count(),
+        0
+    )
+    self.assertEqual(all_models.Relationship.query.count(), 5)
+
+  def test_cascade_unmap_automapped(self):
+    """Test if cascade unmapping Issue will not work for automapped"""
+    # Set all Relationships as manually created
+    db.session.query(all_models.Relationship).update({"automapping_id": None})
+    db.session.commit()
+
+    unmap_rel1 = all_models.Relationship.query.get(self.unmap_rel_id1)
+    response = self.generator.api.delete(unmap_rel1, {"cascade": "true"})
+    self.assert200(response)
+
+    unmap_rel2 = all_models.Relationship.query.get(self.unmap_rel_id2)
+    response = self.generator.api.delete(unmap_rel2, {"cascade": "true"})
+    self.assert200(response)
+
+    # No Issue-Snapshot, no Issue-Audit relationships should be removed
+    # as they manually mapped
+    snap0_issue_rel = self.get_relationships(
+        self.snapshot_ids[0], "Snapshot", self.issue_id, "Issue"
+    )
+    self.assertEqual(snap0_issue_rel.count(), 1)
+
+    snap1_issue_rel = self.get_relationships(
+        self.snapshot_ids[1], "Snapshot", self.issue_id, "Issue"
+    )
+    self.assertEqual(snap1_issue_rel.count(), 1)
+
+    audit_issue_rel = self.get_relationships(
+        self.audit_id, "Audit", self.issue_id, "Issue"
+    )
+    self.assertEqual(audit_issue_rel.count(), 1)
+
+  def test_cascade_unmap_man_audit(self):
+    """Test cascade unmapping Issue from Audit if it manually mapped"""
+    audit_issue_rel = self.get_relationships(
+        self.audit_id, "Audit", self.issue_id, "Issue"
+    )
+    all_models.Relationship.query.filter(
+        all_models.Relationship.id.in_(audit_issue_rel.subquery())
+    ).update({"automapping_id": None}, synchronize_session="fetch")
+    db.session.commit()
+
+    unmap_rel1 = all_models.Relationship.query.get(self.unmap_rel_id1)
+    response = self.generator.api.delete(unmap_rel1, {"cascade": "true"})
+    self.assert200(response)
+    # Snapshot is unmapped in cascade as it's automapped
+    self.assertEqual(all_models.Relationship.query.count(), 8)
+
+    unmap_rel2 = all_models.Relationship.query.get(self.unmap_rel_id2)
+    response = self.generator.api.delete(unmap_rel2, {"cascade": "true"})
+    self.assert200(response)
+
+    snap1_issue_rel = self.get_relationships(
+        self.snapshot_ids[1], "Snapshot", self.issue_id, "Issue"
+    )
+    audit_issue_rel = self.get_relationships(
+        self.audit_id, "Audit", self.issue_id, "Issue"
+    )
+    self.assertEqual(snap1_issue_rel.count(), 0)
+    # Audit is not removed in cascade as it was manually created
+    self.assertEqual(audit_issue_rel.count(), 1)
+    self.assertEqual(
+        all_models.Relationship.query.filter_by(id=self.unmap_rel_id2).count(),
+        0
+    )
+    self.assertEqual(all_models.Relationship.query.count(), 6)
