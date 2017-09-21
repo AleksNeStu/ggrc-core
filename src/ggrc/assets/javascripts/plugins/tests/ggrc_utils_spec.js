@@ -91,13 +91,14 @@ describe('GGRC utils getMappableTypes() method', function () {
     var result = mapper('Reference');
     expect(_.contains(result, 'Reference')).toBe(false);
   });
-  it('returns no results for Person', function () {
+  it('does not return Issue type for Person', function () {
     var result = mapper('Person');
-    expect(result.length).toBe(0);
+    expect(_.contains(result, 'Issue')).toBe(false);
   });
-  it('returns no results for AssessmentTemplate', function () {
+  it('returns only Audit type for AssessmentTemplate', function () {
     var result = mapper('AssessmentTemplate');
-    expect(result.length).toBe(0);
+    expect(result.length).toBe(1);
+    expect(result[0]).toBe('Audit');
   });
   it('always returns whitelisted items', function () {
     var whitelisted = ['Hello', 'World'];
@@ -130,10 +131,6 @@ describe('GGRC utils getMappableTypes() method', function () {
 });
 
 describe('GGRC utils isMappableType() method', function () {
-  it('returns false for Person and any type', function () {
-    var result = GGRC.Utils.isMappableType('Person', 'Program');
-    expect(result).toBe(false);
-  });
   it('returns false for AssessmentTemplate and  any type', function () {
     var result = GGRC.Utils.isMappableType('AssessmentTemplate', 'Program');
     expect(result).toBe(false);

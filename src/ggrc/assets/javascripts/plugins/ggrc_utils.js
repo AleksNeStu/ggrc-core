@@ -273,28 +273,19 @@
       var list = GGRC.tree_view.base_widgets_by_type[type];
       var forbidden;
       var forbiddenList = {
-        Program: ['Audit', 'RiskAssessment'],
+        Program: ['Audit'],
         Audit: ['Assessment', 'Program'],
         Assessment: ['Workflow', 'TaskGroup'],
-        Person: '*',
-        AssessmentTemplate: '*'
+        Person: ['Issue'],
       };
       options = options || {};
       if (!type) {
         return [];
       }
-      if (options.forbidden) {
-        forbidden = options.forbidden;
-      } else {
-        forbidden = forbiddenList[type] || [];
-      }
+      forbidden = _.union(forbiddenList[type] || [], options.forbidden || []);
       result = _.intersection.apply(_, _.compact([_.keys(canonical), list]));
-      if (_.isString(forbidden) && forbidden === '*') {
-        forbidden = [];
-        result = [];
-      }
-      result = _.partial(_.without, result);
-      result = result.apply(result, forbidden);
+
+      result = _.difference(result, forbidden);
 
       if (options.whitelist) {
         result = _.union(result, options.whitelist);
@@ -355,7 +346,6 @@
         twoWay: Object.freeze({
           'audit program': true,
           'audit request': true,
-          'program riskassessment': true,
           'assessmenttemplate cacheable': true,
           'cacheable person': true,
           'person risk': true,
