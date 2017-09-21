@@ -273,42 +273,50 @@ def relevant(exp, object_class, target_class, query):
     exp = query[exp['ids'][0]]
   object_name = exp['object_name']
   ids = exp['ids']
-  snapshoted = (object_class.__name__ in rules.Types.scoped and
-                object_name in rules.Types.all)
-  if not snapshoted:
-    return object_class.id.in_(
-        relationship_helper.get_ids_related_to(
-            object_class.__name__,
-            object_name,
-            ids,
-        )
-    )
-  snapshot_qs = models.Snapshot.query.filter(
-      models.Snapshot.parent_type == models.Audit.__name__,
-      models.Snapshot.child_type == object_name,
-      models.Snapshot.child_id.in_(ids),
-  ).options(
-      load_only(models.Snapshot.id),
-  ).distinct(
-  ).subquery(
-      "snapshot"
+  check_snapshots = (
+      object_class.__name__ in rules.Types.scoped | rules.Types.trans_scope and
+      object_name in rules.Types.all
   )
-  dest_qs = models.Relationship.query.filter(
-      models.Relationship.destination_id == snapshot_qs.c.id,
-      models.Relationship.destination_type == models.Snapshot.__name__,
-      models.Relationship.source_type == object_class.__name__,
-  ).options(
-      load_only("source_id")
-  ).distinct()
-  source_qs = models.Relationship.query.filter(
-      models.Relationship.source_id == snapshot_qs.c.id,
-      models.Relationship.source_type == models.Snapshot.__name__,
-      models.Relationship.destination_type == object_class.__name__,
-  ).options(
-      load_only("destination_id")
-  ).distinct()
-  ids_qs = dest_qs.union(source_qs).distinct().subquery()
-  return object_class.id == ids_qs.c.relationships_source_id
+  check_direct = (not check_snapshots or
+                  object_class.__name__ in rules.Types.trans_scope)
+
+  result = set()
+
+  if check_direct:
+    result.update(*relationship_helper.get_ids_related_to(
+        object_class.__name__,
+        object_name,
+        ids,
+    ))
+
+  if check_snapshots:
+    snapshot_qs = models.Snapshot.query.filter(
+        models.Snapshot.parent_type == models.Audit.__name__,
+        models.Snapshot.child_type == object_name,
+        models.Snapshot.child_id.in_(ids),
+    ).options(
+        load_only(models.Snapshot.id),
+    ).distinct(
+    ).subquery(
+        "snapshot"
+    )
+    dest_qs = db.session.query(models.Relationship.source_id).filter(
+        models.Relationship.destination_id == snapshot_qs.c.id,
+        models.Relationship.destination_type == models.Snapshot.__name__,
+        models.Relationship.source_type == object_class.__name__,
+    )
+    source_qs = db.session.query(models.Relationship.destination_id).filter(
+        models.Relationship.source_id == snapshot_qs.c.id,
+        models.Relationship.source_type == models.Snapshot.__name__,
+        models.Relationship.destination_type == object_class.__name__,
+    )
+    ids_qs = dest_qs.union(source_qs)
+    result.update(*ids_qs.all())
+
+  if not result:
+    return sqlalchemy.sql.false()
+
+  return object_class.id.in_(result)
 
 
 def build_expression(exp, object_class, target_class, query):

@@ -5,8 +5,6 @@
 
 from sqlalchemy import and_
 from sqlalchemy import sql
-from sqlalchemy import union
-from sqlalchemy.orm import aliased
 
 from ggrc import db
 from ggrc.extensions import get_extension_modules
@@ -174,13 +172,11 @@ def _array_union(queries):
 def _assessment_object_mappings(object_type, related_type, related_ids):
   """Get Object ids for audit scope objects and snapshotted objects."""
 
-  if object_type in Types.scoped and related_type in Types.all:
+  if (object_type in Types.scoped | Types.trans_scope and
+          related_type in Types.all):
 
     source_query = db.session.query(
         Relationship.destination_id.label("result_id"),
-        Relationship.destination_type,
-        Snapshot.child_id,
-        Snapshot.child_type,
     ).join(
         Snapshot,
         and_(
@@ -194,9 +190,6 @@ def _assessment_object_mappings(object_type, related_type, related_ids):
 
     destination_query = db.session.query(
         Relationship.source_id.label("result_id"),
-        Relationship.source_type,
-        Snapshot.child_id,
-        Snapshot.child_type,
     ).join(
         Snapshot,
         and_(
@@ -208,14 +201,12 @@ def _assessment_object_mappings(object_type, related_type, related_ids):
         )
     )
 
-  elif object_type in Types.all and related_type in Types.scoped:
+  elif (object_type in Types.all and
+        related_type in Types.scoped | Types.trans_scope):
     source_query = db.session.query(
-        Relationship.destination_id,
-        Relationship.destination_type,
         Snapshot.child_id.label("result_id"),
-        Snapshot.child_type,
     ).join(
-        Snapshot,
+        Relationship,
         and_(
             Relationship.source_id == Snapshot.id,
             Relationship.source_type == Snapshot.__name__,
@@ -226,12 +217,9 @@ def _assessment_object_mappings(object_type, related_type, related_ids):
     )
 
     destination_query = db.session.query(
-        Relationship.source_id,
-        Relationship.source_type,
         Snapshot.child_id.label("result_id"),
-        Snapshot.child_type,
     ).join(
-        Snapshot,
+        Relationship,
         and_(
             Relationship.destination_id == Snapshot.id,
             Relationship.destination_type == Snapshot.__name__,
@@ -247,9 +235,7 @@ def _assessment_object_mappings(object_type, related_type, related_ids):
         "object types: '{}' - '{}'".format(object_type, related_type)
     )
 
-  query = aliased(union(source_query, destination_query))
-
-  return db.session.query(query.c.result_id)
+  return source_query.union_all(destination_query)
 
 
 def _parent_object_mappings(object_type, related_type, related_ids):
@@ -319,5 +305,10 @@ def get_ids_related_to(object_type, related_type, related_ids=None):
       object_type, related_type, related_ids))
   queries.extend(get_special_mappings(
       object_type, related_type, related_ids))
+
+  if (object_type in Types.trans_scope and related_type in Types.all or
+          object_type in Types.all and related_type in Types.trans_scope):
+    queries.append(_assessment_object_mappings(
+        object_type, related_type, related_ids))
 
   return _array_union(queries)

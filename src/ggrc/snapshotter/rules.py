@@ -39,6 +39,9 @@ class Types(object):
 
   scoped = {
       "Assessment",
+  }
+
+  trans_scope = {
       "Issue",
   }
 
@@ -98,6 +101,7 @@ class Rules(object):
             "fst": fstdeg,
             "snd": snddeg
         }
+
 
 DEFAULT_RULE_LIST = [
     [
