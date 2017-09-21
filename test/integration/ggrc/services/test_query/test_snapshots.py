@@ -403,6 +403,76 @@ class TestAuditSnapshotQueries(TestCase, WithQueryApi):
 
 
 @ddt
+class TestIssueRelevantFilter(TestCase, WithQueryApi):
+  """Test suite to check both Snapshots and Snapshottables in relevant."""
+  # pylint: disable=invalid-name
+
+  def setUp(self):
+    super(TestIssueRelevantFilter, self).setUp()
+    self.client.get("/login")
+
+    self.snapshottable = factories.ObjectiveFactory()
+    revision = all_models.Revision.query.filter_by(
+        resource_id=self.snapshottable.id,
+        resource_type=self.snapshottable.type,
+    ).first()
+
+    with factories.single_commit():
+      self.control = factories.ControlFactory()
+      self.audit = factories.AuditFactory()
+      self.issue = factories.IssueFactory()
+      self.snapshot = factories.SnapshotFactory(
+          parent=self.audit,
+          child_id=self.snapshottable.id,
+          child_type=self.snapshottable.type,
+          revision_id=revision.id,
+      )
+
+      factories.RelationshipFactory(source=self.issue,
+                                    destination=self.control)
+      factories.RelationshipFactory(source=self.issue, destination=self.audit)
+      factories.RelationshipFactory(source=self.issue,
+                                    destination=self.snapshot)
+
+    self.objects = {
+        "Issue": self.issue,
+        "Control": self.control,
+        "Snapshot": self.snapshot,
+        "Snapshottable": self.snapshottable,
+    }
+
+  @staticmethod
+  def _make_relevant_filter(target_type, relevant_obj):
+    return {"object_name": target_type,
+            "type": "ids",
+            "filters": {"expression": {
+                "op": {"name": "relevant"},
+                "object_name": relevant_obj.type,
+                "ids": [relevant_obj.id],
+            }}}
+
+  @data(("Issue", "Control"),
+        ("Control", "Issue"),
+        ("Issue", "Snapshot"),
+        ("Snapshot", "Issue"),
+        ("Issue", "Snapshottable"),
+        ("Snapshottable", "Issue"))
+  @unpack
+  def test_relevant_issue_snapshottable(self, target, relevant_to):
+    """Relevant filter returns Snapshots and Snapshottables for Issue."""
+    target_obj = self.objects[target]
+    relevant_obj = self.objects[relevant_to]
+    target_id = target_obj.id
+
+    result = self._get_first_result_set(
+        self._make_relevant_filter(target_obj.type, relevant_obj),
+        target_obj.type, "ids",
+    )
+
+    self.assertEqual(result, [target_id])
+
+
+@ddt
 class TestSnapshotIndexing(TestCase, WithQueryApi):
   """Test suite to check indexing of special fields in Snapshots."""
 
