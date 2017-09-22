@@ -19,7 +19,10 @@ from ggrc.models import exceptions
 
 def _handle_del_audit_issue_mapping(audit, issue):
   """Unset audit_id and context_id from issue if allowed else fail."""
-  if not issue.allow_unmap_from_audit:
+  if issue in db.session.deleted:
+    # the issue is being removed, no action needed
+    return
+  if audit not in db.session.deleted and not issue.allow_unmap_from_audit:
     raise exceptions.ValidationError("Issue#{issue.id} can't be unmapped "
                                      "from Audit#{audit.id}: common mappings."
                                      .format(issue=issue, audit=audit))

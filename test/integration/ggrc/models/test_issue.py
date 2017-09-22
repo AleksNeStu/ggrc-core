@@ -60,8 +60,15 @@ class TestIssueAuditMapping(TestCase):
   def setUp(self):
     super(TestIssueAuditMapping, self).setUp()
     self.generator = generator.ObjectGenerator(fail_no_json=False)
+    control = factories.ControlFactory()
+    revision = all_models.Revision.query.filter(
+        all_models.Revision.resource_type == control.type,
+        all_models.Revision.resource_id == control.id,
+    ).first()
     with factories.single_commit():
       self.audit = factories.AuditFactory()
+      self.snapshot = factories.SnapshotFactory(parent=self.audit,
+                                                revision=revision)
       self.other_audits = [factories.AuditFactory() for _ in range(2)]
       self.issue_mapped = factories.IssueFactory()
       self.issue_unmapped = factories.IssueFactory()
@@ -162,20 +169,76 @@ class TestIssueAuditMapping(TestCase):
 
   def test_deny_unmapping_from_audit_snapshot(self):
     """Issue can't be unmapped from Audit if has common Snapshot."""
-    control = factories.ControlFactory()
-    revision = all_models.Revision.query.filter(
-        all_models.Revision.resource_type == control.type,
-        all_models.Revision.resource_id == control.id,
-    ).first()
-    with factories.single_commit():
-      snapshot = factories.SnapshotFactory(parent=self.audit,
-                                           revision=revision)
-      factories.RelationshipFactory(source=snapshot,
-                                    destination=self.issue_mapped,
-                                    context=self.audit.context)
+    factories.RelationshipFactory(source=self.snapshot,
+                                  destination=self.issue_mapped,
+                                  context=self.audit.context)
 
     response = self.generator.api.delete(self.issue_audit_mapping)
     self.assert400(response)
+
+  def test_delete_audit_with_issue(self):
+    """Audit can be deleted if mapped to Issue, Issue is unmapped."""
+    issue_id = self.issue_mapped.id
+    audit_id = self.audit.id
+
+    response = self.generator.api.delete(self.audit)
+    self.issue_mapped = self.refresh_object(self.issue_mapped, id_=issue_id)
+    self.audit = self.refresh_object(self.audit, id_=audit_id)
+
+    self.assert200(response)
+    self.assertIsNone(self.audit)
+    self.assertIsNotNone(self.issue_mapped)
+
+    self.assertIsNone(self.issue_mapped.context_id)
+    self.assertIsNone(self.issue_mapped.audit_id)
+
+  def test_delete_issue_with_audit(self):
+    """Issue can be deleted if mapped to Audit."""
+    issue_id = self.issue_mapped.id
+    audit_id = self.audit.id
+
+    response = self.generator.api.delete(self.issue_mapped)
+    self.issue_mapped = self.refresh_object(self.issue_mapped, id_=issue_id)
+    self.audit = self.refresh_object(self.audit, id_=audit_id)
+
+    self.assert200(response)
+    self.assertIsNone(self.issue_mapped)
+    self.assertIsNotNone(self.audit)
+
+  def test_delete_issue_with_audit_and_snapshot(self):
+    """Issue can be deleted if mapped to Audit and Snapshot."""
+    issue_id = self.issue_mapped.id
+    audit_id = self.audit.id
+    factories.RelationshipFactory(source=self.snapshot,
+                                  destination=self.issue_mapped,
+                                  context=self.audit.context)
+
+    response = self.generator.api.delete(self.issue_mapped)
+    self.issue_mapped = self.refresh_object(self.issue_mapped, id_=issue_id)
+    self.audit = self.refresh_object(self.audit, id_=audit_id)
+
+    self.assert200(response)
+    self.assertIsNone(self.issue_mapped)
+    self.assertIsNotNone(self.audit)
+
+  def test_delete_audit_with_issue_and_snapshot(self):
+    """Audit can be deleted if mapped to Issue mapped to Snapshot."""
+    issue_id = self.issue_mapped.id
+    audit_id = self.audit.id
+    factories.RelationshipFactory(source=self.snapshot,
+                                  destination=self.issue_mapped,
+                                  context=self.audit.context)
+
+    response = self.generator.api.delete(self.audit)
+    self.issue_mapped = self.refresh_object(self.issue_mapped, id_=issue_id)
+    self.audit = self.refresh_object(self.audit, id_=audit_id)
+
+    self.assert200(response)
+    self.assertIsNone(self.audit)
+    self.assertIsNotNone(self.issue_mapped)
+
+    self.assertIsNone(self.issue_mapped.context_id)
+    self.assertIsNone(self.issue_mapped.audit_id)
 
 
 class TestIssueUnmap(TestCase):
