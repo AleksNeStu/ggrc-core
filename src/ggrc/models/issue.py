@@ -73,7 +73,9 @@ class Issue(Roleable, HasObjectState, TestPlanned, CustomAttributable,
 
     # pylint: disable=not-an-iterable
     restricting_srcs = (rel.source_type.lower() in restricting_types
-                        for rel in self.related_sources)
+                        for rel in self.related_sources
+                        if rel not in db.session.deleted)
     restricting_dsts = (rel.destination_type.lower() in restricting_types
-                        for rel in self.related_destinations)
+                        for rel in self.related_destinations
+                        if rel not in db.session.deleted)
     return not any(itertools.chain(restricting_srcs, restricting_dsts))

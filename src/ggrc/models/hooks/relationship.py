@@ -155,7 +155,7 @@ def unmap_issue_cascade(asmnt, issue):
   ).subquery()
 
   # Find relationships between Snapshot and Issue to unmap
-  unmap_rels = db.session.query(all_models.Relationship.id).filter(
+  snapshot_rels = all_models.Relationship.query.filter(
       sa.and_(
           related_condition(issue, "Snapshot"),
           related_id("Issue", "snapshot_id").in_(asmnt_snap_ids),
@@ -167,7 +167,7 @@ def unmap_issue_cascade(asmnt, issue):
   # If there are not any relationships between Issue and Assessment
   # except one we received in request, we can unmap Issue from Audit
   if not db.session.query(other_asmnts.exists()).scalar():
-    unmap_audit_rels = db.session.query(all_models.Relationship.id).filter(
+    audit_rels = all_models.Relationship.query.filter(
         sa.or_(
             sa.and_(
                 all_models.Relationship.source_id == issue.id,
@@ -185,13 +185,12 @@ def unmap_issue_cascade(asmnt, issue):
             )
         )
     )
-    unmap_rels = unmap_rels.union_all(unmap_audit_rels)
   else:
-    unmap_rels = db.session.query(unmap_rels.subquery())
+    audit_rels = []
 
-  all_models.Relationship.query.filter(
-      all_models.Relationship.id.in_(unmap_rels)
-  ).delete(synchronize_session="fetch")
+  for instance in itertools.chain(snapshot_rels, audit_rels):
+    # this loop makes sure that before_flush hooks are executed
+    db.session.delete(instance)
 
 
 def init_hook():
