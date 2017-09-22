@@ -894,60 +894,44 @@ class Resource(ModelView):
           obj_etag=etag(self.modified_at(obj), get_info(obj)))
 
   def delete(self, id):
-    if 'X-Appengine-Taskname' not in request.headers:
-      task = create_task(request.method, request.full_path)
-      if getattr(settings, 'APP_ENGINE', False):
-        return self.json_success_response(
-            self.object_for_json(task, 'background_task'),
-            self.modified_at(task))
-    else:
-      task_id = int(request.headers.get('x-task-id'))
-      task = BackgroundTask.query.get(task_id)
-    task.start()
-    try:
-      with benchmark("Query for object"):
-        obj = self.get_object(id)
-      if obj is None:
-        return self.not_found_response()
-      with benchmark("Query delete permissions"):
-        if not permissions.is_allowed_delete(
-            self.model.__name__, obj.id, obj.context_id)\
-           and not permissions.has_conditions("delete", self.model.__name__):
-          raise Forbidden()
-        if not permissions.is_allowed_delete_for(obj):
-          raise Forbidden()
-      header_error = self.validate_headers_for_put_or_delete(obj)
-      if header_error:
-        return header_error
-      db.session.delete(obj)
-      with benchmark("Send DELETEd event"):
-        signals.Restful.model_deleted.send(
-            obj.__class__, obj=obj, service=self)
-      with benchmark("Get modified objects"):
-        modified_objects = get_modified_objects(db.session)
-      with benchmark("Log event"):
-        event = log_event(db.session, obj)
-      with benchmark("Update memcache before commit for collection DELETE"):
-        update_memcache_before_commit(
-            self.request, modified_objects, CACHE_EXPIRY_COLLECTION)
-      with benchmark("Commit"):
-        db.session.commit()
-      with benchmark("Update index"):
-        update_snapshot_index(db.session, modified_objects)
-      with benchmark("Update memcache after commit for collection DELETE"):
-        update_memcache_after_commit(self.request)
-      with benchmark("Send DELETEd - after commit event"):
-        signals.Restful.model_deleted_after_commit.send(
-            obj.__class__, obj=obj, service=self, event=event)
-      with benchmark("Send event job"):
-        send_event_job(event)
-      with benchmark("Make response"):
-        result = self.json_success_response({}, datetime.datetime.now())
-    except:
-      import traceback
-      task.finish("Failure", traceback.format_exc())
-      raise
-    task.finish("Success", result)
+    with benchmark("Query for object"):
+      obj = self.get_object(id)
+    if obj is None:
+      return self.not_found_response()
+    with benchmark("Query delete permissions"):
+      if not permissions.is_allowed_delete(
+          self.model.__name__, obj.id, obj.context_id)\
+         and not permissions.has_conditions("delete", self.model.__name__):
+        raise Forbidden()
+      if not permissions.is_allowed_delete_for(obj):
+        raise Forbidden()
+    header_error = self.validate_headers_for_put_or_delete(obj)
+    if header_error:
+      return header_error
+    db.session.delete(obj)
+    with benchmark("Send DELETEd event"):
+      signals.Restful.model_deleted.send(
+          obj.__class__, obj=obj, service=self)
+    with benchmark("Get modified objects"):
+      modified_objects = get_modified_objects(db.session)
+    with benchmark("Log event"):
+      event = log_event(db.session, obj)
+    with benchmark("Update memcache before commit for collection DELETE"):
+      update_memcache_before_commit(
+          self.request, modified_objects, CACHE_EXPIRY_COLLECTION)
+    with benchmark("Commit"):
+      db.session.commit()
+    with benchmark("Update index"):
+      update_snapshot_index(db.session, modified_objects)
+    with benchmark("Update memcache after commit for collection DELETE"):
+      update_memcache_after_commit(self.request)
+    with benchmark("Send DELETEd - after commit event"):
+      signals.Restful.model_deleted_after_commit.send(
+          obj.__class__, obj=obj, service=self, event=event)
+    with benchmark("Send event job"):
+      send_event_job(event)
+    with benchmark("Make response"):
+      result = self.json_success_response({}, datetime.datetime.now())
     return result
 
   def has_cache(self):
