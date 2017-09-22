@@ -9,6 +9,7 @@ import functools
 
 import flask
 import sqlalchemy
+from sqlalchemy.orm import aliased
 from sqlalchemy.orm import load_only
 
 from ggrc import db
@@ -349,6 +350,118 @@ def or_operation(exp, object_class, target_class, query):
       build_expression(exp["right"], object_class, target_class, query))
 
 
+@validate("issue", "assessment")
+def cascade_unmappable(exp, object_class, target_class, query):
+  """Special operator to get the effect of cascade unmap of Issue from Asmt."""
+  issue_id = exp["issue"].get("id")
+  assessment_id = exp["assessment"].get("id")
+
+  if not issue_id:
+    raise BadQueryException("Missing 'id' key in 'issue': {}"
+                            .format(exp["issue"]))
+  if not assessment_id:
+    raise BadQueryException("Missing 'id' key in 'assessment': {}"
+                            .format(exp["assessment"]))
+
+  if object_class.__name__ not in {"Audit", "Snapshot"}:
+    raise BadQueryException("'cascade_unmapping' can't be applied to {}"
+                            .format(object_class.__name__))
+
+  mapped_to_issue = aliased(sqlalchemy.union_all(
+      db.session.query(
+          models.Relationship.destination_id.label("target_id"),
+      ).filter(
+          models.Relationship.source_id == issue_id,
+          models.Relationship.source_type == "Issue",
+          models.Relationship.destination_type == object_class.__name__,
+          ~models.Relationship.automapping_id.is_(None),
+      ),
+      db.session.query(
+          models.Relationship.source_id.label("target_id"),
+      ).filter(
+          models.Relationship.destination_id == issue_id,
+          models.Relationship.destination_type == "Issue",
+          models.Relationship.source_type == object_class.__name__,
+      ),
+  ), name="mapped_to_issue")
+
+  mapped_to_assessment = aliased(sqlalchemy.union_all(
+      db.session.query(
+          models.Relationship.destination_id.label("target_id"),
+      ).filter(
+          models.Relationship.source_id == assessment_id,
+          models.Relationship.source_type == "Assessment",
+          models.Relationship.destination_type == object_class.__name__,
+      ),
+      db.session.query(
+          models.Relationship.source_id.label("target_id"),
+      ).filter(
+          models.Relationship.destination_id == assessment_id,
+          models.Relationship.destination_type == "Assessment",
+          models.Relationship.source_type == object_class.__name__,
+      ),
+  ), "mapped_to_assessment")
+
+  other_assessments = aliased(sqlalchemy.union_all(
+      db.session.query(
+          models.Relationship.destination_id.label("assessment_id"),
+      ).filter(
+          models.Relationship.source_id == issue_id,
+          models.Relationship.source_type == "Issue",
+          models.Relationship.destination_id != assessment_id,
+          models.Relationship.destination_type == "Assessment",
+      ),
+      db.session.query(
+          models.Relationship.source_id.label("assessment_id"),
+      ).filter(
+          models.Relationship.destination_id == issue_id,
+          models.Relationship.destination_type == "Issue",
+          models.Relationship.source_id != assessment_id,
+          models.Relationship.source_type == "Assessment",
+      ),
+  ), "other_assessments")
+
+  mapped_to_other_assessments = aliased(sqlalchemy.union_all(
+      db.session.query(
+          models.Relationship.destination_id.label("target_id"),
+      ).filter(
+          models.Relationship.source_id.in_(other_assessments),
+          models.Relationship.source_type == "Assessment",
+          models.Relationship.destination_type == object_class.__name__,
+      ),
+      db.session.query(
+          models.Relationship.source_id.label("target_id"),
+      ).filter(
+          models.Relationship.destination_id != assessment_id,
+          models.Relationship.destination_type == "Assessment",
+          models.Relationship.source_type == object_class.__name__,
+      ),
+  ), "mapped_to_other_assessments")
+
+  result = db.session.query(
+      mapped_to_issue.c.target_id,
+  ).join(
+      mapped_to_assessment,
+      mapped_to_issue.c.target_id == mapped_to_assessment.c.target_id,
+  ).outerjoin(
+      mapped_to_other_assessments,
+      mapped_to_issue.c.target_id == mapped_to_other_assessments.c.target_id,
+  ).filter(
+      mapped_to_other_assessments.c.target_id.is_(None),
+  )
+
+  result = result.all()
+
+  result = set(db.session.query(mapped_to_issue))
+  result &= set(db.session.query(mapped_to_assessment))
+  result -= set(db.session.query(mapped_to_other_assessments))
+
+  if not result:
+    return sqlalchemy.sql.false()
+
+  return object_class.id.in_([row[0] for row in result])
+
+
 EQ_OPERATOR = validate("left", "right")(build_op_shortcut(operator.eq))
 LT_OPERATOR = validate("left", "right")(build_op_shortcut(operator.lt))
 GT_OPERATOR = validate("left", "right")(build_op_shortcut(operator.gt))
@@ -372,4 +485,5 @@ OPS = {
     "related_people": related_people,
     "text_search": text_search,
     "is": is_filter,
+    "cascade_unmappable": cascade_unmappable,
 }
