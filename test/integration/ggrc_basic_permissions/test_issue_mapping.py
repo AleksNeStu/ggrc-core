@@ -80,10 +80,7 @@ class TestIssueMapping(TestCase):
           context=audit.context,
       )
       # Create an issue
-      issue = factories.IssueFactory(
-          audit=audit,
-          context=audit.context
-      )
+      issue = factories.IssueFactory()
       self.issues[is_archived] = issue
       # Map issue to audit
       factories.RelationshipFactory(

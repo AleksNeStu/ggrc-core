@@ -29,7 +29,10 @@ class TestAuditExport(TestCase):
         # All snapshotable objects should be mapped to Audit + Issue
         # and Assessment
         for type_ in Types.all.union(Types.scoped):
-          if type_ in Types.scoped:
+          if type_ == "Issue":
+            obj = get_model_factory(type_)()
+            factories.RelationshipFactory(source=audit, destination=obj)
+          elif type_ in Types.scoped:
             obj = get_model_factory(type_)(audit=audit)
             factories.RelationshipFactory(source=audit, destination=obj)
           else:

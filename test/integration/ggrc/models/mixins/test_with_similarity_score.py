@@ -500,7 +500,7 @@ class TestWithSimilarityScore(TestCase):
           audit=audit, assessment_type=asmnt_type
       )
       assessment2 = factories.AssessmentFactory(audit=audit)
-      issue = factories.IssueFactory(audit=audit)
+      issue = factories.IssueFactory()
 
       snapshot = factories.SnapshotFactory(
           parent=audit,
@@ -582,7 +582,7 @@ class TestWithSimilarityScore(TestCase):
         factories.RelationshipFactory(source=snapshot, destination=assessment)
 
       # Create one issue in the last audit linked to snapshot/assessment
-      issue = factories.IssueFactory(audit=audit)
+      issue = factories.IssueFactory()
       factories.RelationshipFactory(source=audit, destination=issue)
       factories.RelationshipFactory(source=snapshot, destination=issue)
       if asmnt_related:

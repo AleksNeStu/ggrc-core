@@ -139,8 +139,6 @@ class IssueFactory(TitledFactory):
   class Meta:
     model = models.Issue
 
-  audit = factory.LazyAttribute(lambda m: AuditFactory())
-
 
 class AssessmentFactory(TitledFactory):
 

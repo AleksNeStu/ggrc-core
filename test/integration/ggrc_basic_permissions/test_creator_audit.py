@@ -186,11 +186,7 @@ class TestCreatorAudit(TestCase):
       response = self.api.post(all_models.Issue, {
           "issue": {
               "title": random_title,
-              "context": {
-                  "type": "Context",
-                  "id": audit_dict["context_id"],
-              },
-              "audit": audit_dict,
+              "context": None,
           },
       })
       self.assertEqual(response.status_code, 201)
