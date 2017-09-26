@@ -440,9 +440,15 @@ class MappingColumnHandler(ColumnHandler):
       if current_obj.id:
         mapping = Relationship.find_related(current_obj, obj)
       if not self.unmap and not mapping:
-        mapping = Relationship(source=current_obj, destination=obj)
-        relationships.append(mapping)
-        db.session.add(mapping)
+        if not (self.mapping_object.__name__ == "Audit" and
+                not getattr(current_obj, "allow_map_to_audit", True)):
+          mapping = Relationship(source=current_obj, destination=obj)
+          relationships.append(mapping)
+          db.session.add(mapping)
+        else:
+          self.add_warning(errors.SINGLE_AUDIT_RESTRICTION,
+                           mapped_type=obj.type,
+                           object_type=current_obj.type)
       elif self.unmap and mapping:
         db.session.delete(mapping)
     db.session.flush()
@@ -597,7 +603,7 @@ class SectionDirectiveColumnHandler(MappingColumnHandler):
 
 
 class AuditColumnHandler(MappingColumnHandler):
-  """Handler for mandatory Audit mappings on Issues And Assessmnets."""
+  """Handler for mandatory Audit mappings on Assessments."""
 
   def __init__(self, row_converter, key, **options):
     key = "{}audit".format(MAPPING_PREFIX)

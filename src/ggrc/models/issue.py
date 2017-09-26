@@ -52,6 +52,7 @@ class Issue(Roleable, HasObjectState, TestPlanned, CustomAttributable,
           "mandatory": False,
           "description": "Options are: \n{} ".format('\n'.join(VALID_STATES))
       },
+      "audit": None,
   }
 
   audit_id = deferred(

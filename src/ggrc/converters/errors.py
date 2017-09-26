@@ -134,3 +134,7 @@ ARCHIVED_IMPORT_ERROR = (u"Line {line}: Importing archived instance is "
 VALIDATION_ERROR = (u"Line {line}: Field '{column_name}' validation failed "
                     u"with the following reason: {message}."
                     u"The line will be ignored.")
+
+SINGLE_AUDIT_RESTRICTION = (u"Line {line}: You can not map {mapped_type} to "
+                            u"{object_type}, because this {object_type} is "
+                            u"already mapped to an {mapped_type}")

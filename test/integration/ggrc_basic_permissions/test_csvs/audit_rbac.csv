@@ -95,6 +95,6 @@ Standard,Code*,Title*,Description,Notes,Admin*,Effective Date,Last Deprecated Da
 ,PMRBACSTANDARD-1,Program Manager Audit RBAC Test Standard,,,user@example.com,,,Draft,,,,,,,,,,,,
 ,,,,,,,,,,,,,,,,,,,,
 Object type,"Must be unique. Can be left empty for autogeneration. If updating or deleting, code is required",,,,,,,,,,,,,,,,,,,
-Issue,Code*,Title*,Description,Notes,Remediation Plan,Admin*,Effective Date,Last Deprecated Date,State,,,Audit,,,,,,,,
+Issue,Code*,Title*,Description,Notes,Remediation Plan,Admin*,Effective Date,Last Deprecated Date,State,,,Map:Audit,,,,,,,,
 ,PMRBACISSUE-1,Program Manager Audit RBAC Test,,,,user@example.com,,,Draft,,,AUDIT-1,,,,,,,,
 ,PMRBACISSUE-2,Program Manager Audit RBAC Test Archived,,,,user@example.com,,,Draft,,,AUDIT-2,,,,,,,,

@@ -33,7 +33,7 @@ class TestImportIssues(TestCase):
           ("Code*", ""),
           ("Title*", "Test issue {}".format(i)),
           ("Admin*", "user@example.com"),
-          ("audit", audit.slug),
+          ("map:Audit", audit.slug),
       ]))
       self._check_csv_response(response, {})
 
@@ -53,12 +53,22 @@ class TestImportIssues(TestCase):
     response = self.import_data(OrderedDict([
         ("object_type", "Issue"),
         ("Code*", issue.slug),
-        ("audit", audit.slug),
+        ("map:Audit", audit.slug),
+    ]))
+    self._check_csv_response(response, {})
+    another_audit = factories.AuditFactory()
+
+    response = self.import_data(OrderedDict([
+        ("object_type", "Issue"),
+        ("Code*", issue.slug),
+        ("map:Audit", another_audit.slug),
     ]))
     self._check_csv_response(response, {
         "Issue": {
             "row_warnings": {
-                errors.UNMODIFIABLE_COLUMN.format(line=3, column_name="Audit")
+                errors.SINGLE_AUDIT_RESTRICTION.format(
+                    line=3, mapped_type="Audit", object_type="Issue",
+                )
             }
         }
     })
@@ -95,7 +105,7 @@ class TestImportIssues(TestCase):
           ("Code*", ""),
           ("Title*", "Test issue {}".format(i)),
           ("Admin*", "user@example.com"),
-          ("audit", audit.slug),
+          ("map:Audit", audit.slug),
           ("State", statuses[i]),
       ]))
 

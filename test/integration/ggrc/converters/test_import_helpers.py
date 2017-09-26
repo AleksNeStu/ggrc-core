@@ -468,7 +468,6 @@ class TestGetObjectColumnDefinitions(TestCase):
         "Title",
         "Description",
         "Notes",
-        "Audit",
         "Remediation Plan",
         "Admin",
         "Reference URL",
@@ -490,16 +489,12 @@ class TestGetObjectColumnDefinitions(TestCase):
         "mandatory": {
             "Title",
             "Admin",
-            "Audit",
             "Code"
         },
         "unique": {
             "Code",
             "Title",
         },
-        "ignore_on_update": {
-            "Audit",
-        }
     }
     self._test_single_object(models.Issue, names, expected_fields)
 
