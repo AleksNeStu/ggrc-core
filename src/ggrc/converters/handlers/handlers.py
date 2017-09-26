@@ -380,7 +380,6 @@ class MappingColumnHandler(ColumnHandler):
 
   def __init__(self, row_converter, key, **options):
     self.key = key
-    self.allow = False  # allow mapping in audit scope
     exportable = get_exportables()
     self.attr_name = options.get("attr_name", "")
     self.mapping_object = exportable.get(self.attr_name)
@@ -400,16 +399,6 @@ class MappingColumnHandler(ColumnHandler):
       an actual object if that object will be generated in the current import.
     """
     # pylint: disable=protected-access
-    from ggrc.snapshotter.rules import Types
-    # TODO add a proper warning here!
-    # This is just a hack to prevent wrong mappings to assessments or issues.
-    if self.mapping_object.__name__ in Types.scoped | Types.parents and \
-       not self.allow:
-      if self.raw_value:
-        self.add_warning(errors.EXPORT_ONLY_WARNING,
-                         column_name=self.display_name)
-      return []
-
     class_ = self.mapping_object
     lines = set(self.raw_value.splitlines())
     slugs = set([slug.lower() for slug in lines if slug.strip()])
@@ -613,7 +602,6 @@ class AuditColumnHandler(MappingColumnHandler):
   def __init__(self, row_converter, key, **options):
     key = "{}audit".format(MAPPING_PREFIX)
     super(AuditColumnHandler, self).__init__(row_converter, key, **options)
-    self.allow = True
 
   def set_obj_attr(self):
     """Set values to be saved.
