@@ -9,6 +9,7 @@ from collections import OrderedDict
 import ddt
 
 from ggrc import models
+from ggrc.models import all_models
 from ggrc.converters import errors
 
 from integration.ggrc.models import factories
@@ -24,25 +25,96 @@ class TestImportIssues(TestCase):
     super(TestImportIssues, self).setUp()
     self.client.get("/login")
 
-  def test_basic_issue_import(self):
-    """Test basic issue import."""
-    audit = factories.AuditFactory()
-    for i in range(2):
-      response = self.import_data(OrderedDict([
-          ("object_type", "Issue"),
-          ("Code*", ""),
-          ("Title*", "Test issue {}".format(i)),
-          ("Admin*", "user@example.com"),
-          ("map:Audit", audit.slug),
-      ]))
-      self._check_csv_response(response, {})
+  def _import_issue(self, slug, additional_fields=None,
+                    expected_errors=None):
+    """Do a typical import for a Issue with optional additional fields."""
+    if expected_errors is None:
+      expected_errors = {}
 
-    for issue in models.Issue.query:
-      self.assertIsNotNone(
-          models.Relationship.find_related(issue, audit),
-          "Could not find relationship between: {} and {}".format(
-              issue.slug, audit.slug)
-      )
+    if additional_fields is None:
+      additional_fields = []
+
+    self._check_csv_response(self.import_data(OrderedDict([
+        ("object_type", "Issue"),
+        ("Code*", slug),
+        ("Title*", slug + " title"),
+        ("Admin*", "user@example.com"),
+    ] + additional_fields)), expected_errors)
+
+  def test_import_no_audit(self):
+    """Issue can be imported with no Audit."""
+
+    self._import_issue("Issue with no Audit")
+
+    self._import_issue("Another issue with no Audit", additional_fields=[
+        ("Map:Audit", ""),
+    ])
+
+  def test_import_with_audit(self):
+    """Issue can be imported with Audit."""
+    audit = factories.AuditFactory()
+
+    self._import_issue("Issue with audit", additional_fields=[
+        ("Map:Audit", audit.slug),
+    ])
+
+    audit = all_models.Audit.query.one()
+    issue = all_models.Issue.query.one()
+
+    self.assertIsNotNone(all_models.Relationship.find_related(issue, audit))
+    self.assertEqual(issue.audit_id, audit.id)
+    self.assertEqual(issue.context_id, audit.context_id)
+
+  def test_map_audit(self):
+    """Issue can be mapped to Audit through import."""
+    self._import_issue("Issue with Audit mapped", additional_fields=[
+        ("Map:Audit", ""),
+    ])
+    audit = factories.AuditFactory()
+
+    self._import_issue("Issue with Audit mapped", additional_fields=[
+        ("Map:Audit", audit.slug),
+    ])
+
+    audit = all_models.Audit.query.one()
+    issue = all_models.Issue.query.one()
+
+    self.assertIsNotNone(all_models.Relationship.find_related(issue, audit))
+    self.assertEqual(issue.audit_id, audit.id)
+    self.assertEqual(issue.context_id, audit.context_id)
+
+  def test_unmap_audit(self):
+    """Issue can be unmapped from Audit through import."""
+    audit = factories.AuditFactory()
+    slug = audit.slug
+    self._import_issue("Issue with Audit unmapped", additional_fields=[
+        ("Map:Audit", slug),
+    ])
+
+    self._import_issue("Issue with Audit unmapped", additional_fields=[
+        ("Unmap:Audit", slug),
+    ])
+
+    audit = all_models.Audit.query.one()
+    issue = all_models.Issue.query.one()
+    self.assertIsNone(all_models.Relationship.find_related(issue, audit))
+    self.assertIsNone(issue.audit_id)
+    self.assertIsNone(issue.context_id)
+
+  def test_map_snapshottable(self):
+    """Snapshottable objects can be mapped to Issue through import."""
+    self._import_issue("Issue with Control mapped")
+
+    control = factories.ControlFactory()
+
+    self._import_issue("Issue with Control mapped", additional_fields=[
+        ("Map:Control", control.slug),
+    ])
+
+    control = all_models.Control.query.one()
+    issue = all_models.Issue.query.one()
+
+    self.assertIsNotNone(all_models.Relationship.find_related(control, issue))
 
   def test_audit_change(self):
     """Test audit changing"""
