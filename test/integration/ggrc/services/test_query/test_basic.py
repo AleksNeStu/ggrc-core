@@ -814,6 +814,71 @@ class TestAdvancedQueryAPI(TestCase, WithQueryApi):
   @ddt.data(
       (all_models.Control, [all_models.Objective, all_models.Control,
                             all_models.Market, all_models.Objective]),
+      (all_models.Issue, [all_models.Control, all_models.Control,
+                          all_models.Market, all_models.Objective]),
+  )
+  @ddt.unpack
+  def test_search_relevant_to_type(self, base_type, relevant_types):
+    """Test filter with 'relevant to' conditions."""
+    _, base_obj = self.generator.generate_object(base_type)
+    relevant_objects = [
+        self.generator.generate_object(type_)[1]
+        for type_ in relevant_types
+    ]
+
+    with factories.single_commit():
+      query_data = []
+      for relevant_obj in relevant_objects:
+        factories.RelationshipFactory(source=base_obj,
+                                      destination=relevant_obj)
+
+        query_data.append(self._make_query_dict(
+            relevant_obj.type,
+            expression=["id", "=", relevant_obj.id],
+            type_="ids",
+        ))
+
+    filter_relevant = {
+        "filters": {
+            "expression": {
+                "left": {
+                    "left": {
+                        "ids": "0",
+                        "object_name": "__previous__",
+                        "op": {"name": "relevant"}
+                    },
+                    "op": {"name": "AND"},
+                    "right": {
+                        "ids": "1",
+                        "object_name": "__previous__",
+                        "op": {"name": "relevant"}
+                    }
+                },
+                "op": {"name": "AND"},
+                "right": {
+                    "left": {
+                        "ids": "2",
+                        "object_name": "__previous__",
+                        "op": {"name": "relevant"}
+                    },
+                    "op": {"name": "AND"},
+                    "right": {
+                        "ids": "3",
+                        "object_name": "__previous__",
+                        "op": {"name": "relevant"}
+                    }
+                }
+            }
+        },
+        "object_name": base_type.__name__
+    }
+    query_data.append(filter_relevant)
+    response = json.loads(self._post(query_data).data)
+    # Last batch contain result for query with "related" condition
+    result_count = response[-1][base_type.__name__]["count"]
+    self.assertEqual(result_count, 1)
+
+  @ddt.data(
       (all_models.Assessment, [all_models.Control, all_models.Control,
                                all_models.Market, all_models.Objective]),
       (all_models.Assessment, [all_models.Issue, all_models.Issue,
@@ -822,13 +887,10 @@ class TestAdvancedQueryAPI(TestCase, WithQueryApi):
                           all_models.Market, all_models.Objective]),
   )
   @ddt.unpack
-  def test_search_relevant_to_type(self, base_type, relevant_types):
-    """Test filter with 'relevant to' conditions."""
-    is_scoped = base_type.__name__ in Types.scoped
-    audit_data = {}
-    if is_scoped:
-      audit = factories.AuditFactory()
-      audit_data = {"audit": {"id": audit.id}}
+  def test_search_relevant_to_type_audit(self, base_type, relevant_types):
+    """Test filter with 'relevant to' conditions (Audit scope)."""
+    audit = factories.AuditFactory()
+    audit_data = {"audit": {"id": audit.id}}
 
     _, base_obj = self.generator.generate_object(base_type, audit_data)
     relevant_objects = [
@@ -842,7 +904,7 @@ class TestAdvancedQueryAPI(TestCase, WithQueryApi):
         related_obj = relevant_obj
 
         # Snapshotable objects are related through the Snapshot
-        if is_scoped and relevant_obj.type in Types.all:
+        if relevant_obj.type in Types.all:
           related_obj = factories.SnapshotFactory(
               parent=audit,
               child_id=relevant_obj.id,
