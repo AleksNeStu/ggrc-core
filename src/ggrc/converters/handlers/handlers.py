@@ -592,6 +592,7 @@ class SectionDirectiveColumnHandler(MappingColumnHandler):
     for directive_class in allowed_directives:
       directive = self.get_directive_from_slug(directive_class, slug)
       if directive is not None:
+        self.mapping_object = type(directive)
         return [directive]
     self.add_error(errors.UNKNOWN_OBJECT, object_type="Program", slug=slug)
     return None
