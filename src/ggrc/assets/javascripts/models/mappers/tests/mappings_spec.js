@@ -1,4 +1,4 @@
-/*!
+/*
  Copyright (C) 2017 Google Inc.
  Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
  */
@@ -36,13 +36,13 @@ describe('GGRC.Mappings', function () {
         'System',
         'Vendor',
         'Risk',
-        'Threat'
+        'Threat',
       ],
-      notMappable: ['Assessment', 'AssessmentTemplate']
+      notMappable: ['Assessment', 'AssessmentTemplate'],
     },
     risk_assessments: {
       models: ['RiskAssessment'],
-      notMappable: ['RiskAssessment']
+      notMappable: ['RiskAssessment'],
     },
     workflows: {
       models: [
@@ -51,15 +51,15 @@ describe('GGRC.Mappings', function () {
         'CycleTaskEntry',
         'CycleTaskGroupObjectTask',
         'CycleTaskGroupObject',
-        'CycleTaskGroup'
+        'CycleTaskGroup',
       ],
       notMappable: [
         'CycleTaskEntry',
         'CycleTaskGroupObjectTask',
         'CycleTaskGroupObject',
-        'CycleTaskGroup'
-      ]
-    }
+        'CycleTaskGroup',
+      ],
+    },
   };
   var directives = ['Contract', 'Policy', 'Regulation', 'Standard'];
   var mappingRules;
@@ -120,7 +120,7 @@ describe('GGRC.Mappings', function () {
     TaskGroup: _.difference(filtered, ['Audit', 'Person',
       'TaskGroup', 'Workflow']),
     Threat: filtered,
-    Vendor: filtered
+    Vendor: filtered,
   };
 
   beforeAll(function () {
@@ -138,7 +138,7 @@ describe('GGRC.Mappings', function () {
       'CycleTaskEntry',
       'CycleTaskGroup',
       'CycleTaskGroupObject',
-      'Workflow'
+      'Workflow',
     ]);
 
     modelsForTests.forEach(function (type) {
@@ -161,7 +161,7 @@ describe('GGRC.Mappings', function () {
       title_plural: 'title_plural',
       model_singular: 'model_singular',
       table_plural: 'table_plural',
-      title_singular: 'title_singular'
+      title_singular: 'title_singular',
     };
     var expectedResult = {
       category: 'category',
@@ -170,7 +170,7 @@ describe('GGRC.Mappings', function () {
       plural: 'title_plural',
       singular: 'model_singular',
       table_plural: 'table_plural',
-      title_singular: 'title_singular'
+      title_singular: 'title_singular',
     };
 
     it('returns specified object', function () {
@@ -182,7 +182,7 @@ describe('GGRC.Mappings', function () {
     it('converts models plural title to a snake_case', function () {
       var result;
       var cmsModel1 = _.assign({}, cmsModel, {
-        title_plural: 'Title Plural'
+        title_plural: 'Title Plural',
       });
       result = GGRC.Mappings._prepareCorrectTypeFormat(cmsModel1);
       expect(result.plural).toEqual(expectedResult.plural);
@@ -192,17 +192,17 @@ describe('GGRC.Mappings', function () {
   describe('addFormattedType() method', function () {
     var groups;
     var type = {
-      category: 'category'
+      category: 'category',
     };
 
     beforeEach(function () {
       groups = {
         governance: {
-          items: []
+          items: [],
         },
         category: {
-          items: []
-        }
+          items: [],
+        },
       };
       spyOn(GGRC.Mappings, '_prepareCorrectTypeFormat')
         .and.returnValue(type);
@@ -213,7 +213,7 @@ describe('GGRC.Mappings', function () {
         groups.category = undefined;
         spyOn(GGRC.Utils, 'getModelByType')
           .and.returnValue({
-            title_singular: 'title_singular'
+            title_singular: 'title_singular',
           });
         GGRC.Mappings._addFormattedType('name', groups);
         expect(groups.governance.items[0]).toEqual(type);
@@ -224,7 +224,7 @@ describe('GGRC.Mappings', function () {
         groups.governance = undefined;
         spyOn(GGRC.Utils, 'getModelByType')
           .and.returnValue({
-            title_singular: 'title_singular'
+            title_singular: 'title_singular',
           });
         GGRC.Mappings._addFormattedType('name', groups);
         expect(groups[type.category].items[0]).toEqual(type);
@@ -248,7 +248,7 @@ describe('GGRC.Mappings', function () {
       function () {
         spyOn(GGRC.Utils, 'getModelByType')
           .and.returnValue({
-            title_singular: 'Reference'
+            title_singular: 'Reference',
           });
         GGRC.Mappings._addFormattedType('name', groups);
         expect(groups.governance.items.length).toEqual(0);

@@ -1,4 +1,4 @@
-/*!
+/*
  Copyright (C) 2017 Google Inc.
  Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
  */
@@ -33,7 +33,7 @@
     Vendor: 'Program',
     Audit: 'Product',
     RiskAssessment: 'Program',
-    TaskGroup: 'Control'
+    TaskGroup: 'Control',
   };
 
   var getDefaultType = function (type, object) {
@@ -56,7 +56,7 @@
     viewModel: function (attrs, parentViewModel) {
       var config = {
         general: parentViewModel.attr('general'),
-        special: parentViewModel.attr('special')
+        special: parentViewModel.attr('special'),
       };
 
       var resolvedConfig = GGRC.VM.ObjectOperationsBaseVM.extractConfig(
@@ -128,7 +128,7 @@
           this.updateFreezedConfigToLatest();
           // calls base version
           this._super.apply(this, arguments);
-        }
+        },
       });
     },
 
@@ -171,7 +171,7 @@
             .map(function (item) {
               return {
                 id: item.id,
-                type: item.type
+                type: item.type,
               };
             });
           this.viewModel.attr('deferred_list', deferredToList);
@@ -203,7 +203,7 @@
                 return desination;
               }
             }
-          ))
+          )),
         };
 
         this.viewModel.attr('deferred_to').controller.element.trigger(
@@ -250,8 +250,8 @@
                 destination: {
                   href: '/api/snapshots/' + destination.id,
                   type: 'Snapshot',
-                  id: destination.id
-                }
+                  id: destination.id,
+                },
               });
 
               return defer.push(modelInstance.save());
@@ -268,7 +268,7 @@
             data[mapping.object_attr] = {
               href: instance.href,
               type: instance.type,
-              id: instance.id
+              id: instance.id,
             };
             data[mapping.option_attr] = destination;
             modelInstance = new Model(data);
@@ -308,7 +308,7 @@
               });
             });
         }.bind(this));
-      }
+      },
     },
 
     helpers: {
@@ -326,7 +326,7 @@
           return type.title_plural;
         }
         return 'Objects';
-      }
-    }
+      },
+    },
   });
 })(window.can, window.can.$, GGRC.Utils);

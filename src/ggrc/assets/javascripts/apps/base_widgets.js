@@ -1,4 +1,4 @@
-/*!
+/*
  Copyright (C) 2017 Google Inc.
  Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
  */
@@ -34,7 +34,7 @@
     'Standard',
     'System',
     'Threat',
-    'Vendor'
+    'Vendor',
   ];
   // NOTE: Widgets that have the order value are sorted by an increase values,
   // the rest of widgets are sorted alphabetically
@@ -48,7 +48,7 @@
     System: 70,
     Process: 80,
     Audit: 90,
-    Person: 100
+    Person: 100,
   };
   // Items allowed for mapping via snapshot.
   var snapshotWidgetsConfig = GGRC.config.snapshotable_objects || [];
@@ -58,14 +58,14 @@
 
   // Items allowed for relationship mapping
   var excludeMappingConfig = [
-    'AssessmentTemplate'
+    'AssessmentTemplate',
   ];
   // Extra Tree View Widgets require to be rendered on Audit View
   var auditInclusion = [
     'Assessment',
     'Person',
     'Program',
-    'Issue'
+    'Issue',
   ];
   var baseWidgetsByType;
 
@@ -108,7 +108,7 @@
     System: filteredTypes,
     Risk: filteredTypes,
     Threat: filteredTypes,
-    Vendor: filteredTypes
+    Vendor: filteredTypes,
   };
 
   baseWidgetsByType = _.extend(baseWidgetsByType, objectVersionWidgets);

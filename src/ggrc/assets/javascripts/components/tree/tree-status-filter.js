@@ -1,4 +1,4 @@
-/*!
+/*
  Copyright (C) 2017 Google Inc.
  Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
  */
@@ -12,15 +12,15 @@
     define: {
       operation: {
         type: String,
-        value: 'AND'
+        value: 'AND',
       },
       depth: {
         type: Boolean,
-        value: false
+        value: false,
       },
       useLocalStorage: {
         type: Boolean,
-        value: true
+        value: true,
       },
       selectedStates: {
         type: '*',
@@ -31,8 +31,8 @@
 
           this.attr('options.filter',
             StateUtils.statusFilter(selected, '', this.attr('modelName')));
-        }
-      }
+        },
+      },
     },
     disabled: false,
     options: {},
@@ -51,7 +51,7 @@
       var filterStates = StateUtils.getStatesForModel(this.attr('modelName'))
         .map(function (state) {
           return {
-            value: state
+            value: state,
           };
         });
 
@@ -108,7 +108,7 @@
       if (this.attr('useLocalStorage')) {
         this.attr('displayPrefs').setTreeViewStates(filterName, stateToSave);
       }
-    }
+    },
   });
 
   /**
@@ -130,7 +130,7 @@
         } else {
           this.viewModel.loadTreeStates(this.viewModel.attr('modelName'));
         }
-      }
-    }
+      },
+    },
   });
 })(window.can, window.GGRC);

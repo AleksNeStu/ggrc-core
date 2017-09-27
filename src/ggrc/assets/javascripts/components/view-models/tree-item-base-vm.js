@@ -1,4 +1,4 @@
-/*!
+/*
  Copyright (C) 2017 Google Inc.
  Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
  */
@@ -12,8 +12,8 @@
     define: {
       expanded: {
         type: Boolean,
-        value: false
-      }
+        value: false,
+      },
     },
     instance: null,
     /**
@@ -36,7 +36,7 @@
           widgetName: GGRC.Utils.ObjectVersions
             .getWidgetConfig(model).widgetName,
           name: model,
-          display: true
+          display: true,
         };
       });
 
@@ -74,6 +74,6 @@
       } else {
         can.trigger($element, 'selectTreeItem', [$element, instance]);
       }
-    }
+    },
   });
 })(window.can, window.GGRC);

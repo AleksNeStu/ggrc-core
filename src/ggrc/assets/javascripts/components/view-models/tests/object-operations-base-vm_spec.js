@@ -1,4 +1,4 @@
-/*!
+/*
  Copyright (C) 2017 Google Inc.
  Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
  */
@@ -57,16 +57,16 @@ describe('GGRC.VM.ObjectOperationsBaseVM', function () {
           special: [
             {
               types: ['Type1', 'Type2'],
-              config: {}
+              config: {},
             },
             {
               types: ['Type1'],
-              config: {}
-            }
-          ]
+              config: {},
+            },
+          ],
         },
         update: jasmine.createSpy('update'),
-        prepareConfig: jasmine.createSpy('prepareConfig')
+        prepareConfig: jasmine.createSpy('prepareConfig'),
       });
       method = GGRC.VM.ObjectOperationsBaseVM
         .prototype
@@ -95,7 +95,7 @@ describe('GGRC.VM.ObjectOperationsBaseVM', function () {
 
       args = vm.update.calls.argsFor(0);
       expect(args[0]).not.toEqual(jasmine.objectContaining({
-        type: jasmine.any(String)
+        type: jasmine.any(String),
       }));
     });
 
@@ -118,13 +118,13 @@ describe('GGRC.VM.ObjectOperationsBaseVM', function () {
       var types = {
         governance: {
           items: [{
-            value: 'v1'
+            value: 'v1',
           }, {
-            value: 'v2'
+            value: 'v2',
           }, {
-            value: 'v3'
-          }]
-        }
+            value: 'v3',
+          }],
+        },
       };
 
       spyOn(GGRC.Mappings, 'getMappingTypes')
@@ -144,8 +144,8 @@ describe('GGRC.VM.ObjectOperationsBaseVM', function () {
       baseConfig = {
         a: 'a',
         b: {
-          c: 'c'
-        }
+          c: 'c',
+        },
       };
       vm = new can.Map(baseConfig);
       method = baseVM.update.bind(vm);
@@ -156,9 +156,9 @@ describe('GGRC.VM.ObjectOperationsBaseVM', function () {
       var config = {
         a: 'new A',
         b: {
-          h: 'new H'
+          h: 'new H',
         },
-        c: []
+        c: [],
       };
       method(config);
 
@@ -184,7 +184,7 @@ describe('GGRC.VM.ObjectOperationsBaseVM', function () {
 
     beforeEach(function () {
       vm = {
-        update: jasmine.createSpy('update')
+        update: jasmine.createSpy('update'),
       };
       method = baseVM.prepareConfig.bind(vm);
     });
@@ -210,14 +210,14 @@ describe('GGRC.VM.ObjectOperationsBaseVM', function () {
         general: {},
         special: [{
           types: ['T1', 'T2'],
-          config: {}
+          config: {},
         }, {
           types: ['T3'],
           config: {
             field: 1,
-            field2: 2
-          }
-        }]
+            field2: 2,
+          },
+        }],
       };
     });
 

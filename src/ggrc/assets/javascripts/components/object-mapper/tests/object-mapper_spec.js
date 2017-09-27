@@ -1,4 +1,4 @@
-/*!
+/*
   Copyright (C) 2017 Google Inc.
   Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
 */
@@ -23,9 +23,9 @@ describe('GGRC.Components.objectMapper', function () {
     beforeEach(function () {
       parentViewModel = new can.Map({
         general: {
-          useSnapshots: false
+          useSnapshots: false,
         },
-        special: []
+        special: [],
       });
     });
     it('returns object with function "isLoadingOrSaving"', function () {
@@ -98,8 +98,8 @@ describe('GGRC.Components.objectMapper', function () {
           freezedConfigTillSubmit: null,
           currConfig: {
             a: 1,
-            b: 2
-          }
+            b: 2,
+          },
         });
       });
 
@@ -119,7 +119,7 @@ describe('GGRC.Components.objectMapper', function () {
 
     beforeEach(function () {
       viewModel.attr({
-        newEntries: []
+        newEntries: [],
       });
       handler = events['.create-control modal:success'];
       spyObj = jasmine.createSpy();
@@ -142,7 +142,7 @@ describe('GGRC.Components.objectMapper', function () {
       viewModel.attr('newEntries', []);
       handler.call({
         viewModel: viewModel,
-        mapObjects: spyObj
+        mapObjects: spyObj,
       }, {}, {}, 'model');
       expect(viewModel.attr('newEntries').length).toEqual(1);
       expect(viewModel.attr('newEntries')[0]).toEqual('model');
@@ -151,7 +151,7 @@ describe('GGRC.Components.objectMapper', function () {
     it('calls mapObjects to map results', function () {
       handler.call({
         viewModel: viewModel,
-        mapObjects: spyObj
+        mapObjects: spyObj,
       }, {}, {}, 'model');
       expect(spyObj).toHaveBeenCalledWith(viewModel.attr('newEntries'));
     });
@@ -199,7 +199,7 @@ describe('GGRC.Components.objectMapper', function () {
     beforeEach(function () {
       viewModel.attr({
         join_object_id: 123,
-        newEntries: [1]
+        newEntries: [1],
       });
       handler = events['{window} modal:dismiss'];
       spyObj = jasmine.createSpy();
@@ -209,11 +209,11 @@ describe('GGRC.Components.objectMapper', function () {
     it('calls mapObjects from mapper-results' +
     'if there are newEntries and ids are equal', function () {
       options = {
-        uniqueId: 123
+        uniqueId: 123,
       };
       handler.call({
         viewModel: viewModel,
-        mapObjects: spyObj
+        mapObjects: spyObj,
       }, {}, {}, options);
       expect(spyObj).toHaveBeenCalled();
     });
@@ -221,12 +221,12 @@ describe('GGRC.Components.objectMapper', function () {
     it('does not call mapObjects from mapper-results' +
       'if there are newEntries and ids are not equal', function () {
       options = {
-        uniqueId: 321
+        uniqueId: 321,
       };
       handler.call({
         viewModel: viewModel,
         mapObjects: spyObj,
-        element: element
+        element: element,
       }, {}, {}, options);
       expect(spyObj).not.toHaveBeenCalled();
     });
@@ -234,12 +234,12 @@ describe('GGRC.Components.objectMapper', function () {
     it('triggers "showModel event"' +
       'if there are newEntries and ids are not equal', function () {
       options = {
-        uniqueId: 321
+        uniqueId: 321,
       };
       handler.call({
         viewModel: viewModel,
         mapObjects: spyObj,
-        element: element
+        element: element,
       }, {}, {}, options);
       expect(element.trigger).toHaveBeenCalledWith('showModal');
     });
@@ -248,12 +248,12 @@ describe('GGRC.Components.objectMapper', function () {
     'if there are no newEntries', function () {
       viewModel.attr('newEntries', []);
       options = {
-        uniqueId: 123
+        uniqueId: 123,
       };
       handler.call({
         viewModel: viewModel,
         mapObjects: spyObj,
-        element: element
+        element: element,
       }, {}, {}, options);
       expect(spyObj).not.toHaveBeenCalled();
     });
@@ -262,12 +262,12 @@ describe('GGRC.Components.objectMapper', function () {
     'if there are no newEntries', function () {
       viewModel.attr('newEntries', []);
       options = {
-        uniqueId: 123
+        uniqueId: 123,
       };
       handler.call({
         viewModel: viewModel,
         mapObjects: spyObj,
-        element: element
+        element: element,
       }, {}, {}, options);
       expect(element.trigger).toHaveBeenCalledWith('showModal');
     });
@@ -280,10 +280,10 @@ describe('GGRC.Components.objectMapper', function () {
       viewModel.attr({
         selected: [1, 2, 3],
         entries: [3, 2, 1],
-        onSubmit: function () {}
+        onSubmit: function () {},
       });
       that = {
-        viewModel: viewModel
+        viewModel: viewModel,
       };
       handler = events.inserted;
     });
@@ -307,12 +307,12 @@ describe('GGRC.Components.objectMapper', function () {
     beforeEach(function () {
       viewModel.attr({});
       spyObj = {
-        trigger: function () {}
+        trigger: function () {},
       };
       element = {
         find: function () {
           return spyObj;
-        }
+        },
       };
       spyOn(spyObj, 'trigger');
       handler = events.closeModal;
@@ -322,14 +322,14 @@ describe('GGRC.Components.objectMapper', function () {
       viewModel.attr('is_saving', true);
       handler.call({
         element: element,
-        viewModel: viewModel
+        viewModel: viewModel,
       });
       expect(viewModel.attr('is_saving')).toEqual(false);
     });
     it('dismiss the modal', function () {
       handler.call({
         element: element,
-        viewModel: viewModel
+        viewModel: viewModel,
       });
       expect(spyObj.trigger).toHaveBeenCalledWith('click');
     });
@@ -341,18 +341,18 @@ describe('GGRC.Components.objectMapper', function () {
 
     beforeEach(function () {
       spyObj = {
-        trigger: function () {}
+        trigger: function () {},
       };
       viewModel.attr({
-        object: 'source'
+        object: 'source',
       });
       viewModel.attr('deferred_to', {
-        controller: {element: spyObj}
+        controller: {element: spyObj},
       });
       spyObj = viewModel.attr('deferred_to').controller.element;
       that = {
         viewModel: viewModel,
-        closeModal: function () {}
+        closeModal: function () {},
       };
       spyOn(that, 'closeModal');
       spyOn(spyObj, 'trigger');
@@ -364,7 +364,7 @@ describe('GGRC.Components.objectMapper', function () {
       expect(spyObj.trigger)
         .toHaveBeenCalledWith('defer:add', [
           {multi_map: true, arr: []},
-          {map_and_save: true}
+          {map_and_save: true},
         ]);
     });
     it('calls closeModal', function () {
@@ -383,13 +383,13 @@ describe('GGRC.Components.objectMapper', function () {
         type: 'type',
         object: 'Program',
         join_object_id: '123',
-        selected: []
+        selected: [],
       });
       viewModel.attr('deferred', false);
       spyOn(CMS.Models.Program, 'findInCacheById')
         .and.returnValue('instance');
       event = {
-        preventDefault: function () {}
+        preventDefault: function () {},
       };
       element = $('<div></div>');
       handler = events['.modal-footer .btn-map click'];
@@ -397,16 +397,16 @@ describe('GGRC.Components.objectMapper', function () {
         viewModel: viewModel,
         closeModal: jasmine.createSpy(),
         deferredSave: jasmine.createSpy().and.returnValue('deferredSave'),
-        mapObjects: events.mapObjects
+        mapObjects: events.mapObjects,
       };
       spyOn(window, 'RefreshQueue')
         .and.returnValue({
           enqueue: function () {
             return {
               trigger: jasmine.createSpy()
-                .and.returnValue(can.Deferred().resolve())
+                .and.returnValue(can.Deferred().resolve()),
             };
-          }
+          },
         });
       spyOn($.prototype, 'trigger');
     });
@@ -447,7 +447,7 @@ describe('GGRC.Components.objectMapper', function () {
       function () {
         var result;
         spyOn(CMS.Models, 'get_instance').and.returnValue({
-          title: 'mockTitle'
+          title: 'mockTitle',
         });
         result = helper.call(viewModel);
         expect(result).toEqual('mockTitle');
@@ -457,7 +457,7 @@ describe('GGRC.Components.objectMapper', function () {
         var result;
         viewModel.attr({
           object: 'mockInstance',
-          parentInstance: undefined
+          parentInstance: undefined,
         });
         result = helper.call(viewModel);
         expect(result).toEqual('mockInstance');
@@ -474,7 +474,7 @@ describe('GGRC.Components.objectMapper', function () {
     it('returns type.title_plural if it is defined', function () {
       var result;
       viewModel.attr({
-        type: 'Program'
+        type: 'Program',
       });
       result = helper.call(viewModel);
       expect(result).toEqual('Programs');
@@ -482,7 +482,7 @@ describe('GGRC.Components.objectMapper', function () {
     it('returns "Objects" if type.title_plural is null', function () {
       var result;
       viewModel.attr({
-        type: null
+        type: null,
       });
       result = helper.call(viewModel);
       expect(result).toEqual('Objects');

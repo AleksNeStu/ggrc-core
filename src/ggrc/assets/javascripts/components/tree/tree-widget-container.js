@@ -1,4 +1,4 @@
-/*!
+/*
  Copyright (C) 2017 Google Inc.
  Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
  */
@@ -49,7 +49,7 @@ import template from './templates/tree-widget-container.mustache';
         value: '',
         get: function () {
           return this.attr('options').additional_filter;
-        }
+        },
       },
       /**
        *
@@ -85,13 +85,13 @@ import template from './templates/tree-widget-container.mustache';
           return filters.filter(function (options) {
             return options.filter;
           }).reduce(this._concatFilters, additionalFilter);
-        }
+        },
       },
       modelName: {
         type: String,
         get: function () {
           return this.attr('model').shortName;
-        }
+        },
       },
       optionsData: {
         get: function () {
@@ -101,25 +101,25 @@ import template from './templates/tree-widget-container.mustache';
               name: modelName,
               loadItemsModelName: modelName,
               widgetId: modelName,
-              countsName: modelName
+              countsName: modelName,
             };
           }
 
           return GGRC.Utils.ObjectVersions
             .getWidgetConfig(modelName, true);
-        }
+        },
       },
       statusFilterVisible: {
         type: Boolean,
         get: function () {
           return GGRC.Utils.State.hasFilter(this.attr('modelName'));
-        }
+        },
       },
       statusTooltipVisible: {
         type: Boolean,
         get: function () {
           return GGRC.Utils.State.hasFilterTooltip(this.attr('modelName'));
-        }
+        },
       },
       cssClasses: {
         type: String,
@@ -135,13 +135,13 @@ import template from './templates/tree-widget-container.mustache';
           }
 
           return classes.join(' ');
-        }
+        },
       },
       parent_instance: {
         type: '*',
         get: function () {
           return this.attr('options').parent_instance;
-        }
+        },
       },
       allow_mapping: {
         type: Boolean,
@@ -154,7 +154,7 @@ import template from './templates/tree-widget-container.mustache';
           }
 
           return allowMapping;
-        }
+        },
       },
       allow_creating: {
         type: Boolean,
@@ -167,7 +167,7 @@ import template from './templates/tree-widget-container.mustache';
           }
 
           return allowCreating;
-        }
+        },
       },
       addItem: {
         type: String,
@@ -176,7 +176,7 @@ import template from './templates/tree-widget-container.mustache';
             false :
             this.attr('options').add_item_view ||
             this.attr('model').tree_view_options.add_item_view;
-        }
+        },
       },
       isSnapshots: {
         type: Boolean,
@@ -188,7 +188,7 @@ import template from './templates/tree-widget-container.mustache';
           return (Snapshots.isSnapshotScope(parentInstance) &&
             Snapshots.isSnapshotModel(model.model_singular)) ||
             this.attr('options.objectVersion');
-        }
+        },
       },
       showGenerateAssessments: {
         type: Boolean,
@@ -198,27 +198,27 @@ import template from './templates/tree-widget-container.mustache';
 
           return parentInstance.type === 'Audit' &&
             model.shortName === 'Assessment';
-        }
+        },
       },
       show3bbs: {
         type: Boolean,
         get: function () {
           return !CurrentPageUtils.isMyAssessments();
-        }
+        },
       },
       noResults: {
         type: Boolean,
         get: function () {
           return !this.attr('loading') && !this.attr('showedItems').length;
-        }
+        },
       },
       pageInfo: {
         value: function () {
           return new GGRC.VM.Pagination({
             pageSizeSelect: [10, 25, 50],
             pageSize: 10});
-        }
-      }
+        },
+      },
     },
     /**
      *
@@ -226,7 +226,7 @@ import template from './templates/tree-widget-container.mustache';
     allow_mapping_or_creating: null,
     sortingInfo: {
       sortDirection: null,
-      sortBy: null
+      sortBy: null,
     },
     /**
      *
@@ -252,7 +252,7 @@ import template from './templates/tree-widget-container.mustache';
     displayPrefs: {},
     columns: {
       selected: [],
-      available: []
+      available: [],
     },
     filters: [],
     loaded: null,
@@ -268,7 +268,7 @@ import template from './templates/tree-widget-container.mustache';
         current: pageInfo.current,
         pageSize: pageInfo.pageSize,
         sortBy: sortingInfo.sortBy,
-        sortDirection: sortingInfo.sortDirection
+        sortDirection: sortingInfo.sortDirection,
       };
       var request = this.attr('advancedSearch.request');
 
@@ -564,7 +564,7 @@ import template from './templates/tree-widget-container.mustache';
       filterItems: can.List(),
       appliedFilterItems: can.List(),
       mappingItems: can.List(),
-      appliedMappingItems: can.List()
+      appliedMappingItems: can.List(),
     },
     openAdvancedFilter: function () {
       this.attr('advancedSearch.filterItems',
@@ -650,7 +650,7 @@ import template from './templates/tree-widget-container.mustache';
         .find('tree-item:nth-of-type(' + (index + 1) +
           ') .tree-item-content')
         .addClass('item-active');
-    }
+    },
   });
 
   /**
@@ -704,7 +704,7 @@ import template from './templates/tree-widget-container.mustache';
         var infoPaneOptions = new can.Map({
           instance: instance,
           parent_instance: parent,
-          options: this.viewModel
+          options: this.viewModel,
         });
         var itemNumber = this.viewModel.getAbsoluteItemNumber(instance);
         var isSubTreeItem = itemNumber === -1;
@@ -768,7 +768,7 @@ import template from './templates/tree-widget-container.mustache';
           }.bind(this))
           .fail(function () {
             $('body').trigger('ajax:flash', {
-              error: 'Failed to fetch an object.'
+              error: 'Failed to fetch an object.',
             });
           })
           .always(function () {
@@ -790,7 +790,7 @@ import template from './templates/tree-widget-container.mustache';
         this.element.closest('.widget')
           .on('widget_shown', viewModel._widgetShown.bind(viewModel));
         viewModel._widgetShown();
-      }
-    }
+      },
+    },
   });
 })(window.can, window.GGRC);

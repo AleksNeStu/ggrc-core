@@ -1,4 +1,4 @@
-/*!
+/*
     Copyright (C) 2017 Google Inc.
     Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
 */
@@ -30,7 +30,7 @@ describe('GGRC.Controllers.ObjectMapper', function () {
     beforeEach(function () {
       updateScopeObject = can.Deferred().resolve();
       scopeObject = new can.Map({
-        id: 1
+        id: 1,
       });
 
       CMS.Models.Assessment = {
@@ -39,18 +39,18 @@ describe('GGRC.Controllers.ObjectMapper', function () {
             updateScopeObject: jasmine.createSpy('updateScopeObject')
               .and
               .returnValue(updateScopeObject),
-            scopeObject: scopeObject
-          })
-        ]
+            scopeObject: scopeObject,
+          }),
+        ],
       };
       fakeCtrlInst = {
-        launch: jasmine.createSpy('launch')
+        launch: jasmine.createSpy('launch'),
       };
       fakeData = {
         toggle: 'unified-mapper',
         join_object_type: 'Assessment',
         join_object_id: 0,
-        join_option_type: 'Type'
+        join_option_type: 'Type',
       };
       method = Ctrl.openMapper.bind(fakeCtrlInst);
       spyOn(GGRC.Errors, 'notifier');
@@ -83,7 +83,7 @@ describe('GGRC.Controllers.ObjectMapper', function () {
             btn,
             jasmine.objectContaining({
               general: jasmine.any(Object),
-              special: jasmine.any(Array)
+              special: jasmine.any(Array),
             })
           );
 
@@ -96,7 +96,7 @@ describe('GGRC.Controllers.ObjectMapper', function () {
       function (done) {
         var args;
         method(_.extend(fakeData, {
-          is_new: true
+          is_new: true,
         }), false);
 
         args = fakeCtrlInst.launch.calls.argsFor(0);
@@ -108,8 +108,8 @@ describe('GGRC.Controllers.ObjectMapper', function () {
               general: jasmine.objectContaining({
                 object: fakeData.join_object_type,
                 type: fakeData.join_option_type,
-                relevantTo: jasmine.any(Array)
-              })
+                relevantTo: jasmine.any(Array),
+              }),
             })
           );
           expect(args[1].general['join-object-id']).toBeNull();
@@ -132,7 +132,7 @@ describe('GGRC.Controllers.ObjectMapper', function () {
 
       beforeEach(function () {
         fakeDataForCommon = _.extend({}, fakeData, {
-          toggle: 'unified unified-search'
+          toggle: 'unified unified-search',
         });
         spyOn(GGRC.Controllers.ObjectSearch, 'launch');
       });
@@ -144,7 +144,7 @@ describe('GGRC.Controllers.ObjectMapper', function () {
         args = GGRC.Controllers.ObjectSearch.launch.calls.argsFor(0);
 
         expect(args[1]).not.toEqual(jasmine.objectContaining({
-          relevantTo: jasmine.any(Array)
+          relevantTo: jasmine.any(Array),
         }));
       });
 

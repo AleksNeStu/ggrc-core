@@ -1,4 +1,4 @@
-/*!
+/*
   Copyright (C) 2017 Google Inc.
   Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
 */
@@ -25,26 +25,26 @@ describe('GGRC.Components.modalConnector', function () {
     beforeEach(function () {
       binding = {
         refresh_instances: jasmine.createSpy()
-          .and.returnValue(can.Deferred().resolve('mockList'))
+          .and.returnValue(can.Deferred().resolve('mockList')),
       };
       viewModel.attr({
         parent_instance: {
           _transient: {
-            _mockSource: 'transientList'
-          }
+            _mockSource: 'transientList',
+          },
         },
         default_mappings: [{
           id: 123,
-          type: 'Assessment'
+          type: 'Assessment',
         }],
         mapping: 'mockSource',
         setListItems: jasmine.createSpy(),
-        instance_attr: ''
+        instance_attr: '',
       });
       viewModel.instance = {
         reify: jasmine.createSpy().and.returnValue(reifiedInstance),
         mark_for_addition: jasmine.createSpy(),
-        get_binding: jasmine.createSpy().and.returnValue(binding)
+        get_binding: jasmine.createSpy().and.returnValue(binding),
       };
       reifiedInstance = new can.Map(viewModel.instance);
       that = {
@@ -52,7 +52,7 @@ describe('GGRC.Components.modalConnector', function () {
         addListItem: jasmine.createSpy(),
         setListItems: jasmine.createSpy(),
         options: {},
-        on: jasmine.createSpy()
+        on: jasmine.createSpy(),
       };
       spyOn(CMS.Models.Assessment, 'findInCacheById')
         .and.returnValue('mockObject');
@@ -149,8 +149,8 @@ describe('GGRC.Components.modalConnector', function () {
     beforeEach(function () {
       that = {
         viewModel: {
-          parent_instance: new can.Map()
-        }
+          parent_instance: new can.Map(),
+        },
       };
       handler = events.destroy.bind(that);
     });
@@ -166,15 +166,15 @@ describe('GGRC.Components.modalConnector', function () {
     beforeEach(function () {
       that = {
         viewModel: new can.Map({
-          list: [123]
-        })
+          list: [123],
+        }),
       };
       handler = events.setListItems.bind(that);
     });
     it('sets concatenated list with current list to viewModel.list',
       function () {
         handler([{
-          instance: 321
+          instance: 321,
         }]);
         expect(that.viewModel.list.length).toEqual(2);
         expect(that.viewModel.list[0]).toEqual(123);
@@ -193,15 +193,15 @@ describe('GGRC.Components.modalConnector', function () {
       result.data('result', 'mock');
       element.append(result);
       event = {
-        stopPropagation: jasmine.createSpy()
+        stopPropagation: jasmine.createSpy(),
       };
       that = {
         viewModel: new can.Map({
           list: [1, 2],
           deferred: true,
           changes: ['firstChange'],
-          parent_instance: new can.Map()
-        })
+          parent_instance: new can.Map(),
+        }),
       };
       handler = events['[data-toggle=unmap] click'].bind(that);
     });
@@ -230,16 +230,16 @@ describe('GGRC.Components.modalConnector', function () {
     var event;
     beforeEach(function () {
       event = {
-        stopPropagation: jasmine.createSpy()
+        stopPropagation: jasmine.createSpy(),
       };
       that = {
         viewModel: new can.Map({
           list: [1, 2],
           deferred: true,
           changes: ['firstChange'],
-          parent_instance: new can.Map()
+          parent_instance: new can.Map(),
         }),
-        addListItem: jasmine.createSpy()
+        addListItem: jasmine.createSpy(),
       };
       handler = events.addMapings.bind(that);
     });
@@ -270,10 +270,10 @@ describe('GGRC.Components.modalConnector', function () {
           list: [1, 2],
           deferred: true,
           changes: ['firstChange'],
-          parent_instance: new can.Map()
+          parent_instance: new can.Map(),
         }),
         element: element,
-        addListItem: jasmine.createSpy()
+        addListItem: jasmine.createSpy(),
       };
       handler = events.autocomplete_select.bind(that);
     });
@@ -283,7 +283,7 @@ describe('GGRC.Components.modalConnector', function () {
         handler(element, {}, {item: 'mock'});
         expect(that.viewModel.changes[1])
           .toEqual(jasmine.objectContaining({
-            what: 'mock', how: 'add', extra: jasmine.any(can.Map)
+            what: 'mock', how: 'add', extra: jasmine.any(can.Map),
           }));
       });
     it('adds all changes to parent_instance if it is deferred', function () {

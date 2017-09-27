@@ -1,4 +1,4 @@
-/*!
+/*
  Copyright (C) 2017 Google Inc.
  Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
  */
@@ -46,19 +46,19 @@
 
       resultConfig = !_.isEmpty(special) ? special : config.general;
       return resultConfig;
-    }
+    },
   }, {
     define: {
       parentInstance: {
         get: function () {
           return CMS.Models
             .get_instance(this.attr('object'), this.attr('join_object_id'));
-        }
+        },
       },
       model: {
         get: function () {
           return this.modelFromType(this.attr('type'));
-        }
+        },
       },
       type: {
       /*
@@ -94,8 +94,8 @@
           this.attr('currConfig', resultConfig);
 
           return mapType;
-        }
-      }
+        },
+      },
     },
     /**
      * Config is an object with general and special settings.
@@ -106,7 +106,7 @@
      */
     config: {
       general: {},
-      special: []
+      special: [],
     },
     /**
      * There is situation when user switch type from one two another.
@@ -181,6 +181,6 @@
       }.bind(this));
 
       can.batch.stop();
-    }
+    },
   });
 })(window.can, window.can.$);

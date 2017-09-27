@@ -1,4 +1,4 @@
-/*!
+/*
     Copyright (C) 2017 Google Inc.
     Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
 */
@@ -6,8 +6,8 @@
 (function (can, $) {
   can.Control('CMS.Controllers.Dashboard', {
     defaults: {
-      widget_descriptors: null
-    }
+      widget_descriptors: null,
+    },
   }, {
     init: function (el, options) {
       CMS.Models.DisplayPrefs.getSingleton().then(function (prefs) {
@@ -100,7 +100,7 @@
       if ($internav.length) {
         this.inner_nav_controller = new CMS.Controllers.InnerNav(
           this.element.find('.internav'), {
-            dashboard_controller: this
+            dashboard_controller: this,
           });
       }
     },
@@ -218,7 +218,7 @@
     add_dashboard_widget_from_descriptor: function (descriptor) {
       return this.add_widget_from_descriptor({
         controller: CMS.Controllers.DashboardWidgets,
-        controller_options: $.extend(descriptor, {dashboard_controller: this})
+        controller_options: $.extend(descriptor, {dashboard_controller: this}),
       });
     },
 
@@ -229,7 +229,7 @@
       } else {
         return this.add_dashboard_widget_from_descriptor(descriptor);
       }
-    }
+    },
 
   });
 
@@ -252,7 +252,7 @@
 
     init_widget_descriptors: function () {
       this.options.widget_descriptors = this.options.widget_descriptors || {};
-    }
+    },
   });
 
   can.Control('CMS.Controllers.InnerNav', {
@@ -267,8 +267,8 @@
       addTabTitle: 'Add Tab',
       hideTabTitle: 'Hide',
       dividedTabsMode: false,
-      priorityTabs: null
-    }
+      priorityTabs: null,
+    },
   }, {
     init: function (options) {
       CMS.Models.DisplayPrefs.getSingleton().then(function (prefs) {
@@ -305,7 +305,7 @@
 
           this.delayed_display = {
             fn: fn,
-            timeout: setTimeout(fn, 50)
+            timeout: setTimeout(fn, 50),
           };
         }.bind(this));
 
@@ -483,7 +483,7 @@
         widget = new can.Observe({
           selector: '#' + $widget.attr('id'),
           count: count,
-          has_count: count != null
+          has_count: count != null,
         });
       }
       existingIndex = this.options.widget_list.indexOf(widget);
@@ -495,7 +495,7 @@
         forceRefetch: widgetOptions && widgetOptions.forceRefetch,
         spinner: this.options.spinners['#' + $widget.attr('id')],
         model: widgetOptions && widgetOptions.model,
-        order: (widgetOptions || widget).order
+        order: (widgetOptions || widget).order,
       });
 
       index = this.options.widget_list.length;
@@ -525,7 +525,7 @@
       if (widget) {
         widget.attr({
           count: count,
-          has_count: true
+          has_count: true,
         });
       }
       this.update_add_more_link();
@@ -652,6 +652,6 @@
         $hiddenArea.hide();
       }
       this.show_hide_titles();
-    }
+    },
   });
 })(window.can, window.can.$);

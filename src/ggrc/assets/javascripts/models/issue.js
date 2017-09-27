@@ -1,4 +1,4 @@
-/*!
+/*
     Copyright (C) 2017 Google Inc.
     Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
 */
@@ -16,18 +16,18 @@
       'ca_update',
       'timeboxed',
       'mapping-limit-issue',
-      'inScopeObjects'
+      'inScopeObjects',
     ],
     is_custom_attributable: true,
     isRoleable: true,
     attributes: {
       context: 'CMS.Models.Context.stub',
-      custom_attribute_values: 'CMS.Models.CustomAttributeValue.stubs'
+      custom_attribute_values: 'CMS.Models.CustomAttributeValue.stubs',
     },
     tree_view_options: {
       attr_list: can.Model.Cacheable.attr_list.concat([
         {attr_title: 'Reference URL', attr_name: 'reference_url'},
-        {attr_title: 'Last Deprecated Date', attr_name: 'end_date'}
+        {attr_title: 'Last Deprecated Date', attr_name: 'end_date'},
       ]),
       attr_view: GGRC.mustache_path + '/base_objects/tree-item-attr.mustache',
       display_attr_names: ['title', 'Admin', 'status'],
@@ -35,7 +35,7 @@
     info_pane_options: {
     },
     defaults: {
-      status: 'Draft'
+      status: 'Draft',
     },
     statuses: ['Draft', 'Deprecated', 'Active', 'Fixed', 'Fixed and Verified'],
     init: function () {
@@ -43,10 +43,10 @@
         this._super.apply(this, arguments);
       }
       this.validateNonBlank('title');
-    }
+    },
   }, {
     object_model: function () {
       return CMS.Models[this.attr('object_type')];
-    }
+    },
   });
 })(window.can, window.GGRC, window.CMS);

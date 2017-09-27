@@ -1,4 +1,4 @@
-/*!
+/*
     Copyright (C) 2017 Google Inc.
     Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
 */
@@ -8,7 +8,7 @@
     defaults: {
       model: null,
       instance: null,
-      widget_view: GGRC.mustache_path + '/base_objects/info.mustache'
+      widget_view: GGRC.mustache_path + '/base_objects/info.mustache',
     },
     init: function () {
       var that = this;
@@ -16,11 +16,11 @@
         if (GGRC.page_object) {
           can.extend(that.defaults, {
             model: GGRC.infer_object_type(GGRC.page_object),
-            instance: GGRC.page_instance()
+            instance: GGRC.page_instance(),
           });
         }
       });
-    }
+    },
   }, {
     init: function () {
       this.init_menu();
@@ -38,7 +38,7 @@
         start_menu: this.options.start_menu,
         object_menu: this.options.object_menu,
         error_msg: '',
-        error: true
+        error: true,
       });
       can.view(this.get_widget_view(this.element),
         this.options.context, function (frag) {
@@ -63,7 +63,7 @@
             model_name: CMS.Models[name].model_singular,
             model_lowercase: CMS.Models[name].table_singular,
             model_plural: CMS.Models[name].table_plural,
-            display_name: displayPrefix + CMS.Models[name].title_singular
+            display_name: displayPrefix + CMS.Models[name].title_singular,
           };
         }
       }));
@@ -75,7 +75,7 @@
         names = [
           'Program',
           'Audit',
-          'Workflow'
+          'Workflow',
         ];
         this.options.start_menu = this.generate_menu_items(names, 'Start new ');
       }
@@ -102,10 +102,10 @@
           'Standard',
           'System',
           'Threat',
-          'Vendor'
+          'Vendor',
         ];
         this.options.object_menu = this.generate_menu_items(names);
       }
-    }
+    },
   });
 })(window._, window.can, window.GGRC, window.CMS);

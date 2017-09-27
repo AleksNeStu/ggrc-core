@@ -1,4 +1,4 @@
-/*!
+/*
     Copyright (C) 2017 Google Inc.
     Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
 */
@@ -25,7 +25,7 @@ import '../components/unified-mapper/mapper-results';
   can.Control.extend('GGRC.Controllers.ObjectMapper', {
     defaults: {
       component: GGRC.mustache_path +
-        '/modals/mapper/object-mapper-modal.mustache'
+        '/modals/mapper/object-mapper-modal.mustache',
     },
     launch: function ($trigger, options) {
       var href = $trigger ?
@@ -40,7 +40,7 @@ import '../components/unified-mapper/mapper-results';
 
       $target.modal_form({}, $trigger);
       this.newInstance($target[0], can.extend({
-        $trigger: $trigger
+        $trigger: $trigger,
       }, options));
 
       $target.on('modal:dismiss', function () {
@@ -88,7 +88,7 @@ import '../components/unified-mapper/mapper-results';
         var special = [{
           types: ['Issue'],
           // set config like for common objects
-          config: getConfigForCommonObjects(data).general
+          config: getConfigForCommonObjects(data).general,
         }];
 
         _.extend(config.general, {useSnapshots: true});
@@ -101,8 +101,8 @@ import '../components/unified-mapper/mapper-results';
             relevantTo: [{
               readOnly: true,
               type: data.snapshot_scope_type,
-              id: data.snapshot_scope_id
-            }]
+              id: data.snapshot_scope_id,
+            }],
           });
           self.launch(btn, can.extend(config, data));
           return;
@@ -136,8 +136,8 @@ import '../components/unified-mapper/mapper-results';
               readOnly: true,
               type: scopeObject.type,
               id: scopeObject.id,
-              title: scopeObject.title
-            }]
+              title: scopeObject.title,
+            }],
           });
 
           self.launch(btn, can.extend(config, data));
@@ -163,9 +163,9 @@ import '../components/unified-mapper/mapper-results';
             'join-object-id': null,
             // if set then each mapped object will be relevant to
             // relevantTo object (for example, snapshots relevant to Audit (at 08/2017))
-            relevantTo: null
+            relevantTo: null,
           },
-          special: []
+          special: [],
         };
       }
 
@@ -175,28 +175,28 @@ import '../components/unified-mapper/mapper-results';
         _.extend(base.general, {
           object: data.join_object_type,
           type: data.join_option_type,
-          'join-object-id': data.join_object_id
+          'join-object-id': data.join_object_id,
         });
 
         return base;
       }
-    }
+    },
   }, {
     init: function () {
       this.element.html(can.view(this.options.component, this.options));
-    }
+    },
   });
   GGRC.Controllers.ObjectMapper.extend('GGRC.Controllers.ObjectSearch', {
     defaults: {
       component: GGRC.mustache_path +
-        '/modals/mapper/object-search-modal.mustache'
-    }
+        '/modals/mapper/object-search-modal.mustache',
+    },
   }, {});
   GGRC.Controllers.ObjectMapper.extend('GGRC.Controllers.ObjectGenerator', {
     defaults: {
       component: GGRC.mustache_path +
-        '/modals/mapper/object-generator-modal.mustache'
-    }
+        '/modals/mapper/object-generator-modal.mustache',
+    },
   }, {});
 
   function openMapperByElement(ev, disableMapper) {

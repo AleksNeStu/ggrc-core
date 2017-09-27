@@ -19,8 +19,8 @@ CMS.Controllers.Filterable('CMS.Controllers.DashboardWidgets', {
     content_selector: '.content',
     content_controller: null,
     content_controller_options: {},
-    content_controller_selector: null
-  }
+    content_controller_selector: null,
+  },
 }, {
   init: function () {
     if (!this.options.model && GGRC.page_model) {
@@ -157,5 +157,5 @@ CMS.Controllers.Filterable('CMS.Controllers.DashboardWidgets', {
       if (that.content_controller && that.content_controller.display_path)
         return that.content_controller.display_path(path, refetch);
     });
-  }
+  },
 });

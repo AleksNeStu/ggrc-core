@@ -1,4 +1,4 @@
-/*!
+/*
  Copyright (C) 2017 Google Inc.
  Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
  */
@@ -23,8 +23,8 @@
       define: {
         fromQueryApi: {
           type: Boolean,
-          value: false
-        }
+          value: false,
+        },
       },
       parent_instance: null,
       instance: null,
@@ -38,7 +38,7 @@
       newInstance: false,
       list: [],
       // the following are just for the case when we have no object to start with,
-      changes: []
+      changes: [],
     },
     events: {
       init: function () {
@@ -181,7 +181,7 @@
           this.viewModel.changes.push({
             what: ui.item,
             how: 'add',
-            extra: extraAttrs
+            extra: extraAttrs,
           });
           this.viewModel.parent_instance.attr('_changes',
             this.viewModel.changes);
@@ -367,7 +367,7 @@
           {
             type: this.viewModel.attr('instance.type'),
             operation: 'relevant',
-            id: this.viewModel.attr('instance.id')
+            id: this.viewModel.attr('instance.id'),
           }
         );
       },
@@ -403,7 +403,7 @@
         );
 
         return dfd;
-      }
+      },
     },
     helpers: {
       // Mapping-based autocomplete selectors use this helper to
@@ -415,10 +415,10 @@
           $el.ggrc_mapping_autocomplete({
             controller: options.contexts.attr('controller'),
             model: $el.data('model'),
-            mapping: false
+            mapping: false,
           });
         };
-      }
-    }
+      },
+    },
   });
 })(window.can, window.can.$);
