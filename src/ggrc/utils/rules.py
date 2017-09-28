@@ -95,6 +95,14 @@ class StaticSnapshotMappingRule(MappingRule):
   VALUE = {Labels.MAP_SNAPSHOT: True}
 
 
+class IssueMappingRule(MappingRule):
+  """Boolean flags to allow to map/unmap original objects and snapshots."""
+
+  VALUE = {Labels.MAP: True,
+           Labels.UNMAP: True,
+           Labels.MAP_SNAPSHOT: True}
+
+
 def wrap_rules(func):
   """Transform str-type rules into MappingRule(str)."""
   def make_rules(items):
@@ -180,20 +188,17 @@ def _all_rules():
   }
 
   # Audit and Audit-scope objects
-  # Assessment and Issue have a special Audit field instead of map:audit
+  # Assessment has a special Audit field instead of map:audit
 
   all_rules.update({
-      "Audit": {
-          StaticMappingRule("Assessment"),
-          StaticMappingRule("Issue")
-      } | {
+      "Audit": {StaticMappingRule("Assessment"), "Issue"} | {
           StaticSnapshotMappingRule(type_) for type_ in snapshots
       },
       "Assessment": {"Issue"} | {
           StaticSnapshotMappingRule(type_) for type_ in snapshots
       },
-      "Issue": {"Assessment"} | {
-          StaticSnapshotMappingRule(type_) for type_ in snapshots
+      "Issue": {"Assessment", "Audit"} | {
+          IssueMappingRule(type_) for type_ in snapshots
       },
   })
 

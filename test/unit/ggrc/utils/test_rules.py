@@ -56,7 +56,11 @@ class TestMappingRules(BaseTestMappingRules):
                   'Market', 'Objective', 'OrgGroup', 'Person', 'Policy',
                   'Process', 'Product', 'Program', 'Project', 'Regulation',
                   'Risk', 'Section', 'Standard', 'System', 'Threat', 'Vendor']
-  issue_rules = ['Assessment']
+  issue_rules = ['AccessGroup', 'Assessment', 'Audit', 'Clause',
+                 'Contract', 'Control', 'DataAsset', 'Facility',
+                 'Market', 'Objective', 'OrgGroup', 'Policy',
+                 'Process', 'Product', 'Regulation', 'Risk',
+                 'Section', 'Standard', 'System', 'Threat', 'Vendor']
   person_rules = ['AccessGroup', 'Clause', 'Contract', 'Control',
                   'CycleTaskGroupObjectTask', 'DataAsset', 'Facility',
                   'Market', 'Objective', 'OrgGroup', 'Policy', 'Process',
@@ -136,7 +140,7 @@ class TestUnMappingRules(BaseTestMappingRules):
                'Product', 'Program', 'Project', 'Regulation', 'Risk',
                'Section', 'Standard', 'System', 'Threat', 'Vendor']
   assessment_rules = ['Issue']
-  audit_rules = []
+  audit_rules = ['Issue']
   accessgroup_rules = ['Clause', 'Contract', 'Control',
                        'CycleTaskGroupObjectTask', 'DataAsset', 'Facility',
                        'Market', 'Objective', 'OrgGroup', 'Person', 'Policy',
@@ -160,7 +164,11 @@ class TestUnMappingRules(BaseTestMappingRules):
                   'Market', 'Objective', 'OrgGroup', 'Person', 'Policy',
                   'Process', 'Product', 'Program', 'Project', 'Regulation',
                   'Risk', 'Section', 'Standard', 'System', 'Threat', 'Vendor']
-  issue_rules = ['Assessment']
+  issue_rules = ['AccessGroup', 'Assessment', 'Audit', 'Clause',
+                 'Contract', 'Control', 'DataAsset', 'Facility',
+                 'Market', 'Objective', 'OrgGroup', 'Policy',
+                 'Process', 'Product', 'Regulation', 'Risk',
+                 'Section', 'Standard', 'System', 'Threat', 'Vendor']
   person_rules = ['AccessGroup', 'Clause', 'Contract', 'Control',
                   'CycleTaskGroupObjectTask', 'DataAsset', 'Facility',
                   'Market', 'Objective', 'OrgGroup', 'Policy', 'Process',
