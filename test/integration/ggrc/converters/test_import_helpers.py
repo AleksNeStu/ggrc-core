@@ -11,8 +11,7 @@ from ggrc.access_control import roleable
 from ggrc.converters import column_handlers
 from ggrc.converters import import_helper
 from ggrc.converters.import_helper import get_object_column_definitions
-from ggrc.snapshotter.rules import Types
-from ggrc.utils.rules import get_mapping_rules, get_unmapping_rules
+from ggrc.utils import rules
 from ggrc.utils import title_from_camelcase
 from ggrc_risks import models as r_models
 from ggrc_risk_assessments import models as ra_models
@@ -22,34 +21,21 @@ from integration.ggrc.generator import ObjectGenerator
 
 
 def get_mapping_names(class_name):
-  """Get mapping column names."""
-  mapping_rules = get_mapping_rules().get(class_name)
-  if mapping_rules is not None:
-    if class_name in Types.scoped | Types.parents:
-      mapping_names = set()
-      for mapped_type in mapping_rules:
-        if mapped_type in Types.all:
-          format_ = "map:{} versions"
-        else:
-          format_ = "map:{}"
-        mapping_names.add(format_.format(title_from_camelcase(mapped_type)))
-    else:
-      pretty_mapping_rules = (title_from_camelcase(r) for r in mapping_rules)
-      mapping_names = {"map:{}".format(n) for n in pretty_mapping_rules}
-  else:
-    mapping_names = None
-  return mapping_names
+  """Get mapping, unmapping and snapshot mapping column names."""
+  map_rules = rules.get_mapping_rules().get(class_name) or set()
+  unmap_rules = rules.get_unmapping_rules().get(class_name) or set()
+  unmap_sn_rules = rules.get_snapshot_mapping_rules().get(class_name) or set()
 
+  format_rules = [("map:{}", map_rules),
+                  ("unmap:{}", unmap_rules),
+                  ("map:{} versions", unmap_sn_rules)]
 
-def get_unmapping_names(class_name):
-  """Get unmapping column names."""
-  unmapping_rules = get_unmapping_rules().get(class_name)
-  if unmapping_rules is not None:
-    pretty_unmapping_rules = (title_from_camelcase(r) for r in unmapping_rules)
-    unmapping_names = {"unmap:{}".format(n) for n in pretty_unmapping_rules}
-  else:
-    unmapping_names = None
-  return unmapping_names
+  column_names = set()
+  for format_, rule_set in format_rules:
+    pretty_rules = (title_from_camelcase(r) for r in rule_set)
+    column_names.update(format_.format(r) for r in pretty_rules)
+
+  return column_names
 
 
 @ddt.ddt
@@ -90,7 +76,6 @@ class TestCustomAttributesDefinitions(TestCase):
         "policy", title="Mandatory Attribute", mandatory=True)
     definitions = get_object_column_definitions(models.Policy)
     mapping_names = get_mapping_names(models.Policy.__name__)
-    unmapping_names = get_unmapping_names(models.Policy.__name__)
     display_names = {val["display_name"] for val in definitions.itervalues()}
     element_names = {
         "Code",
@@ -113,7 +98,7 @@ class TestCustomAttributesDefinitions(TestCase):
         'Last Updated',
         'Last Updated By',
     }
-    expected_names = element_names.union(mapping_names).union(unmapping_names)
+    expected_names = element_names.union(mapping_names)
     self.assertEqual(expected_names, display_names)
     vals = {val["display_name"]: val for val in definitions.itervalues()}
     self.assertTrue(vals["Title"]["mandatory"])
@@ -140,7 +125,6 @@ class TestCustomAttributesDefinitions(TestCase):
     )
     definitions = get_object_column_definitions(models.Program)
     mapping_names = get_mapping_names(models.Program.__name__)
-    unmapping_names = get_unmapping_names(models.Program.__name__)
     display_names = {val["display_name"] for val in definitions.itervalues()}
     element_names = {
         "Title",
@@ -165,7 +149,7 @@ class TestCustomAttributesDefinitions(TestCase):
         'Last Updated',
         'Last Updated By',
     }
-    expected_names = element_names.union(mapping_names).union(unmapping_names)
+    expected_names = element_names.union(mapping_names)
     self.assertEqual(expected_names, display_names)
     vals = {val["display_name"]: val for val in definitions.itervalues()}
     self.assertTrue(vals["Title"]["mandatory"])
@@ -212,14 +196,11 @@ class TestGetObjectColumnDefinitions(TestCase):
     definitions = get_object_column_definitions(obj_class)
     display_names = {val["display_name"] for val in definitions.itervalues()}
     mapping_names = get_mapping_names(obj_class.__name__)
-    unmapping_names = get_unmapping_names(obj_class.__name__)
     if has_mappings:
-      self.assertNotEqual(mapping_names, None)
-      self.assertNotEqual(unmapping_names, None)
-      expected_names = names.union(mapping_names).union(unmapping_names)
+      self.assertTrue(mapping_names)
+      expected_names = names.union(mapping_names)
     else:
-      self.assertEqual(mapping_names, None)
-      self.assertEqual(unmapping_names, None)
+      self.assertFalse(mapping_names)
       expected_names = names
     self.assertEqual(display_names, expected_names)
 

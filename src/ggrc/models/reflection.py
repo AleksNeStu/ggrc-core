@@ -9,7 +9,7 @@ from collections import defaultdict
 import flask
 from sqlalchemy.sql.schema import UniqueConstraint
 
-from ggrc.utils.rules import get_mapping_rules, get_unmapping_rules
+from ggrc.utils import rules
 from ggrc.utils import title_from_camelcase
 from ggrc.utils import underscore_from_camelcase
 
@@ -270,13 +270,13 @@ class AttributeInfo(object):
     }
 
   @classmethod
-  def _generate_mapping_definition(cls, rules, prefix, display_name_tmpl):
+  def _generate_mapping_definition(cls, rules_set, prefix, display_name_tmpl):
     "Generate definition from template"
     definitions = {}
     from ggrc.snapshotter.rules import Types
     read_only = Types.parents | Types.scoped
     read_only_text = "Read only column and will be ignored on import."
-    for klass in rules:
+    for klass in rules_set:
       klass_name = title_from_camelcase(klass)
       key = "{}{}".format(prefix, klass_name)
       definitions[key.lower()] = {
@@ -302,29 +302,20 @@ class AttributeInfo(object):
     For every direct mapping column generated it also generates an unmapping
     column.
     """
-    from ggrc.snapshotter import rules
-    mapping_rules = get_mapping_rules()
-    all_mappings = mapping_rules.get(object_class.__name__, set())
-    unmapping_rules = get_unmapping_rules()
-    all_unmappings = unmapping_rules.get(object_class.__name__, set())
 
     definitions = {}
-    if object_class.__name__ in rules.Types.scoped | rules.Types.parents:
-      snapshot_mappings = all_mappings & rules.Types.all
-      direct_mappings = all_mappings - rules.Types.all
-      definitions.update(cls._generate_mapping_definition(
-          snapshot_mappings, cls.SNAPSHOT_MAPPING_PREFIX, "map:{} versions",
-      ))
-    else:
-      direct_mappings = all_mappings
-
-    direct_unmappings = direct_mappings & all_unmappings
 
     definitions.update(cls._generate_mapping_definition(
-        direct_mappings, cls.MAPPING_PREFIX, "map:{}",
+        rules.get_mapping_rules().get(object_class.__name__, set()),
+        cls.MAPPING_PREFIX, "map:{}",
     ))
     definitions.update(cls._generate_mapping_definition(
-        direct_unmappings, cls.UNMAPPING_PREFIX, "unmap:{}",
+        rules.get_snapshot_mapping_rules().get(object_class.__name__, set()),
+        cls.SNAPSHOT_MAPPING_PREFIX, "map:{} versions",
+    ))
+    definitions.update(cls._generate_mapping_definition(
+        rules.get_unmapping_rules().get(object_class.__name__, set()),
+        cls.UNMAPPING_PREFIX, "unmap:{}",
     ))
     return definitions
 

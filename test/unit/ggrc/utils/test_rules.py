@@ -31,15 +31,8 @@ class TestMappingRules(BaseTestMappingRules):
                'Objective', 'OrgGroup', 'Person', 'Policy', 'Process',
                'Product', 'Program', 'Project', 'Regulation', 'Risk',
                'Section', 'Standard', 'System', 'Threat', 'Vendor', ]
-  assessment_rules = ['AccessGroup', 'Clause', 'Contract', 'Control',
-                      'DataAsset', 'Facility', 'Issue', 'Market', 'Objective',
-                      'OrgGroup', 'Policy', 'Process', 'Product', 'Regulation',
-                      'Risk', 'Section', 'Standard', 'System', 'Threat',
-                      'Vendor', ]
-  audit_rules = ['AccessGroup', 'Assessment', 'Clause', 'Contract', 'Control',
-                 'DataAsset', 'Facility', 'Issue', 'Market', 'Objective',
-                 'OrgGroup', 'Policy', 'Process', 'Product', 'Regulation',
-                 'Risk', 'Section', 'Standard', 'System', 'Threat', 'Vendor']
+  assessment_rules = ['Issue']
+  audit_rules = ['Assessment', 'Issue']
   accessgroup_rules = ['Clause', 'Contract', 'Control',
                        'CycleTaskGroupObjectTask', 'DataAsset', 'Facility',
                        'Market', 'Objective', 'OrgGroup', 'Person', 'Policy',
@@ -63,10 +56,7 @@ class TestMappingRules(BaseTestMappingRules):
                   'Market', 'Objective', 'OrgGroup', 'Person', 'Policy',
                   'Process', 'Product', 'Program', 'Project', 'Regulation',
                   'Risk', 'Section', 'Standard', 'System', 'Threat', 'Vendor']
-  issue_rules = ['AccessGroup', 'Assessment', 'Clause', 'Contract', 'Control',
-                 'DataAsset', 'Facility', 'Market', 'Objective', 'OrgGroup',
-                 'Policy', 'Process', 'Product', 'Regulation', 'Risk',
-                 'Section', 'Standard', 'System', 'Threat', 'Vendor', ]
+  issue_rules = ['Assessment']
   person_rules = ['AccessGroup', 'Clause', 'Contract', 'Control',
                   'CycleTaskGroupObjectTask', 'DataAsset', 'Facility',
                   'Market', 'Objective', 'OrgGroup', 'Policy', 'Process',
@@ -232,6 +222,60 @@ class TestUnMappingRules(BaseTestMappingRules):
         ("Standard", standard_rules),
         ("System", all_rules),
         ("Threat", threat_rules),
+        ("Vendor", all_rules))
+  @unpack
+  def test_field(self, field, rules):
+    self.assertRules(field, *rules)
+
+
+@ddt
+class TestSnapshotMappingRules(BaseTestMappingRules):
+  """Test case for snapshot mapping rules."""
+
+  rules = ggrc.utils.rules.get_snapshot_mapping_rules()
+
+  all_rules = []
+  assessment_rules = ["AccessGroup", "Clause", "Contract", "Control",
+                      "DataAsset", "Facility", "Market", "Objective",
+                      "OrgGroup", "Policy", "Process", "Product",
+                      "Regulation", "Section", "Standard", "System",
+                      "Vendor", "Risk", "Threat"]
+  audit_rules = ["AccessGroup", "Clause", "Contract", "Control",
+                 "DataAsset", "Facility", "Market", "Objective",
+                 "OrgGroup", "Policy", "Process", "Product",
+                 "Regulation", "Section", "Standard", "System",
+                 "Vendor", "Risk", "Threat"]
+  issue_rules = ["AccessGroup", "Clause", "Contract", "Control",
+                 "DataAsset", "Facility", "Market", "Objective",
+                 "OrgGroup", "Policy", "Process", "Product",
+                 "Regulation", "Section", "Standard", "System",
+                 "Vendor", "Risk", "Threat"]
+
+  @data(("AccessGroup", all_rules),
+        ("Assessment", assessment_rules),
+        ("Audit", audit_rules),
+        ("Clause", all_rules),
+        ("Contract", all_rules),
+        ("Control", all_rules),
+        ("CycleTaskGroupObjectTask", all_rules),
+        ("DataAsset", all_rules),
+        ("Facility", all_rules),
+        ("Issue", issue_rules),
+        ("Market", all_rules),
+        ("Objective", all_rules),
+        ("OrgGroup", all_rules),
+        ("Person", all_rules),
+        ("Policy", all_rules),
+        ("Process", all_rules),
+        ("Product", all_rules),
+        ("Program", all_rules),
+        ("Project", all_rules),
+        ("Regulation", all_rules),
+        ("Risk", all_rules),
+        ("Section", all_rules),
+        ("Standard", all_rules),
+        ("System", all_rules),
+        ("Threat", all_rules),
         ("Vendor", all_rules))
   @unpack
   def test_field(self, field, rules):
