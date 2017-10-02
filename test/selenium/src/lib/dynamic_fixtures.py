@@ -82,8 +82,7 @@ def _new_objs_rest(obj_name, obj_count,  # noqa: ignore=C901
   if obj_name == objects.AUDITS:
     parent_obj_name = (objects.get_singular(objects.PROGRAMS) if obj_count == 1
                        else objects.PROGRAMS)
-  if obj_name in (objects.ASSESSMENT_TEMPLATES, objects.ASSESSMENTS,
-                  objects.ISSUES):
+  if obj_name in (objects.ASSESSMENT_TEMPLATES, objects.ASSESSMENTS):
     parent_obj_name = objects.get_singular(objects.AUDITS)
   if (has_cas and obj_name in objects.ALL_OBJS and
           obj_name not in objects.ASSESSMENT_TEMPLATES):
