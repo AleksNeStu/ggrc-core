@@ -1,8 +1,9 @@
 # Copyright (C) 2017 Google Inc.
 # Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
 "Factory for modules, classes, methods, functions."
+
 from lib import base, cache, constants, exception
-from lib.constants import objects, element, locator
+from lib.constants import objects, element
 from lib.element import tree_view, widget_info, tree_view_item
 
 
@@ -97,13 +98,6 @@ def get_cls_widget(object_name, is_info=False, is_admin=False):
   else:
     base_cls = generic_widget.Widget
   return _factory(cls_name=object_name, parent_cls=base_cls)
-
-
-def get_cls_locators_generic_widget(object_name):
-  """Get and return class of locators for object generic widget."""
-  cls_name = constants.cls_name.WIDGET + object_name
-  base_cls = locator.BaseWidgetGeneric
-  return _factory(cls_name=cls_name, parent_cls=base_cls)
 
 
 def get_cls_entity_factory(object_name):
