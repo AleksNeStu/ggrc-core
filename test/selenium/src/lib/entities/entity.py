@@ -911,10 +911,10 @@ class IssueEntity(Entity):
       "type", "title", "slug", "status", "contact", "os_state", "created_at",
       "updated_at", "modified_by"]
   attrs_names_to_repr = Representation.core_attrs_names_to_repr + [
-      "status", "audit", "contact", "secondary_contact", "updated_at",
+      "status", "contact", "secondary_contact", "updated_at",
       "custom_attributes", "access_control_list", "os_state", "modified_by"]
 
-  def __init__(self, status=None, audit=None, owners=None,
+  def __init__(self, status=None, owners=None,
                contact=None, secondary_contact=None, updated_at=None,
                custom_attribute_definitions=None, os_state=None,
                custom_attribute_values=None, custom_attributes=None,
@@ -932,6 +932,5 @@ class IssueEntity(Entity):
     self.custom_attribute_definitions = custom_attribute_definitions
     self.custom_attribute_values = custom_attribute_values
     # additional
-    self.audit = audit  # audit title
     self.custom_attributes = custom_attributes  # map of cas def and values
     self.access_control_list = access_control_list

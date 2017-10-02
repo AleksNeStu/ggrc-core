@@ -376,10 +376,10 @@ class ControlsFactory(EntitiesFactory):
     random_control.contact = cls.default_person.__dict__
     random_control.owners = [cls.default_person.__dict__]
     random_control.access_control_list = [
-        ObjectPersonsFactory().get_acl_member(roles.ADMIN_ID,
-                                              random_control.owners[0]),
-        ObjectPersonsFactory().get_acl_member(roles.PRIMARY_CONTACT_ID,
-                                              random_control.contact)]
+        ObjectPersonsFactory().get_acl_member(
+            roles.CONTROL_ADMIN_ID, random_control.owners[0]),
+        ObjectPersonsFactory().get_acl_member(
+            roles.CONTROL_PRIMARY_CONTACT_ID, random_control.contact)]
     random_control.os_state = unicode(element.ReviewStates.UNREVIEWED)
     return random_control
 
@@ -660,7 +660,7 @@ class IssuesFactory(EntitiesFactory):
 
   @classmethod
   def create(cls, type=None, id=None, title=None, href=None, url=None,
-             slug=None, status=None, audit=None, owners=None, contact=None,
+             slug=None, status=None, owners=None, contact=None,
              secondary_contact=None, updated_at=None, os_state=None,
              custom_attribute_definitions=None, custom_attribute_values=None,
              custom_attributes=None, access_control_list=None, created_at=None,
@@ -673,7 +673,7 @@ class IssuesFactory(EntitiesFactory):
     issue_entity = cls._create_random_issue()
     issue_entity = Entity.update_objs_attrs_values_by_entered_data(
         obj_or_objs=issue_entity, is_allow_none_values=False, type=type, id=id,
-        title=title, href=href, url=url, slug=slug, status=status, audit=audit,
+        title=title, href=href, url=url, slug=slug, status=status,
         owners=owners, contact=contact, secondary_contact=secondary_contact,
         updated_at=updated_at, os_state=os_state,
         custom_attribute_definitions=custom_attribute_definitions,
@@ -694,9 +694,9 @@ class IssuesFactory(EntitiesFactory):
     random_issue.owners = [ObjectPersonsFactory().default().__dict__]
     random_issue.contact = ObjectPersonsFactory().default().__dict__
     random_issue.access_control_list = [
-        ObjectPersonsFactory().get_acl_member(roles.ADMIN_ID,
-                                              random_issue.owners[0]),
-        ObjectPersonsFactory().get_acl_member(roles.PRIMARY_CONTACT_ID,
-                                              random_issue.contact)]
+        ObjectPersonsFactory().get_acl_member(
+            roles.ISSUE_ADMIN_ID, random_issue.owners[0]),
+        ObjectPersonsFactory().get_acl_member(
+            roles.ISSUE_PRIMARY_CONTACT_ID, random_issue.contact)]
     random_issue.os_state = unicode(element.ReviewStates.UNREVIEWED)
     return random_issue
