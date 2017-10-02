@@ -103,29 +103,29 @@ class TestAuditPage(base.Test):
 
   @pytest.mark.smoke_tests
   @pytest.mark.parametrize(
-      "dynamic_object, dynamic_relationships",
+      "dynamic_objects, dynamic_relationships",
       [("new_control_rest", "map_new_program_rest_to_new_control_rest"),
        ("new_objective_rest", "map_new_program_rest_to_new_objective_rest")],
       indirect=True)
   def test_asmt_creation_with_mapping(
-      self, new_program_rest, dynamic_object, dynamic_relationships,
+      self, new_program_rest, dynamic_objects, dynamic_relationships,
       new_audit_rest, selenium
   ):
     """Check if Assessment can be created with mapped snapshot via
     Modal Create on Assessments TreeView. Additional check existing of
     mapped objs Titles on Modal Create.
     Preconditions:
-    - Program, dynamic_object created via REST API.
-    - dynamic_object mapped to Program via REST API.
+    - Program, dynamic_objects created via REST API.
+    - dynamic_objects mapped to Program via REST API.
     - Audit created under Program via REST API.
     Test parameters:
-    - 'dynamic_object'.
+    - 'dynamic_objects'.
     - 'dynamic_relationships'.
     """
     expected_asmt = (
         entities_factory.AssessmentsFactory().create(
-            objects_under_assessment=[dynamic_object]))
-    expected_titles = [dynamic_object.title]
+            objects_under_assessment=[dynamic_objects]))
+    expected_titles = [dynamic_objects.title]
     asmts_ui_service = webui_service.AssessmentsService(selenium)
     actual_titles = (
         asmts_ui_service.create_obj_and_get_mapped_titles_from_modal(
@@ -143,7 +143,7 @@ class TestAuditPage(base.Test):
 
   @pytest.mark.smoke_tests
   @pytest.mark.parametrize(
-      "dynamic_object",
+      "dynamic_objects",
       [None, "new_assessment_template_rest",
        "new_assessment_template_with_cas_rest"],
       ids=["Assessments generation without Assessment Template",
@@ -153,7 +153,7 @@ class TestAuditPage(base.Test):
   def test_asmts_generation(
       self, new_program_rest, new_controls_rest,
       map_new_program_rest_to_new_controls_rest, new_audit_rest,
-      dynamic_object, selenium
+      dynamic_objects, selenium
   ):
     """Check if Assessments can be generated from Audit page via Assessments
     widget using Assessment template and Controls.
@@ -162,17 +162,17 @@ class TestAuditPage(base.Test):
     - Controls mapped to Program via REST API.
     - Audit created under Program via REST API.
     Test parameters:
-    - 'dynamic_object'.
+    - 'dynamic_objects'.
     """
     expected_asmts = (entities_factory.AssessmentsFactory().generate(
         objs_under_asmt=new_controls_rest, audit=new_audit_rest,
-        asmt_tmpl=dynamic_object))
+        asmt_tmpl=dynamic_objects))
     expected_asmts = [
         expected_asmt.repr_ui() for expected_asmt in expected_asmts]
     asmts_ui_service = webui_service.AssessmentsService(selenium)
     asmts_ui_service.generate_objs_via_tree_view(
         src_obj=new_audit_rest, objs_under_asmt=new_controls_rest,
-        asmt_tmpl_obj=dynamic_object)
+        asmt_tmpl_obj=dynamic_objects)
     actual_asmts_tab_count = asmts_ui_service.get_count_objs_from_tab(
         src_obj=new_audit_rest)
     assert len(expected_asmts) == actual_asmts_tab_count

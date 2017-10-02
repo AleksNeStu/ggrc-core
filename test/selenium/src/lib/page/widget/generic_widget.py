@@ -18,7 +18,7 @@ class Widget(base.Widget):
   destinations objects's widget will be snapshots' versions.
   """
   # pylint: disable=too-many-instance-attributes
-  def __init__(self, driver, obj_name, is_versions_widget):
+  def __init__(self, driver, obj_name, is_versions_widget=False):
     self.obj_name = obj_name
     self.is_versions_widget = is_versions_widget
     self._locators_filter = locator.BaseWidgetGeneric(

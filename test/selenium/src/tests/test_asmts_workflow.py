@@ -113,7 +113,7 @@ class TestAssessmentsWorkflow(base.Test):
 
   @pytest.mark.smoke_tests
   @pytest.mark.parametrize(
-      ("dynamic_object_w_factory_params", "action",
+      ("dynamic_objects_w_factory_params", "action",
        "expected_initial_state", "expected_final_state", "expected_verified"),
       [(("new_assessment_rest", {"status":
                                  AssessmentStates.NOT_STARTED}),
@@ -168,9 +168,9 @@ class TestAssessmentsWorkflow(base.Test):
            "Complete asmt w' verifier 'In Progress' - 'In Review'",
            "Verify asmt w' verifier 'In Review' - 'Completed'",
            "Reject asmt w' verifier 'In Review' - 'In Progress'"],
-      indirect=["dynamic_object_w_factory_params"])
+      indirect=["dynamic_objects_w_factory_params"])
   def test_check_asmt_state_change(
-      self, new_program_rest, new_audit_rest, dynamic_object_w_factory_params,
+      self, new_program_rest, new_audit_rest, dynamic_objects_w_factory_params,
       action, expected_initial_state, expected_final_state, expected_verified,
       selenium
   ):
@@ -180,7 +180,7 @@ class TestAssessmentsWorkflow(base.Test):
     - Audit created under Program via REST API.
     - Assessment created and updated under Audit via REST API.
     """
-    expected_asmt = dynamic_object_w_factory_params
+    expected_asmt = dynamic_objects_w_factory_params
     if expected_initial_state:
       (rest_service.AssessmentsService().
        update_obj(expected_asmt, status=expected_initial_state))
@@ -212,6 +212,7 @@ class TestAssessmentsWorkflow(base.Test):
     - Global Custom Attributes for Assessment created via REST API.
     - Set revers value of GCA with Checkbox type for second Assessment.
     """
+    # pylint: disable=too-many-locals
     custom_attr_values = (
         CustomAttributeDefinitionsFactory().generate_ca_values(
             list_ca_def_objs=new_cas_for_assessments_rest))
@@ -259,30 +260,30 @@ class TestAssessmentsWorkflow(base.Test):
 
   @pytest.mark.smoke_tests
   @pytest.mark.parametrize(
-      "dynamic_object, dynamic_relationships",
+      "dynamic_objects, dynamic_relationships",
       [("new_objective_rest", "map_new_program_rest_to_new_objective_rest"),
        ("new_control_rest", "map_new_program_rest_to_new_control_rest")],
       indirect=True)
   def test_map_snapsots_to_asmt_via_edit_modal(
-      self, new_program_rest, dynamic_object, dynamic_relationships,
+      self, new_program_rest, dynamic_objects, dynamic_relationships,
       new_audit_rest, new_assessment_rest, selenium
   ):
     """Check Assessment can be mapped with snapshot via Modal Edit
     on Assessments Info Page. Additional check existing of mapped obj Titles
     on Modal Edit.
     Preconditions:
-    - Program, dynamic_object created via REST API.
-    - dynamic_object mapped to Program via REST API.
+    - Program, dynamic_objects created via REST API.
+    - dynamic_objects mapped to Program via REST API.
     - Audit created under Program via REST API.
     - Assessment created under audit via REST API.
     Test parameters:
-    - 'dynamic_object'.
+    - 'dynamic_objects'.
     - 'dynamic_relationships'.
     """
     expected_asmt = (new_assessment_rest.update_attrs(
-        objects_under_assessment=[dynamic_object],
+        objects_under_assessment=[dynamic_objects],
         status=AssessmentStates.IN_PROGRESS))
-    expected_titles = [dynamic_object.title]
+    expected_titles = [dynamic_objects.title]
     asmts_ui_service = webui_service.AssessmentsService(selenium)
     actual_titles = (
         asmts_ui_service.map_objs_and_get_mapped_titles_from_edit_modal(
