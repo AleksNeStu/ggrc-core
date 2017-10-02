@@ -14,18 +14,21 @@ from lib.utils import selenium_utils
 
 
 class Widget(base.Widget):
-  """All widgets with Tree View and Filters."""
+  """All widgets with Tree View and Filters. If 'is_versions_widget' then
+  destinations objects's widget will be snapshots' versions.
+  """
   # pylint: disable=too-many-instance-attributes
-  def __init__(self, driver, obj_name):
+  def __init__(self, driver, obj_name, is_versions_widget):
     self.obj_name = obj_name
-    self._locators_filter = factory.get_cls_locators_generic_widget(
-        object_name=obj_name)
-    self._locator_widget = factory.get_locator_widget(self.obj_name.upper())
+    self.is_versions_widget = is_versions_widget
+    self._locators_filter = locator.BaseWidgetGeneric(
+        self.obj_name, self.is_versions_widget)
+    self._locators_widget = factory.get_locator_widget(self.obj_name.upper())
     self.info_widget_cls = factory.get_cls_widget(
         object_name=obj_name, is_info=True)
     # Filter
+    # todo Persons, Workflows, TaskGroups, Cycles, CycleTaskGroupObjectTasks
     self.cls_without_state_filtering = (AssessmentTemplates, )
-    # Persons, Workflows, TaskGroups, Cycles, CycleTaskGroupObjectTasks
     self.button_help = base.Button(driver, self._locators_filter.BUTTON_HELP)
     self.filter = base.FilterCommon(
         driver, text_box_locator=self._locators_filter.TEXTFIELD_TO_FILTER,
@@ -35,7 +38,8 @@ class Widget(base.Widget):
           driver, self._locators_filter.DROPDOWN)
     super(Widget, self).__init__(driver)
     # Tree View
-    self.tree_view = TreeView(driver, self.info_widget_cls, self.obj_name)
+    self.tree_view = TreeView(
+        driver, self.info_widget_cls, self.obj_name, self.is_versions_widget)
     # Tab count
     self.members_listed = None
     self.member_count = None
@@ -44,7 +48,7 @@ class Widget(base.Widget):
   def _set_member_count(self):
     """Parses widget name and number of items from widget tab title."""
     widget_label = selenium_utils.get_when_visible(
-        self._driver, self._locator_widget).text
+        self._driver, self._locators_widget).text
     # The widget label has 2 forms: "widget_name_plural (number_of_items)"
     # and "number_of_items" and they change depending on how many widgets
     # are open. In order to handle both forms, we first try to parse the
@@ -73,7 +77,7 @@ class Widget(base.Widget):
     # pylint: disable=invalid-name
     exp_pagination_count = counters.PAGINATION_CTRLS_COUNT
     pagination_elements = selenium_utils.get_when_all_visible(
-        self._driver, locator.BaseWidgetGeneric.PAGINATION_CONTROLLERS)
+        self._driver, self._locators_filter.PAGINATION_CONTROLLERS)
     if pagination_elements:
       if len(pagination_elements) == exp_pagination_count:
         return pagination_elements
@@ -106,7 +110,7 @@ class Widget(base.Widget):
     if count != '1':
       new_count = ' {}'.format(int(count) - 1)
       selenium_utils.wait_for_element_text(
-          self._driver, locator.BaseWidgetGeneric.PAGINATION_CONTROLLERS,
+          self._driver, self._locators_filter.PAGINATION_CONTROLLERS,
           new_count)
     else:
       self.verify_counter_not_loaded()
@@ -144,10 +148,11 @@ class TreeView(base.TreeView):
   # pylint: disable=too-many-instance-attributes
   _locators = locator.TreeView
 
-  def __init__(self, driver, info_widget_cls, obj_name):
-    super(TreeView, self).__init__(driver, obj_name=obj_name)
+  def __init__(self, driver, info_widget_cls, obj_name, is_versions_widget):
+    super(TreeView, self).__init__(driver, obj_name, is_versions_widget)
     self.info_widget_cls = info_widget_cls
     self.obj_name = obj_name
+    self.is_versions_widget = is_versions_widget
     self.create_obj_cls = factory.get_cls_create_obj(object_name=obj_name)
     self.dropdown_settings_cls = factory.get_cls_3bbs_dropdown_settings(
         object_name=obj_name, is_tree_view_not_info=True)
@@ -184,14 +189,16 @@ class TreeView(base.TreeView):
     _locator_3bbs = (
         By.CSS_SELECTOR, self._locators.BUTTON_3BBS.format(self.widget_name))
     base.Button(self._driver, _locator_3bbs).click()
-    return self.dropdown_settings_cls(self._driver, self.obj_name)
+    return self.dropdown_settings_cls(
+        self._driver, self.obj_name, self.is_versions_widget)
 
   def select_member_by_title(self, title):
     """Select member on Tree View by title.
     Return: lib.page.widget.info_widget."obj_name"
     """
     item_num = self._get_item_num_by_title(title)
-    return Widget(self._driver, self.obj_name).select_member_by_num(item_num)
+    return (Widget(self._driver, self.obj_name, self.is_versions_widget).
+            select_member_by_num(item_num))
 
   def _get_item_num_by_title(self, title):
     """Return number of item by title"""
@@ -206,6 +213,7 @@ class TreeView(base.TreeView):
     button.
     Return: lib.element.tree_view."dropdown_obj"
     """
+    # pylint: disable=invalid-name
     button_num = self._get_item_num_by_title(title)
     item_dropdown_button = self.tree_view_items()[button_num].item_btn
     selenium_utils.hover_over_element(

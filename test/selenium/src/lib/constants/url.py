@@ -42,8 +42,11 @@ class Widget(object):
   PROGRAMS = "#program_widget"
 
 
-def get_widget_name_of_mapped_objs(obj_name):
+def get_widget_name_of_mapped_objs(obj_name, is_versions_widget=False):
   """Get and return widget name for mapped objects (URL's parts for widgets)
-  based on object name.
+  based on object name. If 'is_versions_widget' then destinations objects's
+  widget will be snapshots' versions.
   """
-  return "#" + get_singular(obj_name) + "_widget"
+  middle_part = (get_singular(obj_name) if not is_versions_widget else
+                 get_singular(obj_name, title=True) + "_versions")
+  return "#" + middle_part + "_widget"

@@ -15,15 +15,18 @@ class CommonUnifiedMapperModal(base.Modal):
   def __init__(self, driver, obj_name):
     super(CommonUnifiedMapperModal, self).__init__(driver)
     # labels
-    self.filter_toggle = base.Toggle(driver, self._locators.FILTER_TOGGLE_CSS)
+    self.filter_toggle = base.Toggle(
+        self._driver, self._locators.FILTER_TOGGLE_CSS)
     self.filter_toggle.is_activated = True
-    self.title_modal = base.Label(driver, self._locators.MODAL_TITLE)
-    self.obj_type = base.Label(driver, self._locators.OBJ_TYPE)
+    self.title_modal = base.Label(self._driver, self._locators.MODAL_TITLE)
+    self.obj_type = base.Label(self._driver, self._locators.OBJ_TYPE)
     # user input elements
-    self.tree_view = base.UnifiedMapperTreeView(driver, obj_name=obj_name)
+    self.tree_view = base.UnifiedMapperTreeView(
+        self._driver, obj_name=obj_name)
     self._add_attr_btn = None
     self.search_result_toggle = base.Toggle(
-        driver, self._locators.RESULT_TOGGLE_CSS)
+        self._driver, self._locators.RESULT_TOGGLE_CSS)
+    self.close_btn = base.Button(self._driver, self._locators.CLOSE_BTN_CSS)
 
   def get_available_to_map_obj_aliases(self):
     """Return texts of all objects available to map via UnifiedMapper."""
@@ -148,6 +151,10 @@ class CommonUnifiedMapperModal(base.Modal):
                           is_asmts_generation=is_asmts_generation)
     self._select_dest_objs_to_map(objs_titles=dest_objs_titles)
     self._confirm_map_selected()
+
+  def close_modal(self):
+    """Close Unified Mapper's modal window."""
+    self.close_btn.click()
 
 
 class MapObjectsModal(CommonUnifiedMapperModal):

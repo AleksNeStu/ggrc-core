@@ -17,8 +17,9 @@ class CommonDropdownSettings(elements_list.DropdownMenu):
   """Common for 3BBS button/dropdown settings on Tree View."""
   _locators = locator.CommonDropdown3bbsTreeView
 
-  def __init__(self, driver, obj_name):
-    self.widget_name = url.get_widget_name_of_mapped_objs(obj_name)
+  def __init__(self, driver, obj_name, is_versions_widget=False):
+    self.widget_name = url.get_widget_name_of_mapped_objs(
+        obj_name, is_versions_widget)
     self.obj_name = obj_name
     # elements
     _dropdown_element = (
