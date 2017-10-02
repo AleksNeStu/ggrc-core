@@ -18,17 +18,18 @@ class BaseWebUiService(object):
   """Base class for business layer's services objects."""
   # pylint: disable=too-many-instance-attributes
   # pylint: disable=too-many-public-methods
-  def __init__(self, driver, obj_name):
+  def __init__(self, driver, obj_name, is_versions_widget=False):
     self.driver = driver
     self.obj_name = obj_name
+    self.is_versions_widget = is_versions_widget
     self.generic_widget_cls = factory.get_cls_widget(object_name=self.obj_name)
     self.info_widget_cls = factory.get_cls_widget(
         object_name=self.obj_name, is_info=True)
     self.entities_factory_cls = factory.get_cls_entity_factory(
         object_name=self.obj_name)
-    # URLs
     self.url_mapped_objs = (
-        "{src_obj_url}" + url.get_widget_name_of_mapped_objs(self.obj_name))
+        "{src_obj_url}" +
+        url.get_widget_name_of_mapped_objs(self.obj_name, is_versions_widget))
     self.url_obj_info_page = "{obj_url}" + url.Widget.INFO
     self._unified_mapper = None
 
@@ -95,7 +96,8 @@ class BaseWebUiService(object):
     """
     generic_widget_url = self.url_mapped_objs.format(src_obj_url=src_obj.url)
     selenium_utils.open_url(self.driver, generic_widget_url)
-    return self.generic_widget_cls(self.driver, self.obj_name)
+    return self.generic_widget_cls(
+        self.driver, self.obj_name, self.is_versions_widget)
 
   def open_info_page_of_obj(self, obj):
     """Navigate to info page URL of object according to URL of object and
@@ -128,6 +130,7 @@ class BaseWebUiService(object):
     self._set_list_objs_scopes_repr_on_mapper_tree_view(src_obj)
     list_objs_scopes, mapping_statuses = (
         self._search_objs_via_tree_view(src_obj, dest_objs))
+    self._get_unified_mapper(src_obj).close_modal()
     return self._create_list_objs(
         entity_factory=self.entities_factory_cls,
         list_scopes=list_objs_scopes), mapping_statuses
@@ -581,14 +584,16 @@ class AssessmentsService(BaseWebUiService):
 
 class ControlsService(SnapshotsWebUiService):
   """Class for Controls business layer's services objects."""
-  def __init__(self, driver):
-    super(ControlsService, self).__init__(driver, objects.CONTROLS)
+  def __init__(self, driver, is_versions_widget=False):
+    super(ControlsService, self).__init__(
+        driver, objects.CONTROLS, is_versions_widget)
 
 
 class ObjectivesService(SnapshotsWebUiService):
   """Class for Objectives business layer's services objects."""
-  def __init__(self, driver):
-    super(ObjectivesService, self).__init__(driver, objects.OBJECTIVES)
+  def __init__(self, driver, is_versions_widget=False):
+    super(ObjectivesService, self).__init__(
+        driver, objects.OBJECTIVES, is_versions_widget)
 
 
 class IssuesService(BaseWebUiService):
