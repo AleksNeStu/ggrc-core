@@ -29,6 +29,13 @@ def _common_fixtures(fixture):
           if not help_utils.is_multiple_objs(fixture) else fixture)
 
 
+def _snapshots_fixtures(fixturename):
+  """Generate snapshot fixtures used generation of common fixtures and return
+  dictionary of executed common fixtures in scope of snapshot fixtures.
+  """
+  return dynamic_fixtures.generate_snapshots_fixtures(fixturename)
+
+
 @pytest.mark.hookwrapper
 def pytest_runtest_makereport(item, call):
   """Replace common screenshot from html-report by full size screenshot."""
@@ -146,6 +153,14 @@ def new_program_rest(request):
 
 
 @pytest.fixture(scope="function")
+def new_programs_rest(request):
+  """Create new Controls objects via REST API.
+  Return: [lib.entities.entity.ProgramEntity, ...]
+  """
+  yield _common_fixtures(request.fixturename)
+
+
+@pytest.fixture(scope="function")
 def new_control_rest(request):
   """Create new Control object via REST API.
   Return: lib.entities.entity.ControlEntity
@@ -186,10 +201,26 @@ def new_audit_rest(request):
 
 
 @pytest.fixture(scope="function")
+def new_audits_rest(request):
+  """Create new Controls objects via REST API.
+  Return: [lib.entities.entity.AuditEntity, ...]
+  """
+  yield _common_fixtures(request.fixturename)
+
+
+@pytest.fixture(scope="function")
 def new_assessment_rest(request):
   """Create new Assessment under Audit object via REST API.
   Return: lib.entities.entity.AssessmentEntity
   """
+  yield _common_fixtures(request.fixturename)
+
+
+@pytest.fixture(scope="function")
+def new_assessments_rest(request):
+  """Create new Assessments objects via REST API.
+   Return: [lib.entities.entity.AssessmentEntity, ...]
+   """
   yield _common_fixtures(request.fixturename)
 
 
@@ -218,90 +249,25 @@ def new_assessment_template_with_cas_rest(request):
 
 
 @pytest.fixture(scope="function")
-def map_new_control_rest_to_new_objective_rest(request):
-  """Map Objective to Control object via REST API return response from server.
+def new_cas_for_assessments_rest(request):
+  """New global Custom Attributes for assessments created via REST API.
+  Teardown - remove created gCAs.
   """
-  yield _common_fixtures(request.fixturename)
+  cas = _common_fixtures(request.fixturename)
+  yield cas
+  from lib.service.rest_service import CustomAttributeDefinitionsService
+  CustomAttributeDefinitionsService().delete_objs(cas)
 
 
 @pytest.fixture(scope="function")
-def map_new_control_rest_to_new_objectives_rest(request):
-  """Map Objectives to Control object via REST API return response from server.
+def new_cas_for_controls_rest(request):
+  """Create new Global Custom Attributes for Controls via REST API and
+  delete GCAs as teardown section.
   """
-  yield _common_fixtures(request.fixturename)
-
-
-@pytest.fixture(scope="function")
-def map_new_program_rest_to_new_objective_rest(request):
-  """Map Program to Objective object via REST API return response from server.
-  """
-  yield _common_fixtures(request.fixturename)
-
-
-@pytest.fixture(scope="function")
-def map_new_program_rest_to_new_control_rest(request):
-  """Map Control to Program object via REST API return response from server.
-  """
-  yield _common_fixtures(request.fixturename)
-
-
-@pytest.fixture(scope="function")
-def map_new_program_rest_to_new_controls_rest(request):
-  """Map Controls to Program object via REST API return response from server.
-  """
-  yield _common_fixtures(request.fixturename)
-
-
-@pytest.fixture(scope="function")
-def map_new_control_rest_to_new_programs_rest(request):
-  """Map Control to Programs objects via REST API return response from server.
-  """
-  yield _common_fixtures(request.fixturename)
-
-
-def _snapshots_fixtures(fixturename):
-  """Generate snapshot fixtures used generation of common fixtures and return
-  dictionary of executed common fixtures in scope of snapshot fixtures.
-  """
-  return dynamic_fixtures.generate_snapshots_fixtures(fixturename)
-
-
-@pytest.fixture(scope="function")
-def dynamic_create_audit_with_control(request):
-  """Create Program and Control, map Control to Program, create Audit
-  under Program and dynamically make manipulations on Control (update,
-  delete, ...) via REST API according to fixturename. Fixturename is indirect
-  parameter that get from 'request.param' and have to be string or boolean.
-  Return: lib.entities.entity.AssessmentTemplateEntity
-  """
-  yield (dynamic_fixtures.generate_snapshots_fixtures(request.param) if
-         request.param else None)
-
-
-@pytest.fixture(scope="function")
-def dynamic_object(request):
-  """Create object by passed indirect parameter that get from 'request.param'
-  and have to be string or boolean. Return singular or plural object's form
-  according to length of the list objects.
-  """
-  yield _common_fixtures(request.param) if request.param else None
-
-
-@pytest.fixture(scope="function")
-def dynamic_object_w_factory_params(request):
-  """Create object by passed indirect parameter that get from 'request.param'
-  and have to be string or boolean. Return singular or plural object's form
-  according to length of the list objects.
-  """
-  yield _common_fixtures(request.param) if request.param else None
-
-
-@pytest.fixture(scope="function")
-def dynamic_relationships(request):
-  """Create relationships between source and destinations objects by passed
-  indirect parameter that get from 'request.param' and have to be string
-  or boolean."""
-  yield _common_fixtures(request.param) if request.param else None
+  cas = _common_fixtures(request.fixturename)
+  yield cas
+  from lib.service.rest_service import CustomAttributeDefinitionsService
+  CustomAttributeDefinitionsService().delete_objs(cas)
 
 
 @pytest.fixture(scope="function")
@@ -331,52 +297,125 @@ def create_audit_with_control_and_delete_control(request):
 
 
 @pytest.fixture(scope="function")
-def new_programs_rest(request):
-  """Create new Controls objects via REST API.
-  Return: [lib.entities.entity.ProgramEntity, ...]
+def map_new_control_rest_to_new_objective_rest(request):
+  """Map Objective to Control object via REST API return response from server.
   """
   yield _common_fixtures(request.fixturename)
 
 
 @pytest.fixture(scope="function")
-def new_audits_rest(request):
-  """Create new Controls objects via REST API.
-  Return: [lib.entities.entity.AuditEntity, ...]
+def map_new_control_rest_to_new_objectives_rest(request):
+  """Map Objectives to Control object via REST API return response from server.
   """
   yield _common_fixtures(request.fixturename)
 
 
 @pytest.fixture(scope="function")
-def new_assessments_rest(request):
-  """Create new Assessments objects via REST API.
-   Return: [lib.entities.entity.AssessmentEntity, ...]
-   """
+def map_new_control_rest_to_new_programs_rest(request):
+  """Map Programs to Control objects via REST API return response from server.
+  """
   yield _common_fixtures(request.fixturename)
 
 
 @pytest.fixture(scope="function")
 def map_new_control_rest_to_new_assessments_rest(request):
-  """Map control to assessments via REST API"""
+  """Map Assessments to Control via REST API return response from server."""
   yield _common_fixtures(request.fixturename)
 
 
 @pytest.fixture(scope="function")
-def new_cas_for_assessments_rest(request):
-  """Create new Global Custom Attributes for Assessments via REST API and
-  delete GCAs as teardown section.
+def map_new_program_rest_to_new_objective_rest(request):
+  """Map Objective to Program object via REST API return response from server.
   """
-  cas = _common_fixtures(request.fixturename)
-  yield cas
-  from lib.service.rest_service import CustomAttributeDefinitionsService
-  CustomAttributeDefinitionsService().delete_objs(cas)
+  yield _common_fixtures(request.fixturename)
 
 
 @pytest.fixture(scope="function")
-def new_cas_for_controls_rest(request):
-  """Create new Global Custom Attributes for Controls via REST API and
-  delete GCAs as teardown section.
+def map_new_program_rest_to_new_control_rest(request):
+  """Map Control to Program object via REST API return response from server.
   """
-  cas = _common_fixtures(request.fixturename)
-  yield cas
-  from lib.service.rest_service import CustomAttributeDefinitionsService
-  CustomAttributeDefinitionsService().delete_objs(cas)
+  yield _common_fixtures(request.fixturename)
+
+
+@pytest.fixture(scope="function")
+def map_new_program_rest_to_new_controls_rest(request):
+  """Map Controls to Program object via REST API return response from server.
+  """
+  yield _common_fixtures(request.fixturename)
+
+
+@pytest.fixture(scope="function")
+def map_new_assessment_rest_to_new_issue_rest(request):
+  """Map Objectives to Control object via REST API return response from server.
+  """
+  yield _common_fixtures(request.fixturename)
+
+
+@pytest.fixture(scope="function")
+def map_new_assessment_rest_to_new_control_rest_snapshot(request):
+  """Map Objectives to Control object via REST API return response from server.
+  """
+  yield _common_fixtures(request.fixturename)
+
+
+def _common_request_param(request):
+  """Processing for common fixtures of request object which gives access to the
+  requesting test context and has an optional param attribute in case the
+  fixture is parametrized indirectly.
+  """
+  # todo implement '_snapshot_request_param'
+  if hasattr(request, "param") and request.param:
+    params = request.param
+    return (({param: _common_fixtures(param) for param in params}
+            if isinstance(params, list) else _common_fixtures(params)) if
+            params else None)
+
+
+@pytest.fixture(scope="function")
+def dynamic_create_audit_with_control(request):
+  """Create Program and Control, map Control to Program, create Audit
+  under Program and dynamically make manipulations on Control (update,
+  delete, ...) via REST API according to fixturename. Fixturename is indirect
+  parameter that get from 'request.param' and have to be string or boolean.
+  Return: lib.entities.entity.AssessmentTemplateEntity
+  """
+  if hasattr(request, "param") and request.param:
+    yield (dynamic_fixtures.generate_snapshots_fixtures(request.param) if
+           request.param else None)
+
+
+@pytest.fixture(scope="function")
+def dynamic_objects(request):
+  """Create new object or objects via REST API or UI according to indirect
+  parameter 'request.param' which can be: str, list of str, bool.
+  Examples:
+  - 'new_program_rest': lib.entities.entity.ProgramEntity;
+  - 'new_programs_rest': [lib.entities.entity.ProgramEntity, ...];
+  - ['new_program_rest', 'new_control_rest']:
+    {'new_program_rest': lib.entities.entity.ProgramEntity,
+     'new_control_rest': lib.entities.entity.ControlEntity};
+  - True: None.
+  """
+  yield _common_request_param(request)
+
+
+@pytest.fixture(scope="function")
+def dynamic_objects_w_factory_params(request):
+  """Create new object or objects via REST API or UI according to indirect
+  parameter 'request.param' and w/ the same logic as 'dynamic_objects' fixture
+  but using extra parameters to have option change default flow.
+  """
+  yield _common_request_param(request)
+
+
+@pytest.fixture(scope="function")
+def dynamic_relationships(request):
+  """Create single or multiply relationships between source and destinations
+  objects via REST API according to indirect parameter 'request.param' which
+  can be: str, list of str, bool and return response or responses from server.
+  Example:
+  - 'map_new_program_rest_to_new_control_rest';
+  - {'map_new_program_rest_to_new_control_rest': resp1,
+     'map_new_control_rest_to_new_objective_rest': resp2}.
+  """
+  yield _common_request_param(request)
