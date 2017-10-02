@@ -129,7 +129,7 @@ class BaseRestService(object):
       # for Audit objects
       if kwargs.get("program"):
         obj.program = kwargs["program"]
-      # for Assessment, Assessment Template, Issues objects
+      # for Assessment, Assessment Template objects
       if kwargs.get("audit"):
         obj.audit = kwargs["audit"]
     return obj
