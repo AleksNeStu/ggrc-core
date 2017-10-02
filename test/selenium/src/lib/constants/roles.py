@@ -41,6 +41,9 @@ WORKFLOW = "Workflow"
 SUPERUSER = "Superuser"
 NO_ACCESS = "No Access"
 
+# todo: implement service to get actual ACL's info via api/access_control_roles
 # Access control role ID
-ADMIN_ID = 49
-PRIMARY_CONTACT_ID = 9
+CONTROL_ADMIN_ID = 49
+CONTROL_PRIMARY_CONTACT_ID = 9
+ISSUE_ADMIN_ID = 53
+ISSUE_PRIMARY_CONTACT_ID = 17
