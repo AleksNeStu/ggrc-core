@@ -21,8 +21,7 @@ class Widget(base.Widget):
   def __init__(self, driver, obj_name, is_versions_widget=False):
     self.obj_name = obj_name
     self.is_versions_widget = is_versions_widget
-    self._locators_filter = locator.BaseWidgetGeneric(
-        self.obj_name, self.is_versions_widget)
+    self._locators_filter = locator.BaseWidgetGeneric
     self._locators_widget = factory.get_locator_widget(self.obj_name.upper())
     self.info_widget_cls = factory.get_cls_widget(
         object_name=obj_name, is_info=True)

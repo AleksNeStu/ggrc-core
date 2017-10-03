@@ -373,7 +373,6 @@ class TestSnapshots(base.Test):
     """Check searching of shapshotable and snapshoted objects via Unified
     Mapper modal and check their correct mapping.
     """
-    # pylint: disable=assert-on-tuple
     audit_with_one_control = create_audit_with_control_and_update_control
     source_obj = dynamic_objects
     expected_control_from_mapper = (
@@ -403,20 +402,24 @@ class TestSnapshots(base.Test):
               [expected_control_from_tree_view],
               actual_controls_from_tree_view,
               *Representation.tree_view_attrs_to_exclude))
-    assert ((
-        (expected_is_found
-         is (expected_controls_from_mapper[0] in actual_controls_from_mapper)
-         is (expected_map_status in actual_map_status)) is
-        (expected_controls_from_tree_view[0] in actual_controls_from_tree_view
-         if expected_control_from_tree_view else
-         expected_controls_from_tree_view ==
-         expected_controls_from_tree_view)), (
+    assert (
+        expected_is_found
+        is (expected_controls_from_mapper[0] in actual_controls_from_mapper)
+        is (expected_map_status in actual_map_status)) == (
+        (expected_controls_from_tree_view[0] in actual_controls_from_tree_view)
+        if expected_control_from_tree_view else
+        expected_controls_from_tree_view ==
+        actual_controls_from_tree_view), (
         messages.AssertionMessages.format_err_msg_equal(
             messages.AssertionMessages.format_err_msg_contains(
                 expected_controls_from_mapper[0], actual_controls_from_mapper),
             messages.AssertionMessages.format_err_msg_contains(
                 expected_controls_from_tree_view[0],
-                actual_controls_from_tree_view))))
+                actual_controls_from_tree_view)
+            if expected_control_from_tree_view else
+            messages.AssertionMessages.format_err_msg_equal(
+                expected_controls_from_tree_view,
+                actual_controls_from_tree_view)))
 
   @pytest.mark.smoke_tests
   def test_mapping_control_to_existing_audit(

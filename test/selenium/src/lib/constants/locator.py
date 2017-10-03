@@ -14,10 +14,9 @@ class Common(object):
   TITLE = " .title"
   DESCRIPTION = " .description"
   # modal
-  MODAL_GENEATE = ".modal-selector"
   MODAL_CREATE = ".modal-wide"
   MODAL_CONFIRM = ".modal.hide"
-  MODAL_MAP = ".modal-selector"
+  MODAL_MAPPER = ".modal-selector"
   MODAL_FOOTER = " .modal-footer"
   MODAL_FILTER = " .modal-filter"
   MODAL_HEADER = " .modal-header"
@@ -61,6 +60,8 @@ class Common(object):
   OBJECT_AREA_CSS = (By.CSS_SELECTOR, ".object-area")
   # alerts
   ALERT_SUCCESS_CSS = (By.CSS_SELECTOR, ".content>.flash>.alert-success")
+  # widgets
+  WIDGET_NOT_HIDDEN = "section.widget:not(.hidden) "
 
 
 class CommonAssessment(object):
@@ -244,7 +245,8 @@ class ExtendedInfo(object):
 class CommonModalUnifiedMapper(object):
   """Common locators for unified mapper modals."""
   # pylint: disable=invalid-name
-  MODAL = Common.MODAL_MAP
+  MODAL = Common.MODAL_MAPPER
+  MODAL_CSS = (By.CSS_SELECTOR, MODAL)
   MODAL_FILTER = Common.MODAL_FILTER
   FILTER_TOGGLE_CSS = (By.CSS_SELECTOR,
                        MODAL_FILTER + " collapse-panel-click-area")
@@ -273,19 +275,19 @@ class CommonModalUnifiedMapper(object):
 
 class ModalMapObjects(CommonModalUnifiedMapper):
   """Locators for map objects modals."""
-  MODAL = Common.MODAL_MAP
+  MODAL = Common.MODAL_MAPPER
   # user input elements
   BUTTON_CREATE_OBJ = (By.CSS_SELECTOR, MODAL + " .create-control")
 
 
 class ModalSearchObjects(CommonModalUnifiedMapper):
   """Locators for search objects modals."""
-  MODAL = Common.MODAL_MAP
+  MODAL = Common.MODAL_MAPPER
 
 
 class ModalGenerateAssessments(CommonModalUnifiedMapper):
   """Locators for generate Assessments modal."""
-  MODAL = Common.MODAL_GENEATE
+  MODAL = Common.MODAL_MAPPER
 
 
 class BaseModalCreateNew(object):
@@ -996,34 +998,21 @@ class UnifiedMapperTreeView(TreeView):
 class BaseWidgetGeneric(object):
   """Locators for non Info and Admin widgets."""
   # pylint: disable=invalid-name
-  # pylint: disable=no-self-argument
-
-  PAGINATION_CONTROLLERS = (
+  _FILTER_BUTTON = (
+      Common.WIDGET_NOT_HIDDEN + "tree-filter-input .tree-filter__actions")
+  _FILTER_DROPDOWN = Common.WIDGET_NOT_HIDDEN + "tree-status-filter"
+  _FILTER_DROPDOWN_ELEMENTS = (
+      _FILTER_DROPDOWN + " .multiselect-dropdown__element")
+  TEXTFIELD_TO_FILTER = (
+      By.CSS_SELECTOR, Common.WIDGET_NOT_HIDDEN + ".tree-filter__input")
+  BUTTON_FILTER = (By.CSS_SELECTOR, _FILTER_BUTTON + ' [type="submit"]')
+  BUTTON_HELP = (By.CSS_SELECTOR, _FILTER_BUTTON + " #page-help")
+  DROPDOWN = (
       By.CSS_SELECTOR,
-      "section.widget:not(.hidden) .tree-pagination.flex-box")
-
-  def __init__(cls, obj_name, is_versions_widget=False):
-    from lib.constants import url
-    widget_name = url.get_widget_name_of_mapped_objs(
-        obj_name, is_versions_widget)
-    _filter_button = widget_name + " tree-filter-input .tree-filter__actions"
-    _filter_dropdown = widget_name + " tree-status-filter"
-    _filter_dropdown_elements = (
-        _filter_dropdown + " .multiselect-dropdown__element")
-    cls.TEXTFIELD_TO_FILTER = (
-        By.CSS_SELECTOR,
-        (widget_name + " .tree-filter__input").format(obj_name))
-    cls.BUTTON_FILTER = (
-        By.CSS_SELECTOR,
-        (_filter_button + ' [type="submit"]').format(obj_name))
-    cls.BUTTON_HELP = (
-        By.CSS_SELECTOR, (_filter_button + " #page-help").format(obj_name))
-    cls.DROPDOWN = (
-        By.CSS_SELECTOR,
-        (_filter_dropdown +
-         " .multiselect-dropdown__input-container").format(obj_name))
-    cls.DROPDOWN_STATES = (
-        By.CSS_SELECTOR, (_filter_dropdown_elements).format(obj_name))
+      _FILTER_DROPDOWN + " .multiselect-dropdown__input-container")
+  DROPDOWN_STATES = (By.CSS_SELECTOR, _FILTER_DROPDOWN_ELEMENTS)
+  PAGINATION_CONTROLLERS = (
+      By.CSS_SELECTOR, Common.WIDGET_NOT_HIDDEN + ".tree-pagination.flex-box")
 
 
 class AdminCustomAttributes(object):
