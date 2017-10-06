@@ -13,7 +13,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.remote import webelement
 
 from lib import constants, exception, mixin
-from lib.constants import url, messages, objects
+from lib.constants import messages, objects
 from lib.constants.element import MappingStatusAttrs, WidgetBar
 from lib.constants.locator import CommonDropdownMenu
 from lib.decorator import lazy_property
@@ -587,16 +587,14 @@ class TreeView(Component):
   # pylint: disable=too-many-instance-attributes
   _locators = constants.locator.TreeView
 
-  def __init__(self, driver, obj_name=None, is_versions_widget=False):
+  def __init__(self, driver, obj_name=None):
     super(TreeView, self).__init__(driver)
     self._tree_view_headers = []
     self._tree_view_items = []
     self.locator_set_visible_fields = None
-    self.locator_no_results_message = self._locators.NO_RESULTS_MESSAGE
+    self.locator_no_results_message = self._locators.NO_RESULTS_MSG_CSS
     self.obj_name = obj_name
     if self.obj_name is not None:
-      self.widget_name = url.get_widget_name_of_mapped_objs(
-          obj_name, is_versions_widget)
       from lib import factory
       self.fields_to_set = factory.get_fields_to_set(object_name=self.obj_name)
 
@@ -605,8 +603,9 @@ class TreeView(Component):
     object(s) under Tree View.
     """
     selenium_utils.wait_until_not_present(
-        self._driver, self._locators.ITEM_LOADING)
-    selenium_utils.get_when_invisible(self._driver, self._locators.SPINNER)
+        self._driver, self._locators.ITEM_LOADING_CSS)
+    selenium_utils.get_when_invisible(
+        self._driver, self._locators.TREE_SPINNER_CSS)
     selenium_utils.wait_for_js_to_load(self._driver)
 
   def _init_tree_view_headers(self):
@@ -629,7 +628,7 @@ class TreeView(Component):
             TreeViewItem(
                 driver=self._driver, locator_or_element=element,
                 item_btn_locator=(
-                    By.CSS_SELECTOR, self._locators.ITEM_EXPAND_BUTTON))
+                    By.CSS_SELECTOR, self._locators.ITEM_EXPAND_BTN))
             for element in selenium_utils.get_when_all_visible(
                 self._driver, _locator_items)])
     return self._tree_view_items
@@ -679,28 +678,21 @@ class UnifiedMapperTreeView(TreeView):
 
   def __init__(self, driver, obj_name):
     super(UnifiedMapperTreeView, self).__init__(driver, obj_name)
-    self.locator_set_visible_fields = (By.CSS_SELECTOR,
-                                       self._locators.BUTTON_SHOW_FIELDS)
-    self.locator_no_results_message = (By.CSS_SELECTOR,
-                                       self._locators.NO_RESULTS_MESSAGE)
+    self.locator_set_visible_fields = self._locators.SHOW_FIELDS_BTN_CSS
+    self.locator_no_results_message = self._locators.NO_RESULTS_MSG_CSS
 
   def open_set_visible_fields(self):
     """Click to Set Visible Fields button on Tree View to open
     Set Visible Fields modal.
     Return: lib.page.modal.set_fields.SetVisibleFieldsModal
     """
-    _locator_set_visible_fields = self.locator_set_visible_fields
-    Button(self._driver, _locator_set_visible_fields).click()
+    Button(self._driver, self.locator_set_visible_fields).click()
     return MapperSetVisibleFieldsModal(self._driver, self.fields_to_set)
 
 
 class AdminTreeView(TreeView):
   """Class for representing Tree View list in Admin dashboard."""
   _locators = constants.locator.AdminTreeView
-
-  def __init__(self, driver, widget_name):
-    super(AdminTreeView, self).__init__(driver)
-    self.widget_name = widget_name
 
 
 class SetVisibleFieldsModal(Modal):

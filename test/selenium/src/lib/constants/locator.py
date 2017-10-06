@@ -31,6 +31,7 @@ class Common(object):
   TREE_LIST = ".tree-action"
   TREE_HEADER = ".tree-header"
   TREE_ITEM = " .object-list__item"
+  TREE_SPINER = ".tree-spinner"
   # base
   BUTTON = "BUTTON_"
   BUTTON_CREATE_NEW = "BUTTON_CREATE_NEW_"
@@ -61,7 +62,7 @@ class Common(object):
   # alerts
   ALERT_SUCCESS_CSS = (By.CSS_SELECTOR, ".content>.flash>.alert-success")
   # widgets
-  WIDGET_NOT_HIDDEN = "section.widget:not(.hidden) "
+  WDG_NOT_HIDDEN = ".widget:not(.hidden) "
 
 
 class CommonAssessment(object):
@@ -911,13 +912,13 @@ class CommonDropdownMenu(object):
 class CommonDropdown3bbsInfoWidget(CommonDropdownMenu):
   """Locators for common settings 3BBS dropdown on Info widget and Info page.
  """
-  _INFO_3BBS_DROPDOWN_BUTTON_XPATH = (Common.INFO_WIDGET_XPATH +
-                                      "//*[contains(@class,'dropdown-menu')]")
-  _INFO_3BBS_DROPDOWN_XPATH = (Common.INFO_WIDGET_XPATH +
-                               "//ul[contains(@class,'dropdown-menu "
-                               "three-dots-list')]")
-  INFO_3BBS_DROPDOWN_BUTTON = (By.XPATH, _INFO_3BBS_DROPDOWN_BUTTON_XPATH)
-  INFO_3BBS_DROPDOWN = (By.XPATH, _INFO_3BBS_DROPDOWN_XPATH)
+  _INFO_3BBS_DROPDOWN_BUTTON_XPATH = (
+      Common.INFO_WIDGET_XPATH + "//*[contains(@class,'dropdown-menu')]")
+  _INFO_3BBS_DROPDOWN_XPATH = (
+      Common.INFO_WIDGET_XPATH +
+      "//ul[contains(@class,'dropdown-menu three-dots-list')]")
+  INFO_WDG_3BBS_DD_BTN_XPATH = (By.XPATH, _INFO_3BBS_DROPDOWN_BUTTON_XPATH)
+  INFO_WDG_3BBS_DD_XPTAH = (By.XPATH, _INFO_3BBS_DROPDOWN_XPATH)
 
 
 class AuditsDropdown3bbsInfoWidget(CommonDropdown3bbsInfoWidget):
@@ -927,42 +928,50 @@ class AuditsDropdown3bbsInfoWidget(CommonDropdown3bbsInfoWidget):
 
 class CommonDropdown3bbsTreeView(CommonDropdownMenu):
   """Locators for common settings 3BBS dropdown on Tree View."""
-  TREE_VIEW_3BBS_DROPDOWN = (
-      "{} " + Common.TREE_LIST + " .tree-action-list-items")
+  TREE_VIEW_3BBS_DD = (
+      Common.WDG_NOT_HIDDEN + Common.TREE_LIST + " .tree-action-list-items")
   # user input elements
-  TREE_VIEW_3BBS_DROPDOWN_CSS = (By.CSS_SELECTOR, TREE_VIEW_3BBS_DROPDOWN)
-  BUTTON_3BBS_IMPORT = TREE_VIEW_3BBS_DROPDOWN + " .fa-cloud-upload"
-  BUTTON_3BBS_EXPORT = TREE_VIEW_3BBS_DROPDOWN + " .fa-download"
-  BUTTON_3BBS_SELECT_CHILD_TREE = TREE_VIEW_3BBS_DROPDOWN + " .fa-share-alt"
+  TREE_VIEW_3BBS_DD_CSS = (By.CSS_SELECTOR, TREE_VIEW_3BBS_DD)
+  BTN_3BBS_IMPORT_CSS = (By.CSS_SELECTOR,
+                         TREE_VIEW_3BBS_DD + " .fa-cloud-upload")
+  BTN_3BBS_EXPORT_CSS = (By.CSS_SELECTOR, TREE_VIEW_3BBS_DD + " .fa-download")
+  BTN_3BBS_SELECT_CHILD_TREE_CSS = (By.CSS_SELECTOR,
+                                    TREE_VIEW_3BBS_DD + " .fa-share-alt")
 
 
 class AssessmentsDropdown3bbsTreeView(CommonDropdown3bbsTreeView):
   """Locators for Assessments settings 3BBS dropdown on Tree View."""
-  TREE_VIEW_3BBS_DROPDOWN = CommonDropdown3bbsTreeView.TREE_VIEW_3BBS_DROPDOWN
-  BUTTON_3BBS_GENERATE = TREE_VIEW_3BBS_DROPDOWN + " .fa-magic"
+  BTN_3BBS_GENERATE_CSS = (
+      By.CSS_SELECTOR,
+      CommonDropdown3bbsTreeView.TREE_VIEW_3BBS_DD + " .fa-magic")
 
 
 class TreeView(object):
   """Locators for Tree View components."""
   # common
-  _WIDGET_NOT_HIDDEN_CSS = " .widget:not(.hidden) "
   TREE_VIEW_CONTAINER_CSS = (
-      By.CSS_SELECTOR, _WIDGET_NOT_HIDDEN_CSS + " tree-widget-container>div")
-  ITEMS = _WIDGET_NOT_HIDDEN_CSS + " .tree-item-element"
-  HEADER = _WIDGET_NOT_HIDDEN_CSS + Common.TREE_HEADER
-  ITEM_LOADING = (By.CSS_SELECTOR, " .tree-item-placeholder")
-  ITEM_EXPAND_BUTTON = " tree-item-actions"
-  ITEM_DROPDOWN_MENU_CSS = Common.HTML_LIST_CSS
-  SPINNER = (By.CSS_SELECTOR, " .tree-spinner")
-  NO_RESULTS_MESSAGE = (
-      By.CSS_SELECTOR, _WIDGET_NOT_HIDDEN_CSS + " .tree-no-results-message")
-  BUTTON_SHOW_FIELDS = "{} " + Common.TREE_HEADER + " .fa-bars"
+      By.CSS_SELECTOR, Common.WDG_NOT_HIDDEN + " tree-widget-container>div")
+  ITEMS = Common.WDG_NOT_HIDDEN + " .tree-item-element"
+  HEADER = Common.WDG_NOT_HIDDEN + Common.TREE_HEADER
+  ITEM_LOADING_CSS = (By.CSS_SELECTOR, " .tree-item-placeholder")
+  ITEM_EXPAND_BTN = " tree-item-actions"
+  ITEM_DD_MENU_CSS = Common.HTML_LIST_CSS
+  TREE_SPINNER_CSS = (By.CSS_SELECTOR, " " + Common.TREE_SPINER)
+  NO_RESULTS_MSG_CSS = (
+      By.CSS_SELECTOR, Common.WDG_NOT_HIDDEN + " .tree-no-results-message")
+  SHOW_FIELDS_BTN_CSS = (
+      By.CSS_SELECTOR,
+      Common.WDG_NOT_HIDDEN + Common.TREE_HEADER + " .fa-bars")
   # user input elements
-  BUTTON_3BBS = "{} " + Common.TREE_LIST + " .details-wrap"
-  BUTTON_CREATE = "{} " + Common.TREE_LIST + " .create-button"
-  BUTTON_MAP = "{} " + Common.TREE_LIST + " .map-button"
-  ITEM_DROPDOWN_BUTTON = (By.CSS_SELECTOR, " ".join(
-      (_WIDGET_NOT_HIDDEN_CSS, ITEM_EXPAND_BUTTON)))
+  BTN_3BBS_CSS = (By.CSS_SELECTOR,
+                  Common.WDG_NOT_HIDDEN + Common.TREE_LIST + " .details-wrap")
+  CREATE_BTN_CSS = (
+      By.CSS_SELECTOR,
+      Common.WDG_NOT_HIDDEN + Common.TREE_LIST + " .create-button")
+  MAP_BTN_CSS = (By.CSS_SELECTOR,
+                 Common.WDG_NOT_HIDDEN + Common.TREE_LIST + " .map-button")
+  ITEM_DD_BTN_CSS = (
+      By.CSS_SELECTOR, Common.WDG_NOT_HIDDEN + ITEM_EXPAND_BTN)
 
 
 class TreeViewItem(object):
@@ -975,16 +984,21 @@ class AdminTreeView(object):
   """Locators for Tree View components in Admin dashboard."""
   # common
   ITEMS = "li.tree-item .item-main"
-  HEADER = Common.TREE_HEADER
-  ITEM_LOADING = (By.CSS_SELECTOR, " .tree-item-placeholder")
-  ITEM_EXPAND_BUTTON = " .openclose"
-  SPINNER = (By.CSS_SELECTOR, " .tree-spinner")
-  NO_RESULTS_MESSAGE = (By.CSS_SELECTOR, ".tree-no-results-message")
-  BUTTON_SHOW_FIELDS = "{} " + Common.TREE_HEADER + " .fa-bars"
+  ITEM_LOADING_CSS = (By.CSS_SELECTOR, " .tree-item-placeholder")
+  ITEM_EXPAND_BTN = " .openclose"
+  TREE_SPINNER_CSS = (By.CSS_SELECTOR, " " + Common.TREE_SPINER)
+  NO_RESULTS_MSG_CSS = (By.CSS_SELECTOR, ".tree-no-results-message")
+  SHOW_FIELDS_BTN_CSS = (
+      By.CSS_SELECTOR,
+      Common.WDG_NOT_HIDDEN + Common.TREE_HEADER + " .fa-bars")
   # user input elements
-  BUTTON_3BBS = "{} " + Common.TREE_LIST + " .btn-draft"
-  BUTTON_CREATE = "{} " + Common.TREE_LIST + " .create-button"
-  BUTTON_MAP = "{} " + Common.TREE_LIST + " .map-button"
+  BTN_3BBS_CSS = (By.CSS_SELECTOR,
+                  Common.WDG_NOT_HIDDEN + Common.TREE_LIST + " .btn-draft")
+  CREATE_BTN_CSS = (
+      By.CSS_SELECTOR,
+      Common.WDG_NOT_HIDDEN + Common.TREE_LIST + " .create-button")
+  MAP_BTN_CSS = (By.CSS_SELECTOR,
+                 Common.WDG_NOT_HIDDEN + Common.TREE_LIST + " .map-button")
 
 
 class UnifiedMapperTreeView(TreeView):
@@ -992,28 +1006,26 @@ class UnifiedMapperTreeView(TreeView):
   MODAL = ".object-modal"
   HEADER = MODAL + " .list-header"
   ITEMS = MODAL + Common.TREE_ITEM
-  BUTTON_SHOW_FIELDS = HEADER + " .fa-bars"
-  NO_RESULTS_MESSAGE = ".well-small:not(.hidden)"
+  SHOW_FIELDS_BTN_CSS = (By.CSS_SELECTOR, HEADER + " .fa-bars")
+  NO_RESULTS_MSG_CSS = (By.CSS_SELECTOR, ".well-small:not(.hidden)")
 
 
 class BaseWidgetGeneric(object):
   """Locators for non Info and Admin widgets."""
   # pylint: disable=invalid-name
-  _FILTER_BUTTON = (
-      Common.WIDGET_NOT_HIDDEN + "tree-filter-input .tree-filter__actions")
-  _FILTER_DROPDOWN = Common.WIDGET_NOT_HIDDEN + "tree-status-filter"
-  _FILTER_DROPDOWN_ELEMENTS = (
-      _FILTER_DROPDOWN + " .multiselect-dropdown__element")
-  TEXTFIELD_TO_FILTER = (
-      By.CSS_SELECTOR, Common.WIDGET_NOT_HIDDEN + ".tree-filter__input")
-  BUTTON_FILTER = (By.CSS_SELECTOR, _FILTER_BUTTON + ' [type="submit"]')
-  BUTTON_HELP = (By.CSS_SELECTOR, _FILTER_BUTTON + " #page-help")
-  DROPDOWN = (
-      By.CSS_SELECTOR,
-      _FILTER_DROPDOWN + " .multiselect-dropdown__input-container")
-  DROPDOWN_STATES = (By.CSS_SELECTOR, _FILTER_DROPDOWN_ELEMENTS)
-  PAGINATION_CONTROLLERS = (
-      By.CSS_SELECTOR, Common.WIDGET_NOT_HIDDEN + ".tree-pagination.flex-box")
+  _FILTER_BTN = (
+      Common.WDG_NOT_HIDDEN + "tree-filter-input .tree-filter__actions")
+  _FILTER_DD = Common.WDG_NOT_HIDDEN + "tree-status-filter"
+  _FILTER_DD_ELEMENTS = (_FILTER_DD + " .multiselect-dropdown__element")
+  TXTFIELD_TO_FILTER_CSS = (By.CSS_SELECTOR,
+                            Common.WDG_NOT_HIDDEN + ".tree-filter__input")
+  FILTER_BTN_CSS = (By.CSS_SELECTOR, _FILTER_BTN + ' [type="submit"]')
+  HELP_BTN_CSS = (By.CSS_SELECTOR, _FILTER_BTN + " #page-help")
+  DD_CSS = (By.CSS_SELECTOR,
+            _FILTER_DD + " .multiselect-dropdown__input-container")
+  DD_STATES_CSS = (By.CSS_SELECTOR, _FILTER_DD_ELEMENTS)
+  PAGINATION_CONTROLLERS_CSS = (
+      By.CSS_SELECTOR, Common.WDG_NOT_HIDDEN + ".tree-pagination.flex-box")
 
 
 class AdminCustomAttributes(object):
@@ -1081,7 +1093,7 @@ class CustomAttributesItemContent(AdminCustomAttributes):
   CELL_IN_ROW = (By.CSS_SELECTOR, "td")
   EDIT_BTN = (By.CSS_SELECTOR, CONTENT_OPEN + " " + Common.TREE_LIST)
   ADD_BTN = (By.CSS_SELECTOR, CONTENT_OPEN + " .add-item .btn")
-  TREE_SPINNER = (By.CSS_SELECTOR, ".tree-spinner")
+  TREE_SPINNER_CSS = (By.CSS_SELECTOR, Common.TREE_SPINER)
 
 
 class MultiInputField(object):

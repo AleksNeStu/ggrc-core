@@ -3,13 +3,11 @@
 """Tree View dropdown elements."""
 # pylint: disable=too-few-public-methods
 
-from selenium.webdriver.common.by import By
-
 from lib import base
-from lib.constants import locator, url
+from lib.constants import locator
 from lib.element import elements_list
-from lib.page.modal import unified_mapper
 from lib.page import export_page
+from lib.page.modal import unified_mapper
 from lib.utils import selenium_utils
 
 
@@ -17,30 +15,22 @@ class CommonDropdownSettings(elements_list.DropdownMenu):
   """Common for 3BBS button/dropdown settings on Tree View."""
   _locators = locator.CommonDropdown3bbsTreeView
 
-  def __init__(self, driver, obj_name, is_versions_widget=False):
-    self.widget_name = url.get_widget_name_of_mapped_objs(
-        obj_name, is_versions_widget)
+  def __init__(self, driver, obj_name):
+    super(CommonDropdownSettings, self).__init__(
+        driver, self._locators.TREE_VIEW_3BBS_DD_CSS)
     self.obj_name = obj_name
-    # elements
-    _dropdown_element = (
-        By.CSS_SELECTOR,
-        self._locators.TREE_VIEW_3BBS_DROPDOWN.format(self.widget_name))
-    super(CommonDropdownSettings, self).__init__(driver, _dropdown_element)
     self.select_child_tree_locator = (
-        self._locators.BUTTON_3BBS_SELECT_CHILD_TREE.format(self.widget_name))
-    self.import_locator = (
-        self._locators.BUTTON_3BBS_IMPORT.format(self.widget_name))
+        self._locators.BTN_3BBS_SELECT_CHILD_TREE_CSS)
+    self.import_locator = self._locators.BTN_3BBS_IMPORT_CSS
 
   def select_export(self):
     """Select Export objects in 3BBS dropdown modal to open Export Page with
     Export Panel witch contains pre-filled object type (mapped objects type)
     and filter by mapping (source object title).
+
     Return: lib.page.export_page.ExportPage
     """
-    _locator_export = (
-        By.CSS_SELECTOR,
-        self._locators.BUTTON_3BBS_EXPORT.format(self.widget_name))
-    base.Button(self._driver, _locator_export).click()
+    base.Button(self._driver, self._locators.BTN_3BBS_EXPORT_CSS).click()
     selenium_utils.switch_to_new_window(self._driver)
     return export_page.ExportPage(self._driver)
 
@@ -52,12 +42,10 @@ class Assessments(CommonDropdownSettings):
   def select_generate(self):
     """Select generate Assessments in 3BBS dropdown modal to
     open unified mapper modal.
+
     Return: lib.page.modal.unified_mapper.GenerateAssessmentsModal
     """
-    _locator_generate = (
-        By.CSS_SELECTOR,
-        self._locators.BUTTON_3BBS_GENERATE.format(self.widget_name))
-    base.Button(self._driver, _locator_generate).click()
+    base.Button(self._driver, self._locators.BTN_3BBS_GENERATE_CSS).click()
     return unified_mapper.GenerateAssessmentsModal(self._driver, self.obj_name)
 
 

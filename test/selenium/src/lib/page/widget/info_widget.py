@@ -26,8 +26,8 @@ class InfoWidget(base.Widget):
 
   def __init__(self, driver):
     super(InfoWidget, self).__init__(driver)
-    self.child_cls_name = self.__class__.__name__.lower()
     selenium_utils.wait_for_js_to_load(self._driver)
+    self.child_cls_name = self.__class__.__name__.lower()
     # empty lists of headers and values
     self.list_all_headers_txt = []
     self.list_all_values_txt = []

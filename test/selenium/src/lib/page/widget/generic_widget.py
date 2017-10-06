@@ -3,42 +3,34 @@
 """Widgets other than Info widget."""
 
 import re
-
 from selenium.common import exceptions
-from selenium.webdriver.common.by import By
 
 from lib import base, factory
-from lib.constants import locator, regex, element, counters, messages
+from lib.constants import locator, regex, element, counters, messages, objects
 from lib.page.modal import unified_mapper
 from lib.utils import selenium_utils
 
 
 class Widget(base.Widget):
-  """All widgets with Tree View and Filters. If 'is_versions_widget' then
-  destinations objects's widget will be snapshots' versions.
-  """
+  """All widgets with Tree View and Filters."""
   # pylint: disable=too-many-instance-attributes
-  def __init__(self, driver, obj_name, is_versions_widget=False):
+  def __init__(self, driver, obj_name):
     self.obj_name = obj_name
-    self.is_versions_widget = is_versions_widget
     self._locators_filter = locator.BaseWidgetGeneric
     self._locators_widget = factory.get_locator_widget(self.obj_name.upper())
     self.info_widget_cls = factory.get_cls_widget(
         object_name=obj_name, is_info=True)
     # Filter
-    # todo Persons, Workflows, TaskGroups, Cycles, CycleTaskGroupObjectTasks
-    self.cls_without_state_filtering = (AssessmentTemplates, )
-    self.button_help = base.Button(driver, self._locators_filter.BUTTON_HELP)
+    self.button_help = base.Button(driver, self._locators_filter.HELP_BTN_CSS)
     self.filter = base.FilterCommon(
-        driver, text_box_locator=self._locators_filter.TEXTFIELD_TO_FILTER,
-        bt_submit_locator=self._locators_filter.BUTTON_FILTER)
-    if self.__class__ not in self.cls_without_state_filtering:
+        driver, text_box_locator=self._locators_filter.TXTFIELD_TO_FILTER_CSS,
+        bt_submit_locator=self._locators_filter.FILTER_BTN_CSS)
+    if self.obj_name not in objects.ALL_OBJS_WO_STATE_FILTERING:
       self.dropdown_states = base.DropdownStatic(
-          driver, self._locators_filter.DROPDOWN)
+          driver, self._locators_filter.DD_CSS)
     super(Widget, self).__init__(driver)
     # Tree View
-    self.tree_view = TreeView(
-        driver, self.info_widget_cls, self.obj_name, self.is_versions_widget)
+    self.tree_view = TreeView(driver, self.info_widget_cls, self.obj_name)
     # Tab count
     self.members_listed = None
     self.member_count = None
@@ -76,7 +68,7 @@ class Widget(base.Widget):
     # pylint: disable=invalid-name
     exp_pagination_count = counters.PAGINATION_CTRLS_COUNT
     pagination_elements = selenium_utils.get_when_all_visible(
-        self._driver, self._locators_filter.PAGINATION_CONTROLLERS)
+        self._driver, self._locators_filter.PAGINATION_CONTROLLERS_CSS)
     if pagination_elements:
       if len(pagination_elements) == exp_pagination_count:
         return pagination_elements
@@ -93,7 +85,7 @@ class Widget(base.Widget):
     """Check that in case of empty table, counter not loaded on filter panel.
     """
     selenium_utils.wait_for_element_text(
-        self._driver, locator.TreeView.NO_RESULTS_MESSAGE,
+        self._driver, locator.TreeView.NO_RESULTS_MSG_CSS,
         element.GenericWidget.NO_FILTER_RESULTS)
 
   def get_items_count(self):
@@ -109,7 +101,7 @@ class Widget(base.Widget):
     if count != '1':
       new_count = ' {}'.format(int(count) - 1)
       selenium_utils.wait_for_element_text(
-          self._driver, self._locators_filter.PAGINATION_CONTROLLERS,
+          self._driver, self._locators_filter.PAGINATION_CONTROLLERS_CSS,
           new_count)
     else:
       self.verify_counter_not_loaded()
@@ -147,56 +139,48 @@ class TreeView(base.TreeView):
   # pylint: disable=too-many-instance-attributes
   _locators = locator.TreeView
 
-  def __init__(self, driver, info_widget_cls, obj_name, is_versions_widget):
-    super(TreeView, self).__init__(driver, obj_name, is_versions_widget)
+  def __init__(self, driver, info_widget_cls, obj_name):
+    super(TreeView, self).__init__(driver, obj_name)
     self.info_widget_cls = info_widget_cls
     self.obj_name = obj_name
-    self.is_versions_widget = is_versions_widget
     self.create_obj_cls = factory.get_cls_create_obj(object_name=obj_name)
     self.dropdown_settings_cls = factory.get_cls_3bbs_dropdown_settings(
         object_name=obj_name, is_tree_view_not_info=True)
     self.dropdown_tree_view_item_cls = factory.get_cls_dropdown_tree_view_item(
         object_name=obj_name)
     self.fields_to_set = factory.get_fields_to_set(object_name=obj_name)
-    self.locator_set_visible_fields = (
-        By.CSS_SELECTOR,
-        self._locators.BUTTON_SHOW_FIELDS.format(self.widget_name))
+    self.locator_set_visible_fields = self._locators.SHOW_FIELDS_BTN_CSS
 
   def open_create(self):
     """Click to Create button on Tree View to open new object creation modal.
+
     Return: lib.page.modal.create_new_object."create_obj_cls"
     """
-    _locator_create = (
-        By.CSS_SELECTOR,
-        self._locators.BUTTON_CREATE.format(self.widget_name))
-    base.Button(self._driver, _locator_create).click()
+    base.Button(self._driver, self._locators.CREATE_BTN_CSS).click()
     return self.create_obj_cls(self._driver)
 
   def open_map(self):
     """Click to Map button on Tree View to open unified mapper modal.
+
     Return: lib.page.modal.unified_mapper.MapObjectsModal
     """
-    _locator_map = (By.CSS_SELECTOR,
-                    self._locators.BUTTON_MAP.format(self.widget_name))
-    base.Button(self._driver, _locator_map).click()
+    base.Button(self._driver, self._locators.MAP_BTN_CSS).click()
     return unified_mapper.MapObjectsModal(self._driver, self.obj_name)
 
   def open_3bbs(self):
     """Click to 3BBS button on Tree View to open tree view 3BBS modal.
+
     Return: lib.element.tree_view."obj_name"DropdownSettings
     """
-    _locator_3bbs = (
-        By.CSS_SELECTOR, self._locators.BUTTON_3BBS.format(self.widget_name))
-    base.Button(self._driver, _locator_3bbs).click()
-    return self.dropdown_settings_cls(
-        self._driver, self.obj_name, self.is_versions_widget)
+    base.Button(self._driver, self._locators.BTN_3BBS_CSS).click()
+    return self.dropdown_settings_cls(self._driver, self.obj_name)
 
   def select_member_by_title(self, title):
     """Select member on Tree View by title.
     Return: lib.page.widget.info_widget."obj_name"
     """
     item_num = self._get_item_num_by_title(title)
-    return (Widget(self._driver, self.obj_name, self.is_versions_widget).
+    return (Widget(self._driver, self.obj_name).
             select_member_by_num(item_num))
 
   def _get_item_num_by_title(self, title):
@@ -210,6 +194,7 @@ class TreeView(base.TreeView):
   def open_tree_actions_dropdown_by_title(self, title):
     """Open dropdown of obj on Tree View by title. Hover mouse on dropdown
     button.
+
     Return: lib.element.tree_view."dropdown_obj"
     """
     # pylint: disable=invalid-name
@@ -221,7 +206,7 @@ class TreeView(base.TreeView):
         self._driver, item_dropdown_button)
     item_dropdown_button.click()
     dropdown_menu_element = item_dropdown_button.find_element(
-        *self._locators.ITEM_DROPDOWN_MENU_CSS)
+        *self._locators.ITEM_DD_MENU_CSS)
     return self.dropdown_tree_view_item_cls(self._driver, self.obj_name,
                                             dropdown_menu_element)
 

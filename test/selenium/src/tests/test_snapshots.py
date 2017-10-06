@@ -600,11 +600,10 @@ class TestSnapshots(base.Test):
          dynamic_objects) if dynamic_objects else
         audit_with_one_control["new_audit_rest"][0])
     expected_control = audit_with_one_control["new_control_rest"][0].repr_ui()
-    export_ui_service = webui_service.BaseWebUiService(
-        driver=selenium, obj_name=objects.get_plural(expected_control.type),
-        is_versions_widget=is_issue_flow)
-    export_ui_service.export_objs_via_tree_view(src_obj=dynamic_objects)
-    actual_controls = export_ui_service.get_list_objs_from_csv(
+    controls_ui_service = webui_service.ControlsService(
+        selenium, is_versions_widget=is_issue_flow)
+    controls_ui_service.export_objs_via_tree_view(src_obj=dynamic_objects)
+    actual_controls = controls_ui_service.get_list_objs_from_csv(
         path_to_export_dir=create_tmp_dir)
     # 'actual_controls': created_at, updated_at,
     #                    custom_attributes (GGRC-2344) (None)

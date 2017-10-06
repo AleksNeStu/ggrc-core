@@ -17,9 +17,9 @@ class CommonInfoDropdownSettings(elements_list.DropdownMenu):
 
   def __init__(self, driver):
     super(CommonInfoDropdownSettings, self).__init__(
-        driver, self._locators.INFO_3BBS_DROPDOWN)
+        driver, self._locators.INFO_WDG_3BBS_DD_XPTAH)
     self.dropdown_button = base.Button(
-        self._driver, self._locators.INFO_3BBS_DROPDOWN_BUTTON)
+        self._driver, self._locators.INFO_WDG_3BBS_DD_BTN_XPATH)
 
   def select_open(self):
     """Select open button in 3BBS dropdown modal."""

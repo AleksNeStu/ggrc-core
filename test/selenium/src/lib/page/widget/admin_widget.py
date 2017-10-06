@@ -42,8 +42,7 @@ class Roles(Widget):
 
   def __init__(self, driver):
     super(Roles, self).__init__(driver)
-    self.roles_tree_view = base.AdminTreeView(
-        self._driver, widget_name=url.Widget.ROLES)
+    self.roles_tree_view = base.AdminTreeView(self._driver)
 
   def get_role_scopes_text_as_dict(self):
     """Get dictionary of labels that displayed in Tree View on Roles widget.
@@ -60,8 +59,7 @@ class CustomAttributes(widget_base.WidgetAdminCustomAttributes):
 
   def __init__(self, driver):
     super(CustomAttributes, self).__init__(driver)
-    self.ca_tree_view = base.AdminTreeView(
-        self._driver, widget_name=url.Widget.CUSTOM_ATTRIBUTES)
+    self.ca_tree_view = base.AdminTreeView(self._driver)
 
   def expand_collapse_group(self, item_title, expand=True):
     """Expand/collapse 2-nd tier of Tree View item."""
