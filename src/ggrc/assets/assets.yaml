@@ -332,3 +332,4 @@ dashboard-js-template-files:
   - components/inline/base-inline-control-title.mustache
   - components/assessment/info-pane/inline-item.mustache
   - components/loading/loading-status.mustache
+  - components/people/templates/people-group-modal.mustache
