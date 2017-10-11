@@ -21,13 +21,18 @@
 
     .people-group__title {
       text-transform: uppercase;
-      font-size: 12px;
-      font-weight: bold;
-      margin-bottom: 0px;
       overflow: hidden;
       white-space: nowrap;
       text-overflow: ellipsis;
-      max-width: 240px;
+      max-width: 160px;
+      margin-right: 4px;
+    }
+
+    .people-group__title-content {
+      display: flex;
+      font-size: 12px;
+      font-weight: bold;
+      margin-bottom: 0px;
     }
 
     .people-group__title-spinner {
@@ -92,7 +97,85 @@
       }
 
       .person-name {
-        max-width: 210px;
+        max-width: 160px;
+      }
+    }
+
+    .editable-people-group__see-more {
+      margin-top: 8px;
+    }
+  }
+
+  .people-group-modal {
+    max-width: 800px;
+
+    .people-group-modal__people-list {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+
+      .object-list__item:not(.object-list__item-empty) {
+        background: #f3f3f3;
+
+        padding: 6px 10px;
+        border-radius: 16px;
+        line-height: 14px;
+        margin: 5px 6px 5px 0;
+
+        .person-name {
+          font-style: normal;
+        }
+      }
+    }
+
+    .people-group-modal__unmap {
+      margin-left: 4px;
+      opacity: 1;
+
+      .fa {
+        color: $unmapIcon;
+      }
+    }
+
+    .people-group-modal__people-section {
+      max-height: 500px;
+      overflow: auto;
+    }
+
+    .people-group-modal__footer {
+      line-height: 30px;
+    }
+
+    .people-group-modal__button {
+      line-height: 18px;
+      margin-left: 10px;
+    }
+
+    .people-group-modal__selected-count {
+      opacity: 0.6;
+    }
+
+    .simple-modal {
+      &__header {
+        border-bottom: none;
+      }
+  
+      &__title__name {
+        font-size: 24px;
+      }
+  
+      &__body {
+        padding-top: 8px;
+      }
+  
+      &__sub-header-section {
+        font-size: 15px;
+        margin-bottom: 40px;
+      }
+  
+      &__footer {
+        border-top: none;
+        padding: 16px;
       }
     }
   }

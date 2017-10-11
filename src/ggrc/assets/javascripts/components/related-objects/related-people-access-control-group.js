@@ -3,6 +3,9 @@
   Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
 */
 
+import '../people/deletable-people-group';
+import '../people/editable-people-group';
+
 (function (can, _, GGRC, Permission) {
   'use strict';
 

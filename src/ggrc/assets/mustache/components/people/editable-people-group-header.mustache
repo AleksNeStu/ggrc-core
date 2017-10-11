@@ -4,12 +4,17 @@
 }}
 
 <label class="action-toolbar editable-people-group__label form-label required-label">
-  <span class="people-group__title">
-    {{#unless editableMode}}
-      <spinner class="people-group__title-spinner" {toggle}="isLoading"></spinner>
-    {{/unless}}
-    {{title}}
-  </span>
+  <div class="people-group__title-content">
+    <div class="people-group__title">
+      {{#unless editableMode}}
+        <spinner class="people-group__title-spinner" {toggle}="isLoading"></spinner>
+      {{/unless}}
+      {{title}}
+    </div>
+    <div>
+      ({{peopleCount}})
+    </div>
+  </div>
   {{#if canEdit}}
     {{#if required}}
       <i class="fa fa-asterisk"></i>

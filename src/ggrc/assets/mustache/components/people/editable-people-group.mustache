@@ -8,12 +8,28 @@
   <content></content>
 
   {{#unless editableMode}}
-    <object-list ({items})="people" {empty-message}="emptyListMessage">
-      <person-list-item person="{.}" {with-details}="withDetails">
+    <object-list ({items})="readonlyPeople" {empty-message}="emptyListMessage">
+      <person-list-item class="people-group__readonly-person"
+        person="{.}"
+        {with-details}="withDetails">
       </person-list-item>
     </object-list>
+
+    {{#if showSeeMoreLink}}
+      <div class="editable-people-group__see-more">
+        <a href="javascript://" ($click)="changeEditableMode(true)">See more</a>
+      </div>
+    {{/if}}
   {{else}}
-    <div class="inline-edit inline-edit--active">
+    {{#if showPeopleGroupModal}}
+      <people-group-modal
+        {title}="title"
+        {is-loading}="isLoading"
+        {empty-list-message}="emptyListMessage"
+        {(people)}="people">
+      </people-group-modal>
+    {{else}}
+      <div class="inline-edit inline-edit--active">
         <div class="inline-edit__content editable-people-group__inline">
           <div class="editable-people-group__inline-content">
             <object-list
@@ -55,6 +71,7 @@
             </ul>
           </div>
         </div>
-    </div>
+      </div>
+    {{/if}}
   {{/unless}}
 </div>
