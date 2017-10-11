@@ -294,8 +294,4 @@ class TestAssessmentsWorkflow(base.Test):
         expected_asmt.update_attrs(updated_at=self.info_service.get_obj(
             obj=expected_asmt).updated_at).repr_ui())
     actual_asmt = asmts_ui_service.get_obj_from_info_page(expected_asmt)
-    self.general_equal_assert(
-        expected_asmt, actual_asmt, "objects_under_assessment")
-    self.xfail_equal_assert(
-        expected_asmt, actual_asmt,
-        "Issue in app GGRC-3154", "objects_under_assessment")
+    self.general_equal_assert(expected_asmt, actual_asmt)
