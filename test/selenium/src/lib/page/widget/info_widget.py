@@ -6,7 +6,7 @@
 import re
 
 from lib import base
-from lib.constants import locator, objects, element, roles
+from lib.constants import locator, objects, element, roles, regex, messages
 from lib.constants.locator import WidgetInfoAssessment
 from lib.element import widget_info, tab_containers
 from lib.page.modal import update_object
@@ -26,7 +26,6 @@ class InfoWidget(base.Widget):
 
   def __init__(self, driver):
     super(InfoWidget, self).__init__(driver)
-    selenium_utils.wait_for_js_to_load(self._driver)
     self.child_cls_name = self.__class__.__name__.lower()
     # empty lists of headers and values
     self.list_all_headers_txt = []
@@ -132,6 +131,53 @@ class InfoWidget(base.Widget):
               for scope in self.all_headers_and_values
               if header_text in scope.text), [None, None]))
     return header_and_value
+
+  def get_header_and_value_txt_from_people_scopes(self, header_text):
+    """Get with controlling header and value text from people's scopes elements
+    according to header text.
+
+    Example:
+    'header_text' = 'ASSIGNEE(S)', return: ['ASSIGNEE(S)', 'user@example.com']
+    """
+    # pylint: disable=invalid-name
+    _header_msg, _value_msg = (
+        "people header: {}, count: {}", "people list: {}, count: {}")
+    people_scopes = self._driver.find_elements(
+        *self._locators.PEOPLE_HEADERS_AND_VALUES_CSS)
+    matched_people_scopes = [people_scope for people_scope in people_scopes
+                             if header_text in people_scope.text]
+    if len(matched_people_scopes) != 1:
+      raise ValueError(
+          messages.ExceptionsMessages.err_results_are_different.format(
+              _header_msg.format(header_text, "1"),
+              _value_msg.format(
+                  [matched_people_scope.text
+                   for matched_people_scope in matched_people_scopes],
+                  len(matched_people_scopes))))
+    people_scope = matched_people_scopes[0]
+    _people_header = people_scope.find_element(
+        *self._locators.PEOPLE_HEADER_CSS).text
+    _people_value = people_scope.find_element(
+        *self._locators.PEOPLE_VALUE_CSS).text
+    # 'ASSIGNEE(S)\n(2)' to str 'ASSIGNEE(S)' and int '2'
+    _people_header_parts = _people_header.splitlines()
+    people_header_txt = _people_header_parts[0]
+    people_count_from_header = (
+        int(re.search(regex.TEXT_WO_PARENTHESES,
+                      _people_header_parts[1]).group(1)))
+    # filter: "\nuser@example.com\n(Inactive user)" to 'user@example.com'
+    people_value_txt = [person for person in _people_value.splitlines()
+                        if person != roles.NO_ROLE_UI]
+    # if counters are same or None
+    if not ((people_count_from_header == len(people_value_txt)) or
+       (people_count_from_header == 0 and people_value_txt == ["None"])):
+      raise ValueError(
+          messages.ExceptionsMessages.err_counters_are_different.format(
+              _header_msg.format(
+                  people_header_txt, str(people_count_from_header)),
+              _value_msg.format(people_value_txt, len(people_value_txt))))
+    return (people_header_txt,
+            None if people_value_txt == ["None"] else people_value_txt)
 
   def get_headers_and_values_dict_from_cas_scopes(self, is_gcas_not_lcas=True):  # noqa: ignore=C901
     """Get text of all CAs headers and values elements scopes and convert it to
@@ -328,17 +374,14 @@ class Assessments(InfoWidget):
     self.lcas_scope_txt = self.get_headers_and_values_dict_from_cas_scopes(
         is_gcas_not_lcas=False)
     self.creators_lbl_txt, self.creators_txt = (
-        self.get_header_and_value_txt_from_custom_scopes(
-            self._elements.CREATORS_.upper(),
-            self._locators.PEOPLE_HEADERS_AND_VALUES))
+        self.get_header_and_value_txt_from_people_scopes(
+            self._elements.CREATORS_.upper()))
     self.assignees_lbl_txt, self.assignees_txt = (
-        self.get_header_and_value_txt_from_custom_scopes(
-            self._elements.ASSIGNEES_.upper(),
-            self._locators.PEOPLE_HEADERS_AND_VALUES))
+        self.get_header_and_value_txt_from_people_scopes(
+            self._elements.ASSIGNEES_.upper()))
     self.verifiers_lbl_txt, self.verifiers_txt = (
-        self.get_header_and_value_txt_from_custom_scopes(
-            self._elements.VERIFIERS_.upper(),
-            self._locators.PEOPLE_HEADERS_AND_VALUES))
+        self.get_header_and_value_txt_from_people_scopes(
+            self._elements.VERIFIERS_.upper()))
     self.comments_panel = base.CommentsPanel(
         self._driver, self._locators.COMMENTS_CSS)
     self.comments_lbl_txt = self.comments_panel.header_lbl.text
@@ -469,13 +512,11 @@ class Controls(InfoWidget):
   def __init__(self, driver):
     super(Controls, self).__init__(driver)
     self.admin_text, self.admin_entered_text = (
-        self.get_header_and_value_txt_from_custom_scopes(
-            self._elements.ADMIN.upper(),
-            self._locators.PEOPLE_HEADERS_AND_VALUES))
+        self.get_header_and_value_txt_from_people_scopes(
+            self._elements.ADMIN.upper()))
     self.primary_contact_text, self.primary_contact_entered_text = (
-        self.get_header_and_value_txt_from_custom_scopes(
-            self._elements.PRIMARY_CONTACTS.upper(),
-            self._locators.PEOPLE_HEADERS_AND_VALUES))
+        self.get_header_and_value_txt_from_people_scopes(
+            self._elements.PRIMARY_CONTACTS.upper()))
     self.list_all_headers_txt.extend(
         [self.admin_text, self.primary_contact_text])
     self.list_all_values_txt.extend(
