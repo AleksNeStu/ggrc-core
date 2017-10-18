@@ -114,3 +114,7 @@ class ExceptionsMessages(CommonMessages):
   err_server_response = "Server response: (code: {}, message: {})\n"
   err_pagination_count = "Count of pagination controllers is not {}\n"
   err_pagination_elements = "Pagination controllers were not found {}\n"
+  err_counters_are_different = (
+      "Counter: {} is different to another counter: {}\n")
+  err_results_are_different = (
+      "Expected result: {} is different to Actual result: {}\n")

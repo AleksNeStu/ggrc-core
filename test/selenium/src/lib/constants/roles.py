@@ -4,6 +4,7 @@
 
 # global roles
 NO_ROLE = "No role"
+NO_ROLE_UI = "(Inactive user)"
 ADMIN = "Admin"
 CREATOR = "Creator"
 READER = "Reader"
