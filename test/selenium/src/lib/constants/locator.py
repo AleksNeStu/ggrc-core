@@ -676,6 +676,12 @@ class CommonWidgetInfo(object):
       By.CSS_SELECTOR, "{} .object-approved".format(WIDGET))
   LINK_SUBMIT_FOR_REVIEW = (By.CSS_SELECTOR,
                             "{} .non-transparent".format(WIDGET))
+  # people section
+  _PEOPLE_ITEM = ".editable-people-group"
+  PEOPLE_HEADERS_AND_VALUES_CSS = (By.CSS_SELECTOR, _PEOPLE_ITEM)
+  PEOPLE_HEADER_CSS = (
+      By.CSS_SELECTOR, _PEOPLE_ITEM + " editable-people-group-header")
+  PEOPLE_VALUE_CSS = (By.CSS_SELECTOR, _PEOPLE_ITEM + " object-list")
   # user input elements
   BUTTON_3BBS = (By.XPATH, _INFO_WIDGET_XPATH + "//*[@data-toggle='dropdown']")
 
