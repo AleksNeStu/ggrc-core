@@ -77,6 +77,7 @@ class AssessmentRelatedIssuesTable(CommonTable):
     raise_btn.click()
     create_new_object.IssuesCreate(self._driver).fill_minimal_data(
         issue_entity.title, issue_entity.slug).save_and_close()
+    selenium_utils.wait_for_js_to_load(self._driver)
 
 
 class AssessmentRelatedAsmtsTable(CommonTable):
