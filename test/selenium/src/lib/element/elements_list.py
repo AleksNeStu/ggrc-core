@@ -62,3 +62,4 @@ class TabController(base.ElementsList):
       self._active_tab = self.get_item(tab_name)
       selenium_utils.scroll_into_view(self._driver, self._active_tab.element)
       self._active_tab.click()
+      selenium_utils.wait_for_js_to_load(self._driver)
