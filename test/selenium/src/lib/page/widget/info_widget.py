@@ -27,6 +27,7 @@ class InfoWidget(base.Widget):
 
   def __init__(self, driver):
     super(InfoWidget, self).__init__(driver)
+    selenium_utils.wait_for_js_to_load(self._driver)
     self.child_cls_name = self.__class__.__name__.lower()
     self.list_all_headers_txt = []
     self.list_all_values_txt = []
@@ -126,10 +127,13 @@ class InfoWidget(base.Widget):
     'header_text' = 'ASSIGNEE(S)', return: ['ASSIGNEE(S)', 'user@example.com']
     """
     # pylint: disable=invalid-name
+    # pylint: disable=expression-not-assigned
     _header_msg, _value_msg = (
         "people header: {}, count: {}", "people list: {}, count: {}")
     people_scopes = self._driver.find_elements(
         *self._locators.PEOPLE_HEADERS_AND_VALUES_CSS)
+    [selenium_utils.wait_until_stops_moving(people_scope)
+     for people_scope in people_scopes]
     matched_people_scopes = [people_scope for people_scope in people_scopes
                              if header_text in people_scope.text]
     if len(matched_people_scopes) != 1:
@@ -160,7 +164,7 @@ class InfoWidget(base.Widget):
       raise ValueError(
           messages.ExceptionsMessages.err_counters_are_different.format(
               _header_msg.format(
-                  people_header_txt, str(people_count_from_header)),
+                  _people_header_parts, str(people_count_from_header)),
               _value_msg.format(people_value_txt, len(people_value_txt))))
     return (people_header_txt,
             None if people_value_txt == ["None"] else people_value_txt)
