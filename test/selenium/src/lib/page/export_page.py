@@ -44,7 +44,7 @@ class ExportPage(base.Page):
     """
     self.export_objs_btn.click()
     selenium_utils.get_when_invisible(
-        self.export_page, self._locators.EXPORT_OBJECTS_SPINNER_CSS)
+        self.export_page, locator.Common.SPINNER_CSS)
     selenium_utils.wait_for_js_to_load(self._driver)
 
   def export_objs_to_csv(self):

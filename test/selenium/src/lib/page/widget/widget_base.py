@@ -85,7 +85,7 @@ class CustomAttributesItemContent(base.Component):
     selenium_utils.scroll_into_view(self._driver, self.button_add.element)
     selenium_utils.get_when_clickable(self._driver, self._locators.ADD_BTN)
     selenium_utils.get_when_invisible(
-        self._driver, self._locators.TREE_SPINNER)
+        self._driver, self._locators.TREE_SPINNER_CSS)
     self.button_add.click()
     return CustomAttributeModal(self._driver)
 

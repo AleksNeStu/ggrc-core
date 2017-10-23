@@ -78,7 +78,7 @@ class AssessmentTabContainer(base.AbstractTabContainer):
                   person_element.text == roles.DEFAULT_USER_EMAIL)
               }
     selenium_utils.wait_until_not_present(
-        _driver, tab_locators.LOG_TAB_SPINNER_CSS)
+        _driver, locator.Common.SPINNER_CSS)
     log_list = selenium_utils.get_when_all_visible(
         log_panel_element, tab_locators.LOG_LIST_CSS)
     return [check_log_item(el) for el in log_list]
