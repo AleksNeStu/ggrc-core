@@ -13,6 +13,8 @@ class Common(object):
   """Common locators."""
   TITLE = " .title"
   DESCRIPTION = " .description"
+  SPINNER = ".spinner"
+  SPINNER_CSS = (By.CSS_SELECTOR, SPINNER)
   # modal
   MODAL_CREATE = ".modal-wide"
   MODAL_CONFIRM = ".modal.hide"
@@ -28,6 +30,7 @@ class Common(object):
   # dropdown
   DROPDOWN_MENU = ".dropdown-menu"
   # tree
+  TREE_SPINNER = ".tree-spinner"
   TREE_LIST = ".tree-action"
   TREE_HEADER = ".tree-header"
   TREE_ITEM = " .object-list__item"
@@ -227,7 +230,6 @@ class ExportPage(object):
   ADD_OBJECT_TYPE_BTN_CSS = (
       By.CSS_SELECTOR, "#addAnotherObjectType")
   EXPORT_OBJECTS_BTN_CSS = (By.CSS_SELECTOR, "#export-csv-button")
-  EXPORT_OBJECTS_SPINNER_CSS = (By.CSS_SELECTOR, ".spinner")
 
 
 class ExtendedInfo(object):
@@ -953,7 +955,7 @@ class TreeView(object):
   ITEM_LOADING = (By.CSS_SELECTOR, " .tree-item-placeholder")
   ITEM_EXPAND_BUTTON = " tree-item-actions"
   ITEM_DROPDOWN_MENU_CSS = Common.HTML_LIST_CSS
-  SPINNER = (By.CSS_SELECTOR, " .tree-spinner")
+  TREE_SPINNER_CSS = (By.CSS_SELECTOR, Common.TREE_SPINNER)
   NO_RESULTS_MESSAGE = (
       By.CSS_SELECTOR, _WIDGET_NOT_HIDDEN_CSS + " .tree-no-results-message")
   BUTTON_SHOW_FIELDS = "{} " + Common.TREE_HEADER + " .fa-bars"
@@ -978,7 +980,6 @@ class AdminTreeView(object):
   HEADER = Common.TREE_HEADER
   ITEM_LOADING = (By.CSS_SELECTOR, " .tree-item-placeholder")
   ITEM_EXPAND_BUTTON = " .openclose"
-  SPINNER = (By.CSS_SELECTOR, " .tree-spinner")
   NO_RESULTS_MESSAGE = (By.CSS_SELECTOR, ".tree-no-results-message")
   BUTTON_SHOW_FIELDS = "{} " + Common.TREE_HEADER + " .fa-bars"
   # user input elements
@@ -1081,7 +1082,7 @@ class CustomAttributesItemContent(AdminCustomAttributes):
   CELL_IN_ROW = (By.CSS_SELECTOR, "td")
   EDIT_BTN = (By.CSS_SELECTOR, CONTENT_OPEN + " " + Common.TREE_LIST)
   ADD_BTN = (By.CSS_SELECTOR, CONTENT_OPEN + " .add-item .btn")
-  TREE_SPINNER = (By.CSS_SELECTOR, ".tree-spinner")
+  TREE_SPINNER_CSS = (By.CSS_SELECTOR, Common.TREE_SPINNER)
 
 
 class MultiInputField(object):
@@ -1105,7 +1106,6 @@ class CommentsPanel(object):
   HEADER_LBL_CSS = (By.CSS_SELECTOR, ".info-pane__section-title")
   INPUT_TXT_CSS = (By.CSS_SELECTOR, ".ql-editor")
   CB_SEND_CSS = (By.CSS_SELECTOR, ".comment-add-form__toolbar-item")
-  CB_SPINNER_CSS = (By.CSS_SELECTOR, ".spinner")
   ADD_BTN_CSS = (By.CSS_SELECTOR, "comment-add-button")
   ITEMS_CSS = (By.CSS_SELECTOR, "comment-list-item")
 
@@ -1123,7 +1123,6 @@ class AssessmentLogTab(object):
   COMMENT_PERSON_CSS = (By.CSS_SELECTOR, '.person-tooltip-trigger')
   PERSON_LABEL = (By.CSS_SELECTOR, '.person-label')
   LOG_LIST_CSS = (By.CSS_SELECTOR, ' .w-status')
-  LOG_TAB_SPINNER_CSS = (By.CSS_SELECTOR, '.spinner')
 
 
 class AssessmentRelatedTable(object):
