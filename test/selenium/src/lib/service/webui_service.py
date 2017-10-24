@@ -209,6 +209,7 @@ class BaseWebUiService(object):
     (dest_objs_widget.tree_view.open_map().
      map_dest_objs(dest_objs_type=dest_objs[0].type.title(),
                    dest_objs_titles=dest_objs_titles))
+    self.driver.refresh()
 
   def _search_objs_via_tree_view(self, src_obj, dest_objs):
     """Open generic widget of mapped objects, open unified mapper modal from
