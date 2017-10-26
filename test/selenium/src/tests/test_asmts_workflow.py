@@ -168,9 +168,9 @@ class TestAssessmentsWorkflow(base.Test):
            "Complete asmt w' verifier 'In Progress' - 'In Review'",
            "Verify asmt w' verifier 'In Review' - 'Completed'",
            "Reject asmt w' verifier 'In Review' - 'Rework Needed'"],
-      indirect=["dynamic_object_w_factory_params"])
+      indirect=["dynamic_objects_w_factory_params"])
   def test_check_asmt_state_change(
-      self, new_program_rest, new_audit_rest, dynamic_object_w_factory_params,
+      self, new_program_rest, new_audit_rest, dynamic_objects_w_factory_params,
       action, expected_initial_state, expected_final_state, expected_verified,
       selenium
   ):
