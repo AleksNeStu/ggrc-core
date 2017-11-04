@@ -206,15 +206,6 @@ class AssessmentsService(BaseRestService):
   def __init__(self):
     super(AssessmentsService, self).__init__(url.ASSESSMENTS)
 
-  def create_objs(self, count, factory_params=None, **attrs_for_template):
-    """Create new Assessments and make default relationships of Persons:
-    'Creator', 'Assignee' to them via REST API and return list of created
-    objects with filtered attributes.
-    """
-    objs = BaseRestService(self.endpoint).create_objs(
-        count, factory_params, **attrs_for_template)
-    return objs
-
 
 class IssuesService(BaseRestService):
   """Service for working with Issues entities."""

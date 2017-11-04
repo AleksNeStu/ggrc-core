@@ -639,6 +639,10 @@ class AssessmentsFactory(EntitiesFactory):
         custom_attribute_values=custom_attribute_values,
         custom_attributes=custom_attributes, created_at=created_at,
         modified_by=modified_by)
+    if verifier:
+      asmt_entity.access_control_list.append(
+          ObjectPersonsFactory.get_acl_member(roles.ASMT_VERIFIER_ID,
+                                              cls.default_person))
     return asmt_entity
 
   @classmethod
