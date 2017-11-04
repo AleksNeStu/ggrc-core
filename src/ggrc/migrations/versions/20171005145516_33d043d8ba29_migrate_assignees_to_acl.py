@@ -44,6 +44,47 @@ ROLES_TRANSLATION = [
 ]
 
 
+def create_translation_table(table_name, translation_data):
+  """Create table to translate one names to anothers"""
+  roles_translation_tbl = create_new_table(
+      table_name,
+      sa.Column("new_name", sa.String(length=100)),
+      sa.Column("old_name", sa.String(length=100)),
+  )
+  op.bulk_insert(
+      roles_translation_tbl,
+      [{"old_name": old, "new_name": new} for old, new in translation_data]
+  )
+
+
+def update_comments():
+  """Update recipients for assessment and assignee_type for old comments"""
+  # Update recipients in assessments
+  op.execute("""
+        UPDATE assessments a
+        JOIN (
+          SELECT a.id, group_concat(art.new_name SEPARATOR ',') recipients
+          FROM assessments a
+          JOIN ac_roles_translation art
+            ON LOCATE(art.old_name, a.recipients) > 0
+          GROUP BY a.id
+        ) temp ON temp.id = a.id
+        SET a.recipients = temp.recipients;
+    """)
+  # Update assignee_type in comments
+  op.execute("""
+      UPDATE comments a
+      JOIN (
+        SELECT a.id, group_concat(art.new_name SEPARATOR ',') assignee_type
+        FROM comments a
+        JOIN ac_roles_translation art
+          ON LOCATE(art.old_name, a.assignee_type) > 0
+        GROUP BY a.id
+      ) temp ON temp.id = a.id
+      SET a.assignee_type = temp.assignee_type;
+  """)
+
+
 def upgrade():
   """Upgrade database schema and/or data, creating a new revision."""
   connection = op.get_bind()
@@ -79,15 +120,7 @@ def upgrade():
       "access_control_roles",
       sa.Column("internal", sa.Boolean(), nullable=False, server_default="0")
   )
-  roles_translation_tbl = create_new_table(
-      "ac_roles_translation",
-      sa.Column("old_name", sa.String(length=100)),
-      sa.Column("new_name", sa.String(length=100)),
-  )
-  op.bulk_insert(
-      roles_translation_tbl,
-      [{"old_name": old, "new_name": new} for old, new in ROLES_TRANSLATION]
-  )
+  create_translation_table("ac_roles_translation", ROLES_TRANSLATION)
 
   # Create new AC roles for assignees
   for assignee_role, permissions in ASSIGNEE_MAPPED_ROLES.items():
@@ -255,6 +288,8 @@ def upgrade():
   op.execute("""
       DROP TABLE IF EXISTS temp_mapped_objects;
   """)
+
+  update_comments()
   op.execute("""
       DROP TABLE IF EXISTS ac_roles_translation;
   """)
@@ -292,6 +327,15 @@ def downgrade():
   )
   op.drop_column("access_control_list", "parent_id")
   op.drop_column("access_control_roles", "internal")
+
+  create_translation_table(
+      "ac_roles_translation",
+      [(new, old) for old, new in ROLES_TRANSLATION]
+  )
+  update_comments()
+  op.execute("""
+      DROP TABLE IF EXISTS ac_roles_translation;
+  """)
 
   op.execute("""
       UPDATE notification_types
