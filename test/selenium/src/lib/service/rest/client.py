@@ -25,8 +25,8 @@ class RestClient(object):
 
   def __init__(self, endpoint):
     self.is_api = "" if endpoint == url.QUERY else url.API
-    self.url = urlparse.urljoin(environment.APP_URL,
-                                "/".join([self.is_api, endpoint]))
+    self.endpoint_url = urlparse.urljoin(
+        environment.APP_URL, "/".join([self.is_api, endpoint]))
     self.session_cookie = None
 
   def get_session_cookie(self):
@@ -59,38 +59,39 @@ class RestClient(object):
     return raw response.
     """
     req_headers = self.generate_req_headers()
-    req_body = self.generate_body(type_name=type, **kwargs)
-    resp = requests.post(url=self.url, data=req_body, headers=req_headers)
-    return resp
+    create_obj_req_body = self.generate_body(type_name=type, **kwargs)
+    create_obj_resp = requests.post(
+        url=self.endpoint_url, data=create_obj_req_body, headers=req_headers)
+    return create_obj_resp
 
   def update_object(self, href, **kwargs):
     """Update object used GET, POST requests and return raw response."""
-    obj_url = urlparse.urljoin(environment.APP_URL, href)
-    obj_resp_headers = self.get_object(obj_url)["resp_headers"]
-    obj_resp_body = self.get_object(obj_url)["resp_body"]
-    new_obj_req_headers = self.generate_req_headers(
+    href_url = urlparse.urljoin(environment.APP_URL, href)
+    obj_resp = self.get_object(href_url)
+    obj_resp_headers = obj_resp.headers
+    obj_resp_body = obj_resp.text
+    update_obj_req_headers = self.generate_req_headers(
         resp_headers=obj_resp_headers)
-    new_obj_req_body = self.update_body(body=obj_resp_body, **kwargs)
-    new_obj_resp = requests.put(url=obj_url, data=new_obj_req_body,
-                                headers=new_obj_req_headers)
-    return new_obj_resp
+    update_obj_req_body = self.update_body(body=obj_resp_body, **kwargs)
+    update_obj_resp = requests.put(
+        url=href_url, data=update_obj_req_body, headers=update_obj_req_headers)
+    return update_obj_resp
 
   def delete_object(self, href):
     """Delete object used GET, POST requests and return raw response."""
-    obj_url = urlparse.urljoin(environment.APP_URL, href)
-    obj_resp_headers = self.get_object(obj_url)["resp_headers"]
+    href_url = urlparse.urljoin(environment.APP_URL, href)
+    obj_resp_headers = self.get_object(href_url).headers
     del_obj_req_headers = self.generate_req_headers(
         resp_headers=obj_resp_headers)
-    del_obj_resp = requests.delete(url=obj_url, headers=del_obj_req_headers)
+    del_obj_resp = requests.delete(url=href_url, headers=del_obj_req_headers)
     return del_obj_resp
 
-  def get_object(self, obj_url):
-    """Get object used GET request and return dictionary:
-    {"resp_body": resp.text, "resp_headers": resp.headers}.
-    """
+  def get_object(self, href):
+    """Get object used GET request and return raw response."""
+    href_url = urlparse.urljoin(environment.APP_URL, href)
     req_headers = self.generate_req_headers()
-    resp = requests.get(url=obj_url, headers=req_headers)
-    return {"resp_body": resp.text, "resp_headers": resp.headers}
+    get_obj_resp = requests.get(url=href_url, headers=req_headers)
+    return get_obj_resp
 
   def generate_body(self, type_name, **kwargs):
     """Generate body of HTTP request based on JSON representation."""
