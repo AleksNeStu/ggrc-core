@@ -68,11 +68,8 @@ class BaseRestService(object):
 
   def update_obj(self, obj, **attrs):
     """Update attributes values of existing object via REST API."""
-    obj.update_attrs(**attrs)
     return self.set_obj_attrs(obj=obj, attrs=self.get_items_from_resp(
-        self.client.update_object(
-            href=obj.href, **dict({k: v for k, v in obj.__dict__
-                                  .iteritems() if k != "href"}.items()))))
+        self.client.update_object(href=obj.href, **attrs)))
 
   @staticmethod
   def get_items_from_resp(response):
