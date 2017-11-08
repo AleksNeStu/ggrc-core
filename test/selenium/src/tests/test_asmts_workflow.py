@@ -151,11 +151,11 @@ class TestAssessmentsWorkflow(base.Test):
                                  "verifier": [roles.DEFAULT_USER]}),
         "complete_assessment",
         AssessmentStates.READY_FOR_REVIEW, False),
-       (("new_assessment_rest", {"status": AssessmentStates.NOT_STARTED,
+       (("new_assessment_rest", {"status": AssessmentStates.READY_FOR_REVIEW,
                                  "verifier": [roles.DEFAULT_USER]}),
         "verify_assessment",
         AssessmentStates.COMPLETED, True),
-       (("new_assessment_rest", {"status": AssessmentStates.NOT_STARTED,
+       (("new_assessment_rest", {"status": AssessmentStates.READY_FOR_REVIEW,
                                  "verifier": [roles.DEFAULT_USER]}),
         "reject_assessment",
         AssessmentStates.REWORK_NEEDED, False)],
@@ -184,9 +184,6 @@ class TestAssessmentsWorkflow(base.Test):
     """
     expected_asmt = dynamic_objects_w_factory_params
     asmts_ui_service = webui_service.AssessmentsService(selenium)
-    # UI part of preparing pre-requirements (due to REST doesn't allow it)
-    if action in ("verify_assessment", "reject_assessment"):
-      getattr(asmts_ui_service, "complete_assessment")(expected_asmt)
     getattr(asmts_ui_service, action)(expected_asmt)
     # 'expected_asmt': updated_at (outdated)
     expected_asmt = (expected_asmt.update_attrs(
