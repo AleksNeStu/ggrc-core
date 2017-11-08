@@ -14,7 +14,7 @@
   function checkIsCurrentUserVerifier(verifiers) {
     return verifiers
       .filter(function (verifier) {
-        return verifier.reify().email === GGRC.current_user.email;
+        return verifier.id === GGRC.current_user.id;
       }).length;
   }
   /**
