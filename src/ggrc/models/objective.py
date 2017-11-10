@@ -12,12 +12,13 @@ from .audit_object import Auditable
 from .track_object_state import HasObjectState
 from .relationship import Relatable
 from .mixins.with_last_assessment_date import WithLastAssessmentDate
+from .mixins.with_similarity_score import WithSimilarityScore
 
 
 class Objective(WithLastAssessmentDate, Roleable, HasObjectState,
                 CustomAttributable, Auditable, Relatable, Personable,
-                PublicDocumentable, Commentable, TestPlanned, BusinessObject,
-                Indexed, db.Model):
+                PublicDocumentable, Commentable, TestPlanned,
+                WithSimilarityScore, BusinessObject, Indexed, db.Model):
   __tablename__ = 'objectives'
   _include_links = []
   _aliases = {
