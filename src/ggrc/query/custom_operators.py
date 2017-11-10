@@ -22,6 +22,7 @@ from ggrc.query import autocast
 from ggrc.query import my_objects
 from ggrc.query.exceptions import BadQueryException
 from ggrc.snapshotter import rules
+from ggrc.snapshotter.rules import Types
 from ggrc_basic_permissions import UserRole
 
 
@@ -264,11 +265,18 @@ def similar(exp, object_class, target_class, query):
                             .format(similar_class.__name__))
   similar_objects_query = similar_class.get_similar_objects_query(
       id_=exp['ids'][0],
-      types=[object_class.__name__],
+      type_=object_class.__name__,
   )
-  similar_objects_ids = [obj.id for obj in similar_objects_query]
+  similar_objects_ids = [obj[0] for obj in similar_objects_query]
   if similar_objects_ids:
-    return object_class.id.in_(similar_objects_ids)
+    if object_class.__name__ in Types.scoped and \
+       similar_class.__name__ in Types.all:
+      return sqlalchemy.and_(
+          object_class.id.in_(similar_objects_ids),
+          object_class.assessment_type == similar_class.__name__
+      )
+    else:
+      return object_class.id.in_(similar_objects_ids)
   return sqlalchemy.sql.false()
 
 

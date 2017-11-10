@@ -7,12 +7,8 @@ This defines a procedure of getting "similar" objects which have similar
 relationships.
 """
 
-from sqlalchemy import and_
-from sqlalchemy import case
-from sqlalchemy import or_
-from sqlalchemy import select
+import sqlalchemy as sa
 from sqlalchemy.orm import aliased
-from sqlalchemy.sql import func
 
 from ggrc import db
 from ggrc.models.relationship import Relationship
@@ -33,29 +29,30 @@ class WithSimilarityScore(object):
   # }
 
   @classmethod
-  def get_similar_objects_query(cls, id_, types="all", relevant_types=None,
-                                threshold=1):
+  def get_similar_objects_query(cls, id_, type_):
     """Get objects of types similar to cls instance by their mappings.
 
     Args:
       id_: the id of the object to which the search will be applied;
-      types: a list of types of relevant objects (or "all" if you need to find
-             objects of any type);
-      relevant_types: use this parameter to override assessment_type;
-      threshold: use this parameter to set similarity threshold.
+      type_: type of similar object;
 
     Returns:
       SQLAlchemy query that yields results with columns [(id, type, weight)] -
           the id and type of similar objects with respective weights.
     """
-    if not types or (not isinstance(types, list) and types != "all"):
+    from ggrc.snapshotter.rules import Types
+    if cls.__name__ in Types.all:
+      from ggrc.models import relationship_helper
+      # For snapshotted objects similar assessments will be the same as related
+      return relationship_helper.get_ids_related_to(type_, cls.__name__, id_)
+
+    if not type_ and type_ != "all":
       raise ValueError("Expected types = 'all' or a non-empty list of "
-                       "requested types, got {!r} instead.".format(types))
+                       "requested types, got {} instead.".format(type_))
     if not hasattr(cls, "assessment_type"):
       raise AttributeError("Expected 'assessment_type' field defined for "
                            "'{c.__name__}' model.".format(c=cls))
-    if relevant_types is None:
-      relevant_types = db.session.query(cls.assessment_type)\
+    relevant_types = db.session.query(cls.assessment_type)\
                                  .filter(cls.id == id_)
 
     # naming: self is "object", the object mapped to it is "related",
@@ -66,15 +63,15 @@ class WithSimilarityScore(object):
     queries_for_union += cls._join_relationships(id_)
 
     # find "similar" objects based on snapshots
-    queries_for_union += cls._join_snapshots(id_, types)
+    queries_for_union += cls._join_snapshots(id_, type_)
 
     joined = queries_for_union.pop().union_all(*queries_for_union).subquery()
 
     # define weights for every "related" object type with default_weight
-    weight_case = case(
+    weight_case = sa.case(
         [(joined.c.related_type == relevant_types, DEFAULT_WEIGHT)],
         else_=0)
-    weight_sum = func.sum(weight_case).label("weight")
+    weight_sum = sa.func.sum(weight_case).label("weight")
 
     # return the id and type of "similar" object together with its measure of
     # similarity
@@ -82,34 +79,25 @@ class WithSimilarityScore(object):
         joined.c.similar_id.label("id"),
         joined.c.similar_type.label("type"),
         weight_sum,
-    ).filter(or_(
+    ).filter(sa.or_(
         # filter out self
         joined.c.similar_id != id_,
         joined.c.similar_type != cls.__name__,
     ))
 
     # Filter Assessments with proper assessment_type
-    asmnt_cond = case([(
+    asmnt_cond = sa.case([(
         joined.c.similar_type == "Assessment",
-        and_(
+        sa.and_(
             joined.c.similar_id == cls.id,
             cls.assessment_type == relevant_types,
         )
     )], else_=True)
     result = result.join(cls, asmnt_cond)
 
-    # do the filtering by "similar" object types
-    if types is not None:
-      if not types:
-        # types is provided but is empty
-        return []
-      elif types == "all":
-        # any type will pass, no filtering applied
-        pass
-      else:
-        # retain only types from the provided list
-        result = result.filter(joined.c.similar_type.in_(types))
+    result = result.filter(joined.c.similar_type == type_)
 
+    threshold = 1
     # group by "similar" objects to remove duplicated rows
     result = result.group_by(
         joined.c.similar_type,
@@ -121,7 +109,7 @@ class WithSimilarityScore(object):
     return result
 
   @classmethod
-  def _join_snapshots(cls, id_, types):
+  def _join_snapshots(cls, id_, type_):
     """Retrieves related objects with snapshots
 
     Performs a query where it first:
@@ -145,19 +133,19 @@ class WithSimilarityScore(object):
     left_relationship = aliased(Relationship, name="left_relationship")
     right_relationship = aliased(Relationship, name="right_relationship")
 
-    snapshot_ids = select([
+    snapshot_ids = sa.select([
         left_relationship.destination_id.label("snapshot_left_id"),
     ]).where(
-        and_(
+        sa.and_(
             left_relationship.source_type == cls.__name__,
             left_relationship.source_id == id_,
             left_relationship.destination_type == "Snapshot"
         )
     ).union(
-        select([
+        sa.select([
             left_relationship.source_id.label("snapshot_left_id"),
         ]).where(
-            and_(
+            sa.and_(
                 left_relationship.destination_type == cls.__name__,
                 left_relationship.destination_id == id_,
                 left_relationship.source_type == "Snapshot"
@@ -172,7 +160,7 @@ class WithSimilarityScore(object):
 
     right_snapshot_join = left_snapshot_join.outerjoin(
         right_snapshot,
-        and_(
+        sa.and_(
             right_snapshot.child_type == left_snapshot.child_type,
             right_snapshot.child_id == left_snapshot.child_id
         )
@@ -185,11 +173,11 @@ class WithSimilarityScore(object):
             right_relationship.source_id.label("similar_id"),
             right_relationship.source_type.label("similar_type"),
         ).filter(
-            and_(
+            sa.and_(
                 right_relationship.destination_type == "Snapshot",
                 right_relationship.destination_id ==
                 right_snapshot_join.c.right_snapshot_id,
-                right_relationship.source_type.in_(types)
+                right_relationship.source_type == type_
             )
         ),
         db.session.query(
@@ -198,11 +186,11 @@ class WithSimilarityScore(object):
             right_relationship.destination_id.label("similar_id"),
             right_relationship.destination_type.label("similar_type"),
         ).filter(
-            and_(
+            sa.and_(
                 right_relationship.source_type == "Snapshot",
                 right_relationship.source_id ==
                 right_snapshot_join.c.right_snapshot_id,
-                right_relationship.destination_type.in_(types)
+                right_relationship.destination_type == type_
             )
         )
     ]
@@ -218,19 +206,20 @@ class WithSimilarityScore(object):
     """
     # get all Relationships for self
     object_to_related = db.session.query(Relationship).filter(
-        or_(and_(Relationship.source_type == cls.__name__,
+        sa.or_(sa.and_(Relationship.source_type == cls.__name__,
                  Relationship.source_id == id_),
-            and_(Relationship.destination_type == cls.__name__,
+            sa.and_(Relationship.destination_type == cls.__name__,
                  Relationship.destination_id == id_))).subquery()
 
     # define how to get id and type of "related" objects
-    related_id_case = (case([(and_(object_to_related.c.source_id == id_,
+    related_id_case = (sa.case([(sa.and_(object_to_related.c.source_id == id_,
                                    object_to_related.c.source_type ==
                                    cls.__name__),
                               object_to_related.c.destination_id)],
                             else_=object_to_related.c.source_id)
                        .label("related_id"))
-    related_type_case = (case([(and_(object_to_related.c.source_id == id_,
+    related_type_case = (sa.case([(sa.and_(
+                                     object_to_related.c.source_id == id_,
                                      object_to_related.c.source_type ==
                                      cls.__name__),
                                 object_to_related.c.destination_type)],
@@ -248,7 +237,7 @@ class WithSimilarityScore(object):
             related_to_similar.destination_type.label("similar_type"),
         ).join(
             related_to_similar,
-            and_(related_id_case == related_to_similar.source_id,
+            sa.and_(related_id_case == related_to_similar.source_id,
                  related_type_case == related_to_similar.source_type),
         ).filter(
             related_to_similar.source_type != "Snapshot"
@@ -259,7 +248,7 @@ class WithSimilarityScore(object):
             related_to_similar.source_type.label("similar_type"),
         ).join(
             related_to_similar,
-            and_(related_id_case == related_to_similar.destination_id,
+            sa.and_(related_id_case == related_to_similar.destination_id,
                  related_type_case == related_to_similar.destination_type),
         ).filter(
             related_to_similar.destination_type != "Snapshot"
