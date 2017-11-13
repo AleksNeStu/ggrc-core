@@ -49,7 +49,26 @@ export default GGRC.Components('relatedAssessments', {
       needReuse: {
         type: 'boolean',
         value: true,
-      }
+      },
+      relatedObjectType: {
+        get: function () {
+          // Get related object type based on assessment or the instance itself
+          // 'instance.assessment_type' is used for object in "Related assessments" in
+          // assessments info pane.
+          // 'instance.type' is used when we are getting related assessment for
+          // a snapshot.
+          return this.attr('instance.assessment_type') ||
+                 this.attr('instance.type');
+        },
+      },
+      relatedObjectsTitle: {
+        get: function () {
+          const relObjType = this.attr('relatedObjectType');
+
+          const objectName = CMS.Models[relObjType].model_plural;
+          return `Related ${objectName}`;
+        },
+      },
     },
     evidences: [],
     urls: [],
