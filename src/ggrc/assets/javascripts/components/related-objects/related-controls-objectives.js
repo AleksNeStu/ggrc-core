@@ -16,18 +16,21 @@
         parentInstance: {
           value: {}
         },
+        relatedObjectType: {
+          value: null,
+        },
         mappedSnapshots: {
           type: 'boolean',
           value: true
         },
         // Load only Controls and Objectives
         filter: {
-          value: function () {
+          get: function () {
             return {
-              only: ['Control', 'Objective'],
-              exclude: []
+              only: [this.attr('relatedObjectType')],
+              exclude: [],
             };
-          }
+          },
         }
       }
     }

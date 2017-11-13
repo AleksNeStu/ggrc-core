@@ -73,7 +73,7 @@
               {{localize_date instance.created_at}}
             </div>
             <div class="flex-size-3">
-              <related-controls-objectives {parent-instance}="instance">
+              <related-controls-objectives {related-object-type}="relatedObjectType" {parent-instance}="instance">
                 <mapped-objects
                   {mapped-snapshots}="mappedSnapshots"
                   {filter}="filter"
