@@ -1,6 +1,8 @@
 # Copyright (C) 2017 Google Inc.
 # Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
 
+"""Module for Objective model."""
+
 from ggrc import db
 from ggrc.access_control.roleable import Roleable
 from ggrc.fulltext.mixin import Indexed
@@ -19,6 +21,8 @@ class Objective(WithLastAssessmentDate, Roleable, HasObjectState,
                 CustomAttributable, Auditable, Relatable, Personable,
                 PublicDocumentable, Commentable, TestPlanned,
                 WithSimilarityScore, BusinessObject, Indexed, db.Model):
+  """Class representing Objective."""
+
   __tablename__ = 'objectives'
   _include_links = []
   _aliases = {
