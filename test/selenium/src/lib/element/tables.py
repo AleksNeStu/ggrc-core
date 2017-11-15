@@ -100,6 +100,6 @@ class AssessmentRelatedAsmtsTable(CommonTable):
     """
     return [
         (r_asmt[self._elements.ASSESSMENT_TITLE.upper()],
-         r_asmt[self._elements.RELATED_CONTROLS_OBJECTIVES.upper()],
+         r_asmt[self._elements.RELATED_CONTROLS.upper()],
          r_asmt[self._elements.AUDIT_TITLE.upper()])
         for r_asmt in self.get_items()]
