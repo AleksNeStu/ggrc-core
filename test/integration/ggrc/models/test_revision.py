@@ -2,12 +2,14 @@
 # Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
 
 """ Tests for ggrc.models.Revision """
+from ggrc import db
 
 import ggrc.models
 import integration.ggrc.generator
 from integration.ggrc import TestCase
 
 from integration.ggrc.models import factories
+from integration.ggrc import api_helper
 
 
 def _get_revisions(obj, field="resource"):
@@ -36,6 +38,7 @@ class TestRevisions(TestCase):
   def setUp(self):
     super(TestRevisions, self).setUp()
     self.gen = integration.ggrc.generator.ObjectGenerator()
+    self.api_helper = api_helper.Api()
 
   def test_revisions(self):
     """ Test revision creation for POST and PUT """
@@ -125,3 +128,38 @@ class TestRevisions(TestCase):
     self.assertIsNotNone(revision)
     self.assertEqual(revision.content["title"], process.title)
     self.assertEqual(revision.content["description"], process.description)
+
+  def test_revision_after_del_cad(self):
+    """Test creating new revision after deleting CAD. In case of deleting CAD,
+        new revision must be created for object, which were have this CAD"""
+    with factories.single_commit():
+      control = factories.ControlFactory()
+
+      cad = factories.CustomAttributeDefinitionFactory(
+          title="test_name",
+          definition_type="control",
+      )
+      factories.CustomAttributeValueFactory(
+          custom_attribute=cad,
+          attributable=control,
+          attribute_value="text")
+
+    revision = ggrc.models.Revision.query.filter(
+        ggrc.models.Revision.resource_id == control.id,
+        ggrc.models.Revision.resource_type == control.type,
+    ).order_by(ggrc.models.Revision.id.desc()).first()
+
+    revision_id = revision.id
+
+    db.session.commit()
+
+    self.api_helper.delete(cad)
+
+    control = ggrc.models.Control.query.first()
+
+    last_revision = ggrc.models.Revision.query.filter(
+        ggrc.models.Revision.resource_id == control.id,
+        ggrc.models.Revision.resource_type == control.type,
+    ).order_by(ggrc.models.Revision.id.desc()).first()
+
+    self.assertGreater(last_revision.id, revision_id)

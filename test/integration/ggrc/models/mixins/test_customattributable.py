@@ -10,6 +10,8 @@ from integration.ggrc import TestCase
 from integration.ggrc.models.factories import ProgramFactory
 from integration.ggrc.models.factories import \
     CustomAttributeDefinitionFactory as CAD
+from integration.ggrc.models import factories
+from integration.ggrc import api_helper
 
 
 class TestCustomAttributableMixin(TestCase):
@@ -198,3 +200,61 @@ class TestCustomAttributableMixin(TestCase):
         set(v.attribute_value for v in prog.custom_attribute_values),
     )
     self.assertEqual(len(prog.custom_attribute_values), 2)
+
+
+class TestCreateRevisionAfterDeleteCAD(TestCase):
+
+  """Test cases for creating new revision after delete CAD"""
+
+  def setUp(self):
+    self.api_helper = api_helper.Api()
+
+  def test_latest_revision_delete_cad(self):
+    """Test creating new revision after deleting CAD. In case of deleting CAD,
+        snapshot attribute is_latest_revision must to be False"""
+    with factories.single_commit():
+      control = factories.ControlFactory()
+      program = factories.ProgramFactory()
+      factories.RelationshipFactory(
+          source=program,
+          destination=control,
+      )
+
+      audit = factories.AuditFactory()
+
+      factories.RelationshipFactory(
+          source=audit,
+          destination=control
+      )
+      cad = factories.CustomAttributeDefinitionFactory(
+          title="test_name",
+          definition_type="control",
+          attribute_type="Text",
+      )
+      factories.CustomAttributeValueFactory(
+          custom_attribute=cad,
+          attributable=control,
+          attribute_value="test")
+
+    last_revision = models.Revision.query.filter(
+        models.Revision.resource_id == control.id,
+        models.Revision.resource_type == control.type,
+    ).order_by(models.Revision.id.desc()).first()
+
+    with factories.single_commit():
+      snapshot = factories.SnapshotFactory(
+          parent=audit,
+          child_id=control.id,
+          child_type=control.type,
+          revision=last_revision)
+
+    db.session.commit()
+
+    self.assertTrue(snapshot.is_latest_revision)
+
+    self.api_helper.delete(cad)
+
+    snapshot = models.Snapshot.query.filter().first()
+    control = models.Control.query.filter().first()
+
+    self.assertFalse(snapshot.is_latest_revision)

@@ -9,6 +9,7 @@ from ggrc.models.hooks import comment
 from ggrc.models.hooks import issue
 from ggrc.models.hooks import relationship
 from ggrc.models.hooks import access_control_list
+from ggrc.models.hooks import custom_attribute_definition
 
 
 ALL_HOOKS = [
@@ -18,6 +19,7 @@ ALL_HOOKS = [
     issue,
     relationship,
     access_control_list,
+    custom_attribute_definition,
 ]
 
 
