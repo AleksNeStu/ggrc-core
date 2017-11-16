@@ -7,9 +7,6 @@ from ggrc import db
 from ggrc import models
 
 from integration.ggrc import TestCase
-from integration.ggrc.models.factories import ProgramFactory
-from integration.ggrc.models.factories import \
-    CustomAttributeDefinitionFactory as CAD
 from integration.ggrc.models import factories
 from integration.ggrc import api_helper
 
@@ -20,9 +17,12 @@ class TestCustomAttributableMixin(TestCase):
 
   def test_setting_ca_values(self):
     """Test normal setting of custom attribute values."""
-    prog = ProgramFactory()
-    cad1 = CAD(definition_type="program", title="CA 1",)
-    cad2 = CAD(definition_type="program", title="CA 2",)
+    with factories.single_commit():
+      prog = factories.ProgramFactory()
+      cad1 = factories.CustomAttributeDefinitionFactory(
+          definition_type="program", title="CA 1",)
+      cad2 = factories.CustomAttributeDefinitionFactory(
+          definition_type="program", title="CA 2",)
 
     prog = prog.__class__.query.get(prog.id)
 
@@ -40,7 +40,7 @@ class TestCustomAttributableMixin(TestCase):
     prog = prog.__class__.query.get(prog.id)
     self.assertEqual(len(prog.custom_attribute_values), 1)
 
-    prog = ProgramFactory()
+    prog = factories.ProgramFactory()
     prog.custom_attribute_values.append(val1)
     db.session.commit()
     prog = prog.__class__.query.get(prog.id)
@@ -50,7 +50,7 @@ class TestCustomAttributableMixin(TestCase):
         set(v.attribute_value for v in prog.custom_attribute_values),
     )
 
-    prog = ProgramFactory()
+    prog = factories.ProgramFactory()
     prog.custom_attribute_values = [val1, val2]
     db.session.commit()
     prog = prog.__class__.query.get(prog.id)
@@ -63,14 +63,15 @@ class TestCustomAttributableMixin(TestCase):
 
   def test_updating_ca_values(self):
     """Test updating custom attribute values."""
-    cad1 = CAD(definition_type="program", title="CA 1",)
+
+    cad1 = factories.CustomAttributeDefinitionFactory(
+        definition_type="program", title="CA 1",)
 
     val1 = models.CustomAttributeValue(
         attribute_value="55",
         custom_attribute=cad1,
     )
-
-    prog = ProgramFactory()
+    prog = factories.ProgramFactory()
     prog.custom_attribute_values = [val1]
     db.session.commit()
 
@@ -90,8 +91,10 @@ class TestCustomAttributableMixin(TestCase):
 
   def test_ca_setattr(self):
     """Test setting custom attribute values with setattr."""
-    prog = ProgramFactory()
-    cad1 = CAD(definition_type="program", title="CA 1",)
+    with factories.single_commit():
+      prog = factories.ProgramFactory()
+      cad1 = factories.CustomAttributeDefinitionFactory(
+          definition_type="program", title="CA 1",)
 
     setattr(prog, "custom_attribute_values", [{
             "attribute_value": "55",
@@ -108,9 +111,12 @@ class TestCustomAttributableMixin(TestCase):
 
   def test_setting_ca_dict(self):
     """Test setting custom attribute values dict."""
-    prog = ProgramFactory()
-    cad1 = CAD(definition_type="program", title="CA 1",)
-    cad2 = CAD(definition_type="program", title="CA 2",)
+    with factories.single_commit():
+      prog = factories.ProgramFactory()
+      cad1 = factories.CustomAttributeDefinitionFactory(
+          definition_type="program", title="CA 1",)
+      cad2 = factories.CustomAttributeDefinitionFactory(
+          definition_type="program", title="CA 2",)
 
     prog.custom_attribute_values = [
         {
@@ -132,8 +138,10 @@ class TestCustomAttributableMixin(TestCase):
 
   def test_updating_ca_dict(self):
     """Test updating custom attribute values with a dict."""
-    prog = ProgramFactory()
-    cad1 = CAD(definition_type="program", title="CA 1",)
+    with factories.single_commit():
+      prog = factories.ProgramFactory()
+      cad1 = factories.CustomAttributeDefinitionFactory(
+          definition_type="program", title="CA 1",)
 
     prog.custom_attribute_values = [{
         "attribute_value": "55",
@@ -152,8 +160,10 @@ class TestCustomAttributableMixin(TestCase):
 
   def test_adding_bad_ca_dict(self):
     """Test setting invalid custom attribute values."""
-    prog = ProgramFactory()
-    cad1 = CAD(definition_type="section", title="CA 1",)
+    with factories.single_commit():
+      prog = factories.ProgramFactory()
+      cad1 = factories.CustomAttributeDefinitionFactory(
+          definition_type="section", title="CA 1",)
 
     with self.assertRaises(ValueError):
       prog.custom_attribute_values = [{
@@ -171,13 +181,15 @@ class TestCustomAttributableMixin(TestCase):
 
   def test_adding_mapping_ca_dict(self):
     """Test adding mapping custom attribute values with a dict."""
-    cad1 = CAD(definition_type="program",
-               attribute_type="Map:Person", title="CA 1",)
-    cad2 = CAD(definition_type="program",
-               attribute_type="Map:Person", title="CA 2",)
+    with factories.single_commit():
+      cad1 = factories.CustomAttributeDefinitionFactory(
+          definition_type="program",
+          attribute_type="Map:Person", title="CA 1",)
+      cad2 = factories.CustomAttributeDefinitionFactory(
+          definition_type="program",
+          attribute_type="Map:Person", title="CA 2",)
     db.session.commit()
-
-    prog = ProgramFactory()
+    prog = factories.ProgramFactory()
     prog.custom_attribute_values = [
         {
             "attribute_value": "Person:1",
@@ -241,12 +253,11 @@ class TestCreateRevisionAfterDeleteCAD(TestCase):
         models.Revision.resource_type == control.type,
     ).order_by(models.Revision.id.desc()).first()
 
-    with factories.single_commit():
-      snapshot = factories.SnapshotFactory(
-          parent=audit,
-          child_id=control.id,
-          child_type=control.type,
-          revision=last_revision)
+    snapshot = factories.SnapshotFactory(
+        parent=audit,
+        child_id=control.id,
+        child_type=control.type,
+        revision=last_revision)
 
     db.session.commit()
 
