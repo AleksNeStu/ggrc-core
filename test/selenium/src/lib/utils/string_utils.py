@@ -120,19 +120,6 @@ def remap_values_for_list_dicts(dict_of_transform_keys, list_dicts):
        for k, v in dic.iteritems()} for dic in list_dicts]
 
 
-def convert_list_elements_to_list(list_to_convert):
-  """Converts list elements in list to sequence of elements:
-  Example: [1, 2, 3, [4, 5], 6, [7]] = [1, 2, 3, 4, 5, 6, 7]
-  """
-  converted_list = []
-  for element in list_to_convert:
-    if isinstance(element, list):
-      converted_list.extend(element)
-    else:
-      converted_list.append(element)
-  return converted_list
-
-
 def merge_dicts_by_same_key(*dicts):
   """Merger multiple (at list two) dictionaries with the same keys to one witch
   will be contain keys (all values from source dicts) and values (all values

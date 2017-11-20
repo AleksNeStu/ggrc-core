@@ -49,7 +49,7 @@ class TestSnapshots(base.Test):
     assert len([exp_controls]) == actual_controls_tab_count
     # 'actual_controls': created_at, updated_at, custom_attributes (None)
     cls.general_equal_assert(exp_controls, actual_controls,
-                             *Representation.tree_view_attrs_to_exclude)
+                             *Representation.tree_view_attrs_names_to_exclude)
 
   @pytest.fixture(scope="function")
   def lhn_menu(self, selenium):
@@ -261,7 +261,7 @@ class TestSnapshots(base.Test):
     # 'actual_controls': created_at, updated_at, custom_attributes (None)
     self.general_equal_assert(
         [expected_control], actual_controls,
-        *Representation.tree_view_attrs_to_exclude)
+        *Representation.tree_view_attrs_names_to_exclude)
 
   @pytest.mark.smoke_tests
   def test_bulk_update_audit_objects_to_latest_ver(
@@ -291,7 +291,7 @@ class TestSnapshots(base.Test):
     # 'actual_controls': created_at, updated_at, custom_attributes (None)
     self.general_equal_assert(
         sorted(expected_controls), sorted(actual_controls),
-        *Representation.tree_view_attrs_to_exclude)
+        *Representation.tree_view_attrs_names_to_exclude)
 
   @pytest.mark.smoke_tests
   @pytest.mark.parametrize("tab_name", [Lhn.ALL_OBJS, Lhn.MY_OBJS])
@@ -339,7 +339,7 @@ class TestSnapshots(base.Test):
     # 'actual_controls': created_at, updated_at, custom_attributes (None)
     expected_controls, actual_controls = entity.Entity.extract_objs(
         [expected_control], actual_controls,
-        *Representation.tree_view_attrs_to_exclude)
+        *Representation.tree_view_attrs_names_to_exclude)
     expected_control = expected_controls[0]
     assert is_found is (expected_control in actual_controls), (
         messages.AssertionMessages.format_err_msg_contains(
@@ -409,14 +409,14 @@ class TestSnapshots(base.Test):
     expected_controls_from_mapper, actual_controls_from_mapper = (
         entity.Entity.extract_objs(
             [expected_control_from_mapper], actual_controls_from_mapper,
-            *Representation.tree_view_attrs_to_exclude))
+            *Representation.tree_view_attrs_names_to_exclude))
     expected_controls_from_tree_view = []
     if expected_control_from_tree_view:
       expected_controls_from_tree_view, actual_controls_from_tree_view = (
           entity.Entity.extract_objs(
               [expected_control_from_tree_view],
               actual_controls_from_tree_view,
-              *Representation.tree_view_attrs_to_exclude))
+              *Representation.tree_view_attrs_names_to_exclude))
     assert (
         expected_is_found
         is (expected_controls_from_mapper[0] in actual_controls_from_mapper)
@@ -448,7 +448,7 @@ class TestSnapshots(base.Test):
     # 'actual_controls': created_at, updated_at, custom_attributes (None)
     expected_control = entity.Entity.extract_objs_wo_excluded_attrs(
         [new_control_rest.repr_ui()],
-        *Representation.tree_view_attrs_to_exclude)[0]
+        *Representation.tree_view_attrs_names_to_exclude)[0]
     controls_ui_service = webui_service.ControlsService(selenium)
     controls_ui_service.map_objs_via_tree_view(
         src_obj=new_audit_rest, dest_objs=[new_control_rest])
@@ -604,7 +604,7 @@ class TestSnapshots(base.Test):
     #                    custom_attributes (GGRC-2344) (None)
     self.general_equal_assert(
         [expected_control], actual_controls,
-        *Representation.tree_view_attrs_to_exclude)
+        *Representation.tree_view_attrs_names_to_exclude)
 
   @pytest.mark.smoke_tests
   @pytest.mark.parametrize(
@@ -629,15 +629,15 @@ class TestSnapshots(base.Test):
     snapshoted_control = create_audit_with_control_and_update_control[
         "new_control_rest"][0]
     expected_obj = (
-        dynamic_objects.repr_ui().update_attrs(status=expected_state))
+        dynamic_objects.repr_ui().update(status=expected_state))
     (webui_service.ControlsService(selenium).map_objs_via_tree_view(
         src_obj=expected_obj, dest_objs=[snapshoted_control]))
     actual_objs = (get_cls_webui_service(
         objects.get_plural(expected_obj.type))(selenium).
         get_list_objs_from_tree_view(src_obj=origin_control))
     # 'actual_controls': created_at, updated_at, custom_attributes (None)
-    exclude_attrs = Representation.tree_view_attrs_to_exclude
-    if dynamic_objects.type == entities_factory.EntitiesFactory.obj_issue:
+    exclude_attrs = Representation.tree_view_attrs_names_to_exclude
+    if dynamic_objects.type == entities_factory.EntitiesFactory.obj_type:
       exclude_attrs = exclude_attrs + ("objects_under_assessment", )
     self.general_equal_assert([expected_obj], actual_objs, *exclude_attrs)
 
@@ -708,7 +708,7 @@ class TestSnapshots(base.Test):
     """
     expected_objs_names_from_mapper = (
         objects.ALL_SNAPSHOTABLE_OBJS + (objects.ISSUES, ))
-    if dynamic_objects.type == entities_factory.EntitiesFactory.obj_issue:
+    if dynamic_objects.type == entities_factory.EntitiesFactory.obj_type:
       expected_objs_names_from_mapper = expected_objs_names_from_mapper + (
           objects.PROGRAMS, objects.PROJECTS)
     expected_objs_names_from_add_widget = expected_objs_names_from_mapper

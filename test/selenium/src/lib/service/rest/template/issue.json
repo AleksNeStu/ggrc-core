@@ -1,16 +1,13 @@
 {
-  "title": null,
-  "url": "",
+  "type": null,
   "slug": null,
+  "title": null,
   "status": null,
-  "owners": [],
-  "contact": null,
   "description": "",
   "test_plan": "",
-  "secondary_contact": null,
   "notes": "",
-  "reference_url": "",
   "custom_attribute_definitions": [],
   "custom_attributes": {},
+  "access_control_list": [],
   "context": null
 }

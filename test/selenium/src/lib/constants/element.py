@@ -59,19 +59,28 @@ class WidgetBar(object):
         setattr(cls, object_, object_.lower())
 
 
+class SystemRoles(object):
+  """Elements' labels and properties for System Roles on UI."""
+  SYSTEM = "System"
+  NO_ROLE = "No role"
+  INACTIVE_USER = "(Inactive user)"
+  ADMIN = "Admin"
+
+
 class AdminWidgetRoles(object):
   """Elements' labels (role scopes) and properties for Roles widget
- at Admin Dashboard.
- """
-  _ADMIN_SCOPE = roles.ADMIN.upper()
-  _SYS_SCOPE = roles.SYSTEM.upper()
-  _PRG_SCOPE = roles.PRIVATE_PROGRAM.upper()
-  _WF_SCOPE = roles.WORKFLOW.upper()
+  at Admin Dashboard.
+  """
+  _ADMIN_SCOPE = SystemRoles.ADMIN.upper()
+  _SYS_SCOPE = SystemRoles.SYSTEM.upper()
+  _PRG_SCOPE = roles.ProgramRoles.PRIVATE_PROGRAM.upper()
+  _WF_SCOPE = roles.WorkflowRoles.WORKFLOW.upper()
   # role scopes
-  ROLE_SCOPE_ADMINISTRATOR = (roles.ADMINISTRATOR, _ADMIN_SCOPE)
-  ROLE_SCOPE_CREATOR = (roles.CREATOR, _SYS_SCOPE)
-  ROLE_SCOPE_EDITOR = (roles.EDITOR, _SYS_SCOPE)
-  ROLE_SCOPE_READER = (roles.READER, _SYS_SCOPE)
+  ROLE_SCOPE_ADMINISTRATOR = (
+      roles.SystemWideRoles.ADMINISTRATOR, _ADMIN_SCOPE)
+  ROLE_SCOPE_CREATOR = (roles.SystemWideRoles.CREATOR, _SYS_SCOPE)
+  ROLE_SCOPE_EDITOR = (roles.SystemWideRoles.EDITOR, _SYS_SCOPE)
+  ROLE_SCOPE_READER = (roles.SystemWideRoles.READER, _SYS_SCOPE)
   ROLE_SCOPE_PROGRAM_EDITOR = (roles.PROGRAM_EDITOR, _PRG_SCOPE)
   ROLE_SCOPE_PROGRAM_MANAGER = (roles.PROGRAM_MANAGER, _PRG_SCOPE)
   ROLE_SCOPE_PROGRAM_READER = (roles.PROGRAM_READER, _PRG_SCOPE)
@@ -91,8 +100,8 @@ class AdminWidgetRoles(object):
 
 class AdminWidgetEvents(object):
   """Elements' labels and properties (regular expression) for Event widget
- at Admin Dashboard.
- """
+  at Admin Dashboard.
+  """
   WIDGET_HEADER = "Events"
   TREE_VIEW_ROW_REGEXP = r"^.+\s(by.+)\son\s" + \
       r"(\d{2}/\d{2}/\d{4}\s\d{2}:\d{2}:\d{2}\s[A,P]M)"
@@ -100,8 +109,8 @@ class AdminWidgetEvents(object):
 
 class AdminWidgetCustomAttributes(object):
   """Elements' labels (custom attributes scopes) for Custom Attributes
- widget at Admin Dashboard.
- """
+  widget at Admin Dashboard.
+  """
   WIDGET_HEADER = "Custom Attributes"
   # possible types of custom attributes
   TEXT = "Text"
@@ -137,7 +146,7 @@ class Common(object):
 
 class CommonModalCreate(object):
   """Common elements' labels and properties for Modal to Create object.
- """
+  """
   HIDE_ALL_OPT_FIELDS = "Hide all optional fields"
   SHOW_ALL_OPT_FIELDS = "Show all optional fields"
   SAVE_AND_CLOSE = "Save & Close"
@@ -145,8 +154,8 @@ class CommonModalCreate(object):
 
 class CommonModalSetVisibleFields(Common):
   """Common elements' labels and properties for Modal widow that Select visible
- fields for Tree View.
- """
+  fields for Tree View.
+  """
   MODAL_HEADER_FORMAT = "Set visible fields for {}"
   TITLE = Common.TITLE
   CODE = Common.CODE
@@ -158,9 +167,9 @@ class CommonModalSetVisibleFields(Common):
 
 class TransformationSetVisibleFields(CommonModalSetVisibleFields):
   """To transformation elements' labels and properties for Modal to Set
- visible fields for object as Tree View headers.
- """
-  ADMIN = roles.ADMIN
+  visible fields for object as Tree View headers.
+  """
+  ADMIN = SystemRoles.ADMIN
   PRIMARY_CONTACTS = roles.PRIMARY_CONTACTS
   SECONDARY_CONTACTS = roles.SECONDARY_CONTACTS
   VERIFIED = "Verified"
@@ -205,7 +214,7 @@ class CommonControl(Common):
   """Common elements' labels and properties for Controls objects."""
   CONTROL = objects.get_normal_form(objects.get_singular(objects.CONTROLS))
   STATE = Base.STATE
-  ADMIN = roles.ADMIN
+  ADMIN = SystemRoles.ADMIN
   PRIMARY_CONTACTS = roles.PRIMARY_CONTACTS
   CREATORS = "Creators"
   MAPPED_OBJECTS = "Mapped Objects"
@@ -215,7 +224,7 @@ class CommonObjective(Common):
   """Common elements' labels and properties for Objective objects."""
   OBJECTIVE = objects.get_normal_form(objects.get_singular(objects.OBJECTIVES))
   STATE = Base.STATE
-  ADMIN = roles.ADMIN
+  ADMIN = SystemRoles.ADMIN
   PRIMARY_CONTACTS = roles.PRIMARY_CONTACTS
   CREATORS = "Creators"
   MAPPED_OBJECTS = "Mapped Objects"
@@ -235,7 +244,7 @@ class CommonAssessment(Common):
 
 class CommonAssessmentTemplate(Common):
   """Common elements' labels and properties for Assessment Templates objects.
- """
+  """
   ASMT_TMPL = objects.get_normal_form(
       objects.get_singular(objects.ASSESSMENT_TEMPLATES))
 
@@ -361,8 +370,8 @@ class AssessmentModalSetVisibleFields(CommonModalSetVisibleFields):
 
 class ControlModalSetVisibleFields(CommonModalSetVisibleFields):
   """Common elements' labels and properties for Modal to Set visible
- fields for Controls.
- """
+  fields for Controls.
+  """
   # pylint: disable=too-many-instance-attributes
   MODAL_HEADER = CommonModalSetVisibleFields.MODAL_HEADER_FORMAT.format(
       CommonControl.CONTROL)
@@ -387,8 +396,8 @@ class ControlModalSetVisibleFields(CommonModalSetVisibleFields):
 
 class ObjectiveModalSetVisibleFields(CommonModalSetVisibleFields):
   """Common elements' labels and properties for Modal to Set visible
- fields for Controls.
- """
+  fields for Controls.
+  """
   # pylint: disable=too-many-instance-attributes
   MODAL_HEADER = CommonModalSetVisibleFields.MODAL_HEADER_FORMAT.format(
       CommonObjective.OBJECTIVE)
@@ -403,8 +412,8 @@ class ObjectiveModalSetVisibleFields(CommonModalSetVisibleFields):
 
 class IssueModalSetVisibleFields(CommonModalSetVisibleFields):
   """Common elements' labels and properties for Modal to Set visible
- fields for Issues.
- """
+  fields for Issues.
+  """
   # pylint: disable=too-many-instance-attributes
   MODAL_HEADER = CommonModalSetVisibleFields.MODAL_HEADER_FORMAT.format(
       CommonIssue.ISSUE)
@@ -417,8 +426,8 @@ class IssueModalSetVisibleFields(CommonModalSetVisibleFields):
 
 class ProgramModalSetVisibleFields(CommonModalSetVisibleFields):
   """Common elements' labels and properties for Modal to Set visible
- fields for Programs.
- """
+  fields for Programs.
+  """
   # pylint: disable=too-many-instance-attributes
   MODAL_HEADER = CommonModalSetVisibleFields.MODAL_HEADER_FORMAT.format(
       CommonProgram.PROGRAM)
@@ -437,11 +446,11 @@ class ProgramModalSetVisibleFields(CommonModalSetVisibleFields):
 class MappingStatusAttrs(namedtuple('_MappingStatusAttrs',
                                     ['title', 'is_checked', 'is_disabled'])):
   """Class for representation of html attributes for mapping checkboxes
-   on unified mapper"""
+   on unified mapper."""
 
 
 class DropdownMenuItemTypes(object):
-  """Class for types of DropdownMenu Item according to "icon" css class"""
+  """Class for types of DropdownMenu Item according to "icon" css class."""
   EDIT = "pencil-square-o"
   OPEN = "long-arrow-right"
   GET_PERMALINK = "link"
@@ -460,7 +469,7 @@ class TransformationElements(TransformationSetVisibleFields, CommonAssessment):
 
 
 class AssessmentTabContainer(object):
-  """Elements' labels for Assessment Tab Container"""
+  """Elements' labels for Assessment Tab Container."""
   ASMT_TAB = "Assessment"
   RELATED_ASMTS_TAB = "Related Assessments"
   RELATED_ISSUES_TAB = "Related Issues"

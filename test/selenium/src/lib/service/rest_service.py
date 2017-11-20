@@ -140,8 +140,7 @@ class BaseRestService(object):
         entity_factory=self.entities_factory_cls(), count=count,
         attrs_to_factory=factory_params, **attrs_for_template)
     return Entity.filter_objs_attrs(
-        obj_or_objs=list_objs,
-        attrs_to_include=self.entities_factory_cls().obj_attrs_names)
+        objs=list_objs, attrs_to_include=list_objs[0].__dict__.keys())
 
   def update_objs(self, objs, factory_params=None, **attrs_for_template):
     """Update existing objects via REST API and return list of updated objects
@@ -152,8 +151,7 @@ class BaseRestService(object):
         list_objs_to_update=help_utils.convert_to_list(objs),
         attrs_to_factory=factory_params, **attrs_for_template)
     return Entity.filter_objs_attrs(
-        obj_or_objs=list_objs,
-        attrs_to_include=self.entities_factory_cls().obj_attrs_names)
+        objs=list_objs, attrs_to_include=list_objs[0].__dict__.keys())
 
   def delete_objs(self, objs):
     """Delete existing objects via REST API."""
@@ -244,7 +242,7 @@ class ObjectsOwnersService(HelpRestService):
   def __init__(self):
     super(ObjectsOwnersService, self).__init__(url.OBJECT_OWNERS)
 
-  def assign_owner_to_objs(self, objs, owner=ObjectPersonsFactory().default()):
+  def assign_owner_to_objs(self, objs, owner=ObjectPersonsFactory().default):
     """Assign of an owner to objects."""
     return [self.client.create_object(
         type=objects.get_singular(self.endpoint), ownable=obj.__dict__,
@@ -272,7 +270,7 @@ class ObjectsInfoService(HelpRestService):
   def get_obj(self, obj):
     """Get and return object according to 'obj.type' and 'obj.id'."""
     obj_dict = (BaseRestService.get_items_from_resp(self.client.create_object(
-        type=self.endpoint, object_name=unicode(obj.type),
+        type=self.endpoint, object_name=obj.type,
         filters=query.Query.expression_get_obj_by_id(obj.id))).get(
         "values")[0])
     return Entity.convert_dict_to_obj_repr(obj_dict)

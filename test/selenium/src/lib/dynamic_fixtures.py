@@ -8,6 +8,7 @@
 
 import copy
 
+import lib.utils.help_utils
 from lib import factory
 from lib.constants import element, objects, counters
 from lib.entities.entities_factory import CustomAttributeDefinitionsFactory
@@ -30,7 +31,7 @@ def _get_fixture_from_dict_fixtures(fixture):
     parent_obj = _get_fixture_from_dict_fixtures("new_audit_rest")[0]
     dict_executed_fixtures.update(
         {fixture: Entity.convert_objs_repr_to_snapshot(
-            obj_or_objs=origin_obj, parent_obj=parent_obj)})
+            objs=origin_obj, parent_obj=parent_obj)})
   return {k: v for k, v in dict_executed_fixtures.iteritems()
           if k == fixture}[fixture]
 
@@ -293,7 +294,7 @@ def generate_snapshots_fixtures(fixture):
       _creation_params, _action_params = fixture_params.split("_and_")
     if "_and_" not in fixture_params:
       _creation_params = fixture_params
-    creation_params = string_utils.convert_list_elements_to_list([
+    creation_params = lib.utils.help_utils.convert_list_els_to_list([
         "new_{}_rest".format(param) if "_with_cas" not in param else
         ["new_cas_for_{}_rest".format(objects.get_plural(param.split("_")[0])),
          "new_{}_rest".format(param)]

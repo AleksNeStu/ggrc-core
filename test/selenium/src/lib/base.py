@@ -499,8 +499,8 @@ class MultiInputField(Element):
   """Representing fields that added plus sign."""
   _locators = constants.locator.MultiInputField
 
-  def __init__(self, driver, loc_or_el):
-    super(MultiInputField, self).__init__(driver, loc_or_el)
+  def __init__(self, driver, locator_or_element):
+    super(MultiInputField, self).__init__(driver, locator_or_element)
     self._items = None
     self.add_btn = Button(self.element, self._locators.ADD_BTN_CSS)
 

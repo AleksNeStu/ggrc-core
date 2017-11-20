@@ -9,6 +9,7 @@
 
 import pytest
 
+import lib.utils.help_utils
 from lib import base
 from lib.constants import messages, roles, element, value_aliases as alias
 from lib.constants.element import AssessmentStates
@@ -44,13 +45,13 @@ class TestAssessmentsWorkflow(base.Test):
         comment_objs=expected_asmt_comments)
     assert asmt_comments_panel.is_input_empty is True
     # 'expected_asmt_comments': created_at (None) *factory
-    expected_asmt_comments = [expected_comment.update_attrs(
+    expected_asmt_comments = [expected_comment.update(
         created_at=self.info_service.get_comment_obj(
             paren_obj=expected_asmt,
             comment_description=expected_comment.description).created_at
     ).repr_ui() for expected_comment in expected_asmt_comments]
     # 'expected_asmt': updated_at (outdated)
-    expected_asmt = expected_asmt.update_attrs(
+    expected_asmt = expected_asmt.update(
         updated_at=self.info_service.get_obj(obj=expected_asmt).updated_at,
         comments=expected_asmt_comments).repr_ui()
     actual_asmt = asmts_ui_service.get_obj_from_info_page(obj=expected_asmt)
@@ -189,7 +190,7 @@ class TestAssessmentsWorkflow(base.Test):
       getattr(asmts_ui_service, "complete_assessment")(expected_asmt)
     getattr(asmts_ui_service, action)(expected_asmt)
     # 'expected_asmt': updated_at (outdated)
-    expected_asmt = (expected_asmt.update_attrs(
+    expected_asmt = (expected_asmt.update(
         title=(element.AssessmentInfoWidget.TITLE_EDITED_PART +
                expected_asmt.title if "edit" in action
                else expected_asmt.title),
@@ -234,9 +235,9 @@ class TestAssessmentsWorkflow(base.Test):
     # 'expected_asmt': updated_at (outdated)
     # 'actual_asmts': created_at, updated_at, custom_attributes (None)
     expected_asmt = entity.Entity.extract_objs_wo_excluded_attrs(
-        [expected_asmt.update_attrs(
+        [expected_asmt.update(
             status=AssessmentStates.IN_PROGRESS).repr_ui()],
-        *Representation.tree_view_attrs_to_exclude)[0]
+        *Representation.tree_view_attrs_names_to_exclude)[0]
     expected_results = [{"filter": filter_expr,
                          "objs": [expected_asmt]}
                         for filter_expr in filter_exprs]
@@ -255,9 +256,9 @@ class TestAssessmentsWorkflow(base.Test):
             [{act_res["filter"]: [act_obj.title for act_obj in act_res["objs"]]
               } for act_res in actual_results]) +
         messages.AssertionMessages.format_err_msg_equal(
-            string_utils.convert_list_elements_to_list(
+            lib.utils.help_utils.convert_list_els_to_list(
                 [exp_res["objs"] for exp_res in expected_results]),
-            string_utils.convert_list_elements_to_list(
+            lib.utils.help_utils.convert_list_els_to_list(
                 [act_res["objs"] for act_res in actual_results])))
 
   @pytest.mark.smoke_tests
@@ -282,7 +283,7 @@ class TestAssessmentsWorkflow(base.Test):
     - 'dynamic_objects'.
     - 'dynamic_relationships'.
     """
-    expected_asmt = (new_assessment_rest.update_attrs(
+    expected_asmt = (new_assessment_rest.update(
         objects_under_assessment=[dynamic_objects],
         status=AssessmentStates.IN_PROGRESS))
     expected_titles = [dynamic_objects.title]
@@ -293,7 +294,7 @@ class TestAssessmentsWorkflow(base.Test):
     assert expected_titles == actual_titles
     # 'expected_asmt': updated_at (outdated)
     expected_asmt = (
-        expected_asmt.update_attrs(updated_at=self.info_service.get_obj(
+        expected_asmt.update(updated_at=self.info_service.get_obj(
             obj=expected_asmt).updated_at).repr_ui())
     actual_asmt = asmts_ui_service.get_obj_from_info_page(expected_asmt)
     self.general_equal_assert(expected_asmt, actual_asmt)

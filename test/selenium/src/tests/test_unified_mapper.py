@@ -38,4 +38,4 @@ class TestProgramPage(base.Test):
     # 'actual_controls': created_at, updated_at, custom_attributes (None)
     self.general_equal_assert(
         sorted(expected_controls), sorted(actual_controls),
-        *Representation.tree_view_attrs_to_exclude)
+        *Representation.tree_view_attrs_names_to_exclude)

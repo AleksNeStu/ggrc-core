@@ -6,6 +6,7 @@
 
 import re
 
+import lib.constants.element
 from lib import base
 from lib.constants import locator, objects, element, roles, regex, messages
 from lib.constants.locator import WidgetInfoAssessment
@@ -156,8 +157,9 @@ class InfoWidget(base.Widget):
         int(re.search(regex.TEXT_WO_PARENTHESES,
                       _people_header_parts[1]).group(1)))
     # filter: "\nuser@example.com\n(Inactive user)" to 'user@example.com'
-    people_value_txt = [person for person in _people_value.splitlines()
-                        if person != roles.NO_ROLE_UI]
+    people_value_txt = [
+        person for person in _people_value.splitlines()
+        if person != lib.constants.element.SystemRoles.INACTIVE_USER]
     # if counters are same or None
     if not ((people_count_from_header == len(people_value_txt)) or
        (people_count_from_header == 0 and people_value_txt == ["None"])):

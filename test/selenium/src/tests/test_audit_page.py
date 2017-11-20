@@ -104,6 +104,17 @@ class TestAuditPage(base.Test):
     self.general_equal_assert([expected_asmt], actual_asmts, "modified_by")
 
   @pytest.mark.smoke_tests
+  def test_asmt_sdion(self, new_issue_rest):
+    """Check if Assessment can be created from Audit page via
+    Assessments widget.
+    Preconditions:
+    - Audit created under Program via REST API.
+    """
+    d = new_issue_rest
+    print d
+
+
+  @pytest.mark.smoke_tests
   @pytest.mark.parametrize(
       "dynamic_objects, dynamic_relationships",
       [("new_control_rest", "map_new_program_rest_to_new_control_rest"),
@@ -140,8 +151,7 @@ class TestAuditPage(base.Test):
     self.general_equal_assert(
         expected_asmt, actual_asmt, "custom_attributes", "status")
     self.xfail_equal_assert(
-        expected_asmt, actual_asmt,
-        "Issue in app GGRC-3033, GGRC-3082", "status")
+        expected_asmt, actual_asmt, "Issue in app GGRC-3033", "status")
 
   @pytest.mark.smoke_tests
   @pytest.mark.parametrize(
@@ -210,7 +220,7 @@ class TestAuditPage(base.Test):
     """
     expected_audit = (
         create_and_clone_audit_w_params_to_update["expected_audit"].
-        update_attrs(status=AuditStates.PLANNED).repr_ui())
+          update(status=AuditStates.PLANNED).repr_ui())
     actual_audit = create_and_clone_audit_w_params_to_update["actual_audit"]
     # 'expected_audit': created_at, updated_at, slug (None) *factory
     self.general_equal_assert(
@@ -275,7 +285,7 @@ class TestAuditPage(base.Test):
     #                      modified_by (None)
     is_expect_ggrc_3423 = (expected_asmt_tmpl.status != ObjectStates.DRAFT)
     exclude_attrs = (
-        Representation.tree_view_attrs_to_exclude + ("slug", "modified_by"))
+      Representation.tree_view_attrs_names_to_exclude + ("slug", "modified_by"))
     self.general_equal_assert(
         expected_asmt_tmpl, actual_asmt_tmpls,
         *(exclude_attrs if not is_expect_ggrc_3423 else
@@ -309,10 +319,10 @@ class TestAuditPage(base.Test):
     #                                     custom_attributes (None)
     self.general_equal_assert(
         [expected_control], actual_controls,
-        *Representation.tree_view_attrs_to_exclude)
+        *Representation.tree_view_attrs_names_to_exclude)
     self.general_equal_assert(
         [expected_program], actual_programs,
-        *Representation.tree_view_attrs_to_exclude)
+        *Representation.tree_view_attrs_names_to_exclude)
 
   @pytest.mark.smoke_tests
   def test_dashboard_gca(self, new_control_rest, selenium, base_url):

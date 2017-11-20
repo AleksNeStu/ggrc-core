@@ -1,9 +1,9 @@
 {
-  "title": null,
-  "url": "",
+  "type": null,
   "slug": null,
+  "title": null,
   "status": null,
-  "contact": null,
+
   "kind": "Directive",
   "description": "",
   "secondary_contact": null,

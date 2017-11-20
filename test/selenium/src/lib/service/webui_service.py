@@ -87,8 +87,8 @@ class BaseWebUiService(object):
                   string_utils.STAR in val):
             scope[key] = val.replace(string_utils.STAR, string_utils.BLANK)
     return [
-        Entity.update_objs_attrs_values_by_entered_data(
-            obj_or_objs=factory_obj, is_allow_none_values=False, **scope) for
+        Entity.update_obj_attrs_values_by_entered_data(
+            obj=factory_obj, is_allow_none_values=False, **scope) for
         scope, factory_obj in zip(list_scopes_to_convert, list_factory_objs)]
 
   def open_widget_of_mapped_objs(self, src_obj):
@@ -438,11 +438,11 @@ class AuditsService(BaseWebUiService):
     audit_info_page = self.open_info_page_of_obj(audit_obj)
     (audit_info_page.
      open_info_3bbs().select_clone().confirm_clone(is_full=True))
-    cloned_audit_obj = self.entities_factory_cls().create_empty().update_attrs(
+    cloned_audit_obj = self.entities_factory_cls().create_empty().update(
         url=self.driver.current_url)
     actual_cloned_audit_obj = self.get_obj_from_info_page(obj=cloned_audit_obj)
     self.driver.refresh()
-    return actual_cloned_audit_obj.update_attrs(url=cloned_audit_obj.url)
+    return actual_cloned_audit_obj.update(url=cloned_audit_obj.url)
 
   def bulk_update_via_info_page(self, audit_obj):
     """Open Info page of Audit object and bulk update objects to
