@@ -27,14 +27,6 @@
     </div>
   </div>
   <div class="row-fluid">
-    <div class="span12">
-      <h6>Audit Captain</h6>
-      <p class="oneline">
-        <person-info empty-text="Not assigned" person-obj="instance.contact"></person-info>
-      </p>
-    </div>
-  </div>
-  <div class="row-fluid">
     <div class="span3">
       <h6>Planned Start Date</h6>
       <p>
@@ -77,26 +69,6 @@
 
   <div class="row-fluid">
     <div class="span6">
-      <h6>Auditor</h6>
-      <p class="oneline">
-        {{#with_mapping 'authorizations' instance}}
-          {{#with_auditors instance decoy=authorizations}}
-            <ul class="inner-count-list">
-              {{#each authorizations}}
-                <li>
-                  {{#using auditor=auditors.0.person}}
-                    <person-info empty-text="Not assigned" person-obj="instance.person"></person-info>
-                  {{/using}}
-                </li>
-              {{/each}}
-            </ul>
-          {{else}}
-            <span class="empty-message">Not assigned</span>
-          {{/with_auditors}}
-        {{/with_mapping}}
-      </p>
-    </div>
-    <div class="span6">
       <h6>Audit firm</h6>
       <p>
         {{#using firm=instance.audit_firm}}
@@ -105,6 +77,8 @@
       </p>
     </div>
   </div>
+
+  {{>'/static/mustache/base_objects/contacts.mustache'}}
 
   <div class="links">
     <div class="row-fluid">
