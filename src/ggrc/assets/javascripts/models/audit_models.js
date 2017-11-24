@@ -226,77 +226,13 @@ import '../components/audit/attach-folder-button'
       ).then(update_program_authorizations);
       GGRC.delay_leaving_page_until(dfd);
     },
-    findAuditors: function (returnList) {
-      // If returnList is true, use findAuditors in the
-      //  classical way, where the exact state of the list
-      //  isn't needed immediately (as in a Mustache helper);
-      //  if false, return a deferred that resolves to the list
-      //  when the list is fully ready, for cases like permission
-      //  checks for other modules.
-      var loader = this.get_binding('authorizations');
-      var auditorsList = new can.List();
-      var dfds = [];
-
-      if (returnList) {
-        $.map(loader.list, function (binding) {
-          // FIXME: This works for now, but is sad.
-          var role;
-          if (!binding.instance.selfLink) {
-            return;
-          }
-          role = binding.instance.role.reify();
-
-          function checkRole() {
-            if (role.attr('name') === 'Auditor') {
-              auditorsList.push({
-                person: binding.instance.person.reify(),
-                binding: binding.instance
-              });
-            }
-          }
-
-          if (role.selfLink) {
-            checkRole();
-          } else {
-            role.refresh().then(checkRole);
-          }
-        });
-        return auditorsList;
-      }
-      return loader.refresh_instances().then(function () {
-        $.map(loader.list, function (binding) {
-          // FIXME: This works for now, but is sad.
-          dfds.push(new $.Deferred(function (dfd) {
-            if (!binding.instance.selfLink) {
-              binding.instance.refresh().then(function () {
-                dfd.resolve(binding.instance);
-              });
-            } else {
-              dfd.resolve(binding.instance);
-            }
-          }).then(function (instance) {
-            var role = instance.role.reify();
-
-            function checkRole() {
-              if (role.attr('name') === 'Auditor') {
-                auditorsList.push({
-                  person: instance.person.reify(),
-                  binding: instance
-                });
-              }
-            }
-
-            if (role.selfLink) {
-              checkRole();
-            } else {
-              return role.refresh().then(checkRole);
-            }
-          }));
-        });
-        return $.when.apply($, dfds).then(function () {
-          return auditorsList;
-        });
+    findRoles: function (roleName) {
+      const auditorsRole = GGRC.access_control_roles.find((role) => {
+        return role.name === roleName && role.object_type === 'Audit';
       });
+      return new can.List(this.access_control_list.filter((item) => {
+        return item.ac_role_id === auditorsRole.id;
+      }));
     },
     form_preload() {
       let dfd;

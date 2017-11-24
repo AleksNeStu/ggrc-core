@@ -313,31 +313,19 @@ import {prepareCustomAttributes} from '../plugins/utils/ca-utils';
       this.before_create();
 
       if (this.audit) {
-        auditLead = this.audit.contact.reify();
-        if (currentUser === auditLead) {
-          markForAddition(this, auditLead, 'Creators,Assignees');
-        } else {
-          markForAddition(this, auditLead, 'Assignees');
-          markForAddition(this, currentUser, 'Creators');
-        }
+        const auditors = this.audit.findRoles('Auditors');
+        const auditCaptains = this.audit.findRoles('Audit Captains');
 
         this.initCanUseIssueTracker(this.audit.issue_tracker);
 
-        return this.audit.findAuditors().then(function (list) {
-          list.forEach(function (item) {
-            var type = 'Verifiers';
-            if (item.person === auditLead) {
-              type += ',Assignees';
-            }
-            if (item.person === currentUser) {
-              type += ',Creators';
-            }
-            markForAddition(self, item.person, type);
-          });
+        markForAddition(this, currentUser, 'Creators');
+        auditCaptains.forEach((item) => {
+          markForAddition(this, item.person, 'Assignees');
+        });
+        auditors.forEach((item) => {
+          markForAddition(this, item.person, 'Verifiers');
         });
       }
-
-      markForAddition(this, currentUser, 'Creator');
 
       function markForAddition(instance, user, type) {
         var rolesNames = type.split(',');
