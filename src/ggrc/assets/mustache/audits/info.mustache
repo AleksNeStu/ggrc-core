@@ -43,145 +43,12 @@
               </div>
             </div>
           </div>
-
           <div class="row-fluid wrap-row">
-            <div class="span4">
-              <h6>Planned Start Date</h6>
-              {{#if instance.start_date}}
-                {{localize_date instance.start_date}}
-              {{else}}
-                <span class="empty-message">None</span>
-              {{/if}}
-            </div>
-            <div class="span4">
-              <h6>Planned End Date</h6>
-              {{#if instance.end_date}}
-                {{localize_date instance.end_date}}
-              {{else}}
-                <span class="empty-message">None</span>
-              {{/if}}
-            </div>
-            <div class="span4">
-              <h6>Report Period</h6>
-              {{#if instance.report_start_date}}
-                {{#if instance.report_end_date}}
-                  {{localize_date instance.report_start_date}} - {{localize_date instance.report_end_date}}
-                {{else}}
-                  Starts {{localize_date instance.report_start_date}}
-                {{/if}}
-              {{else}}
-                {{#if instance.report_end_date}}
-                  Ends {{localize_date instance.report_end_date}}
-                {{else}}
-                  <span class="empty-message">None</span>
-                {{/if}}
-              {{/if}}
+            <div>
+              <custom-roles {instance}="instance"></custom-roles>
             </div>
           </div>
 
-          <div class="row-fluid wrap-row">
-            <div class="span4">
-              <h6>Audit Captain</h6>
-              {{#if instance.contact}}
-                {{#using person=instance.contact}}
-                  {{>'/static/mustache/people/popover.mustache'}}
-                {{/using}}
-              {{else}}
-                <span class="empty-message">None</span>
-              {{/if}}
-            </div>
-            <div class="span4">
-              <h6>Audit Firm</h6>
-              {{#using firm=instance.audit_firm}}
-                {{{firstnonempty firm.title '<span class="empty-message">None</span>'}}}
-              {{/using}}
-            </div>
-            <div class="span4">
-              {{! `with_auditors` requires `authorizations` mapping, so preload it }}
-              {{#with_mapping 'auditor_authorizations' instance}}
-                {{#if auditor_authorizations.length}}
-                  <h6>{{#if_equals auditor_authorizations.length 1}}Auditor{{else}}Auditors{{/if_equals}}</h6>
-                  <ul class="inner-count-list">
-                    {{#each auditor_authorizations}}
-                      <li>
-                        {{#using auditor=instance.person}}
-                          {{{renderLive '/static/mustache/people/popover.mustache' person=auditor}}}
-                        {{/using}}
-                        {{^if instance.archived}}
-                            {{#is_allowed 'delete' this}}
-                                <a href="javascript://" class="unmap" data-toggle="unmap">
-                                    <span class="result" {{data 'result'}}></span>
-                                        <i class="fa fa-trash"></i>
-                                </a>
-                            {{/is_allowed}}
-                        {{/if}}
-                      </li>
-                    {{/each}}
-                  </ul>
-                {{else}}
-                  <h6>Auditors</h6>
-                  <span class="empty-message">None</span>
-                {{/if}}
-              {{/with_mapping}}
-              {{^if instance.archived}}
-              {{#is_allowed 'create' 'UserRole' context=instance.context.id}}
-              {{#toggle show_new_object_form}}
-                {{#with_page_object_as 'page_instance'}}
-                <ggrc-quick-add parent_instance="instance" join_model="UserRole">
-                {{#if_config_exist 'external_services.Person'}}
-                <div class="autocomplete-field">
-                  <inline-autocomplete-wrapper
-                    {display-prop}="'email'"
-                    {text-value}="instance.email">
-                    <external-data-autocomplete
-                        {type}="'Person'"
-                        {placeholder}="'Add Auditor'"
-                        {auto-clean}="false"
-                        (item-selected)="controller.autocomplete_select(null, null, {item=%event.selectedItem})"
-                        {min-length}="2"
-                        {search-criteria}="textValue">
-                    </external-data-autocomplete>
-                  </inline-autocomplete-wrapper>
-                  <a href="javascript://" {{toggle_button}}><i class="fa fa-trash"></i></a>
-                </div>
-                {{/if_config_exist}}
-                  {{#prune_context}}
-                  {{^if_config_exist 'external_services.Person'}}
-                  <div class="objective-selector field-wrap">
-                    <input tabindex="3" type="text" name="instance" data-lookup="Person" null-if-empty="true" class="search-icon" placeholder="Add Auditor" {{autocomplete_select}} value="{{instance.email}}">
-                    <a href="javascript://" {{toggle_button}}><i class="fa fa-trash"></i></a>
-                  </div>
-                  {{/if_config_exist}}
-                  {{#with_mapping 'auditor_authorizations' parent_instance}}
-                  <a
-                    href="javascript://"
-                    class="btn btn-small btn-green {{^instance}}disabled{{/instance}} no-float"
-                    data-toggle="submit" {{toggle_button "modal:success"}}
-                    {{#isInAuthList instance auditor_authorizations}}
-                      disabled
-                      title="User already set as an Auditor"
-                    {{/userExists}}
-                    >Add</a>
-                    {{/with_mapping}}
-                  <input type="hidden" name="role_name" value="Auditor" />
-                  {{/prune_context}}
-                </ggrc-quick-add>
-                {{/with_page_object_as}}
-              {{else}}
-                <br>
-                  <a href="javascript://" class="btn btn-small btn-white" {{toggle_button}}>Add Auditor</a>
-              {{/toggle}}
-              {{/is_allowed}}
-              {{/if}}
-            </div>
-          </div>
-
-          <div class="row-fluid wrap-row">
-            <div class="span12">
-              <h6>Code</h6>
-              {{instance.slug}}
-            </div>
-          </div>
           <div class="row-fluid wrap-row">
             <div class="span12">
                 {{#if_helpers '\
@@ -202,30 +69,78 @@
                 {{/if_helpers}}
             </div>
           </div>
-          {{>'/static/mustache/custom_attributes/info.mustache'}}
-
-          {{#displayAssessmentIssueTracker instance.can_use_issue_tracker}}
-            <div class="expanded-area">
-              <div class="info-expand">
-                <a class="show-hidden-fields info-show-hide active" href="javascript://">
-                  <span class="out">
-                    <i class="fa fa-caret-right"></i>
-                    SHOW
-                  </span>
-                  <span class="in">
-                    <i class="fa fa-caret-down"></i>
-                    HIDE
-                  </span>
-                  BUGANIZER INFO
-                </a>
+          <div class="custom-attr-wrap info-pane__section">
+            <div class="row-fluid">
+              <div class="span12">
+                <div class="info-expand">
+                  <a class="show-hidden-fields info-show-hide active" href="javascript://">
+                    <span class="out">
+                      <i class="fa fa-caret-right"></i>
+                      Show
+                    </span>
+                    <span class="in">
+                      <i class="fa fa-caret-down"></i>
+                      Hide
+                    </span>
+                    Advanced
+                  </a>
+                </div>
               </div>
-              <div class="hidden-fields-area">
+            </div><!-- row-fluid end -->
+            <div class="hidden-fields-area">
+              <div class="row-fluid wrap-row">
+                <div class="span4">
+                  <h6>Code</h6>
+                  {{instance.slug}}
+                </div>
+                <div class="span4">
+                  <h6>Audit Firm</h6>
+                  {{#using firm=instance.audit_firm}}
+                    {{{firstnonempty firm.title '<span class="empty-message">None</span>'}}}
+                  {{/using}}
+                </div>
+              </div>
+              <div class="row-fluid wrap-row">
+                <div class="span4">
+                  <h6>Planned Start Date</h6>
+                  {{#if instance.start_date}}
+                    {{localize_date instance.start_date}}
+                  {{else}}
+                    <span class="empty-message">None</span>
+                  {{/if}}
+                </div>
+                <div class="span4">
+                  <h6>Planned End Date</h6>
+                  {{#if instance.end_date}}
+                    {{localize_date instance.end_date}}
+                  {{else}}
+                    <span class="empty-message">None</span>
+                  {{/if}}
+                </div>
+                <div class="span4">
+                  <h6>Report Period</h6>
+                  {{#if instance.report_start_date}}
+                    {{#if instance.report_end_date}}
+                      {{localize_date instance.report_start_date}} - {{localize_date instance.report_end_date}}
+                    {{else}}
+                      Starts {{localize_date instance.report_start_date}}
+                    {{/if}}
+                  {{else}}
+                    {{#if instance.report_end_date}}
+                      Ends {{localize_date instance.report_end_date}}
+                    {{else}}
+                      <span class="empty-message">None</span>
+                    {{/if}}
+                  {{/if}}
+                </div>
+              </div>
+              {{>'/static/mustache/custom_attributes/info.mustache'}}
+              {{#displayAssessmentIssueTracker instance.can_use_issue_tracker}}
                 <info-issue-tracker-fields {instance}="instance">
                 </info-issue-tracker-fields>
-              </div>
-            </div>
-          {{/displayAssessmentIssueTracker}}
-
+              {{/displayAssessmentIssueTracker}}
+            </div><!-- hidden-fields-area end -->
+          </div><!-- custom-attr-wrap end -->
         </tab-panel>
         <tab-panel {(panels)}="panels" title-text="Change Log">
             <revision-log {instance}="instance"></revision-log>
