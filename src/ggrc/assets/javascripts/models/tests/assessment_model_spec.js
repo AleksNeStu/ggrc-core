@@ -1,4 +1,4 @@
-/*!
+/*
   Copyright (C) 2017 Google Inc.
   Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
 */
@@ -143,13 +143,12 @@ describe('CMS.Models.Assessment', function () {
       GGRC.access_control_roles = [
         {id: 1, name: 'Admin', object_type: 'Assessment'},
         {id: 2, name: 'Admin', object_type: 'Vendor'},
-        {id: 3, name: 'Primary Contacts', object_type: 'Control'},
         {id: 4, name: 'Secondary Contacts', object_type: 'Assessment'},
         {id: 5, name: 'Principal Assignees', object_type: 'Control'},
-        {id: 6, name: 'Assessor', object_type: 'Assessment'},
         {id: 7, name: 'Secondary Assignees', object_type: 'Assessment'},
-        {id: 8, name: 'Verifier', object_type: 'Assessment'},
-        {id: 9, name: 'Creator', object_type: 'Assessment'},
+        {id: 10, name: 'Creators', object_type: 'Assessment'},
+        {id: 11, name: 'Assignees', object_type: 'Assessment'},
+        {id: 12, name: 'Verifiers', object_type: 'Assessment'},
       ];
     });
 
@@ -157,32 +156,43 @@ describe('CMS.Models.Assessment', function () {
       delete GGRC.access_control_roles;
     });
 
-    it('returns deferred indicates that auditors have been found', function () {
+    it('populates access control roles based on audit roles', function () {
       var model = new CMS.Models.Assessment();
-      var findAuditorsCallbackDfd = 'findAuditorsCallbackDfd';
-      var findAuditorsDfd = function () {
-        return {
-          then: function () {
-            return findAuditorsCallbackDfd;
-          }
-        };
-      };
-      var result;
       spyOn(model, 'before_create');
-      spyOn(model, 'mark_for_addition');
 
+      // Mock out the findRoles function
       model.attr('audit', {
-        findAuditors: findAuditorsDfd,
-        contact: {
-          id: 1,
+        findRoles: (name) => {
+          const roles = {
+            Auditors: [
+              {person: {id: 10, type: 'Person'}},
+              {person: {id: 20, type: 'Person'}},
+            ],
+            'Audit Captains': [
+              {person: {id: 20, type: 'Person'}},
+              {person: {id: 30, type: 'Person'}},
+              {person: {id: 40, type: 'Person'}},
+              {person: {id: 50, type: 'Person'}},
+            ],
+          };
+          return roles[name];
         },
       });
+      model.form_preload(true);
+      // Expect 7 new access_control_roles to be created
+      expect(model.access_control_list.length).toBe(7);
+      checkAcRoles(10, [1]);
+      checkAcRoles(12, [10, 20]);
+      checkAcRoles(11, [20, 30, 40, 50]);
 
-      spyOn(model.audit.contact, 'reify')
-        .and.returnValue({id: 6565});
-
-      result = model.form_preload(true);
-      expect(result).toBe(findAuditorsCallbackDfd);
+      function checkAcRoles(roleId, peopleIds) {
+        const res = can.makeArray(model.access_control_list).filter((acl) => {
+          return acl.ac_role_id === roleId;
+        }).map((acl) => {
+          return acl.person.id;
+        }).sort();
+        expect(res).toEqual(peopleIds);
+      }
     });
   });
 });
