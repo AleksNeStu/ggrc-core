@@ -1658,33 +1658,6 @@ Mustache.registerHelper("if_in", function (needle, haystack, options) {
   return options[found ? "fn" : "inverse"](options.contexts);
 });
 
-Mustache.registerHelper("with_auditors", function (instance, options) {
-  var auditors, auditors_dfd
-    , decoy
-    ;
-
-  instance = resolve_computed(instance);
-  if (options.hash && options.hash.decoy) {
-    decoy = Mustache.resolve(options.hash.decoy);
-    decoy.attr();
-  }
-
-  if (!instance)
-    return "";
-
-  auditors_dfd = Mustache.resolve(instance).findAuditors().done(function (aud) {
-    auditors = aud;
-  });
-  return defer_render("span", function () {
-    if (auditors && auditors.attr("length") > 0) {
-      return options.fn(options.contexts.add({"auditors": auditors}));
-    }
-    else{
-      return options.inverse(options.contexts);
-    }
-  }, auditors_dfd);
-});
-
 Mustache.registerHelper("if_instance_of", function (inst, cls, options) {
   var result;
   cls = resolve_computed(cls);
@@ -1738,41 +1711,6 @@ Mustache.registerHelper('if_config_exist', function (key, options) {
   return configValue ?
     options.fn(options.contexts) :
     options.inverse(options.contexts);
-});
-
-Mustache.registerHelper("if_auditor", function (instance, options) {
-  var audit, auditors_dfd, auditors
-    , admin = Permission.is_allowed("__GGRC_ADMIN__")
-    , editor = GGRC.current_user.system_wide_role === "Editor"
-    , include_admin = !options.hash || options.hash.include_admin !== false;
-
-  instance = Mustache.resolve(instance);
-  instance = !instance ? instance : instance.reify();
-
-  if (!instance) {
-    return '';
-  }
-
-  audit = instance;
-
-  if (!audit) {
-    return '';  // take no action until audit is available
-  }
-
-  audit = audit instanceof CMS.Models.Audit ? audit : audit.reify();
-  auditors = audit.findAuditors(true); // immediate-mode findAuditors
-
-  if ((include_admin && (admin|| editor)) ||
-      can.map(
-          auditors,
-          function (auditor) {
-            if (auditor.person.id === GGRC.current_user.id) {
-              return auditor;
-            }
-        }).length) {
-    return options.fn(options.contexts);
-  }
-  return options.inverse(options.contexts);
 });
 
 Mustache.registerHelper("switch", function (value, options) {

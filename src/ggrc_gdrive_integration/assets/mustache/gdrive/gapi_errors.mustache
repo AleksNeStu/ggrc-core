@@ -27,28 +27,3 @@
       {{error.message}} <strong>(Code {{error.code}})</strong>
     </div>
   </div>
-
-  {{#if_auditor instance}}
-    <div>
-      {{#switch error.code}}
-        {{#case 404}}
-            Contact your Audit Lead ({{#using assignee=instance.contact}}<a href="mailto:{{assignee.email}}">{{assignee.email}}</a>{{/using}}) to request access.
-        {{/case}}
-        {{#case 403}}
-            Contact your Audit Lead ({{#using assignee=instance.contact}}<a href="mailto:{{assignee.email}}">{{assignee.email}}</a>{{/using}}) to request access.
-        {{/case}}
-        {{#case 401}}
-          Try reloading this page. If you see a popup for Google API, make sure to click the Authorize buttons
-        {{/case}}
-        {{#case 500}}
-          Try again later to see if the problem resolves.
-        {{/case}}
-        {{#case 400}}
-          Please contact your Administrators (<a href="mailto:{{ggrc_config_value 'GAPI_ADMIN_GROUP'}}">{{ggrc_config_value 'GAPI_ADMIN_GROUP'}}</a>) and report this problem.
-        {{/case}}
-        {{#default}}
-          Try again later to see if the problem resolves.
-        {{/default}}
-      {{/switch}}
-    </div>
-  {{/if_auditor}}
