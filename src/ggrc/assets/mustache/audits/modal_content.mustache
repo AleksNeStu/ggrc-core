@@ -46,38 +46,6 @@
           </label>
         {{/instance.computed_errors.title}}
       </div>
-      <div class="span3">
-        <label>
-          Audit Captain
-          <span class="required">*</span>
-        </label>
-        <i class="fa fa-person green pull-left icon-field"></i>
-        <div class="objective-selector">
-            {{^if_config_exist 'external_services.Person'}}
-            <input data-id="audit_lead" tabindex="3" type="text" name="contact.email" data-lookup="Person"
-              class="span10 audit-selector search-icon" placeholder="Enter text to search for Audit Captain"
-              value="{{firstnonempty instance.contact.email ''}}" data-no-serialization>
-            {{else}}
-            <inline-autocomplete-wrapper
-              class="inline-block"
-              {instance}="instance"
-              {path}="'contact'"
-              {display-prop}="'email'"
-              {text-value}="contact.email">
-              <external-data-autocomplete
-                {type}="'Person'"
-                {extra-css-class}="'audit-selector search-icon'"
-                {placeholder}="'Enter text to search for Audit Captain'"
-                (item-selected)="setItem(%event.selectedItem)"
-                (criteria-changed)="updateTransient(%event.value)"
-                {auto-clean}="false"
-                {min-length}="2"
-                {search-criteria}="textValue">
-              </external-data-autocomplete>
-            </inline-autocomplete-wrapper>
-            {{/if_config_exist}}
-        </div>
-      </div>
       <div data-id="status_hidden" class="span3 hidable">
         <label>
           Status
@@ -91,7 +59,14 @@
         </div>
       </div>
     </div>
-
+    <div class="row-fluid">
+      <div class="span12 hide-wrap hidable">
+        <access-control-list-roles-helper
+          {instance}="."
+          {is-new-instance}="new_object_form">
+        </access-control-list-roles-helper>
+      </div>
+    </div>
     <div class="row-fluid">
       <div data-id="planned_start_date_hidden" class="span3 hidable">
         <a data-id="hide_effective_date_lk" href="javascript://" class="field-hide" tabindex="-1">hide</a>
@@ -147,67 +122,6 @@
           </div>
         </div>
         <div class="span6 hide-wrap hidable">
-          <div class="row-fluid inner-hide spacing-bottom">
-            <div data-id="auditors_hidden" class="span12 hidable">
-              <ggrc-modal-connector
-                parent_instance="instance"
-                instance_attr="context"
-                source_mapping="auditors"
-                source_mapping_source="parent_instance"
-                mapping="authorized_people"
-                deferred="true"
-                >
-                {{#if list.length}}
-                  <label>
-                    {{#if_equals list.length 1}}Auditor{{else}}Auditors{{/if_equals}}
-                    <a data-id="hide_auditors_lk" href="javascript://" class="field-hide" tabindex="-1">hide</a>
-                  </label>
-                  {{#each list}}
-                  <div class="span12">
-                    {{{renderLive '/static/mustache/people/popover.mustache' person=this}}}
-                    <a href="javascript://" class="unmap" data-toggle="unmap">
-                      <span class="result" {{data 'result'}}></span>
-                      <i class="fa fa-trash" tabindex="11"></i>
-                    </a>
-                  </div>
-                  {{/each}}
-                {{else}}
-                  <label>
-                    Auditors
-                    <a href="javascript://" class="field-hide" tabindex="-1">hide</a>
-                  </label>
-                  <p>No auditor assigned</p>
-                {{/if}}
-              {{#toggle show_new_object_form}}
-                {{^if_config_exist 'external_services.Person'}}
-                  {{#prune_context}}
-                  <div class="span12 objective-selector field-wrap">
-                    <input tabindex="11" type="text" data-lookup="Person" null-if-empty="true" class="search-icon" placeholder="Enter text to search for Auditor" {{autocomplete_select}} value="{{instance.email}}">
-                    <a class="remove-field" href="javascript://" {{toggle_button}}><i class="fa fa-trash"></i></a>
-
-                  </div>
-                  {{/prune_context}}
-                {{else}}
-                  <div class="autocomplete-field">
-                    <external-data-autocomplete
-                      {type}="'Person'"
-                      {extra-css-class}="'search-icon'"
-                      {placeholder}="'Enter text to search for Auditor'"
-                      {auto-clean}="false"
-                      {min-length}="2"
-                      (item-selected)="controller.autocomplete_select(null,null, {item=%event.selectedItem})">
-                    </external-data-autocomplete>
-                    <a class="remove-field" href="javascript://" {{toggle_button}}><i class="fa fa-trash"></i></a>
-                  </div>
-                {{/if_config_exist}}
-                <input type="hidden" name="role_name" value="Auditor" />
-              {{else}}
-                <a data-id="add_auditor" href="javascript://" class="btn btn-small btn-white" tabindex="11" {{toggle_button}}>Add Auditor</a>
-
-              {{/toggle}}
-              </ggrc-modal-connector>
-            </div>
-          </div>
           <div class="row-fluid inner-hide">
             <div data-id="audit_firm_hidden" class="span12 hidable">
               <label>
