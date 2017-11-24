@@ -17,7 +17,7 @@
         <span class="bubble"></span>
       </a>
       <ul class="dropdown-menu three-dots-list" aria-labelledby="drop1" role="menu">
-        {{#if_instance_of parentInstance 'Program|Audit|Workflow'}}
+        {{#if_instance_of parentInstance 'Program|Workflow'}}
           {{#is_allowed 'create' 'delete' 'UserRole' context=parentInstance.context.id}}
             {{#is_info_pin}}
               <li>

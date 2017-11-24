@@ -425,13 +425,8 @@
       objectQuery = {id: data.person_id};
     }
 
-    if (data.base_modal === 'auditor') {
-      baseModalView =
-          '/ggrc_basic_permissions/people_roles/audit_modal.mustache';
-    } else {
-      baseModalView =
-          '/ggrc_basic_permissions/people_roles/base_modal.mustache';
-    }
+    baseModalView =
+        '/ggrc_basic_permissions/people_roles/base_modal.mustache';
 
     return {
       base_modal_view: GGRC.mustache_path + baseModalView,
