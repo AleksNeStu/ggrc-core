@@ -139,6 +139,16 @@ describe('CMS.Models.Assessment', function () {
   });
 
   describe('form_preload() method', function () {
+
+    function checkAcRoles(model, roleId, peopleIds) {
+      const res = can.makeArray(model.access_control_list).filter((acl) => {
+        return acl.ac_role_id === roleId;
+      }).map((acl) => {
+        return acl.person.id;
+      }).sort();
+      expect(res).toEqual(peopleIds);
+    }
+
     beforeAll(function () {
       GGRC.access_control_roles = [
         {id: 1, name: 'Admin', object_type: 'Assessment'},
@@ -181,18 +191,31 @@ describe('CMS.Models.Assessment', function () {
       model.form_preload(true);
       // Expect 7 new access_control_roles to be created
       expect(model.access_control_list.length).toBe(7);
-      checkAcRoles(10, [1]);
-      checkAcRoles(12, [10, 20]);
-      checkAcRoles(11, [20, 30, 40, 50]);
+      checkAcRoles(model, 10, [1]);
+      checkAcRoles(model, 12, [10, 20]);
+      checkAcRoles(model, 11, [20, 30, 40, 50]);
+    });
+    it('defaults correctly when auditors/audit captains are undefined',
+       function () {
+      var model = new CMS.Models.Assessment();
+      spyOn(model, 'before_create');
 
-      function checkAcRoles(roleId, peopleIds) {
-        const res = can.makeArray(model.access_control_list).filter((acl) => {
-          return acl.ac_role_id === roleId;
-        }).map((acl) => {
-          return acl.person.id;
-        }).sort();
-        expect(res).toEqual(peopleIds);
-      }
+      // Mock out the findRoles function
+      model.attr('audit', {
+        findRoles: (name) => {
+          const roles = {
+            Auditors: [],
+            'Audit Captains': [],
+          };
+          return roles[name];
+        },
+      });
+      model.form_preload(true);
+      // Expect 7 new access_control_roles to be created
+      expect(model.access_control_list.length).toBe(2);
+      checkAcRoles(model, 10, [1]);
+      checkAcRoles(model, 11, [1]);
+      checkAcRoles(model, 12, []);
     });
   });
 });

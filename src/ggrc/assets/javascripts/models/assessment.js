@@ -319,6 +319,9 @@ import {prepareCustomAttributes} from '../plugins/utils/ca-utils';
         this.initCanUseIssueTracker(this.audit.issue_tracker);
 
         markForAddition(this, currentUser, 'Creators');
+        if (!auditCaptains.length) {
+          markForAddition(this, currentUser, 'Assignees');
+        }
         auditCaptains.forEach((item) => {
           markForAddition(this, item.person, 'Assignees');
         });
