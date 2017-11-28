@@ -363,7 +363,7 @@ def handle_relationship_creation(session, flush_context):
         assign_obj, other = other, assign_obj
       for acl in assign_obj.access_control_list:
         acr_id = acl.ac_role.id if acl.ac_role else acl.ac_role_id
-        ac_role = get_custom_roles_for(acl.object_type)[acr_id]
+        ac_role = get_custom_roles_for(acl.object_type).get(acr_id, None)
         if ac_role in assign_obj.ASSIGNEE_TYPES:
           assign_stub = Stub(assign_obj.type, assign_obj.id)
           other_stub = Stub(other.type, other.id)
