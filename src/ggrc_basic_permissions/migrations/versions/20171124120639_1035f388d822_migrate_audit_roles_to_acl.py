@@ -19,18 +19,20 @@ down_revision = '5a7fd43e43ae'
 
 AC_TABLE = namedtuple("AC_TABLE", "type table role parent_role")
 AC_PERMISSIONS = namedtuple(
-    "AC_PERMISSIONS", "read update delete mandatory my_work")
+    "AC_PERMISSIONS",
+    "read update delete mandatory my_work default_to_current_user object_type")
 ROLES = {
-    "Auditors": AC_PERMISSIONS(1, 0, 0, 0, 1),
-    "Audit Captains": AC_PERMISSIONS(1, 1, 1, 1, 1),
+    "Auditors": AC_PERMISSIONS(1, 0, 0, 0, 1, 0, "Audit"),
+    "Audit Captains": AC_PERMISSIONS(1, 1, 1, 1, 1, 1, "Audit"),
 }
 MAPPED_ROLES = {
-    "Audit Captains Mapped": AC_PERMISSIONS(1, 1, 1, 0, 0),
-    "Auditors Mapped": AC_PERMISSIONS(1, 0, 0, 0, 0),
-    "Auditors Assessment Mapped": AC_PERMISSIONS(1, 1, 0, 0, 0),
-    "Auditors Document Mapped": AC_PERMISSIONS(1, 1, 0, 0, 0),
-    "Auditors Snapshot Mapped": AC_PERMISSIONS(1, 1, 0, 0, 0),
-    "Auditors Issue Mapped": AC_PERMISSIONS(1, 1, 0, 0, 0),
+    "Audit Captains Mapped": AC_PERMISSIONS(1, 1, 1, 0, 0, 0, "Audit"),
+    "Auditors Mapped": AC_PERMISSIONS(1, 0, 0, 0, 0, 0, "Audit"),
+    "Auditors Assessment Mapped": AC_PERMISSIONS(1, 1, 0, 0, 0, 0,
+                                                 "Assessment"),
+    "Auditors Document Mapped": AC_PERMISSIONS(1, 1, 0, 0, 0, 0, "Document"),
+    "Auditors Snapshot Mapped": AC_PERMISSIONS(1, 1, 0, 0, 0, 0, "Snapshot"),
+    "Auditors Issue Mapped": AC_PERMISSIONS(1, 1, 0, 0, 0, 0, "Issue"),
 }
 ALL_ROLES = dict(ROLES, **MAPPED_ROLES)
 
@@ -63,20 +65,23 @@ def _create_new_roles():
         text("""
             INSERT INTO access_control_roles(
                 name, object_type, created_at, updated_at, `read`, `update`,
-                `delete`, mandatory, non_editable, internal, my_work
+                `delete`, mandatory, non_editable, internal, my_work,
+                default_to_current_user
             )
             VALUES(
                 :role, :object_type, NOW(), NOW(), :read, :update,
-                :delete, :mandatory, :non_editable, :internal, :my_work
+                :delete, :mandatory, :non_editable, :internal, :my_work,
+                :default_to_current_user
             );
         """),
         role=role,
-        object_type="Audit",
+        object_type=permissions.object_type,
         read=permissions.read,
         update=permissions.update,
         delete=permissions.delete,
         mandatory=permissions.mandatory,
         my_work=permissions.my_work,
+        default_to_current_user=permissions.default_to_current_user,
         non_editable="1",
         internal="1" if role in MAPPED_ROLES else "0",
     )
@@ -107,6 +112,8 @@ def _migrate_auditors():
                "Auditors"),
       AC_TABLE("Document", "documents", "Auditors Document Mapped",
                "Auditors"),
+      AC_TABLE("Comment", "comments", "Auditors Mapped",
+               "Auditors"),
       AC_TABLE("Issue", "issues", "Auditors Issue Mapped",
                "Auditors"),
       AC_TABLE("AssessmentTemplate", "assessment_templates", "Auditors Mapped",
@@ -136,6 +143,8 @@ def _migrate_captains():
       AC_TABLE("Assessment", "assessments", "Audit Captains Mapped",
                "Audit Captains"),
       AC_TABLE("Document", "documents", "Audit Captains Mapped",
+               "Audit Captains"),
+      AC_TABLE("Comment", "comments", "Audit Captains Mapped",
                "Audit Captains"),
       AC_TABLE("Issue", "issues", "Audit Captains Mapped",
                "Audit Captains"),
