@@ -6,6 +6,7 @@
 from sqlalchemy import orm
 
 from ggrc import db
+from ggrc.access_control.list import AccessControlList
 from ggrc.access_control.roleable import Roleable
 from ggrc.builder import simple_property
 from ggrc.models.deferred import deferred
@@ -171,29 +172,27 @@ class Audit(Snapshotable,
     db.session.flush()
 
     create_audit_context(self)
-    self._clone_auditors(source_object)
+    self.clone_acls(source_object)
     self.clone_custom_attribute_values(source_object)
 
-  def _clone_auditors(self, audit):
-    """Clone auditors of specified audit.
+  def clone_acls(self, audit):
+    """Clone acl roles like auditors and audit captains
 
     Args:
       audit: Audit instance
     """
-    from ggrc_basic_permissions.models import Role, UserRole
-
-    role = Role.query.filter_by(name="Auditor").first()
-    auditors = [ur.person for ur in UserRole.query.filter_by(
-        role=role, context=audit.context).all()]
-
-    for auditor in auditors:
-      user_role = UserRole(
-          context=self.context,
-          person=auditor,
-          role=role
-      )
-      db.session.add(user_role)
-    db.session.flush()
+    for acl in audit.access_control_list:
+      if acl.parent_id:
+        continue
+      data = {
+          "person_id": acl.person_id,
+          "ac_role_id": acl.ac_role_id,
+          "object_id": self.id,
+          "object_type": "Audit",
+          "context_id": acl.context_id,
+      }
+      new_acl = AccessControlList(**data)
+      db.session.add(new_acl)
 
   def clone(self, source_id, mapped_objects=None):
     """Clone audit with specified whitelisted children.
