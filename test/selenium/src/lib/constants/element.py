@@ -165,7 +165,7 @@ class TransformationSetVisibleFields(CommonModalSetVisibleFields):
   SECONDARY_CONTACTS = roles.SECONDARY_CONTACTS
   VERIFIED = "Verified"
   STATUS = "Status"
-  AUDIT_CAPTAIN = "Audit Captain"
+  AUDIT_CAPTAINS = "Audit Captains"
   MANAGER = "Manager"
   MAPPED_OBJECTS = "Mapped Objects"
   REVIEW_STATE = "Review State"
@@ -193,7 +193,7 @@ class CommonAudit(Common):
   PLANNED_START_DATE = "Planned Start Date"
   PLANNED_END_DATE = "Planned End Date"
   PLANNED_REPORT_PERIOD = "Report Period"
-  AUDIT_CAPTAIN = "Audit Captain"
+  AUDIT_CAPTAINS = "Audit Captains"
   AUDIT_FIRM = " Audit Firm"
   AUDITORS = "Auditors"
   ADD_AUDITOR = "+ Add Auditor"
@@ -290,39 +290,28 @@ class IssueStates(ObjectStates):
 class ProgramInfoWidget(CommonProgram):
   """Elements' labels and properties for Programs Info widgets."""
   WIDGET_HEADER = Base.WIDGET_INFO_HEADER_FORMAT.format(CommonProgram.PROGRAM)
-  OBJECT_REVIEW_UPPER = ReviewStates.OBJECT_REVIEW.upper()
 
 
 class AuditInfoWidget(CommonAudit):
   """Elements' labels and properties for Audits Info widgets."""
   WIDGET_HEADER = Base.WIDGET_INFO_HEADER_FORMAT.format(CommonAudit.AUDIT)
-  TITLE_UPPER = CommonAudit.TITLE.upper()
-  AUDIT_CAPTAIN_UPPER = CommonAudit.AUDIT_CAPTAIN.upper()
-  CODE_UPPER = CommonAudit.CODE.upper()
 
 
 class ControlInfoWidget(CommonControl):
   """Elements' labels and properties for Controls Info widgets."""
   WIDGET_HEADER = Base.WIDGET_INFO_HEADER_FORMAT.format(CommonControl.CONTROL)
-  TITLE_UPPER = CommonControl.TITLE.upper()
-  CODE_UPPER = CommonControl.CODE.upper()
-  OBJECT_REVIEW_UPPER = ReviewStates.OBJECT_REVIEW.upper()
 
 
 class AssessmentInfoWidget(CommonAssessment):
   """Elements' labels and properties for Assessments Info widgets."""
   WIDGET_HEADER = Base.WIDGET_INFO_HEADER_FORMAT.format(CommonAssessment.ASMT)
-  TITLE_UPPER = CommonAssessment.TITLE.upper()
   TITLE_EDITED_PART = "[EDITED]"
-  CODE_UPPER = CommonAssessment.CODE.upper()
   COMMENTS_HEADER = "RESPONSES/COMMENTS"
 
 
 class IssueInfoWidget(CommonIssue):
   """Elements' labels and properties for Issue Info widgets."""
   TITLE_UPPER = CommonIssue.TITLE.upper()
-  CODE_UPPER = CommonIssue.CODE.upper()
-  OBJECT_REVIEW_UPPER = ReviewStates.OBJECT_REVIEW.upper()
 
 
 class AssessmentTemplateModalSetVisibleFields(CommonModalSetVisibleFields):
