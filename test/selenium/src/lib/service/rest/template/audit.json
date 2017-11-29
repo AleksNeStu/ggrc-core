@@ -9,5 +9,6 @@
   "modified_by_id": "1",
   "custom_attribute_definitions": [],
   "custom_attributes": {},
-  "context": null
+  "context": null,
+  "access_control_list": []
 }

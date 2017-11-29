@@ -61,7 +61,7 @@ class Representation(object):
     ui_remap_items = {
         els.MANAGER: "manager", els.VERIFIED: "verified",
         els.STATUS: "status", els.LAST_UPDATED: "updated_at",
-        els.AUDIT_CAPTAIN: "contact", els.CAS: "custom_attributes",
+        els.AUDIT_CAPTAINS: "contact", els.CAS: "custom_attributes",
         els.MAPPED_OBJECTS: "objects_under_assessment",
         els.ASSIGNEES: "assignee",
         els.CREATORS: "creator",
@@ -734,7 +734,7 @@ class ControlEntity(Entity):
       "owners", "created_at", "updated_at", "modified_by"]
   attrs_names_to_repr = Representation.core_attrs_names_to_repr + [
       "status", "contact", "secondary_contact", "updated_at",
-      "os_state", "custom_attributes", "access_control_list", "owners",
+      "os_state", "custom_attributes", "owners",
       "modified_by"]
 
   def __init__(self, status=None, owners=None, contact=None,
@@ -754,9 +754,10 @@ class ControlEntity(Entity):
     self.owners = owners
     self.custom_attribute_definitions = custom_attribute_definitions
     self.custom_attribute_values = custom_attribute_values
+    # ACL [{ac_role_id: *, person: {id: *}, ...]
+    self.access_control_list = access_control_list
     # additional
     self.custom_attributes = custom_attributes  # map of cas def and values
-    self.access_control_list = access_control_list
 
 
 class ObjectiveEntity(Entity):
@@ -769,7 +770,7 @@ class ObjectiveEntity(Entity):
       "created_at", "updated_at", "modified_by"]
   attrs_names_to_repr = Representation.core_attrs_names_to_repr + [
       "status", "contact", "secondary_contact", "updated_at",
-      "os_state", "custom_attributes", "access_control_list", "modified_by"]
+      "os_state", "custom_attributes", "modified_by"]
 
   def __init__(self, status=None, owners=None, contact=None,
                secondary_contact=None, updated_at=None, os_state=None,
@@ -788,9 +789,10 @@ class ObjectiveEntity(Entity):
     self.owners = owners
     self.custom_attribute_definitions = custom_attribute_definitions
     self.custom_attribute_values = custom_attribute_values
+    # ACL [{ac_role_id: *, person: {id: *}, ...]
+    self.access_control_list = access_control_list
     # additional
     self.custom_attributes = custom_attributes  # map of cas def and values
-    self.access_control_list = access_control_list
 
 
 class AuditEntity(Entity):
@@ -808,7 +810,7 @@ class AuditEntity(Entity):
   def __init__(self, status=None, program=None, contact=None,
                updated_at=None, custom_attribute_definitions=None,
                custom_attribute_values=None, custom_attributes=None,
-               created_at=None, modified_by=None):
+               created_at=None, modified_by=None, access_control_list=None):
     super(AuditEntity, self).__init__()
     # REST and UI
     self.status = status  # status (e.g. "Planned")
@@ -818,6 +820,8 @@ class AuditEntity(Entity):
     # REST
     self.custom_attribute_definitions = custom_attribute_definitions
     self.custom_attribute_values = custom_attribute_values
+    # ACL [{ac_role_id: *, person: {id: *}, ...]
+    self.access_control_list = access_control_list
     # additional
     self.program = program  # program title
     self.custom_attributes = custom_attributes  # map of cas def and values
@@ -896,13 +900,13 @@ class AssessmentEntity(Entity):
     self.recipients = recipients  # "Verifiers,Assignees,Creators"
     self.custom_attribute_definitions = custom_attribute_definitions
     self.custom_attribute_values = custom_attribute_values
+    # ACL [{ac_role_id: *, person: {id: *}, ...]
+    self.access_control_list = access_control_list
     # additional
     self.audit = audit  # audit title
     self.custom_attributes = custom_attributes  # map of cas def and values
     # [{"modified_by": *, "created_at": *, "description": *}, {}]
     self.comments = comments
-    # ACL [{ac_role_id: *, person: {id: *}, ...]
-    self.access_control_list = access_control_list
 
 
 class IssueEntity(Entity):
@@ -915,7 +919,7 @@ class IssueEntity(Entity):
       "updated_at", "modified_by"]
   attrs_names_to_repr = Representation.core_attrs_names_to_repr + [
       "status", "contact", "secondary_contact", "updated_at",
-      "custom_attributes", "access_control_list", "os_state", "modified_by"]
+      "custom_attributes", "os_state", "modified_by"]
 
   def __init__(self, status=None, owners=None,
                contact=None, secondary_contact=None, updated_at=None,
@@ -934,6 +938,7 @@ class IssueEntity(Entity):
     self.os_state = os_state  # review state (e.g. "Unreviewed")
     self.custom_attribute_definitions = custom_attribute_definitions
     self.custom_attribute_values = custom_attribute_values
+    # ACL [{ac_role_id: *, person: {id: *}, ...]
+    self.access_control_list = access_control_list
     # additional
     self.custom_attributes = custom_attributes  # map of cas def and values
-    self.access_control_list = access_control_list
