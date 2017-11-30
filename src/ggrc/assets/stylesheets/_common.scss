@@ -746,6 +746,9 @@ p {
     margin-top: 2px;
     padding-top: 2px;
   }
+  &.state-proposed {
+    background: $status-proposed;
+  }
   &.state-notstarted,
   &.state-draft,
   &.state-assigned,

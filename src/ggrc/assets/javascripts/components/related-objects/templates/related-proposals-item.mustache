@@ -1,0 +1,45 @@
+{{!
+  Copyright (C) 2017 Google Inc.
+  Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
+}}
+
+<div class="flex-size-1">
+  <div class="related-proposals__state">
+    <div class="state-value state-{{proposal.status}}"
+      rel="tooltip"
+      data-original-title="{{stateTooltip}}"
+      data-placement="bottom">
+        {{proposal.status}}
+    </div>
+  </div>
+  <div class="related-proposals__author-info">
+    Proposed by {{proposal.created_by.email}}
+    <span class="related-proposals__date">
+      {{localize_date proposal.created_at}}
+    </span>
+  </div>
+</div>
+<div class="flex-size-3">
+  {{#fieldsDiff}}
+    <div class="related-proposals__row--attributes flex-box">
+      <div class="flex-size-1 related-proposals__attr">
+        {{fieldName}}
+      </div>
+      <div class="flex-size-1 related-proposals__attr">
+        {{currentVal}}
+      </div>
+      <div class="flex-size-1 related-proposals__attr">
+        {{revisedVal}}
+      </div>
+    </div>
+  {{/fields}}
+</div>
+<div class="flex-size-1 related-proposals__attr">
+  {{{proposal.agenda}}}
+</div>
+<div class="flex-size-1">
+  <accept-decline-proposal-buttons
+    {instance}="instance"
+    {proposal}="proposal">
+  </accept-decline-proposal-buttons>
+</div>

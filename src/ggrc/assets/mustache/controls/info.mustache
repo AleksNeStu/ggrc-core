@@ -248,6 +248,9 @@
           </div>
         </tab-panel>
         {{^if isSnapshot}}
+          <tab-panel {(panels)}="panels" title-text="Change Proposals">
+            <related-proposals {base-instance}="instance"></related-proposals>
+          </tab-panel>
           <tab-panel {(panels)}="panels" title-text="Change Log">
               <revision-log {instance}="instance"></revision-log>
           </tab-panel>

@@ -1,0 +1,25 @@
+{{!
+  Copyright (C) 2017 Google Inc.
+  Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
+}}
+
+<div class="related-proposals__actions">
+  {{#if canDisplayAcceptButton}}
+    <div class="related-proposals__action">
+      <button
+        ($click)="acceptProposal()"
+        class="btn btn-small btn-green">
+          Accept
+      </button>
+    </div>
+  {{/if}}
+  {{#if canDisplayDeclineButton}}
+    <div class="related-proposals__action">
+      <button
+        ($click)="declineProposal()"
+        class="btn btn-small btn-red">
+          Decline
+      </button>
+    </div>
+  {{/if}}
+</div>

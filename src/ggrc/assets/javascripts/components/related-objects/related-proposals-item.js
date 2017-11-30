@@ -1,0 +1,122 @@
+/*
+ Copyright (C) 2017 Google Inc., authors, and contributors
+ Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
+ */
+
+import '../proposal/accept-decline-proposal-buttons';
+import template from './templates/related-proposals-item.mustache';
+const tag = 'related-proposals-item';
+const EMPTY_VALUE = '—';
+
+export default can.Component.extend({
+  tag,
+  template,
+  viewModel: {
+    define: {
+      proposal: {
+        value: {},
+        set(newValue, setValue) {
+          if (newValue) {
+            this.setPeople(newValue);
+            this.buildFieldsDiff(newValue);
+          }
+
+          setValue(newValue);
+        },
+      },
+      fields: {
+        get() {
+          return this.attr('proposal.content.fields');
+        },
+      },
+      status: {
+        get() {
+          return this.attr('proposal.status');
+        },
+      },
+      stateTooltip: {
+        get() {
+          return this.getStateTooltip();
+        },
+      },
+    },
+    fieldsDiff: [],
+    instance: {},
+    buildFieldsDiff(proposal) {
+      const instance = this.attr('instance');
+      const fields = proposal.attr('content.fields') || {};
+      const fieldsKeys = can.Map.keys(fields);
+      const fieldsDiff = [];
+
+      if (!fields || !fieldsKeys.length) {
+        return;
+      }
+
+      fieldsKeys.forEach((key) => {
+        let revisedVal = fields[key];
+        let currentVal = instance.attr(key);
+
+        if (revisedVal !== currentVal) {
+          fieldsDiff.push({
+            fieldName: key,
+            revisedVal: revisedVal || EMPTY_VALUE,
+            currentVal: currentVal || EMPTY_VALUE,
+          });
+        }
+      });
+
+      this.attr('fieldsDiff', fieldsDiff);
+    },
+    setPeople(proposal) {
+      GGRC.Utils.getPersonInfo(proposal.created_by)
+        .then((person) => {
+          proposal.attr('created_by', person);
+      });
+
+      GGRC.Utils.getPersonInfo(proposal.applied_by)
+        .then((person) => {
+          proposal.attr('applied_by', person);
+      });
+
+      GGRC.Utils.getPersonInfo(proposal.declined_by)
+        .then((person) => {
+          proposal.attr('declined_by', person);
+      });
+    },
+
+    getStateTooltip() {
+      const proposal = this.attr('proposal');
+      const status = this.attr('status');
+      let text;
+      let date;
+
+      if (status === 'declined') {
+        date = GGRC.Utils.formatDate(proposal.attr('decline_datetime'));
+        text = this.buildTooltipMessage(
+          'Declined',
+          proposal.attr('declined_by.email'),
+          date,
+          proposal.attr('decline_reason'));
+      } else if (status === 'applied') {
+        date = GGRC.Utils.formatDate(proposal.attr('apply_datetime'));
+        text = this.buildTooltipMessage(
+          'Applied',
+          proposal.attr('applied_by.email'),
+          date,
+          proposal.attr('apply_reason'));
+      }
+
+      return text;
+    },
+
+    // TODO: fix messages
+    buildTooltipMessage(startWord, email, date, comment) {
+      const text = `${startWord} by ${email}, ${date}
+
+        Comment:
+        ${comment}`;
+
+      return text;
+    },
+  },
+});

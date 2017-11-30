@@ -3,6 +3,7 @@
  Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
  */
 
+import RefreshQueue from '../models/refresh_queue';
 import Permission from '../permission';
 
 (function ($, GGRC, moment, CMS) {
@@ -109,7 +110,12 @@ import Permission from '../permission';
 
       if (typeof date === 'string') {
         // string dates are assumed to be in ISO format
-        return moment.utc(date, formats, true).format('MM/DD/YYYY');
+
+        if (hideTime) {
+          return moment.utc(date, formats, true).format('MM/DD/YYYY');
+        }
+        return moment.utc(date, formats, true)
+          .format('MM/DD/YYYY hh:mm:ss A Z');
       }
 
       inst = moment(new Date(date.isComputed ? date() : date));
@@ -120,6 +126,36 @@ import Permission from '../permission';
     },
     fileSafeCurrentDate() {
       return moment().format('YYYY-MM-DD_HH-mm-ss');
+    },
+    getPersonInfo(person) {
+      const dfd = can.Deferred();
+      let actualPerson;
+
+      if (!person || !person.id) {
+        dfd.resolve(person);
+        return dfd;
+      }
+
+      actualPerson = CMS.Models.Person.store[person.id] || {};
+      if (actualPerson.email) {
+        dfd.resolve(actualPerson);
+      } else {
+        actualPerson = new CMS.Models.Person({id: person.id});
+        new RefreshQueue()
+          .enqueue(actualPerson)
+          .trigger()
+          .done((personItem) => {
+            personItem = Array.isArray(personItem) ? personItem[0] : personItem;
+            dfd.resolve(personItem);
+          })
+          .fail(function () {
+            GGRC.Errors.notifier('error',
+              'Failed to fetch data for person ' + person.id + '.');
+            dfd.reject();
+          });
+      }
+
+      return dfd;
     },
     getPickerElement: function (picker) {
       return _.find(_.values(picker), function (val) {
