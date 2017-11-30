@@ -20,6 +20,7 @@
       'timeboxed',
       'accessControlList',
       'base-notifications',
+      'proposable',
     ],
     is_custom_attributable: true,
     isRoleable: true,

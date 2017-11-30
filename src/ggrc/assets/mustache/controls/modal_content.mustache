@@ -68,31 +68,37 @@
         <textarea data-id="note_txtbx" tabindex="5" id="notes" class="span12 double wysihtml5" name="notes" placeholder="Enter Notes">{{{notes}}}</textarea>
       </div>
     </div>
-    <div class="span6 hide-wrap hidable">
-      <div class="row-fluid inner-hide">
-        {{> '/static/mustache/base_objects/modal_content_urls.mustache'}}
+    {{^if isProposal}}
+      <div class="span6 hide-wrap hidable">
+        <div class="row-fluid inner-hide">
+          {{> '/static/mustache/base_objects/modal_content_urls.mustache'}}
+        </div>
       </div>
-    </div>
+    {{/if}}
   </div>
 
-  <div class="row-fluid">
-    <div data-id="folder_hidden" class="span6 hidable">
-      <ggrc-gdrive-folder-picker instance="instance" deferred="true" tabindex="13">
-      </ggrc-gdrive-folder-picker>
+  {{^if isProposal}}
+    <div class="row-fluid">
+      <div data-id="folder_hidden" class="span6 hidable">
+        <ggrc-gdrive-folder-picker instance="instance" deferred="true" tabindex="13">
+        </ggrc-gdrive-folder-picker>
+      </div>
     </div>
-  </div>
+  {{/if}}
 
   <div>
-    <div class="row-fluid">
-      <div data-test-id="control_code_f8abbcc9" data-id="code_hidden" class="span6 hidable">
-        <label>
-          Code
-          <i class="fa fa-question-circle" rel="tooltip" title="The GGRC application will automatically provide codes for new objects.  If you would like to override this feature you may manually enter a code of your choosing.  You should have a specific reason for doing this."></i>
-          <a data-id="hide_code_lk" href="javascript://" class="field-hide" tabindex="-1">hide</a>
-        </label>
-        <input data-id="code_txtbx" tabindex="6" class="input-block-level" name="slug" placeholder="CONTROL-XXX" type="text" value="{{slug}}">
+    {{^if isProposal}}
+      <div class="row-fluid">
+        <div data-test-id="control_code_f8abbcc9" data-id="code_hidden" class="span6 hidable">
+          <label>
+            Code
+            <i class="fa fa-question-circle" rel="tooltip" title="The GGRC application will automatically provide codes for new objects.  If you would like to override this feature you may manually enter a code of your choosing.  You should have a specific reason for doing this."></i>
+            <a data-id="hide_code_lk" href="javascript://" class="field-hide" tabindex="-1">hide</a>
+          </label>
+          <input data-id="code_txtbx" tabindex="6" class="input-block-level" name="slug" placeholder="CONTROL-XXX" type="text" value="{{slug}}">
+        </div>
       </div>
-    </div>
+    {{/if}}
     <div class="row-fluid">
       <div data-test-id="control_kind_nature_dadc232f" data-id="kind_nature_hidden" class="span3 hidable">
         <label>

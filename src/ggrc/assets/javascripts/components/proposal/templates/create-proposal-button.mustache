@@ -1,0 +1,19 @@
+{{!
+  Copyright (C) 2017 Google Inc.
+  Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
+}}
+
+{{#if showProposalButton}}
+  <a href="javascript://"
+    class="btn btn-white btn-small create-proposal__open-modal-button"
+    data-link-purpose="open-edit-modal"
+    data-is-proposal="true"
+    data-toggle="modal-ajax-form"
+    data-modal-reset="reset"
+    data-modal-class="modal-wide"
+    data-object-singular="{{instance.class.model_singular}}"
+    data-object-plural="{{instance.class.table_plural}}"
+    data-object-id="{{instance.id}}">
+      Propose Changes
+  </a>
+{{/if}}

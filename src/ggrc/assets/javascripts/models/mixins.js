@@ -459,6 +459,10 @@ import {isSnapshot} from '../plugins/utils/snapshot-utils';
     }
   });
 
+  can.Model.Mixin('proposable', {
+    isProposable: true,
+  }, {});
+
   can.Model.Mixin('base-notifications', {
     send_by_default: true,
     recipients: 'Admin,Primary Contacts,Secondary Contacts',

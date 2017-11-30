@@ -16,6 +16,7 @@ import '../components/comment/mapped-comments';
 import '../components/object-list-item/document-object-list-item';
 import '../components/object-list-item/editable-document-object-list-item';
 import '../components/show-related-assessments-button/show-related-assessments-button';
+import '../components/proposal/create-proposal-button';
 import '../components/unarchive_link';
 import '../components/sort/sort-by';
 import * as TreeViewUtils from '../plugins/utils/tree-view-utils';

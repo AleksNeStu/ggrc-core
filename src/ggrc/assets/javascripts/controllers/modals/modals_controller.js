@@ -32,6 +32,7 @@ import '../../components/gca-controls/gca-controls';
 import '../../components/datepicker/datepicker';
 import '../../components/external-data-autocomplete/inline-autocomplete-wrapper';
 import '../../components/multi-select-label/multi-select-label';
+import '../../components/proposal/create-proposal';
 import {BUTTON_VIEW_DONE} from '../../plugins/utils/modals'
 import {
   checkPreconditions,
@@ -58,6 +59,7 @@ export default can.Control({
     reset_visible: false,
     extraCssClass: '',
     afterFetch: function () {},
+    isProposal: false,
     isSaving: false  // is there a save/map operation currently in progress
   },
 

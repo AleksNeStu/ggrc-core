@@ -7,6 +7,7 @@ import Spinner from 'spin.js';
 import {
   warning,
   BUTTON_VIEW_SAVE_CANCEL_DELETE,
+  BUTTON_CREATE_PROPOSAL,
 } from '../plugins/utils/modals';
 import {
   hasWarningType,
@@ -150,6 +151,7 @@ import Permission from '../permission';
       var model = CMS.Models[$trigger.attr('data-object-singular')] ||
         CMS.ModelHelpers[$trigger.attr('data-object-singular')];
       var mapping = $trigger.data('mapping');
+      var isProposal = $trigger.data('is-proposal');
       var instance;
       var modalTitle;
       var titleOverride;
@@ -176,6 +178,9 @@ import Permission from '../permission';
       if (titleOverride) {
         modalTitle = titleOverride;
       }
+      if (isProposal) {
+        modalTitle = `Proposal for ${model.title_singular}`;
+      }
 
       contentView = $trigger.data('template') ||
         GGRC.mustache_path + '/' +
@@ -187,7 +192,9 @@ import Permission from '../permission';
         .ggrc_controllers_modals({
           new_object_form: !$trigger.attr('data-object-id'),
           object_params: objectParams,
-          button_view: BUTTON_VIEW_SAVE_CANCEL_DELETE,
+          button_view: isProposal ?
+            BUTTON_CREATE_PROPOSAL :
+            BUTTON_VIEW_SAVE_CANCEL_DELETE,
           model: model,
           oldData: {
             status: instance && instance.status // status before changing
@@ -199,6 +206,7 @@ import Permission from '../permission';
           modal_title: objectParams.modal_title || modalTitle,
           content_view: contentView,
           mapping: mapping,
+          isProposal: isProposal,
           $trigger: $trigger
         });
 
