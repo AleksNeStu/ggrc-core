@@ -9,12 +9,14 @@ from werkzeug.exceptions import Forbidden
 
 from ggrc import db
 from ggrc.access_control.roleable import Roleable
+from ggrc import login
 from ggrc.builder import simple_property
 from ggrc.models import assessment
 from ggrc.models import audit
 from ggrc.models import issuetracker_issue
 from ggrc.models import mixins
 from ggrc.models import relationship
+from ggrc.models.mixins import clonable
 from ggrc.models.exceptions import ValidationError
 from ggrc.models.reflection import AttributeInfo
 from ggrc.models import reflection
@@ -25,8 +27,9 @@ from ggrc.rbac.permissions import permissions_for
 
 
 class AssessmentTemplate(assessment.AuditRelationship, relationship.Relatable,
-                         mixins.Titled, mixins.CustomAttributable, Roleable,
-                         mixins.Slugged, mixins.Stateful, Indexed, db.Model):
+                         mixins.Titled, mixins.CustomAttributable,
+                         Roleable, mixins.Slugged, mixins.Stateful,
+                         clonable.MultiClonable, Indexed, db.Model):
   """A class representing the assessment template entity.
 
   An Assessment Template is a template that allows users for easier creation of
@@ -172,6 +175,7 @@ class AssessmentTemplate(assessment.AuditRelationship, relationship.Relatable,
         "test_plan_procedure": self.test_plan_procedure,
         "procedure_description": self.procedure_description,
         "default_people": self.default_people,
+        "modified_by": login.get_current_user(),
     }
     assessment_template_copy = AssessmentTemplate(**data)
     db.session.add(assessment_template_copy)
