@@ -32,7 +32,7 @@ class TestClonable(SnapshotterBaseTestCase):
     self.generator = generator.Generator()
     self.object_generator = generator.ObjectGenerator()
 
-  def clone_object(self, obj, mapped_objects=None):
+  def clone_audit(self, obj, mapped_objects=None):
     """Perform clone operation on an object"""
     if not mapped_objects:
       mapped_objects = []
@@ -48,6 +48,66 @@ class TestClonable(SnapshotterBaseTestCase):
                 "mappedObjects": mapped_objects
             }
         })
+
+  def clone_asmnt_templates(self, obj_ids, audit):
+    """Perform clone operation on an object"""
+    clone_data = [{
+        "sourceObjectIds": obj_ids,
+        "destination": {
+            "type": "Audit",
+            "id": audit.id
+        },
+        "mappedObjects": []
+    }]
+    response = self.api.send_request(
+        self.api.client.post,
+        data=clone_data,
+        api_link="/api/assessment_template/clone"
+    )
+    self.assertEqual(response.status_code, 200)
+
+  def assert_template_copy(self, source, copy, dest_audit):
+    """Check if Assessment Template was cloned properly.
+
+    Args:
+        source: Original object that was cloned.
+        copy: Cloned object.
+        dest_audit: Destination for cloned Assessment Template object.
+    """
+    check_fields = [
+        "template_object_type",
+        "test_plan_procedure",
+        "procedure_description",
+        "default_people",
+        "title"
+    ]
+    # Check that fields in copy template is same as in source
+    self.assertEqual(
+        [getattr(source, f) for f in check_fields],
+        [getattr(copy, f) for f in check_fields],
+    )
+
+    # Check that relationship with Audit was created
+    template_rels = db.session.query(models.Relationship.id).filter_by(
+        source_type=dest_audit.type,
+        source_id=dest_audit.id,
+        destination_type="AssessmentTemplate",
+        destination_id=copy.id,
+    )
+    self.assertEqual(template_rels.count(), 1)
+
+    # Check that copied assessment template has context of Audit
+    self.assertEqual(copy.context, dest_audit.context)
+
+    # Check that local CADs were copied with template
+    for s, d in zip(
+        source.custom_attribute_definitions,
+        copy.custom_attribute_definitions
+    ):
+      self.assertEqual(
+          (s.title, s.definition_type, s.attribute_type),
+          (d.title, d.definition_type, d.attribute_type),
+      )
 
   def test_audit_clone(self):
     """Test that assessment templates get copied correctly"""
@@ -107,7 +167,7 @@ class TestClonable(SnapshotterBaseTestCase):
       attr = factories.CustomAttributeDefinitionFactory(**attribute)
       assessment_template_attributes += [attr]
 
-    self.clone_object(audit, [u"AssessmentTemplate"])
+    self.clone_audit(audit, [u"AssessmentTemplate"])
 
     self.assertEqual(db.session.query(models.Audit).filter(
         models.Audit.title.like("%copy%")).count(), 1)
@@ -131,6 +191,82 @@ class TestClonable(SnapshotterBaseTestCase):
             models.CustomAttributeDefinition.definition_id ==
             assessment_template_1.id
         ).count(), len(assessment_template_attributes_def))
+
+  def test_asmnt_template_clone(self):
+    """Test assessment template cloning"""
+    with factories.single_commit():
+      audit1 = factories.AuditFactory()
+      audit2 = factories.AuditFactory()
+      assessment_template = factories.AssessmentTemplateFactory(
+          template_object_type="Control",
+          procedure_description="Test procedure",
+          title="Test clone of Assessment Template",
+          context=audit1.context,
+      )
+      factories.RelationshipFactory(
+          source=audit1,
+          destination=assessment_template
+      )
+      for cad_type in [
+          "Text", "Rich Text", "Checkbox", "Date", "Dropdown", "Map:Person"
+      ]:
+        factories.CustomAttributeDefinitionFactory(
+            definition_type="assessment_template",
+            definition_id=assessment_template.id,
+            title="Test {}".format(cad_type),
+            attribute_type=cad_type,
+            multi_choice_options="a,b,c" if cad_type == "Dropdown" else "",
+        )
+
+    self.clone_asmnt_templates([assessment_template.id], audit2)
+
+    assessment_template = models.AssessmentTemplate.query.get(
+        assessment_template.id
+    )
+    audit2 = models.Audit.query.get(audit2.id)
+    template_copy = models.AssessmentTemplate.query.filter(
+        models.AssessmentTemplate.title == assessment_template.title,
+        models.AssessmentTemplate.id != assessment_template.id
+    ).first()
+    self.assert_template_copy(assessment_template, template_copy, audit2)
+
+  def test_multiple_templates_clone(self):
+    """Test multiple assessment templates cloning"""
+    template_ids = []
+    assessment_templates = []
+    with factories.single_commit():
+      audit1 = factories.AuditFactory()
+      audit2 = factories.AuditFactory()
+      for i in xrange(10):
+        assessment_template = factories.AssessmentTemplateFactory(
+            template_object_type="Control",
+            procedure_description="Test procedure",
+            title="Assessment template - {}".format(i),
+            context=audit1.context,
+        )
+        assessment_templates.append(assessment_template)
+        template_ids.append(assessment_template.id)
+        factories.RelationshipFactory(
+            source=audit1,
+            destination=assessment_template)
+
+        for cad_type in [
+            "Text", "Rich Text", "Checkbox", "Date", "Dropdown", "Map:Person"
+        ]:
+          factories.CustomAttributeDefinitionFactory(
+              definition_type="assessment_template",
+              definition_id=assessment_template.id,
+              title="Test {}".format(cad_type),
+              attribute_type=cad_type,
+              multi_choice_options="a,b,c" if cad_type == "Dropdown" else "",
+          )
+    self.clone_asmnt_templates(template_ids, audit2)
+    template_copies = models.AssessmentTemplate.query.filter(
+        ~models.AssessmentTemplate.id.in_(template_ids)
+    ).order_by(models.AssessmentTemplate.title).all()
+    db.session.add_all(assessment_templates + [audit2])
+    for source, copy in zip(assessment_templates, template_copies):
+      self.assert_template_copy(source, copy, audit2)
 
   # pylint: disable=unused-argument
   @patch('ggrc.integrations.issues.Client.update_issue')
@@ -161,7 +297,7 @@ class TestClonable(SnapshotterBaseTestCase):
       })
 
     audit = db.session.query(models.Audit).get(audit_id)
-    self.clone_object(audit)
+    self.clone_audit(audit)
 
     self.assertEqual(db.session.query(models.Audit).filter(
         models.Audit.title.like("%copy%")).count(), 1)
@@ -224,7 +360,7 @@ class TestClonable(SnapshotterBaseTestCase):
       attr = factories.CustomAttributeDefinitionFactory(**attribute)
       assessment_template_attributes += [attr]
 
-    self.clone_object(audit, [u"blaaaaaa", 123])
+    self.clone_audit(audit, [u"blaaaaaa", 123])
 
     self.assertEqual(db.session.query(models.Audit).filter(
         models.Audit.title.like("%copy%")).count(), 1)
@@ -294,7 +430,7 @@ class TestClonable(SnapshotterBaseTestCase):
       attr = factories.CustomAttributeDefinitionFactory(**attribute)
       assessment_template_attributes += [attr]
 
-    self.clone_object(audit, [""])
+    self.clone_audit(audit, [""])
 
     self.assertEqual(db.session.query(models.Audit).filter(
         models.Audit.title.like("%copy%")).count(), 1)
@@ -338,7 +474,7 @@ class TestClonable(SnapshotterBaseTestCase):
             object_type="Audit",
             object_id=audit.id).count(), 3, "Auditors not present")
 
-    self.clone_object(audit)
+    self.clone_audit(audit)
 
     audit_copy = db.session.query(models.Audit).filter(
         models.Audit.title.like("%copy%")).first()
@@ -386,7 +522,7 @@ class TestClonable(SnapshotterBaseTestCase):
         attribute_value="CA 1 value"
     )
 
-    self.clone_object(audit)
+    self.clone_audit(audit)
 
     audit_copy = db.session.query(models.Audit).filter(
         models.Audit.title.like("%copy%")).first()
@@ -430,7 +566,7 @@ class TestClonable(SnapshotterBaseTestCase):
     audit = db.session.query(models.Audit).filter(
         models.Audit.title == "Snapshotable audit").one()
 
-    self.clone_object(audit)
+    self.clone_audit(audit)
 
     audit_copy = db.session.query(models.Audit).filter(
         models.Audit.title == "Snapshotable audit - copy 1").one()
