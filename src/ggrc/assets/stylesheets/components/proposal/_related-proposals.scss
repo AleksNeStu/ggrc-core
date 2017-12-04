@@ -77,6 +77,38 @@
   }
 }
 
+.related-proposals-confirm {
+  .simple-modal {
+    &__header {
+      border-bottom: none;
+    }
+
+    &__footer {
+      border-top: none;
+      padding: 16px;
+    }
+  }
+
+  .related-proposals-confirm__header {
+    font-size: 16px;
+    font-weight: 400;
+  }
+
+  .related-proposals-confirm__footer {
+    line-height: 30px;
+
+    .related-proposals-confirm__button {
+      line-height: 18px;
+      margin-left: 10px;
+    }
+  }
+
+  .related-proposals-confirm__description {
+    font-size: 13px;
+    margin-bottom: 6px;
+  }
+}
+
 .related-proposals-tab-warning {
   .nav-tab-warning {
     .fa {

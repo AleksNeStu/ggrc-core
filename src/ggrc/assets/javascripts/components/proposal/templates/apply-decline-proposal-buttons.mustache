@@ -1,0 +1,85 @@
+{{!
+  Copyright (C) 2017 Google Inc.
+  Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
+}}
+
+<div class="related-proposals__actions">
+  {{#if canDisplayApplyButton}}
+    <div class="related-proposals__action">
+      <button
+        ($click)="applyProposal()"
+        class="btn btn-small btn-green">
+          Apply
+      </button>
+    </div>
+  {{/if}}
+  {{#if canDisplayDeclineButton}}
+    <div class="related-proposals__action">
+      <button
+        ($click)="declineProposal()"
+        class="btn btn-small btn-red">
+          Decline
+      </button>
+    </div>
+  {{/if}}
+</div>
+
+<simple-modal modal-title="title" state="modalState" replace-content="true" extra-css-class="related-proposals-confirm">
+  <div class="simple-modal__header flex-box flex-row">
+    <div class="simple-modal__header-text flex-size-1">
+      <div class="simple-modal__title">
+        <div class="related-proposals-confirm__header">
+          {{title}}
+        </div>
+      </div>
+    </div>
+    <button class="btn btn-small btn-icon" ($click)="closeModal">
+      <i class="fa fa-times black"></i>
+    </button>
+  </div>
+
+  <div class="simple-modal__body {{#if isLoading}}loading{{/if}}">
+    <div class="ggrc-form simple-modal__section">
+      <div class="related-proposals-confirm__description">
+        {{description}}
+      </div>
+
+      <div class="ggrc-form-item">
+        <div class="ggrc-form-item__row">
+          <label class="ggrc-form-item__label">
+            Comment
+          </label>
+          <rich-text
+              hidden-toolbar="true"
+              placeholder="Enter comment"
+              {(text)}="actionComment">
+          </rich-text>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="simple-modal__footer">
+    <div class="simple-modal__toolbar related-proposals-confirm__footer">
+      {{#if isApplyAction}}
+        <button class="btn btn-green related-proposals-confirm__button"
+          ($click)="confirm(true)"
+          {{#if isLoading}}disabled{{/if}}>
+            Apply
+        </button>
+      {{else}}
+        <button class="btn btn-red related-proposals-confirm__button"
+          ($click)="confirm()"
+          {{#if isLoading}}disabled{{/if}}>
+            Decline
+        </button>
+      {{/if}}
+      <button class="btn btn-small related-proposals-confirm__button btn-white"
+        ($click)="closeModal"
+        {{#if isLoading}}disabled{{/if}}>
+          Cancel
+      </button>
+      <spinner toggle="isLoading"></spinner>
+    </div>
+  </div>
+</simple-modal>

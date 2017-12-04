@@ -3,7 +3,7 @@
  Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
  */
 
-import '../proposal/accept-decline-proposal-buttons';
+import '../proposal/apply-decline-proposal-buttons';
 import template from './templates/related-proposals-item.mustache';
 const tag = 'related-proposals-item';
 const EMPTY_VALUE = '—';
