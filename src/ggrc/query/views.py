@@ -11,6 +11,7 @@ from flask import request
 from flask import current_app
 from werkzeug.exceptions import BadRequest
 
+from ggrc.models import inflector
 from ggrc.query.exceptions import BadQueryException
 from ggrc.query.default_handler import DefaultHandler
 from ggrc.query.assessment_related_objects import AssessmentRelatedObjects
@@ -122,5 +123,21 @@ def init_query_views(app):
     """Advanced object collection queries view."""
     try:
       return get_objects_by_query()
+    except (NotImplementedError, BadQueryException) as exc:
+      raise BadRequest(exc.message)
+
+
+def init_clone_views(app):
+  # pylint: disable=unused-variable
+  @app.route('/api/<model>/clone', methods=['POST'])
+  @login_required
+  def clone_objects(model):
+    """Clone object view."""
+    try:
+      model_cls = inflector.get_model(model)
+      if hasattr(model_cls, "clone"):
+        return model_cls.handle_model_clone(request.json[0])
+      else:
+        raise NotImplementedError
     except (NotImplementedError, BadQueryException) as exc:
       raise BadRequest(exc.message)
