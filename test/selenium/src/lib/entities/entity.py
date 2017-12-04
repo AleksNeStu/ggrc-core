@@ -234,10 +234,10 @@ class Representation(object):
              all(isinstance(_def, dict)
                  for _def in cas_def)) else None)
         cas_val_dict = (
-            dict([_val.iteritems().next() for _val in cas_val]) if
-            (isinstance(cas_def, list) and
-             all(isinstance(_def, dict)
-                 for _def in cas_def)) else None)
+          dict([_val.iteritems().next() for _val in cas_val]) if
+          (isinstance(cas_def, list) and
+           all(isinstance(_def, dict)
+               for _def in cas_def)) else None)
         cas = StringMethods.merge_dicts_by_same_key(cas_def_dict, cas_val_dict)
         if cas in [{None: None}, {}]:
           cas = None
