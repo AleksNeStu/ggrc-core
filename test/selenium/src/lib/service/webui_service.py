@@ -226,6 +226,7 @@ class BaseWebUiService(object):
     Tree View, fill data according to destination objects, search by them
     titles and then map to source object.
     """
+    # todo: add logic for map destinations objects with different types
     dest_objs_titles = [dest_obj.title for dest_obj in dest_objs]
     dest_objs_widget = self.open_widget_of_mapped_objs(src_obj)
     (dest_objs_widget.tree_view.open_map().
@@ -344,19 +345,23 @@ class BaseWebUiService(object):
 
   def map_objs_via_tree_view_item(self, src_obj, dest_objs):
     """Open generic widget of mapped objects, open unified mapper modal from
-    Tree View, fill data according to destination objects, search by them
-    titles and then map to source object.
+    Tree View, fill data according to destination objects, search by them types
+    and titles and then map to source object for all Tree View's items.
     """
-    dest_objs_titles = [dest_obj.title for dest_obj in dest_objs]
+    # todo: add option to select particular tree view item by title
+    dest_objs_by_type = StringMethods.merge_dicts_by_same_key(
+        [{dest_obj.type: dest_obj} for dest_obj in dest_objs])
     objs_widget = self.open_widget_of_mapped_objs(src_obj)
     objs_tree_view_items = (
         objs_widget.tree_view.get_list_members_as_list_scopes())
-    for obj in objs_tree_view_items:
-      dropdown = objs_widget.tree_view.open_tree_actions_dropdown_by_title(
-          title=obj['TITLE'])
-      dropdown.select_map().map_dest_objs(
-          dest_objs_type=dest_objs[0].type.title(),
-          dest_objs_titles=dest_objs_titles)
+    for obj_tree_view_item in objs_tree_view_items:
+      for _dest_obj_type, _dest_objs in dest_objs_by_type.iteritems():
+        obj_tree_view_dropdown = (
+            objs_widget.tree_view.open_tree_actions_dropdown_by_title(
+                title=obj_tree_view_item['TITLE']))
+        obj_tree_view_dropdown.select_map().map_dest_objs(
+            dest_objs_type=_dest_obj_type.title(),
+            dest_objs_titles=[_dest_obj.title for _dest_obj in _dest_objs])
 
   def unmap_via_info_panel(self, src_obj, obj):
     """Open info panel of 'obj' from generic widget of 'src_obj'. Then unmap
@@ -548,7 +553,7 @@ class AssessmentsService(BaseWebUiService):
     asmt_page = self.open_info_page_of_obj(obj=obj)
     related_asmts_tab = asmt_page.tab_container.get_tab_object(
         element.AssessmentTabContainer.RELATED_ASMTS_TAB)
-    return related_asmts_tab.get_related_titles()
+    return related_asmts_tab.get_related_titles(asmt_type=obj.assessment_type)
 
   def get_related_issues_titles(self, obj):
     """Open assessment Info Page. Open Open Related Issues Tab on Assessment
