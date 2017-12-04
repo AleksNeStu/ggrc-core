@@ -153,24 +153,27 @@ class StringMethods(object):
     return converted_list
 
   @staticmethod
-  def merge_dicts_by_same_key(*dicts):
-    """Merger multiple (at list two) dictionaries with the same keys to one
-    witch will be contain keys (all values from source dicts) and values (all
-    values from destination dicts).
-    Example:
-    :arg *dicts = ({1: 55, 2: 66}, {2: 67, 1: 56})
-    :return {55: 56, 66: 67}
+  def merge_dicts_by_same_key(list_dicts, is_delete_keys=False):
+    """Merger list of two (*or more if not 'is_delete_keys') dictionaries with
+    the same keys.
+    Examples:
+    list_dicts = ({1: 55, 2: 66}, {2: 67, 1: 56})
+    If not 'is_delete_keys' then result: {1: [55, 56], 2: [66, 67]}
+    If 'is_delete_keys' then result: {55: 56, 66: 67} * len(list_dicts) == 2
     """
     merged_dict = defaultdict(list)
-    for _dict in dicts:
+    for _dict in list_dicts:
       if isinstance(_dict, dict):
         for key, val in _dict.iteritems():
           merged_dict[key].append(val)
-    if merged_dict != {None: [None, None]}:
-      merged_dict = {
-          key: val for key, val in merged_dict.iteritems() if
-          val and len(val) == 2}
-    return dict([tuple(item) for item in merged_dict.values()])
+    if is_delete_keys:
+      if (merged_dict != {None: [None, None]} and
+         all(len(values) == 2 for values in merged_dict.values())):
+        merged_dict = {
+            key: val for key, val in merged_dict.items() if
+            val and len(val) == 2}
+      merged_dict = dict([tuple(item) for item in merged_dict.values()])
+    return merged_dict
 
   @staticmethod
   def is_subset_of_dicts(src_dict, dest_dict):
