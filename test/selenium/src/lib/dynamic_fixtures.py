@@ -1,4 +1,4 @@
-# Copyright (C) 2018 Google Inc.
+# Copyright (C) 2017 Google Inc.
 # Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
 "Logical model of dynamic fixtures creation."
 # pylint: disable=invalid-name
@@ -15,7 +15,6 @@ from lib.entities.entity import Representation
 from lib.page.widget import info_widget
 from lib.service import rest_service
 from lib.utils import conftest_utils, test_utils
-from lib.utils.string_utils import StringMethods
 
 dict_executed_fixtures = {}
 
@@ -30,10 +29,10 @@ def _get_fixture_from_dict_fixtures(fixture):
         fixture.replace("_snapshot", ""))
     parent_obj = _get_fixture_from_dict_fixtures("new_audit_rest")[0]
     dict_executed_fixtures.update(
-        {fixture: Representation.convert_repr_to_snapshot(
-            objs=origin_obj, parent_obj=parent_obj)})
-  return {k: v for k, v in dict_executed_fixtures.iteritems()
-          if k == fixture}[fixture]
+        {fixture: Representation.convert_objs_repr_to_snapshot(
+            obj_or_objs=origin_obj, parent_obj=parent_obj)})
+  return copy.deepcopy({k: v for k, v in dict_executed_fixtures.iteritems()
+                        if k == fixture}[fixture])
 
 
 def _new_objs_rest(obj_name, obj_count,  # noqa: ignore=C901
@@ -278,10 +277,13 @@ def generate_common_fixtures(*fixtures):  # noqa: ignore=C901
 def generate_snapshots_fixtures(fixture):
   """Generate, run and return of results for snapshots dynamic fixtures
   according to tuple of fixture name.
-  Example: 'create_audit_with_control__risk_and_update_control'
-           'create_audit_with_controls'
-           'create_audit_with_controls_and_update_control'
-           'create_audit_with_control__risk_and_update_control__risk
+
+  Examples:
+  'create_audit_with_control__objectives__assessments_and_update_control'
+  'create_audit_with_control_with_cas_and_update_control_with_cas'
+  'create_audit_with_control_with_cas_and_delete_cas_for_controls'
+  'create_audit_with_control_and_update_control'
+  'create_audit_with_control_and_delete_control'
   """
   global dict_executed_fixtures
   if isinstance(fixture, str) and fixture.startswith("create_audit_with_"):
@@ -294,16 +296,28 @@ def generate_snapshots_fixtures(fixture):
       _creation_params, _action_params = fixture_params.split("_and_")
     if "_and_" not in fixture_params:
       _creation_params = fixture_params
-    creation_params = StringMethods.convert_list_elements_to_list([
-        "new_{}_rest".format(param) if "_with_cas" not in param else
-        ["new_cas_for_{}_rest".format(objects.get_plural(param.split("_")[0])),
-         "new_{}_rest".format(param)]
-        for param in _creation_params.split("__")])
+    audit_related_obj_names = (
+        objects.ASSESSMENTS, objects.ASSESSMENT_TEMPLATES,
+        objects.get_singular(objects.ASSESSMENTS),
+        objects.get_singular(objects.ASSESSMENT_TEMPLATES))
+    audit_related_creation_params = []
+    creation_params = []
+    for param in _creation_params.split("__"):
+      if "_with_cas" in param:
+        creation_params.append("new_cas_for_{}_rest".format(
+            objects.get_plural(param.split("_")[0])))
+        creation_params.append("new_{}_rest".format(param))
+      else:
+        if param in audit_related_obj_names:
+          audit_related_creation_params.append("new_{}_rest".format(param))
+        else:
+          creation_params.append("new_{}_rest".format(param))
     mapping_params = [
-        "map_new_program_rest_to_new_{}_rest".format(param) for param in
-        _creation_params.split("__")]
-    creation_part = (["new_program_rest"] + creation_params +
-                     mapping_params + ["new_audit_rest"])
+        "map_new_program_rest_to_{}".format(param) for param in
+        creation_params if "new_cas_for_" not in param]
+    creation_part = (
+        ["new_program_rest"] + creation_params + mapping_params +
+        ["new_audit_rest"] + audit_related_creation_params)
     if _action_params:
       if "update" in _action_params:
         updating_params = ["update_{}_rest".format(param) for param in
