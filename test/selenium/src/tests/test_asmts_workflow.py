@@ -10,7 +10,7 @@
 import pytest
 
 from lib import base
-from lib.constants import messages, element, value_aliases as alias
+from lib.constants import messages, element, value_aliases as alias, objects
 from lib.constants.element import AssessmentStates
 from lib.entities import entities_factory
 from lib.entities.entities_factory import (
@@ -77,26 +77,125 @@ class TestAssessmentsWorkflow(base.Test):
     assert ([True] * 2) == log_validation_results, str(log_items_validation)
 
   @pytest.mark.smoke_tests
+  @pytest.mark.parametrize(
+      ("dynamic_objects, dynamic_relationships,"
+       "dynamic_objects_w_factory_params, is_update_type_of_sec_asmt,"
+       "expected_content, dynamic_create_audit_with_control"),
+      [(["new_control_rest", "new_objective_rest"],
+        ["map_new_program_rest_to_new_control_rest",
+         "map_new_program_rest_to_new_objective_rest"],
+        ("new_assessments_rest",
+         {"assessment_type": objects.get_obj_type(objects.CONTROLS)}), False,
+        {"asmt_tab": objects.get_obj_type(objects.CONTROLS),
+         "related_asmts_tab": objects.get_obj_type(objects.CONTROLS),
+         "other_attrs_tab": objects.get_obj_type(objects.OBJECTIVES)}, None),
+       (["new_control_rest", "new_objective_rest"],
+        ["map_new_program_rest_to_new_control_rest",
+         "map_new_program_rest_to_new_objective_rest"],
+        ("new_assessments_rest",
+         {"assessment_type": objects.get_obj_type(objects.OBJECTIVES)}), False,
+        {"asmt_tab": objects.get_obj_type(objects.OBJECTIVES),
+         "related_asmts_tab": objects.get_obj_type(objects.OBJECTIVES),
+         "other_attrs_tab": objects.get_obj_type(objects.CONTROLS)}, None),
+       (["new_control_rest", "new_objective_rest"],
+        ["map_new_program_rest_to_new_control_rest",
+         "map_new_program_rest_to_new_objective_rest"],
+        ("new_assessments_rest",
+         {"assessment_type": objects.get_obj_type(objects.CONTROLS)}), True,
+        {"asmt_tab": objects.get_obj_type(objects.OBJECTIVES),
+         "related_asmts_tab": None,
+         "other_attrs_tab": objects.get_obj_type(objects.CONTROLS)}, None),
+       (["new_objective_rest"],
+        ["map_new_program_rest_to_new_objective_rest"],
+        ("new_assessments_rest",
+         {"assessment_type": objects.get_obj_type(objects.CONTROLS)}), False,
+        {"asmt_tab": None, "related_asmts_tab": None,
+         "other_attrs_tab": objects.get_obj_type(objects.OBJECTIVES)}, None),
+       (["new_control_rest"],
+        ["map_new_program_rest_to_new_control_rest"],
+        ("new_assessment_rest",
+         {"assessment_type": objects.get_obj_type(objects.CONTROLS)}), False,
+        {"asmt_tab": objects.get_obj_type(objects.CONTROLS),
+         "related_asmts_tab": objects.get_obj_type(objects.CONTROLS),
+         "other_attrs_tab": None}, "create_audit_with_control__assessment")],
+      ids=["Same Audit: Map snapshoted Control, Objective to two Assessments "
+           "of Control type",
+           "Same Audit: Map snapshoted Control, Objective to two Assessments "
+           "of Objective type",
+           "Same Audit: Map snapshoted Control, Objective to two Assessments "
+           "of Control and Objective type)",
+           "Same Audit: Map snapshoted Objective to two Assessments "
+           "of Control type",
+           "Different Audits: Map snapshoted Control two different Assessments"
+           "of Control type under different Audits"],
+      indirect=["dynamic_objects", "dynamic_relationships",
+                "dynamic_objects_w_factory_params",
+                "dynamic_create_audit_with_control"])
   def test_asmt_related_asmts(
-      self, new_program_rest, new_control_rest,
-      map_new_program_rest_to_new_control_rest, new_audit_rest,
-      new_assessments_rest, selenium
+      self, new_program_rest, dynamic_objects, dynamic_relationships,
+      new_audit_rest, dynamic_objects_w_factory_params,
+      is_update_type_of_sec_asmt, expected_content,
+      dynamic_create_audit_with_control, selenium
   ):
-    """Test for checking Related Assessments. Map two Assessments to one
-    snapshot of control. And check second Assessment contains in "Related
-    Assessments" Tab of first Assessment. 3 Titles will be compared:
-    Assessment, Audit of Assessment, generic Control.
+    """Extended testing for checking Assessments' relationships under tabs:
+    - 'Related Assessments': check 3 titles of Assessment Under Audit, Audit,
+    snapshot mapped Audit and then to Assessment;
+    - 'Assessment', 'Other Attributes': objects under Assessment related to
+    Assessment's type and other.
     """
-    expected_titles = [(new_assessments_rest[1].title,
-                        new_control_rest.title,
-                        new_audit_rest.title)]
+    # pylint: disable=too-many-locals ; test-case structure
+    snapshoted_control = dynamic_objects.get("new_control_rest")
+    snapshoted_objective = dynamic_objects.get("new_objective_rest")
+    second_audit_fixture = dynamic_create_audit_with_control
+    second_audit = (second_audit_fixture["new_audit_rest"][0]
+                    if second_audit_fixture else None)
+    if second_audit:
+      rest_service.RelationshipsService().map_objs(
+          src_obj=second_audit, dest_objs=snapshoted_control)
+    first_asmt = (
+        dynamic_objects_w_factory_params[0] if not second_audit_fixture
+        else dynamic_objects_w_factory_params)
+    expected_second_asmt = (
+        dynamic_objects_w_factory_params[1] if not second_audit_fixture
+        else second_audit_fixture["new_assessment_rest"][0])
+    if is_update_type_of_sec_asmt:
+      expected_second_asmt = rest_service.AssessmentsService().update_obj(
+          obj=expected_second_asmt, assessment_type=(
+              objects.get_obj_type(objects.OBJECTIVES) if
+              first_asmt.assessment_type ==
+              objects.get_obj_type(objects.CONTROLS) else
+              objects.get_obj_type(objects.CONTROLS)))
+    expected_asmt_related_obj_title, expected_other_related_obj_title = (
+        (snapshoted_control.title if
+         expected_content.get(tab) == objects.get_obj_type(objects.CONTROLS)
+         else snapshoted_objective.title if
+         expected_content.get(tab) == objects.get_obj_type(objects.OBJECTIVES)
+         else None) for tab in ["asmt_tab", "other_attrs_tab"])
+    expected_titles_related_asmts_tab = (
+        [(first_asmt.title, expected_asmt_related_obj_title,
+          new_audit_rest.title)] if expected_content.get("related_asmts_tab")
+        else [])
+    expected_titles_objects_under_assessment = (
+        filter(None, [expected_asmt_related_obj_title,
+                      expected_other_related_obj_title]))
     asmts_ui_service = webui_service.AssessmentsService(selenium)
-    asmts_ui_service.map_objs_via_tree_view_item(
-        src_obj=new_audit_rest, dest_objs=[new_control_rest])
-    related_asmts_objs_titles = (
-        asmts_ui_service.get_related_asmts_titles(
-            obj=new_assessments_rest[0]))
-    assert expected_titles == related_asmts_objs_titles
+    for audit in [new_audit_rest, second_audit]:
+      if audit:
+        asmts_ui_service.map_objs_via_tree_view_item(
+            src_obj=audit,
+            dest_objs=filter(None, [snapshoted_control, snapshoted_objective]))
+    expected_second_asmt = expected_second_asmt.update_attrs(
+        updated_at=self.info_service.get_obj(
+            obj=expected_second_asmt).updated_at,
+        objects_under_assessment=expected_titles_objects_under_assessment,
+        status=AssessmentStates.IN_PROGRESS).repr_ui()
+    actual_titles_related_asmts_tab = (
+        asmts_ui_service.get_related_asmts_titles(obj=expected_second_asmt))
+    actual_second_asmt = (
+        asmts_ui_service.get_obj_from_info_page(expected_second_asmt))
+    assert (
+        expected_titles_related_asmts_tab == actual_titles_related_asmts_tab)
+    self.general_equal_assert(expected_second_asmt, actual_second_asmt)
 
   @pytest.mark.smoke_tests
   def test_raise_issue(
