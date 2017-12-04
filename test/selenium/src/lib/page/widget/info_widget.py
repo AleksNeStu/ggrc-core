@@ -81,6 +81,9 @@ class InfoWidget(base.Widget):
       self.tab_container = self._get_tab_container()
       self.tab_container.tab_controller.active_tab = (
           self.tab_container._elements.OBJ_TAB)
+    # core element to find sub elements
+    self.core_elem = (self.info_widget_elem if self.is_snapshoted_panel else
+                      self.tab_container.active_tab_elem)
     # for overridable methods
     self._extend_list_all_scopes_by_code()
     self._extend_list_all_scopes_by_cas()
@@ -120,7 +123,7 @@ class InfoWidget(base.Widget):
     # pylint: disable=not-an-iterable
     # pylint: disable=invalid-name
     selenium_utils.wait_for_js_to_load(self._driver)
-    all_headers_and_values = self.info_widget_elem.find_elements(
+    all_headers_and_values = self.core_elem.find_elements(
         *custom_scopes_locator if custom_scopes_locator else
         self._locators.HEADERS_AND_VALUES)
     return next((scope.text.splitlines() + [None]
@@ -140,7 +143,7 @@ class InfoWidget(base.Widget):
     # pylint: disable=expression-not-assigned
     _header_msg, _value_msg = (
         "people header: {}, count: {}", "people list: {}, count: {}")
-    people_scopes = self._driver.find_elements(
+    people_scopes = self.core_elem.find_elements(
         *self._locators.PEOPLE_HEADERS_AND_VALUES_CSS)
     [selenium_utils.wait_until_stops_moving(people_scope)
      for people_scope in people_scopes]
@@ -335,33 +338,37 @@ class Programs(InfoWidget):
 
   def __init__(self, driver):
     super(Programs, self).__init__(driver)
-    # todo redesign 'Programs' cls init and related methods and tests
+    # todo: redesign 'Programs' cls init and related methods and tests
     self.show_advanced = base.Toggle(
-        self.info_widget_elem, self._locators.TOGGLE_SHOW_ADVANCED)
+        self.tab_container.active_tab_elem,
+        self._locators.TOGGLE_SHOW_ADVANCED)
     self.show_advanced.toggle()
     self.object_review = base.Label(
         self.info_widget_elem, self._locators.TXT_OBJECT_REVIEW)
     self.submit_for_review = base.Label(
         self.info_widget_elem, self._locators.LINK_SUBMIT_FOR_REVIEW)
     self.description = base.Label(
-        self.info_widget_elem, self._locators.DESCRIPTION)
+        self.tab_container.active_tab_elem, self._locators.DESCRIPTION)
     self.description_entered = base.Label(
-        self.info_widget_elem, self._locators.DESCRIPTION_ENTERED)
-    self.notes = base.Label(self.info_widget_elem, self._locators.NOTES)
+        self.tab_container.active_tab_elem, self._locators.DESCRIPTION_ENTERED)
+    self.notes = (
+        base.Label(self.tab_container.active_tab_elem, self._locators.NOTES))
     self.notes_entered = base.Label(
         self.info_widget_elem, self._locators.NOTES_ENTERED)
     self.manager, self.manager_entered = (
         self.get_header_and_value_txt_from_people_scopes(
             self._elements.PROGRAM_MANAGERS.upper()))
     self.ref_url = base.MultiInputField(
-        self.info_widget_elem, self._locators.REF_URL_CSS)
-    self.code = base.Label(self.info_widget_elem, self._locators.CODE)
+        self.tab_container.active_tab_elem, self._locators.REF_URL_CSS)
+    self.code = base.Label(
+        self.tab_container.active_tab_elem, self._locators.CODE)
     self.code_entered = base.Label(
-        self.info_widget_elem, self._locators.CODE_ENTERED)
+        self.tab_container.active_tab_elem, self._locators.CODE_ENTERED)
     self.effective_date = base.Label(
-        self.info_widget_elem, self._locators.EFFECTIVE_DATE)
+        self.tab_container.active_tab_elem, self._locators.EFFECTIVE_DATE)
     self.effective_date_entered = base.Label(
-        self.info_widget_elem, self._locators.EFFECTIVE_DATE_ENTERED)
+        self.tab_container.active_tab_elem,
+        self._locators.EFFECTIVE_DATE_ENTERED)
 
 
 class Workflows(InfoWidget):
@@ -455,7 +462,7 @@ class Assessments(InfoWidget):
   def _get_mapped_objs_titles_txt(self):
     """Return lists of str for mapped snapshots titles text from current tab.
     """
-    mapped_items = self.info_widget_elem.find_elements(
+    mapped_items = self.tab_container.active_tab_elem.find_elements(
         *self._locators.MAPPED_SNAPSHOTS_CSS)
     return [mapped_el.find_element(
             *self._locators.MAPPED_SNAPSHOT_TITLE_CSS).text
@@ -478,7 +485,8 @@ class Assessments(InfoWidget):
     """
     if (self.tab_container.tab_controller.active_tab.text ==
             element.AssessmentTabContainer.OTHER_ATTRS_TAB):
-      code_elem = base.Label(self.info_widget_elem, self._locators.CODE_CSS)
+      code_elem = base.Label(
+          self.tab_container.active_tab_elem, self._locators.CODE_CSS)
       self.code_lbl_txt = code_elem.element.find_element(
           *self._locators.CODE_HEADER_CSS).text
       self.code_txt = code_elem.element.find_element(

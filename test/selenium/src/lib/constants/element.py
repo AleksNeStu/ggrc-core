@@ -610,7 +610,7 @@ class RelatedAsmtsTab(object):
   """
   TAB_NAME = AssessmentTabContainer.RELATED_ASMTS_TAB
   ASSESSMENT_TITLE = "Assessment Title"
-  RELATED_CONTROLS = "Related Controls"
+  RELATED_OBJECTS = "Related {}"  # '{}' part depend on Assessment's type
   AUDIT_TITLE = "Audit Title"
 
 

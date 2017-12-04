@@ -4,7 +4,7 @@
 import itertools
 
 from lib import base
-from lib.constants import locator, element
+from lib.constants import locator, element, objects
 from lib.page.modal import create_new_object
 from lib.utils import selenium_utils
 
@@ -32,8 +32,7 @@ class CommonTable(base.AbstractTable):
     Return list of WebElement: [WebElement, WebElement ...]
     """
     if not self._rows:
-      self._rows = selenium_utils.get_when_all_visible(
-          self.table_element, self._locators.ROWS)
+      self._rows = self.table_element.find_elements(*self._locators.ROWS)
     return self._rows
 
   def get_cells(self, row):
@@ -92,14 +91,14 @@ class AssessmentRelatedAsmtsTable(CommonTable):
   def reuse_asmt(self):
     raise NotImplementedError
 
-  def get_related_titles(self):
+  def get_related_titles(self, asmt_type):
     """Get titles of Related Assessments and their related Audit and
     Controls titles.
     Return list of tuples, tuples with 3 strings:
       [(str, str, str ), (str, str, str) ...]
     """
-    return [
-        (r_asmt[self._elements.ASSESSMENT_TITLE.upper()],
-         r_asmt[self._elements.RELATED_CONTROLS.upper()],
-         r_asmt[self._elements.AUDIT_TITLE.upper()])
-        for r_asmt in self.get_items()]
+    return [(r_asmt[self._elements.ASSESSMENT_TITLE.upper()],
+             r_asmt[self._elements.RELATED_OBJECTS.format(
+                 objects.get_plural(asmt_type)).upper()],
+             r_asmt[self._elements.AUDIT_TITLE.upper()])
+            for r_asmt in self.get_items()]
