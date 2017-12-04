@@ -29,11 +29,11 @@ def _common_fixtures(fixture):
           if not help_utils.is_multiple_objs(fixture) else fixture)
 
 
-def _snapshots_fixtures(fixturename):
+def _snapshots_fixtures(fixture):
   """Generate snapshot fixtures used generation of common fixtures and return
   dictionary of executed common fixtures in scope of snapshot fixtures.
   """
-  return dynamic_fixtures.generate_snapshots_fixtures(fixturename)
+  return dynamic_fixtures.generate_snapshots_fixtures(fixture)
 
 
 @pytest.mark.hookwrapper
@@ -364,8 +364,11 @@ def _common_request_param(request):
   """Processing for common fixtures of request object which gives access to the
   requesting test context and has an optional param attribute in case the
   fixture is parametrized indirectly.
+  Examples:
+  request.param: [("f1", {"attr": "value"}), "f2"]
+  :return {"f1": result, "f2": result}
   """
-  # todo implement '_snapshot_request_param'
+  # todo: implement '_snapshot_request_param'
   if hasattr(request, "param") and request.param:
     params = request.param
     return (({param: _common_fixtures(param) for param in params}
@@ -381,9 +384,10 @@ def dynamic_create_audit_with_control(request):
   parameter that get from 'request.param' and have to be string or boolean.
   Return: lib.entities.entity.AssessmentTemplateEntity
   """
-  if hasattr(request, "param") and request.param:
-    yield (dynamic_fixtures.generate_snapshots_fixtures(request.param) if
-           request.param else None)
+  if hasattr(request, "param"):
+    dynamic_audit_with_control = (
+        _snapshots_fixtures(request.param) if request.param else None)
+    yield dynamic_audit_with_control
 
 
 @pytest.fixture(scope="function")
