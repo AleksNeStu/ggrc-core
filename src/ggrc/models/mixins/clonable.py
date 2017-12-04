@@ -7,7 +7,7 @@ import itertools
 from ggrc.services import signals
 
 
-class Clonable(object):
+class SingleClonable(object):
   """Clonable mixin"""
 
   __lazy_init__ = True
