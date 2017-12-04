@@ -179,7 +179,6 @@ class AssessmentTemplate(assessment.AuditRelationship, relationship.Relatable,
     }
     assessment_template_copy = AssessmentTemplate(**data)
     db.session.add(assessment_template_copy)
-    db.session.flush()
     return assessment_template_copy
 
   def clone(self, target):

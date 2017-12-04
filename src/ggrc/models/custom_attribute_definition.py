@@ -117,7 +117,6 @@ class CustomAttributeDefinition(attributevalidator.AttributeValidator,
     }
     ca_definition = CustomAttributeDefinition(**data)
     db.session.add(ca_definition)
-    db.session.flush()
     return ca_definition
 
   class ValidTypes(object):
