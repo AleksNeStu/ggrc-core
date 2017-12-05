@@ -76,3 +76,12 @@
     font-style: italic;
   }
 }
+
+.related-proposals-tab-warning {
+  .nav-tab-warning {
+    .fa {
+      opacity: 1;
+      color: $status-proposed;
+    }
+  }
+}

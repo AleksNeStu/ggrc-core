@@ -6,10 +6,21 @@
 <div class="tab-container {{^if showTabs}}tab-container_hidden-tabs{{/if}}">
   <ul class="nav nav-tabs">
     {{#each panels}}
-    <li {{#if active}}class="active"{{/if}}>
+    <li class="{{extraClasses}} {{#if active}}active{{/if}}">
       <a ($click)='setActive'
         tabindex="{{@index}}">
         {{titleText}}
+        {{#if canDisplayWarning}}
+          {{#if warningState}}
+            <span
+              class="nav-tab-warning"
+              rel="tooltip"
+              data-original-title="{{warningText}}"
+              data-placement="bottom">
+                <i class="fa fa-exclamation-circle" aria-hidden="true"></i>
+            </span>
+          {{/if}}
+        {{/if}}
       </a>
     </li>
     {{/each}}

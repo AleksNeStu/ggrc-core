@@ -34,5 +34,27 @@ export default can.Component.extend({
         },
       },
     },
+    proposals: [],
+    checkTabWarning() {
+      const proposals = this.attr('proposals');
+      let proposed;
+      if (!proposals || !proposals.length) {
+        return;
+      }
+
+      proposed = proposals.filter((item) => {
+        return item.instance.status === 'proposed';
+      });
+
+      this.dispatch({
+        type: 'updateProposalsWarning',
+        warning: proposed.length > 0,
+      });
+    },
+  },
+  events: {
+    '{viewModel.proposals} change'() {
+      this.viewModel.checkTabWarning();
+    },
   },
 });

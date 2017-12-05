@@ -99,8 +99,17 @@
         </tab-panel>
         {{^if isSnapshot}}
           {{#if_instance_of instance "Risk"}}
-            <tab-panel {(panels)}="panels" title-text="Change Proposals">
-              <related-proposals {base-instance}="instance"></related-proposals>
+            <tab-panel
+              warning-text="Some proposals are pending approval"
+              title-text="Change Proposals"
+              extra-classes="related-proposals-tab-warning"
+              {(panels)}="panels"
+              {can-display-warning}="true"
+              {pre-render-content}="true">
+                <related-proposals
+                  (update-proposals-warning)="updateWarningState(%event)"
+                  {base-instance}="instance">
+                </related-proposals>
             </tab-panel>
           {{/if_instance_of}}
           <tab-panel {(panels)}="panels" title-text="Change Log">
