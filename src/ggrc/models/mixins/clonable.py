@@ -11,10 +11,11 @@ from collections import defaultdict
 
 import sqlalchemy as sa
 
-from werkzeug.exceptions import BadRequest
+from werkzeug import exceptions
 
 from ggrc import db
 from ggrc.models import relationship, inflector
+from ggrc.rbac import permissions
 from ggrc.services import signals
 
 
@@ -106,11 +107,11 @@ class MultiClonable(object):
         list of possible mapped types (source_objs, destination, mapped_types).
     """
     if not query:
-      raise BadRequest()
+      raise exceptions.BadRequest()
 
     source_ids = query.get("sourceObjectIds", [])
     if not source_ids:
-      raise BadRequest("sourceObjectIds parameter wasn't provided")
+      raise exceptions.BadRequest("sourceObjectIds parameter wasn't provided")
     source_objs = cls.query.options(
         sa.orm.subqueryload('custom_attribute_definitions'),
         sa.orm.subqueryload('custom_attribute_values'),
@@ -151,6 +152,13 @@ class MultiClonable(object):
 
     clonned_objs = {}
     for source_obj in source_objs:
+      if (
+          not permissions.is_allowed_read_for(source_obj) or
+          not permissions.is_allowed_create(
+              source_obj.type, source_obj.id, destination.context_id
+          )
+      ):
+        raise exceptions.Forbidden()
       clonned_objs[source_obj] = cls._clone_obj(source_obj, destination)
 
     for target, mapped_obj in cls._collect_mapped(source_objs, mapped_types):
