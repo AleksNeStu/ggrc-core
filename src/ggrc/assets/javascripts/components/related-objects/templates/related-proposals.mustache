@@ -5,7 +5,7 @@
 
 {{#baseInstance}}
   <related-objects
-    class="related-proposals"
+    class="object-history"
     initial-order-by="status,created_at"
     {predefined-filter}="predefinedFilter"
     {base-instance}="baseInstance"
@@ -15,7 +15,7 @@
     <div class="grid-data__toolbar flex-box">
       <tree-pagination {paging}="paging" class="grid-data__toolbar-item"></tree-pagination>
     </div>
-    <div class="related-proposals__header flex-row flex-box">
+    <div class="object-history__header flex-row flex-box">
       <div class="flex-size-1">
         Proposal
       </div>
@@ -35,14 +35,14 @@
       </div>
     </div>
     {{#if isLoading}}
-      <div class="related-proposals__spinner">
+      <div class="object-history__spinner">
         <spinner toggle="isLoading"></spinner>
       </div>
     {{/if}}
-    <div class="related-proposals__body {{#isLoading}}loading{{/isLoading}}">
+    <div class="object-history__body {{#isLoading}}loading{{/isLoading}}">
       <object-list {items}="relatedObjects" {is-loading}="isLoading" spinner-css="grid-spinner">
         <related-proposals-item
-          class="related-proposals__row related-proposals__row--with-border flex-box"
+          class="object-history__row object-history__row--with-border flex-box"
           {instance}="baseInstance"
           {proposal}="instance">
         </related-proposals-item>

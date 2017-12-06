@@ -3,25 +3,25 @@
  * Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
  */
 
-.related-proposals {
-  .related-proposals__header {
+.object-history {
+  .object-history__header {
     border-bottom: 1px solid #ccc;
     padding: 12px 0;
     text-transform: uppercase;
   }
 
-  .related-proposals__spinner {
+  .object-history__spinner {
     margin-top: 4px;
   }
 
-  .related-proposals__body {
+  .object-history__body {
     display: flex;
     box-sizing: border-box;
     overflow: auto;
     position: relative;
   }
 
-  .related-proposals__row {
+  .object-history__row {
     overflow: hidden;
     padding: 8px 0;
     cursor: default;
@@ -36,12 +36,12 @@
     }
   }
 
-  .related-proposals__attr {
+  .object-history__attr {
     word-wrap: break-word;
     padding: 0 4px;
   }
 
-  .related-proposals__state {
+  .object-history__state {
     display: flex;
     margin-top: 8px;
 
@@ -55,29 +55,29 @@
     }
   }
 
-  .related-proposals__actions {
+  .object-history__actions {
     justify-content: flex-end;
     display: flex;
     height: 100%;
 
-    .related-proposals__action {
+    .object-history__action {
       margin-left: 4px;
       align-self: center;
     }
   }
 
-  .related-proposals__author-info {
+  .object-history__author-info {
     font-style: italic;
     margin-top: 8px;
   }
 
-  .related-proposals__date {
+  .object-history__date {
     opacity: 0.6;
     font-style: italic;
   }
 }
 
-.related-proposals-confirm {
+.object-history-confirm {
   .simple-modal {
     &__header {
       border-bottom: none;
@@ -89,27 +89,27 @@
     }
   }
 
-  .related-proposals-confirm__header {
+  .object-history-confirm__header {
     font-size: 16px;
     font-weight: 400;
   }
 
-  .related-proposals-confirm__footer {
+  .object-history-confirm__footer {
     line-height: 30px;
 
-    .related-proposals-confirm__button {
+    .object-history-confirm__button {
       line-height: 18px;
       margin-left: 10px;
     }
   }
 
-  .related-proposals-confirm__description {
+  .object-history-confirm__description {
     font-size: 13px;
     margin-bottom: 6px;
   }
 }
 
-.related-proposals-tab-warning {
+.object-history-tab-warning {
   .nav-tab-warning {
     .fa {
       opacity: 1;

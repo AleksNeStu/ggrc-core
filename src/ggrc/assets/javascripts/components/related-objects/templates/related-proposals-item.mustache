@@ -4,7 +4,7 @@
 }}
 
 <div class="flex-size-1">
-  <div class="related-proposals__state">
+  <div class="object-history__state">
     <div class="state-value state-{{proposal.status}}"
       rel="tooltip"
       data-original-title="{{stateTooltip}}"
@@ -12,9 +12,9 @@
         {{proposal.status}}
     </div>
   </div>
-  <div class="related-proposals__author-info">
+  <div class="object-history__author-info">
     Proposed by {{proposal.created_by.email}}
-    <span class="related-proposals__date">
+    <span class="object-history__date">
       {{date proposal.created_at}}
     </span>
   </div>
@@ -22,21 +22,21 @@
 <div class="flex-size-3">
   <instance-fields-diff {current-instance}="instance" {modified-fields}="proposal.content.fields">
     {{#diff}}
-      <div class="related-proposals__row--attributes flex-box">
-        <div class="flex-size-1 related-proposals__attr">
+      <div class="object-history__row--attributes flex-box">
+        <div class="flex-size-1 object-history__attr">
           {{attrName}}
         </div>
-        <div class="flex-size-1 related-proposals__attr">
+        <div class="flex-size-1 object-history__attr">
           {{currentVal}}
         </div>
-        <div class="flex-size-1 related-proposals__attr">
+        <div class="flex-size-1 object-history__attr">
           {{modifiedVal}}
         </div>
       </div>
     {{/diff}}
   </instance-fields-diff>
 </div>
-<div class="flex-size-1 related-proposals__attr">
+<div class="flex-size-1 object-history__attr">
   {{{proposal.agenda}}}
 </div>
 <div class="flex-size-1">
