@@ -4,9 +4,9 @@
  */
 
 import '../proposal/apply-decline-proposal-buttons';
+import '../diff/instance-fields-diff';
 import template from './templates/related-proposals-item.mustache';
 const tag = 'related-proposals-item';
-const EMPTY_VALUE = '—';
 
 export default can.Component.extend({
   tag,
@@ -18,7 +18,6 @@ export default can.Component.extend({
         set(newValue, setValue) {
           if (newValue) {
             this.setPeople(newValue);
-            this.buildFieldsDiff(newValue);
           }
 
           setValue(newValue);
@@ -40,33 +39,7 @@ export default can.Component.extend({
         },
       },
     },
-    fieldsDiff: [],
     instance: {},
-    buildFieldsDiff(proposal) {
-      const instance = this.attr('instance');
-      const fields = proposal.attr('content.fields') || {};
-      const fieldsKeys = can.Map.keys(fields);
-      const fieldsDiff = [];
-
-      if (!fields || !fieldsKeys.length) {
-        return;
-      }
-
-      fieldsKeys.forEach((key) => {
-        let revisedVal = fields[key];
-        let currentVal = instance.attr(key);
-
-        if (revisedVal !== currentVal) {
-          fieldsDiff.push({
-            fieldName: key,
-            revisedVal: revisedVal || EMPTY_VALUE,
-            currentVal: currentVal || EMPTY_VALUE,
-          });
-        }
-      });
-
-      this.attr('fieldsDiff', fieldsDiff);
-    },
     setPeople(proposal) {
       GGRC.Utils.getPersonInfo(proposal.created_by)
         .then((person) => {
@@ -83,7 +56,6 @@ export default can.Component.extend({
           proposal.attr('declined_by', person);
       });
     },
-
     getStateTooltip() {
       const proposal = this.attr('proposal');
       const status = this.attr('status');

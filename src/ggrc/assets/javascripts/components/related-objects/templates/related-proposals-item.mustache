@@ -20,19 +20,21 @@
   </div>
 </div>
 <div class="flex-size-3">
-  {{#fieldsDiff}}
-    <div class="related-proposals__row--attributes flex-box">
-      <div class="flex-size-1 related-proposals__attr">
-        {{fieldName}}
+  <instance-fields-diff {current-instance}="instance" {modified-fields}="proposal.content.fields">
+    {{#diff}}
+      <div class="related-proposals__row--attributes flex-box">
+        <div class="flex-size-1 related-proposals__attr">
+          {{attrName}}
+        </div>
+        <div class="flex-size-1 related-proposals__attr">
+          {{currentVal}}
+        </div>
+        <div class="flex-size-1 related-proposals__attr">
+          {{modifiedVal}}
+        </div>
       </div>
-      <div class="flex-size-1 related-proposals__attr">
-        {{currentVal}}
-      </div>
-      <div class="flex-size-1 related-proposals__attr">
-        {{revisedVal}}
-      </div>
-    </div>
-  {{/fields}}
+    {{/diff}}
+  </instance-fields-diff>
 </div>
 <div class="flex-size-1 related-proposals__attr">
   {{{proposal.agenda}}}
