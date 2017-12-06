@@ -38,8 +38,10 @@
   {{{proposal.agenda}}}
 </div>
 <div class="flex-size-1">
-  <apply-decline-proposal-buttons
-    {instance}="instance"
-    {proposal}="proposal">
-  </apply-decline-proposal-buttons>
+  {{#is_allowed 'update' instance}}
+    <apply-decline-proposal-buttons
+      {instance}="instance"
+      {proposal}="proposal">
+    </apply-decline-proposal-buttons>
+  {{/is_allowed}}
 </div>
