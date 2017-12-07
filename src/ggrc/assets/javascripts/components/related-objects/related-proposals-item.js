@@ -5,6 +5,7 @@
 
 import '../proposal/apply-decline-proposal-buttons';
 import '../diff/instance-fields-diff';
+import '../diff/instance-acl-diff';
 import template from './templates/related-proposals-item.mustache';
 const tag = 'related-proposals-item';
 
