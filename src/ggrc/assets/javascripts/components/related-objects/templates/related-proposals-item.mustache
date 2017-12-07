@@ -58,6 +58,21 @@
       </div>
     {{/diff}}
   </instance-acl-diff>
+  <instance-gca-diff {current-instance}="instance" {modified-attributes}="proposal.content.custom_attribute_values">
+    {{#diff}}
+      <div class="object-history__row--attributes flex-box">
+        <div class="flex-size-1 object-history__attr">
+          {{attrName}}
+        </div>
+        <div class="flex-size-1 object-history__attr">
+          {{currentVal}}
+        </div>
+        <div class="flex-size-1 object-history__attr">
+          {{modifiedVal}}
+        </div>
+      </div>
+    {{/diff}}
+  </instance-gca-diff>
 </div>
 <div class="flex-size-1 object-history__attr">
   {{{proposal.agenda}}}
