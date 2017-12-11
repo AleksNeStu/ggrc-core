@@ -5,6 +5,7 @@
 
 import Proposal from '../../models/proposal';
 import template from './templates/create-proposal.mustache';
+import {REFRESH_TAB_CONTENT} from '../../events/eventTypes';
 const tag = 'create-proposal';
 
 export default can.Component.extend({
@@ -15,7 +16,8 @@ export default can.Component.extend({
     proposalAgenda: '',
     loading: false,
     create(element, event) {
-      const instance = this.attr('instance').attr();
+      const instance = this.attr('instance');
+      const instanceFields = instance.attr();
       let proposal;
 
       event.preventDefault();
@@ -24,21 +26,28 @@ export default can.Component.extend({
       proposal = {
         agenda: this.attr('proposalAgenda'),
         instance: {
-          id: instance.id,
-          type: instance.type,
+          id: instanceFields.id,
+          type: instanceFields.type,
         },
-        full_instance_content: instance,
-        context: instance.context,
+        full_instance_content: instanceFields,
+        context: instanceFields.context,
       };
 
-      new Proposal(proposal).save()
-        .then(() => {
+      new Proposal(proposal).save().then(
+        () => {
           this.attr('loading', false);
+          instance.refresh().then(() => {
+            instance.dispatch({
+              ...REFRESH_TAB_CONTENT,
+              tabId: 'tab-related-proposals',
+            });
+          });
           this.closeModal(element);
         }, (error) => {
           this.attr('loading', false);
           console.error(error.statusText);
-        });
+        }
+      );
     },
     closeModal(element) {
       // TODO: fix
