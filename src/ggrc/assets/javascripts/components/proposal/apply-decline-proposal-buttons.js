@@ -4,6 +4,7 @@
  */
 
 import template from './templates/apply-decline-proposal-buttons.mustache';
+import {REFRESH_TAB_CONTENT} from '../../events/eventTypes';
 const tag = 'apply-decline-proposal-buttons';
 
 export default can.Component.extend({
@@ -59,9 +60,17 @@ export default can.Component.extend({
       this.attr('modalState.open', true);
     },
     confirm(isApply) {
-      const comment = this.attr('actionComment');
-      const proposalModel = new CMS.Models.Proposal();
       this.attr('isLoading', true);
+
+      // refresh for getting E-tag
+      this.attr('proposal').refresh().then(() => {
+        this.prepareDataAndSave(isApply);
+      });
+    },
+    prepareDataAndSave(isApply) {
+      const comment = this.attr('actionComment');
+      // create new model. No need to 'PUT' full object data
+      const proposalModel = new CMS.Models.Proposal();
 
       if (isApply) {
         proposalModel.attr('apply_reason', comment);
@@ -78,12 +87,24 @@ export default can.Component.extend({
           this.attr('isLoading', false);
           this.attr('modalState.open', false);
           this.attr('actionComment', '');
+
+          if (isApply) {
+            this.refreshPage();
+          }
         },
         (error) => {
           console.log(error);
         }
       );
     },
+    refreshPage() {
+      const instance = this.attr('instance');
+      instance.refresh().then(() => {
+        instance.dispatch({
+          ...REFRESH_TAB_CONTENT,
+          tabId: 'tab-related-proposals',
+        });
+      });
+    },
   },
 });
-
