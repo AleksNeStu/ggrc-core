@@ -23,7 +23,7 @@
       btn-green
       preventdoubleclick
       {{disable_if_errors instance}}
-      {{#if loading}}disabled{{/if}}"
+      {{#if isDisabledButton}}disabled{{/if}}"
       ($click)="create(%element, %event)">
         Propose
     </a>

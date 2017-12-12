@@ -12,6 +12,13 @@ export default can.Component.extend({
   tag,
   template,
   viewModel: {
+    define: {
+      isDisabledButton: {
+        get() {
+          return !this.hasChanges() || this.attr('loading');
+        },
+      },
+    },
     instance: {},
     proposalAgenda: '',
     loading: false,
@@ -32,6 +39,11 @@ export default can.Component.extend({
         full_instance_content: instanceFields,
         context: instanceFields.context,
       };
+
+      this.saveProposal(proposal, element);
+    },
+    saveProposal(proposal, element) {
+      const instance = this.attr('instance');
 
       new Proposal(proposal).save().then(
         () => {
@@ -54,6 +66,13 @@ export default can.Component.extend({
       $(element).closest('.modal')
         .find('.modal-dismiss')
         .trigger('click');
+    },
+    hasChanges() {
+      const instance = this.attr('instance');
+      const hasPending = GGRC.Utils.hasPending(instance);
+      const isDirty = instance.isDirty(true);
+
+      return isDirty || hasPending;
     },
   },
 });
