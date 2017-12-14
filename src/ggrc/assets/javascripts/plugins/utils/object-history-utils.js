@@ -77,7 +77,41 @@ const buildModifiedACL = (instance, modifiedRoles) => {
 };
 // #endregion
 
+// #region list-fields
+const buildModifiedListField = (currentField, modifiedItem) => {
+  let modifiedField;
+
+  if (!currentField) {
+    currentField = [];
+  }
+
+  modifiedField = currentField.slice();
+
+  modifiedItem.added.forEach((item) => {
+    const index = _.findIndex(modifiedField, {id: item.id});
+
+    if (!item.hasOwnProperty('display_name')) {
+      item.display_name = item.title || item.name;
+    }
+
+    if (index > -1) {
+      // replace item because current field item can be stub
+      modifiedField[index] = item;
+    } else {
+      modifiedField.push(item);
+    }
+  });
+
+  // remove deleted items
+  _.remove(modifiedField, (item) =>
+    _.findIndex(modifiedItem.deleted, {id: item.id}) > -1);
+
+  return modifiedField;
+};
+// #endregion
+
 export {
   buildRoleACL,
   buildModifiedACL,
+  buildModifiedListField,
 };

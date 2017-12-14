@@ -5,6 +5,7 @@
 
 import {
   buildRoleACL,
+  buildModifiedListField,
 } from '../../plugins/utils/object-history-utils';
 
 describe('"buildModifiedACL" method', () => {
@@ -65,5 +66,79 @@ describe('"buildModifiedACL" method', () => {
     const result = buildRoleACL(5, currentAcl, modifiedRole);
     expect(result.length).toBe(1);
     expect(result[0].person_id).toEqual(25);
+  });
+});
+
+describe('"buildModifiedListField" method', () => {
+  it('should not add duplicates', () => {
+    const currentField = [
+      {id: 1, name: 'Category #1'},
+      {id: 2, name: 'Category #2'},
+    ];
+    const modifiedField = {
+      added: [
+        {id: 1, name: 'Category #1'},
+        {id: 3, name: 'Category #3'},
+      ],
+      deleted: [],
+    };
+
+    const result = buildModifiedListField(currentField, modifiedField);
+    expect(result.length).toBe(3);
+  });
+
+  it('should add "added" items. current field is undefined', () => {
+    const modifiedField = {
+      added: [
+        {id: 1, name: 'Category #1'},
+        {id: 3, name: 'Category #3'},
+      ],
+      deleted: [
+        {id: 2, name: 'Category #2'},
+      ],
+    };
+
+    const result = buildModifiedListField(undefined, modifiedField);
+    expect(result.length).toBe(2);
+  });
+
+  it('should delete 1 item', () => {
+    const currentField = [
+      {id: 1, name: 'Category #1'},
+      {id: 2, name: 'Category #2'},
+    ];
+    const modifiedField = {
+      deleted: [
+        {id: 1, name: 'Category #1'},
+        {id: 3, name: 'Category #3'},
+      ],
+      added: [],
+    };
+
+    const result = buildModifiedListField(currentField, modifiedField);
+    expect(result.length).toBe(1);
+    expect(result[0].id).toBe(2);
+  });
+
+  it('should add 2 items and delete 2 items', () => {
+    const currentField = [
+      {id: 1, name: 'Category #1'},
+      {id: 2, name: 'Category #2'},
+    ];
+    const modifiedField = {
+      added: [
+        {id: 3, name: 'Category #3'},
+        {id: 4, name: 'Category #4'},
+      ],
+      deleted: [
+        {id: 1, name: 'Category #1'},
+        {id: 2, name: 'Category #2'},
+      ],
+    };
+
+    const result = buildModifiedListField(currentField, modifiedField);
+    expect(result.length).toBe(2);
+    expect(result[0].id).toBe(3);
+    expect(result[1].id).toBe(4);
   });
 });

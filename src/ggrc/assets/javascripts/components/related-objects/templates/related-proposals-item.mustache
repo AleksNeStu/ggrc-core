@@ -50,6 +50,29 @@
       </div>
     {{/diff}}
   </instance-mapping-fields-diff>
+  <instance-list-fields-diff {current-instance}="instance" {modified-fields}="proposal.content.mapping_list_fields">
+    {{#diff}}
+      <div class="object-history__row--attributes flex-box">
+        <div class="flex-size-1 object-history__attr">
+          {{attrName}}
+        </div>
+        <div class="flex-size-1 object-history__attr">
+          {{#currentVal}}
+            <div>
+              {{.}}
+            </div>
+          {{/currentVal}}
+        </div>
+        <div class="flex-size-1 object-history__attr">
+          {{#modifiedVal}}
+            <div>
+              {{.}}
+            </div>
+          {{/modifiedVal}}
+        </div>
+      </div>
+    {{/diff}}
+  </instance-list-fields-diff>
   <instance-acl-diff {current-instance}="instance" {modified-acl}="proposal.content.access_control_list">
     {{#diff}}
       <div class="object-history__row--attributes flex-box">
