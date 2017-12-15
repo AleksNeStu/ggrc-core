@@ -17,12 +17,28 @@ import template from './custom-roles.mustache';
     tag: tag,
     template: template,
     viewModel: {
-      instance: {},
+      define: {
+        instance: {
+          set(newValue, setValue) {
+            const isReadonly = this.isReadOnlyForInstance(newValue);
+            this.attr('readOnly', isReadonly);
+            setValue(newValue);
+          },
+        },
+      },
       updatableGroupId: null,
       includeRoles: [],
       excludeRoles: [],
       conflictRoles: [],
       orderOfRoles: [],
+      readOnly: false,
+      isReadOnlyForInstance(instance) {
+        if (!instance) {
+          return false;
+        }
+
+        return instance.class.isProposable;
+      },
       save: function (args) {
         var self = this;
         this.attr('updatableGroupId', args.groupId);

@@ -17,6 +17,7 @@ export default GGRC.Components('relatedPeopleAccessControl', {
     conflictRoles: [],
     orderOfRoles: [],
     hasConflicts: false,
+    readOnly: false,
 
     updateRoles: function (args) {
       this.updateAccessContolList(args.people, args.roleId);
