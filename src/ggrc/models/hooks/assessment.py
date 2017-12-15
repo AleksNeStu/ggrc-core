@@ -202,9 +202,11 @@ def generate_role_object_dict(snapshot, audit):
   acl_dict["Audit Lead"].extend([acl.person_id
                                 for acl in audit.access_control_list
                                 if acl.ac_role_id == leads_role])
-  acl_dict["Auditors"].extend([acl.person_id
-                               for acl in audit.access_control_list
-                               if acl.ac_role_id == auditors_role])
+  auditors = [
+      acl.person_id for acl in audit.access_control_list
+      if acl.ac_role_id == auditors_role
+  ]
+  acl_dict["Auditors"].extend(auditors or acl_dict["Audit Lead"])
   return acl_dict
 
 
