@@ -4,6 +4,7 @@
  */
 
 import {buildModifiedListField} from '../../plugins/utils/object-history-utils';
+import {REFRESH_PROPOSAL_DIFF} from '../../events/eventTypes';
 import DiffBaseVM from './diff-base-vm';
 const tag = 'instance-list-fields-diff';
 
@@ -72,13 +73,19 @@ export default can.Component.extend({
   tag,
   viewModel: viewModel,
   events: {
-    inserted() {
+    buildDiff() {
       const instance = this.viewModel.attr('currentInstance');
       const modifiedFields = this.viewModel.attr('modifiedFields');
       if (!modifiedFields || !instance) {
         return;
       }
       this.viewModel.buildDiffObject();
+    },
+    inserted() {
+      this.buildDiff();
+    },
+    [`{viewModel.currentInstance} ${REFRESH_PROPOSAL_DIFF.type}`]() {
+      this.buildDiff();
     },
   },
 });

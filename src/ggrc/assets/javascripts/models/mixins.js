@@ -9,6 +9,7 @@ import {
 } from '../plugins/utils/query-api-utils';
 import {confirm} from '../plugins/utils/modals';
 import {isSnapshot} from '../plugins/utils/snapshot-utils';
+import {REFRESH_PROPOSAL_DIFF} from '../events/eventTypes';
 
 (function (can, GGRC) {
   can.Construct.extend('can.Model.Mixin', {
@@ -461,7 +462,13 @@ import {isSnapshot} from '../plugins/utils/snapshot-utils';
 
   can.Model.Mixin('proposable', {
     isProposable: true,
-  }, {});
+  }, {
+    after_update() {
+      this.dispatch({
+        ...REFRESH_PROPOSAL_DIFF,
+      });
+    },
+  });
 
   can.Model.Mixin('base-notifications', {
     send_by_default: true,

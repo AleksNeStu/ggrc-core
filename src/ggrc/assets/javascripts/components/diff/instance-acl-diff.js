@@ -4,6 +4,7 @@
  */
 
 import {buildModifiedACL} from '../../plugins/utils/object-history-utils';
+import {REFRESH_PROPOSAL_DIFF} from '../../events/eventTypes';
 import DiffBaseVM from './diff-base-vm';
 const tag = 'instance-acl-diff';
 
@@ -68,7 +69,7 @@ export default can.Component.extend({
   tag,
   viewModel: viewModel,
   events: {
-    inserted() {
+    buildDiff() {
       const instance = this.viewModel.attr('currentInstance');
       const modifiedACL = this.viewModel.attr('modifiedAcl');
 
@@ -76,6 +77,12 @@ export default can.Component.extend({
         return;
       }
       this.viewModel.buildDiffObject();
+    },
+    inserted() {
+      this.buildDiff();
+    },
+    [`{viewModel.currentInstance} ${REFRESH_PROPOSAL_DIFF.type}`]() {
+      this.buildDiff();
     },
   },
 });

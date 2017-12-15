@@ -83,6 +83,16 @@ const REFRESH_TAB_CONTENT = {
   type: 'refreshTabContent',
 };
 
+/**
+ * Refreshes diff of proposals
+ * @event refreshProposalDiff
+ * @type {object}
+ * @property {string} type - Event name.
+ */
+const REFRESH_PROPOSAL_DIFF = {
+  type: 'refreshProposalDiff',
+};
+
 export {
   REFRESH_RELATED,
   SAVE_CUSTOM_ROLE,
@@ -92,4 +102,5 @@ export {
   VALIDATION_ERROR,
   DESTINATION_UNMAPPED,
   REFRESH_TAB_CONTENT,
+  REFRESH_PROPOSAL_DIFF,
 };
