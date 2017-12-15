@@ -45,9 +45,9 @@ export default can.Component.extend({
     },
     instance: {},
     setPeople(proposal) {
-      GGRC.Utils.getPersonInfo(proposal.created_by)
+      GGRC.Utils.getPersonInfo(proposal.proposed_by)
         .then((person) => {
-          proposal.attr('created_by', person);
+          proposal.attr('proposed_by', person);
       });
 
       GGRC.Utils.getPersonInfo(proposal.applied_by)

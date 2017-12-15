@@ -38,7 +38,7 @@ export default can.Component.extend({
     },
     getModalDescriptionText(isDecline) {
       const date = GGRC.Utils.formatDate(this.attr('proposal.created_at'));
-      const email = this.attr('proposal.created_by.email');
+      const email = this.attr('proposal.proposed_by.email');
       const action = isDecline ? 'declining' : 'applying';
 
       return `You're ${action} the version - ${email}, ${date}`;
