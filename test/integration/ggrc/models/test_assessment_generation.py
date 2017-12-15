@@ -575,3 +575,20 @@ class TestAssessmentGeneration(TestAssessmentBase):
     response = self.assessment_post()
     self.assertEqual(response.status_code, 201)
     self.assertEqual(response.json["assessment"]["test_plan"], test_plan)
+
+  def test_generate_empty_auditor(self):
+    """Test generation in audit without Auditor from template with Auditor."""
+    with factories.single_commit():
+      person = factories.PersonFactory()
+      captain_acl_id = factories.AccessControlListFactory(
+          object=self.audit, person=person, ac_role=self.captains_role
+      ).id
+      template = factories.AssessmentTemplateFactory(
+          default_people={"assignees": "Auditors", "verifiers": "Auditors"}
+      )
+    response = self.assessment_post(template)
+    self.assert_assignees("Creators", response, "user@example.com")
+    captain_acl = all_models.AccessControlList.query.get(captain_acl_id)
+    # If Auditor is not set, Audit Captain should be used as Assignee
+    self.assert_assignees("Assignees", response, captain_acl.person.email)
+    self.assert_assignees("Verifiers", response, captain_acl.person.email)
