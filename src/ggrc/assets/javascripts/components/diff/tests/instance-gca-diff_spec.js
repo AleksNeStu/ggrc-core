@@ -44,8 +44,8 @@ describe('instance-gca-diff component', () => {
       const result = buildAttributeDiff(modifiedAttr, currentAttr);
 
       expect(result.attrName).toEqual(EXPECTED_CA_TITLE);
-      expect(result.currentVal).toEqual(emptyValue);
-      expect(result.modifiedVal).toEqual(expectedValue);
+      expect(result.currentVal[0]).toEqual(emptyValue);
+      expect(result.modifiedVal[0]).toEqual(expectedValue);
     });
 
     it('should return diff with empty modifiedVal', () => {
@@ -57,8 +57,8 @@ describe('instance-gca-diff component', () => {
       const result = buildAttributeDiff(modifiedAttr, currentAttr);
 
       expect(result.attrName).toEqual(EXPECTED_CA_TITLE);
-      expect(result.modifiedVal).toEqual(emptyValue);
-      expect(result.currentVal).toEqual(expectedValue);
+      expect(result.modifiedVal[0]).toEqual(emptyValue);
+      expect(result.currentVal[0]).toEqual(expectedValue);
     });
 
     it('should return diff with filled fields', () => {
@@ -71,8 +71,8 @@ describe('instance-gca-diff component', () => {
       const result = buildAttributeDiff(modifiedAttr, currentAttr);
 
       expect(result.attrName).toEqual(EXPECTED_CA_TITLE);
-      expect(result.modifiedVal).toEqual(expectedValue);
-      expect(result.currentVal).toEqual(expectedCurrentValue);
+      expect(result.modifiedVal[0]).toEqual(expectedValue);
+      expect(result.currentVal[0]).toEqual(expectedCurrentValue);
     });
   });
 

@@ -5,6 +5,7 @@
 
 import {REFRESH_PROPOSAL_DIFF} from '../../events/eventTypes';
 import DiffBaseVM from './diff-base-vm';
+import template from './templates/instance-diff-items.mustache';
 const tag = 'instance-mapping-fields-diff';
 
 const viewModel = DiffBaseVM.extend({
@@ -42,8 +43,8 @@ const viewModel = DiffBaseVM.extend({
 
     return {
       attrName: this.getAttrDisplayName(key),
-      currentVal: currentDisplayName,
-      modifiedVal: modifiedDisplayName,
+      currentVal: [currentDisplayName],
+      modifiedVal: [modifiedDisplayName],
     };
   },
   getCurrentValue(currentValueStub) {
@@ -65,6 +66,7 @@ const viewModel = DiffBaseVM.extend({
 
 export default can.Component.extend({
   tag,
+  template,
   viewModel: viewModel,
   events: {
     buildDiff() {

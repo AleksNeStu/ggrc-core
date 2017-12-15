@@ -5,6 +5,7 @@
 
 import {REFRESH_PROPOSAL_DIFF} from '../../events/eventTypes';
 import DiffBaseVM from './diff-base-vm';
+import template from './templates/instance-diff-items.mustache';
 const tag = 'instance-fields-diff';
 
 const viewModel = DiffBaseVM.extend({
@@ -32,13 +33,14 @@ const viewModel = DiffBaseVM.extend({
   getValueOrEmpty(value) {
     const emptyValue = this.attr('emptyValue');
     return value === null || value === undefined || value === '' ?
-      emptyValue :
-      value;
+      [emptyValue] :
+      [value];
   },
 });
 
 export default can.Component.extend({
   tag,
+  template,
   viewModel: viewModel,
   events: {
     buildDiff() {

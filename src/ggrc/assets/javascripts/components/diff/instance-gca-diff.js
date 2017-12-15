@@ -5,6 +5,7 @@
 
 import {REFRESH_PROPOSAL_DIFF} from '../../events/eventTypes';
 import DiffBaseVM from './diff-base-vm';
+import template from './templates/instance-diff-items.mustache';
 const tag = 'instance-gca-diff';
 
 const viewModel = DiffBaseVM.extend({
@@ -66,8 +67,8 @@ const viewModel = DiffBaseVM.extend({
 
     return {
       attrName: def.title,
-      currentVal: currentVal,
-      modifiedVal: modifiedVal,
+      currentVal: [currentVal],
+      modifiedVal: [modifiedVal],
     };
   },
   buildPersonDiff(modifiedAttr, currentAttr) {
@@ -76,18 +77,18 @@ const viewModel = DiffBaseVM.extend({
     const dfd = can.Deferred();
     const diffObject = {
       attrName: def.title,
-      currentVal: this.attr('emptyValue'),
-      modifiedVal: this.attr('emptyValue'),
+      currentVal: [this.attr('emptyValue')],
+      modifiedVal: [this.attr('emptyValue')],
     };
 
     if (modifiedAttr.attribute_object) {
-      diffObject.modifiedVal = modifiedAttr.attribute_object.email;
+      diffObject.modifiedVal = [modifiedAttr.attribute_object.email];
     }
 
     // value is empty. Attr filled first time
     if (val && val.attribute_object) {
       GGRC.Utils.getPersonInfo(val.attribute_object).then((person) => {
-        diffObject.currentVal = person.email;
+        diffObject.currentVal = [person.email];
         dfd.resolve(diffObject);
       });
     } else {
@@ -128,6 +129,7 @@ const viewModel = DiffBaseVM.extend({
 
 export default can.Component.extend({
   tag,
+  template,
   viewModel: viewModel,
   events: {
     buildDiff() {

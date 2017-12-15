@@ -26,13 +26,11 @@
     padding: 8px 0;
     cursor: default;
     line-height: 16px;
-
-    &--with-border {
-      border-bottom: 1px solid #ccc;
-    }
+    border-bottom: 1px solid #ccc;
 
     &--attributes {
       padding: 4px 0;
+      border-bottom: 0;
     }
   }
 

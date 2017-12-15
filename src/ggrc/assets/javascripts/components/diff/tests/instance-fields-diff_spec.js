@@ -48,11 +48,11 @@ describe('instance-fields-diff component', () => {
       diff = viewModel.attr('diff');
       expect(diff.length).toBe(2);
       expect(diff[0].attrName).toEqual('title');
-      expect(diff[0].currentVal).toEqual(currentInstance.title);
-      expect(diff[0].modifiedVal).toEqual(expectedTitle);
+      expect(diff[0].currentVal[0]).toEqual(currentInstance.title);
+      expect(diff[0].modifiedVal[0]).toEqual(expectedTitle);
       expect(diff[1].attrName).toEqual('description');
-      expect(diff[1].currentVal).toEqual(currentInstance.description);
-      expect(diff[1].modifiedVal).toEqual(expectedDescription);
+      expect(diff[1].currentVal[0]).toEqual(currentInstance.description);
+      expect(diff[1].modifiedVal[0]).toEqual(expectedDescription);
     });
 
     it('modified value should be empty', () => {
@@ -66,8 +66,8 @@ describe('instance-fields-diff component', () => {
       diff = viewModel.attr('diff');
       expect(diff.length).toBe(1);
       expect(diff[0].attrName).toEqual('title');
-      expect(diff[0].currentVal).toEqual(currentInstance.title);
-      expect(diff[0].modifiedVal).toEqual(viewModel.attr('emptyValue'));
+      expect(diff[0].currentVal[0]).toEqual(currentInstance.title);
+      expect(diff[0].modifiedVal[0]).toEqual(viewModel.attr('emptyValue'));
     });
 
     it('current value should be empty', () => {
@@ -82,8 +82,8 @@ describe('instance-fields-diff component', () => {
       diff = viewModel.attr('diff');
       expect(diff.length).toBe(1);
       expect(diff[0].attrName).toEqual('newInstanceProporty');
-      expect(diff[0].modifiedVal).toEqual(expectedValue);
-      expect(diff[0].currentVal).toEqual(viewModel.attr('emptyValue'));
+      expect(diff[0].modifiedVal[0]).toEqual(expectedValue);
+      expect(diff[0].currentVal[0]).toEqual(viewModel.attr('emptyValue'));
     });
   });
 });
