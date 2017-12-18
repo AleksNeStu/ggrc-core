@@ -173,7 +173,8 @@ def get_people_ids_based_on_role(assignee_role,
                                  template_settings,
                                  acl_dict):
   """Get people_ids base on role and template settings."""
-  if assignee_role not in template_settings:
+  if assignee_role not in template_settings or \
+     not template_settings.get(assignee_role):
     return []
   template_role = template_settings[assignee_role]
   if isinstance(template_role, list):
