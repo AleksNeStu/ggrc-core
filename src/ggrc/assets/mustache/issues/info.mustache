@@ -16,7 +16,7 @@
       {{>'/static/mustache/base_objects/general-page-header.mustache'}}
 
       <tab-container>
-        <tab-panel {(panels)}="panels" title-text="{{instance.type}}">
+        <tab-panel {(panels)}="panels" title-text="Attributes">
           <div class="info-pane__body">
             <div class="info-pane__main-content {{^if isSnapshot}}info-pane__main-content-with-sidebar{{/if}}">
               {{>'/static/mustache/base_objects/object-review.mustache'}}
