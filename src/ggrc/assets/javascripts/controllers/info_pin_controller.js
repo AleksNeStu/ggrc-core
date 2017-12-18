@@ -19,6 +19,7 @@ import '../components/show-related-assessments-button/show-related-assessments-b
 import '../components/proposal/create-proposal-button';
 import '../components/related-objects/proposals/related-proposals';
 import '../components/related-objects/proposals/related-proposals-item';
+import '../components/related-objects/revisions/related-revisions';
 import '../components/unarchive_link';
 import '../components/sort/sort-by';
 import * as TreeViewUtils from '../plugins/utils/tree-view-utils';

@@ -1,0 +1,42 @@
+{{!
+  Copyright (C) 2017 Google Inc.
+  Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
+}}
+
+<div class="object-history">
+  <div class="grid-data__toolbar flex-box">
+    <tree-pagination {paging}="paging" class="grid-data__toolbar-item"></tree-pagination>
+  </div>
+  <div class="object-history__header flex-row flex-box">
+    <div class="flex-size-1">
+      Version
+    </div>
+    <div class="flex-size-1">
+      Attribute
+    </div>
+    <div class="flex-size-1">
+      Current Value
+    </div>
+    <div class="flex-size-1">
+      Revised Value
+    </div>
+
+    <!-- buttons -->
+    <div class="flex-size-1">
+    </div>
+  </div>
+  {{#if loading}}
+    <div class="object-history__spinner">
+      <spinner toggle="loading"></spinner>
+    </div>
+  {{/if}}
+  <div class="object-history__body {{#isLoading}}loading{{/isLoading}}">
+    <object-list {items}="visibleRevisions" {is-loading}="loading" spinner-css="grid-spinner">
+      <related-revisions-item
+        class="object-history__row flex-box"
+        {instance}="instance"
+        {revision}=".">
+      </related-revisions-item>
+    </object-list>
+  </div>
+</div>

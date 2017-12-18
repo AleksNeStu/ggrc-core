@@ -113,6 +113,9 @@
                   {base-instance}="instance">
                 </related-proposals>
             </tab-panel>
+            <tab-panel {(panels)}="panels" title-text="Revision History">
+              <related-revisions {instance}="instance"></related-revisions>
+            </tab-panel>
           {{/if_instance_of}}
           <tab-panel {(panels)}="panels" title-text="Change Log">
               <revision-log {instance}="instance"></revision-log>

@@ -1,0 +1,48 @@
+{{!
+  Copyright (C) 2017 Google Inc.
+  Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
+}}
+
+<div class="flex-size-1">
+  <div class="object-history__date">
+    {{date revision.updated_at}}
+  </div>
+  <div class="object-history__author-info">
+    {{#if isCreated}}
+      Created
+    {{else}}
+      Modified
+    {{/if}}
+    by
+    {{modifiedBy.email}}
+  </div>
+</div>
+
+<div class="flex-size-3">
+  <instance-fields-diff {current-instance}="instance" {modified-fields}="revision.diff_with_current.fields">
+  </instance-fields-diff>
+
+  <instance-mapping-fields-diff {current-instance}="instance" {modified-fields}="revision.diff_with_current.mapping_fields">
+  </instance-mapping-fields-diff>
+
+  <instance-list-fields-diff {current-instance}="instance" {modified-fields}="revision.diff_with_current.mapping_list_fields">
+  </instance-list-fields-diff>
+
+  <instance-acl-diff {current-instance}="instance" {modified-acl}="revision.diff_with_current.access_control_list">
+  </instance-acl-diff>
+
+  <instance-gca-diff {current-instance}="instance" {modified-attributes}="revision.diff_with_current.custom_attribute_values">
+  </instance-gca-diff>
+</div>
+
+<div class="flex-size-1">
+  {{#is_allowed 'update' instance}}
+    <div class="object-history__actions">
+        <div class="object-history__action">
+          <button ($click)="review()" class="btn btn-small btn-white">
+            Review &amp; Restore
+          </button>
+        </div>
+    </div>
+  {{/is_allowed}}
+</div>
