@@ -85,14 +85,15 @@ export default can.Component.extend({
       return text;
     },
 
-    // TODO: fix messages
     buildTooltipMessage(startWord, email, date, comment) {
-      const text = `${startWord} by ${email}, ${date}
+      if (!comment) {
+        return `${startWord} by ${email}, ${date}`;
+      }
+
+      return `${startWord} by ${email}, ${date}
 
         Comment:
         ${comment}`;
-
-      return text;
     },
   },
 });
