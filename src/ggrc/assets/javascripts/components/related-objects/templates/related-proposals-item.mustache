@@ -42,9 +42,6 @@
 </div>
 <div class="flex-size-1">
   {{#is_allowed 'update' instance}}
-    <apply-decline-proposal-buttons
-      {instance}="instance"
-      {proposal}="proposal">
-    </apply-decline-proposal-buttons>
+    <apply-decline-proposal {instance}="instance" {proposal}="proposal"></apply-decline-proposal>
   {{/is_allowed}}
 </div>

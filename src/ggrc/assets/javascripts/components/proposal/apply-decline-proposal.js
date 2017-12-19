@@ -3,9 +3,9 @@
  Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
  */
 
-import template from './templates/apply-decline-proposal-buttons.mustache';
+import template from './templates/apply-decline-proposal.mustache';
 import {REFRESH_TAB_CONTENT} from '../../events/eventTypes';
-const tag = 'apply-decline-proposal-buttons';
+const tag = 'apply-decline-proposal';
 
 export default can.Component.extend({
   tag,
