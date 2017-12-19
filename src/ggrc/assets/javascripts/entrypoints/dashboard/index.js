@@ -35,7 +35,6 @@ import '../../components/object_cloner/object_cloner';
 import '../../components/sort_by_sort_index/sort_by_sort_index';
 import '../../components/tree_pagination/tree_pagination';
 import '../../components/tree/tree-widget-container';
-import '../../components/snapshotter/revisions-comparer';
 import '../../components/snapshotter/scope-update';
 import '../../components/page-header/page-header';
 import '../../components/action-toolbar-control/action-toolbar-control';

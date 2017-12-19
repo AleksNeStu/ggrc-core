@@ -41,11 +41,20 @@
           <div class="span12 snapshot">
             <hr class="snapshot">
             <p>
-              <revisions-comparer instance="instance"
-                                  left-revision-id="instance.snapshot.revision_id"
-                                  right-revisions="instance.snapshot.revisions">
-                  <a href="javascript://" can-click="compareIt">Get the latest version</a>
-              </revisions-comparer>
+              <snapshot-comparer-config
+                {instance}="instance"
+                {left-revision-id}="instance.snapshot.revision_id"
+                {right-revisions}="instance.snapshot.revisions">
+                  <revisions-comparer
+                    {modal-title}="modalTitle"
+                    {modal-confirm}="modalConfirm"
+                    {button-view}="buttonView"
+                    {instance}="instance"
+                    {left-revision-id}="leftRevisionId"
+                    {right-revision}="rightRevision">
+                      <a href="javascript://" can-click="compareIt">Get the latest version</a>
+                  </revisions-comparer>
+              </snapshot-comparer-config>
             </p>
           </div>
           {{/if}}

@@ -13,24 +13,27 @@ export default can.Component.extend({
   viewModel: {
     instance: null,
     leftRevisionId: null,
-    rightRevisions: [],
+    rightRevision: null,
+    buttonView: null,
+    modalConfirm: null,
+    modalTitle: null,
     compareIt: function () {
-      var view = this.attr('instance.view');
-      var that = this;
-      var currentRevisionID = this.attr('leftRevisionId');
-      var rightRevisions = this.attr('rightRevisions');
-      var revisionsLength = rightRevisions.length;
-      var newRevisionID = rightRevisions[revisionsLength - 1].id;
+      const view = this.attr('instance.view');
+      const that = this;
+      const currentRevisionID = this.attr('leftRevisionId');
+      const rightRevision = this.attr('rightRevision');
+      const newRevisionID = rightRevision.id;
       confirm({
-        modal_title: 'Compare with the latest version',
+        modal_title: this.attr('modalTitle'),
         modal_description: 'Loading...',
         header_view: GGRC.mustache_path +
                       '/modals/modal_compare_header.mustache',
-        modal_confirm: 'Update',
+        modal_confirm: this.attr('modalConfirm'),
         skip_refresh: true,
         extraCssClass: 'compare-modal',
-        button_view: GGRC.mustache_path +
-                      '/modals/prompt_buttons.mustache',
+        button_view: this.attr('buttonView'),
+        instance: this.attr('instance'),
+        rightRevision: rightRevision,
         afterFetch: function (target) {
           that.getRevisions(currentRevisionID, newRevisionID)
             .then(function (data) {
