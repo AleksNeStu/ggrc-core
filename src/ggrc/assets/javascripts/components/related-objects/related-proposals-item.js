@@ -70,21 +70,27 @@ export default can.Component.extend({
         date = GGRC.Utils.formatDate(proposal.attr('decline_datetime'));
         text = this.buildTooltipMessage(
           'Declined',
-          proposal.attr('declined_by.email'),
+          this.getPersonEmail(proposal.attr('declined_by')),
           date,
           proposal.attr('decline_reason'));
       } else if (status === 'applied') {
         date = GGRC.Utils.formatDate(proposal.attr('apply_datetime'));
         text = this.buildTooltipMessage(
           'Applied',
-          proposal.attr('applied_by.email'),
+          this.getPersonEmail(proposal.attr('applied_by')),
           date,
           proposal.attr('apply_reason'));
       }
 
       return text;
     },
+    getPersonEmail(person) {
+      if (!person || !person.reify) {
+        return '';
+      }
 
+      return person.reify().email;
+    },
     buildTooltipMessage(startWord, email, date, comment) {
       if (!comment) {
         return `${startWord} by ${email}, ${date}`;
