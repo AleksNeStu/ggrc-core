@@ -20,6 +20,7 @@ export default can.Component.extend({
       },
     },
     instance: {},
+    lastRevision: {},
     visibleRevisions: [],
     revisions: [],
     loading: false,
@@ -41,9 +42,20 @@ export default can.Component.extend({
       this.attr('loading', true);
 
       this.buildRevisionRequest('resource').then((data) => {
-        this.attr('paging.total', data.length);
-        this.attr('revisions', data);
+        let revisions;
         this.attr('loading', false);
+
+        if (!data || !data.length) {
+          return;
+        }
+
+        // skip last revision. it's current state of object
+        revisions = data.slice(1, data.length);
+        this.attr('paging.total', revisions.length);
+        this.attr('revisions', revisions);
+
+        // get first because revisions have desc sorting
+        this.attr('lastRevision', data[0]);
 
         this.setVisibleRevisions();
       });

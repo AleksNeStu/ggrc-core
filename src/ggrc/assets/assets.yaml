@@ -188,6 +188,7 @@ dashboard-js-template-files:
   - components/inline/simple-readonly-text.mustache
   - partials/modal-ajax-test-plan.mustache
   - modals/create_proposal.mustache
+  - modals/restore_revision.mustache
   # ggrc_basic_permissions
   - people_roles/authorizations_by_person_list.mustache
   - people_roles/authorizations_by_person_tree_add_item.mustache

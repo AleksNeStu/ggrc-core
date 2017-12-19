@@ -39,9 +39,22 @@
   {{#is_allowed 'update' instance}}
     <div class="object-history__actions">
         <div class="object-history__action">
-          <button ($click)="review()" class="btn btn-small btn-white">
-            Review &amp; Restore
-          </button>
+          <restored-revision-comparer-config
+            {instance}="instance"
+            {left-revision-id}="lastRevision.id"
+            {right-revision}="revision">
+              <revisions-comparer
+                {modal-title}="modalTitle"
+                {modal-confirm}="modalConfirm"
+                {button-view}="buttonView"
+                {instance}="instance"
+                {left-revision-id}="leftRevisionId"
+                {right-revision}="rightRevision">
+                  <a href="javascript://" class="btn btn-small btn-white" can-click="compareIt">
+                    Review &amp; Restore
+                  </a>
+              </revisions-comparer>
+          </restored-revision-comparer-config>
         </div>
     </div>
   {{/is_allowed}}

@@ -152,7 +152,12 @@ export default can.Component.extend({
       }
 
       return result.then(function (revisions) {
-        return new can.List(_.sortBy(revisions, 'id'));
+        // set correct order of revisions
+        const isNeedReverse = revisions[0].id !== currentRevisionID;
+        if (isNeedReverse) {
+          revisions = revisions.reverse();
+        }
+        return new can.List(revisions);
       });
     },
     prepareInstances: function (data) {
