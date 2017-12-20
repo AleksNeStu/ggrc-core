@@ -24,11 +24,11 @@
   {{/if}}
 </div>
 
-<simple-modal modal-title="title" state="modalState" replace-content="true" extra-css-class="object-history-confirm">
+<simple-modal modal-title="title" state="modalState" replace-content="true" extra-css-class="proposal-confirm">
   <div class="simple-modal__header flex-box flex-row">
     <div class="simple-modal__header-text flex-size-1">
       <div class="simple-modal__title">
-        <div class="object-history-confirm__header">
+        <div class="proposal-confirm__header">
           {{title}}
         </div>
       </div>
@@ -40,7 +40,7 @@
 
   <div class="simple-modal__body {{#if isLoading}}loading{{/if}}">
     <div class="ggrc-form simple-modal__section">
-      <div class="object-history-confirm__description">
+      <div class="proposal-confirm__description">
         {{description}}
       </div>
 
@@ -60,21 +60,21 @@
   </div>
 
   <div class="simple-modal__footer">
-    <div class="simple-modal__toolbar object-history-confirm__footer">
+    <div class="simple-modal__toolbar proposal-confirm__footer">
       {{#if isApplyAction}}
-        <button class="btn btn-green object-history-confirm__button"
+        <button class="btn btn-green proposal-confirm__button"
           ($click)="confirm(true)"
           {{#if isLoading}}disabled{{/if}}>
             Apply
         </button>
       {{else}}
-        <button class="btn btn-red object-history-confirm__button"
+        <button class="btn btn-red proposal-confirm__button"
           ($click)="confirm()"
           {{#if isLoading}}disabled{{/if}}>
             Decline
         </button>
       {{/if}}
-      <button class="btn btn-small object-history-confirm__button btn-white"
+      <button class="btn btn-small proposal-confirm__button btn-white"
         ($click)="closeModal"
         {{#if isLoading}}disabled{{/if}}>
           Cancel

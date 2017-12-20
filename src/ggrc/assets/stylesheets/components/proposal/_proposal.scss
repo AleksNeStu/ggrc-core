@@ -1,0 +1,57 @@
+/*
+ * Copyright (C) 2017 Google Inc.
+ * Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
+ */
+
+.proposal {
+  .proposal__save-button {
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .proposal__open-modal-button {
+    margin: -4px 6px 0 6px;
+    line-height: 16px;
+  }
+
+  &.proposal__tab-warning {
+    .nav-tab-warning {
+      .fa {
+        opacity: 1;
+        color: $status-proposed;
+      }
+    }
+  }
+}
+
+.proposal-confirm {
+  .simple-modal {
+    &__header {
+      border-bottom: none;
+    }
+
+    &__footer {
+      border-top: none;
+      padding: 16px;
+    }
+  }
+
+  .proposal-confirm__header {
+    font-size: 16px;
+    font-weight: 400;
+  }
+
+  .proposal-confirm__footer {
+    line-height: 30px;
+
+    .proposal-confirm__button {
+      line-height: 18px;
+      margin-left: 10px;
+    }
+  }
+
+  .proposal-confirm__description {
+    font-size: 13px;
+    margin-bottom: 6px;
+  }
+}
