@@ -26,14 +26,6 @@ var helpers = {
       Date: function (item) {
         return GGRC.Utils.formatDate(item.attr('attribute_value'), true);
       },
-      'Map:Person': function (item) {
-        var attr = item.attr('attribute_object');
-        return options.fn(options.contexts.add({
-          object: attr ?
-            attr.reify() :
-            null,
-        }));
-      },
     };
 
     attr = Mustache.resolve(attr);
