@@ -855,21 +855,13 @@ import RefreshQueue from './refresh_queue';
         this.attr('custom_attributes', new can.Map());
         can.each(this.custom_attribute_values, function (value) {
           var def;
-          var attributeValue;
-          var object;
           value = value.isStub ? value : value.reify();
           def = _.find(this.custom_attribute_definitions, {
-            id: value.custom_attribute_id
+            id: value.custom_attribute_id,
           });
           if (def) {
-            if (def.attribute_type.startsWith('Map:')) {
-              object = value.attribute_object;
-              attributeValue = object.type + ':' + object.id;
-            } else {
-              attributeValue = value.attribute_value;
-            }
             self.custom_attributes.attr(value.custom_attribute_id,
-                                      attributeValue);
+                                      value.attribute_value);
           }
         }.bind(this));
       }
@@ -885,24 +877,6 @@ import RefreshQueue from './refresh_queue';
       }
     },
 
-    _custom_attribute_map: function (attrId, object) {
-      var definition;
-      attrId = Number(attrId); // coming from mustache this will be a string
-      definition = _.find(this.custom_attribute_definitions, {id: attrId});
-
-      if (!definition || !definition.attribute_type.startsWith('Map:')) {
-        return;
-      }
-      if (typeof object === 'string' && object.length > 0) {
-        return;
-      }
-      object = object.stub ? object.stub() : undefined;
-      if (object) {
-        this.custom_attributes.attr(attrId, object.type + ':' + object.id);
-      } else {
-        this.custom_attributes.attr(attrId, 'Person:None');
-      }
-    },
     computed_errors: function () {
       var errors = this.errors();
       if (this.attr('_suppress_errors')) {

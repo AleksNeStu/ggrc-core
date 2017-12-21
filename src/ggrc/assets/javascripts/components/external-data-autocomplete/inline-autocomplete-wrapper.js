@@ -51,16 +51,6 @@ export default GGRC.Components('inlineAutocompleteWrapper', {
       this.updateTransient(item);
     },
     /**
-     * Updates Custom Attribute value in instance object.
-     * @param {Can.Map} item - The item picked in autocomplete.
-     * @param {*} cadId - Custom Attribute defenition Id.
-     */
-    setCustomAttribute(item, cadId) {
-      let instance = this.attr('instance');
-      instance._custom_attribute_map(cadId, item);
-      this.updateTextValue(item);
-    },
-    /**
      * Updates text displayed in autocomplete input.
      * @param {Can.Map|String} item - The item picked in autocomplete or any string.
      */

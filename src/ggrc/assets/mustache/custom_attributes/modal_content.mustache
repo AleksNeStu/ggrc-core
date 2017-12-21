@@ -71,40 +71,6 @@
               {helptext}="cad.helptext"
             />
           {{/case}}
-          {{#case 'Map:Person'}}
-          <label>
-            {{cad.title}}
-            {{#cad.mandatory}}<span class="required">*</span>{{/cad.mandatory}}
-            {{#cad.helptext}}<i class="fa fa-question-circle" rel="tooltip" title="{{cad.helptext}}"></i>{{/cad.helptext}}
-            {{#unless cad.mandatory}}<a href="javascript://" class="field-hide" tabindex="-1">hide</a>{{/unless}}
-          </label>
-            {{#using person=cav.attribute_object}}
-              {{^if_config_exist 'external_services.Person'}}
-              <input class="input-block-level"
-                    name="_custom_attribute_mappings.{{cad.id}}.email"
-                    data-lookup="Person" placeholder="Enter email address"
-                    data-lookup-cb="_custom_attribute_map {{cad.id}}"
-                    null-if-empty="null-if-empty"
-                    type="text"
-                    value="{{person.email}}" />
-              {{else}}
-              <inline-autocomplete-wrapper
-                {instance}="instance"
-                {text-value}="person.email"
-                {display-prop}="'email'">
-                <external-data-autocomplete
-                  {type}="'Person'"
-                  {placeholder}="'Enter email address'"
-                  (item-selected)="setCustomAttribute(%event.selectedItem, cad.id)"
-                  (criteria-changed)="setCustomAttribute(%event.value, cad.id)"
-                  {auto-clean}="false"
-                  {min-length}="2"
-                  {search-criteria}="textValue">
-                </external-data-autocomplete>
-              </inline-autocomplete-wrapper>
-              {{/if_config_exist}}
-            {{/using}}
-          {{/case}}
           {{/switch}}
 
           {{#ca_validation_error instance.computed_errors id}}
