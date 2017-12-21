@@ -61,8 +61,7 @@
       title: '',
       attribute_type: 'Text'
     },
-    attributeTypes: ['Text', 'Rich Text', 'Date', 'Checkbox', 'Dropdown',
-      'Map:Person'],
+    attributeTypes: ['Text', 'Rich Text', 'Date', 'Checkbox', 'Dropdown'],
 
     _customValidators: {
       /**
