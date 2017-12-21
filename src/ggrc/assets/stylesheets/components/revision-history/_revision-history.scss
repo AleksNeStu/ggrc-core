@@ -7,5 +7,10 @@
   .revision-history__restore-button {
     display: flex;
     justify-content: flex-end;
+    align-items: center;
+  }
+
+  .revision-history__spinner {
+    margin-left: 2px;
   }
 }

@@ -110,8 +110,72 @@ const buildModifiedListField = (currentField, modifiedItem) => {
 };
 // #endregion
 
+// #region GCA
+const getValueAndDefinition = (values, definitions, attrId) => {
+  const value = values
+    .find((val) => val.custom_attribute_id === attrId);
+  const definition = definitions
+    .find((def) => def.id === attrId);
+
+  return {
+    value: value,
+    def: definition,
+  };
+};
+
+const getModifiedValue = (modifiedAttr, attr) => {
+  const isPerson = attr.def.attribute_type === 'Map:Person';
+  const contentProperty = isPerson ? 'attribute_object' : 'attribute_value';
+  let value = attr.value;
+
+  if (!modifiedAttr || !modifiedAttr.hasOwnProperty(contentProperty)) {
+    return value;
+  }
+
+  if (value && value.hasOwnProperty(contentProperty)) {
+    value[contentProperty] = modifiedAttr[contentProperty];
+  } else {
+    value = {
+      [contentProperty]: modifiedAttr[contentProperty],
+      custom_attribute_id: attr.def.id,
+    };
+  }
+
+  if (isPerson && value.attribute_object) {
+    value.attribute_object_id = value.attribute_object.id;
+  }
+
+  return value;
+};
+
+const buildModifiedAttValues = (values, definitions, modifiedAttrs) => {
+  // convert to string.
+  const valueKeys = values.map((val) => `${val.custom_attribute_id}`);
+  const caKeys = can.Map.keys(modifiedAttrs);
+  const modifiedValues = _.union(valueKeys, caKeys).map((attrId) => {
+    let attr;
+    let modifiedAttr;
+    attrId = Number(attrId);
+
+    attr = getValueAndDefinition(values, definitions, attrId);
+    modifiedAttr = modifiedAttrs[attrId];
+
+    // attr was deleted
+    if (!attr.def) {
+      return;
+    }
+
+    return getModifiedValue(modifiedAttr, attr);
+  })
+  .filter((value) => !!value);
+
+  return modifiedValues;
+};
+// #endregion
+
 export {
   buildRoleACL,
   buildModifiedACL,
   buildModifiedListField,
+  buildModifiedAttValues,
 };
