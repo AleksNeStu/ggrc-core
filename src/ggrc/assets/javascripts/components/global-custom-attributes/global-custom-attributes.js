@@ -106,9 +106,6 @@ import Permission from '../../permission';
         if (type === 'checkbox') {
           return value ? 1 : 0;
         }
-        if (type === 'person') {
-          return value ? ('Person:' + value) : 'Person:None';
-        }
         if (type === 'dropdown') {
           if (value && value === '') {
             return undefined;
