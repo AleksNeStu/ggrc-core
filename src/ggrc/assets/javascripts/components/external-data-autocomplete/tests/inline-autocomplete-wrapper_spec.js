@@ -97,33 +97,6 @@ describe('GGRC.Components.inline-autocomplete-wrapper', ()=> {
       });
     });
 
-    describe('setCustomAttribute() method', ()=> {
-      let cadId;
-      let item;
-      beforeEach(()=> {
-        cadId = 'testId';
-        item = {
-          test: true,
-        };
-        spyOn(viewModel, 'updateTextValue');
-      });
-
-      it('calls instance._custom_attribute_map() method', ()=> {
-        spyOn(instance, '_custom_attribute_map');
-
-        viewModel.setCustomAttribute(item, cadId);
-
-        expect(instance._custom_attribute_map)
-          .toHaveBeenCalledWith(cadId, item);
-      });
-
-      it('updates text', ()=> {
-        viewModel.setCustomAttribute(item, cadId);
-
-        expect(viewModel.updateTextValue).toHaveBeenCalledWith(item);
-      });
-    });
-
     describe('updateTextValue() method', ()=> {
       it('sets "displayProp" value if argument is object', ()=> {
         viewModel.attr('displayProp', 'test');

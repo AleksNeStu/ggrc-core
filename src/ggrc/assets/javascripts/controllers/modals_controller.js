@@ -1047,10 +1047,6 @@ export default can.Control({
         } else {
           element.val('');
         }
-      } else if (definition.attribute_type === 'Map:Person') {
-        element = this.element.find('[name="_custom_attribute_mappings.' +
-          definition.id + '.email"]');
-        element.val('');
       } else {
         element.val('');
       }
