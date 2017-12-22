@@ -108,8 +108,7 @@ class AdminWidgetCustomAttributes(object):
   DATE = "Date"
   CHECKBOX = "Checkbox"
   DROPDOWN = "Dropdown"
-  PERSON = "Map:Person"
-  ALL_CA_TYPES = (TEXT, RICH_TEXT, DATE, CHECKBOX, DROPDOWN, PERSON)
+  ALL_CA_TYPES = (TEXT, RICH_TEXT, DATE, CHECKBOX, DROPDOWN)
 
 
 class Base(object):

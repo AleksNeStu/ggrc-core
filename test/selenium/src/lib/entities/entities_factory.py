@@ -171,9 +171,6 @@ class CustomAttributeDefinitionsFactory(EntitiesFactory):
           if ca_attr_type == AdminWidgetCustomAttributes.DROPDOWN:
             ca_value = unicode(
                 random.choice(ca["multi_choice_options"].split(",")))
-          if ca_attr_type == AdminWidgetCustomAttributes.PERSON:
-            ca_value = ":".join([unicode(ca["modified_by"]["type"]),
-                                 unicode(ca["modified_by"]["id"])])
         else:
           ca_value = (
               None if ca_attr_type != AdminWidgetCustomAttributes.CHECKBOX
