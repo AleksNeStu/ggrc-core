@@ -95,9 +95,28 @@
           {{/if}}
         </div>
         </tab-panel>
-        <tab-panel {(panels)}="panels" title-text="Change Log">
+        {{^if isSnapshot}}
+          <tab-panel
+            warning-text="Some proposals are pending approval"
+            title-text="Change Proposals"
+            extra-classes="proposal proposal__tab-warning"
+            tab-id="tab-related-proposals"
+            {(panels)}="panels"
+            {parent-instance}="instance"
+            {can-display-warning}="true"
+            {pre-render-content}="true">
+            <related-proposals
+              (update-proposals-warning)="updateWarningState(%event)"
+              {base-instance}="instance">
+            </related-proposals>
+          </tab-panel>
+          <tab-panel {(panels)}="panels" title-text="Revision History">
+            <related-revisions {instance}="instance"></related-revisions>
+          </tab-panel>
+          <tab-panel {(panels)}="panels" title-text="Change Log">
             <revision-log {instance}="instance"></revision-log>
-        </tab-panel>
+          </tab-panel>
+        {{/if}}
       </tab-container>
     </div><!-- tier-content end -->
   </section>
