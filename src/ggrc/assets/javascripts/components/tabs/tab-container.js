@@ -3,6 +3,7 @@
  Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
  */
 
+import {NAVIGATE_TO_TAB} from '../../events/eventTypes';
 import './tab-panel';
 import template from './tab-container.mustache';
 
@@ -64,6 +65,14 @@ export default GGRC.Components('tabContainer', {
     setLastErrorTab: function (tabIndex) {
       this.attr('lastErrorTab', tabIndex);
     },
+    navigate(tabId) {
+      const panels = this.attr('panels');
+      const panel = _.find(panels, (panel) => panel.tabId === tabId);
+
+      if (panel) {
+        this.setActivePanel(panel.tabIndex);
+      }
+    },
   },
   events: {
     /**
@@ -84,5 +93,8 @@ export default GGRC.Components('tabContainer', {
     '{viewModel.instance} switchToErrorPanel': function () {
       this.viewModel.setActivePanel(this.viewModel.lastErrorTab);
     },
-  }
+    [`{viewModel.instance} ${NAVIGATE_TO_TAB.type}`](el, ev) {
+      this.viewModel.navigate(ev.tabId);
+    },
+  },
 });
