@@ -203,7 +203,7 @@ class InfoWidget(base.Widget):
           else:
             list_text_cas_scopes.append([ca_header_text, None])
         if len(scope.text.splitlines()) == 1:
-          if (element.AdminWidgetCustomAttributes.CHECKBOX.upper() in
+          if (element.CustomAttributesTypes.CHECKBOX.upper() in
                   ca_header_text):
             list_text_cas_scopes.append(
                 [ca_header_text,
