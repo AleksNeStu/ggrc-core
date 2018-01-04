@@ -221,7 +221,7 @@ class TestAssessmentsWorkflow(base.Test):
             list_ca_def_objs=new_cas_for_assessments_rest))
     checkbox_id = entity.Entity.filter_objs_by_attrs(
         objs=new_cas_for_assessments_rest,
-        attribute_type=element.AdminWidgetCustomAttributes.CHECKBOX).id
+        attribute_type=element.GlobalCustomAttributesTypes.CHECKBOX).id
     expected_asmt = new_assessments_rest[0]
     asmts_rest_service = rest_service.AssessmentsService()
     asmts_rest_service.update_obj(

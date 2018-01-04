@@ -7,13 +7,13 @@
 # pylint: disable=protected-access
 
 import random
+import re
 
 import pytest
-import re
 
 from lib import base, constants
 from lib.constants import objects, messages
-from lib.constants.element import AdminWidgetCustomAttributes
+from lib.constants.element import GlobalCustomAttributesTypes
 from lib.entities import entities_factory
 from lib.page import dashboard
 from lib.utils import selenium_utils
@@ -74,7 +74,7 @@ class TestAdminDashboardPage(base.Test):
       "ca_type, def_type",
       [(ca_type_item,
         objects.get_normal_form(random.choice(objects.ALL_CA_OBJS))) for
-       ca_type_item in AdminWidgetCustomAttributes.ALL_CA_TYPES]
+       ca_type_item in GlobalCustomAttributesTypes.GCAS_TYPES]
   )
   def test_add_global_ca(self, admin_dashboard, ca_type, def_type):
     """Create different types of Custom Attribute on Admin Dashboard."""
