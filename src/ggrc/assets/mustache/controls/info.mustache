@@ -15,7 +15,7 @@
     <div class="tier-content">
       {{>'/static/mustache/base_objects/general-page-header.mustache'}}
 
-      <tab-container>
+      <tab-container {instance}="instance">
         <tab-panel {(panels)}="panels" title-text="Attributes">
           <div class="info-pane__body">
             <div class="info-pane__main-content {{^if isSnapshot}}info-pane__main-content-with-sidebar{{/if}}">
@@ -241,7 +241,7 @@
                   {notifications-info}="'Notify Admins, Primary and Secondary Contacts'">
                 </comment-add-form>
                 {{/unless}}
-                <mapped-comments {mapped-items}="comments"></mapped-comments>
+                <mapped-comments {base-instance}="instance" {mapped-items}="comments"></mapped-comments>
               </comment-data-provider>
             </div>
             {{/if}}

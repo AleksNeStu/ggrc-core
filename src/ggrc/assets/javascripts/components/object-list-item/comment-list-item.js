@@ -3,6 +3,7 @@
  Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
  */
 
+import {NAVIGATE_TO_TAB} from '../../events/eventTypes';
 import '../object-list-item/person-list-item';
 import template from './comment-list-item.mustache';
 
@@ -18,6 +19,7 @@ import template from './comment-list-item.mustache';
     template: template,
     viewModel: {
       instance: {},
+      baseInstance: {},
       define: {
         showIcon: {
           type: 'boolean',
@@ -71,8 +73,19 @@ import template from './comment-list-item.mustache';
             return this.attr('commentRevision.custom_attribute.title') +
            ':' + this.attr('commentRevision.custom_attribute_stored_value');
           }
-        }
-      }
-    }
+        },
+        isProposalHeaderLink: {
+          get() {
+            return this.attr('itemData.header_url_link') === 'proposal_link';
+          },
+        },
+      },
+      openProposalTab() {
+        this.attr('baseInstance').dispatch({
+          ...NAVIGATE_TO_TAB,
+          tabId: 'tab-related-proposals',
+        });
+      },
+    },
   });
 })(window.can, window.GGRC);

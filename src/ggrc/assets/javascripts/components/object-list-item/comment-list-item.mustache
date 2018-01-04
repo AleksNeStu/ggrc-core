@@ -2,17 +2,33 @@
     Copyright (C) 2017 Google Inc.
     Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
 }}
+
 <div class="comment-object-item">
-    <div class="comment-object-item__author">
-      {{#if commentAuthor}}
-        <person-list-item {person}="commentAuthor"></person-list-item>
+    <div class="comment-object-item__header">
+      {{#if header_url_link}}
+        <div class="comment-object-item__header-link">
+          {{#if isProposalHeaderLink}}
+            <a class="comment-object-item__proposal-link"
+              href="javascript:void(0)"
+              ($click)="openProposalTab()">
+                PROPOSAL
+            </a>
+          {{else}}
+            <a href="header_url_link">TODO: Name of header link</a>
+          {{/if}}
+        </div>
       {{/if}}
-      <span class="comment-object-item__author_info">{{assignee_types commentAuthorType}} {{date commentCreationDate}}</span>
+      {{#if commentAuthor}}
+        <div class="comment-object-item__header-author">
+          <person-list-item {person}="commentAuthor"></person-list-item>
+        </div>
+      {{/if}}
+      <div class="comment-object-item__header-author-info">{{assignee_types commentAuthorType}} {{date commentCreationDate}}</div>
     </div>
-  {{#if hasRevision}}
+    {{#if hasRevision}}
       <div class="comment-list__ca-description">{{customAttributeData}}</div>
-  {{/if}}
+    {{/if}}
     <div class="comment-object-item__text">
-     <read-more {text}="commentText"></read-more>
+      <read-more {text}="commentText"></read-more>
     </div>
 </div>

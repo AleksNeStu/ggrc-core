@@ -175,22 +175,36 @@
     max-height: 20px;
     margin: 0;
   }
-  .comment-object-item__author {
-    display: flex;
-    flex-direction: row;
 
-    .comment-object-item__author_info {
+  .comment-object-item__proposal-link {
+    color: $proposalLink;
+  }
+
+  .comment-object-item__header {
+    display: flex;
+    flex-wrap: wrap;
+
+    .comment-object-item__header-author {
+       display: flex;
+       margin-right: 6px;
+
+      person-list-item {
+        font-size: 11px;
+        font-style: italic;
+      }
+    }
+
+    .comment-object-item__header-author-info {
       font-size: 11px;
       font-style: italic;
       color: #999;
     }
 
-    person-list-item {
-      font-size: 11px;
-      font-style: italic;
-      margin: 0 6px 0 0;
+    .comment-object-item__header-link {
+      margin-right: 6px;
     }
   }
+
   .comment-object-item__text {
     font-size: 13px;
     word-wrap: break-word;

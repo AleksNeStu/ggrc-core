@@ -25,6 +25,7 @@ import template from './mapped-comments.mustache';
         },
       },
       mappedItems: [],
+      baseInstance: {},
     },
   });
 })(window.can, window.GGRC);
