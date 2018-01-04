@@ -449,13 +449,12 @@ class TransformationElements(TransformationSetVisibleFields, CommonAssessment):
 
 class TabContainer(object):
   """Elements' labels for Common Tab Container."""
-  OBJ_TAB = None
+  OBJ_TAB = "Attributes"
   CHANGE_LOG_TAB = "Change Log"
 
 
 class AuditTabContainer(TabContainer):
   """Elements' labels for Audit Tab Container."""
-  OBJ_TAB = "Audit"
 
 
 class AssessmentTabContainer(TabContainer):
@@ -468,27 +467,110 @@ class AssessmentTabContainer(TabContainer):
 
 class ControlTabContainer(TabContainer):
   """Elements' labels for Control Tab Container."""
-  OBJ_TAB = "Control"
 
 
 class OrgGroupTabContainer(TabContainer):
   """Elements' labels for OrgGroup Tab Container."""
-  OBJ_TAB = "OrgGroup"
 
 
 class ProgramTabContainer(TabContainer):
   """Elements' labels for Program Tab Container."""
-  OBJ_TAB = "Program"
 
 
 class RiskTabContainer(TabContainer):
   """Elements' labels for Risk Tab Container."""
-  OBJ_TAB = "Risk"
 
 
 class IssueTabContainer(TabContainer):
   """Elements' labels for Issue Tab Container."""
-  OBJ_TAB = "Issue"
+
+
+class StandardTabContainer(TabContainer):
+  """Elements' labels for Standard Tab Container."""
+
+
+class RegulationTabContainer(TabContainer):
+  """Elements' labels for Regulation Tab Container."""
+
+
+class SectionTabContainer(TabContainer):
+  """Elements' labels for Section Tab Container."""
+
+
+class ObjectiveTabContainer(TabContainer):
+  """Elements' labels for Objective Tab Container."""
+
+
+class ProductTabContainer(TabContainer):
+  """Elements' labels for Product Tab Container."""
+
+
+class SystemTabContainer(TabContainer):
+  """Elements' labels for System Tab Container."""
+
+
+class ProcessTabContainer(TabContainer):
+  """Elements' labels for Process Tab Container."""
+
+
+class AccessGroupTabContainer(TabContainer):
+  """Elements' labels for Access Group Tab Container."""
+
+
+class ClauseTabContainer(TabContainer):
+  """Elements' labels for Clause Tab Container."""
+
+
+class ContractTabContainer(TabContainer):
+  """Elements' labels for Contract Tab Container."""
+
+
+class DataAssetTabContainer(TabContainer):
+  """Elements' labels for Data Asset Tab Container."""
+
+
+class FacilityTabContainer(TabContainer):
+  """Elements' labels for Facility Tab Container."""
+
+
+class MarketTabContainer(TabContainer):
+  """Elements' labels for Market Tab Container."""
+
+
+class PolicyTabContainer(TabContainer):
+  """Elements' labels for Policy Tab Container."""
+
+
+class ProjectTabContainer(TabContainer):
+  """Elements' labels for Project Tab Container."""
+
+
+class ThreatTabContainer(TabContainer):
+  """Elements' labels for Threat Tab Container."""
+
+
+class VendorTabContainer(TabContainer):
+  """Elements' labels for Vendor Tab Container."""
+
+
+class RiskAssessmentTabContainer(TabContainer):
+  """Elements' labels for Risk Assessment Tab Container."""
+
+
+class WorkflowTabContainer(TabContainer):
+  """Elements' labels for Workflow Tab Container."""
+
+
+class CycleTaskTabContainer(TabContainer):
+  """Elements' labels for Cycle Task Tab Container."""
+
+
+class PersonTabContainer(TabContainer):
+  """Elements' labels for Person Tab Container."""
+
+
+class AssessmentTemplateTabContainer(TabContainer):
+  """Elements' labels for Assessment Template Tab Container."""
 
 
 class AsmtAttrsTab(object):
