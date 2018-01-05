@@ -18,6 +18,8 @@ from lib.utils import conftest_utils, test_utils
 from lib.utils.string_utils import StringMethods
 
 dict_executed_fixtures = {}
+_gcas_types = element.GlobalCustomAttributesTypes.GCAS_TYPES
+_lcas_types = element.LocalCustomAttributesTypes.LCAS_TYPES
 
 
 def _get_fixture_from_dict_fixtures(fixture):
@@ -44,7 +46,6 @@ def _new_objs_rest(obj_name, obj_count,  # noqa: ignore=C901
   """
   # pylint: disable=unused-argument
   global dict_executed_fixtures
-  _list_cas_types = element.AdminWidgetCustomAttributes.ALL_CA_TYPES
 
   def create_objs_rest(name, count, factory_params):
     """Create new objects via REST API according to object name (plural form)
@@ -66,8 +67,8 @@ def _new_objs_rest(obj_name, obj_count,  # noqa: ignore=C901
             count=1, factory_params=factory_params,
             custom_attribute_definitions=CustomAttributeDefinitionsFactory().
             generate_ca_defenitions_for_asmt_tmpls(
-                list_ca_definitions=extra_attrs[:len(_list_cas_types)]),
-            audit=extra_attrs[len(_list_cas_types):][0].__dict__)
+                list_ca_definitions=extra_attrs[:len(_lcas_types)]),
+            audit=extra_attrs[len(_lcas_types):][0].__dict__)
       else:
         return factory.get_cls_rest_service(object_name=name)().create_objs(
             count=1, factory_params=factory_params,
@@ -97,7 +98,7 @@ def _new_objs_rest(obj_name, obj_count,  # noqa: ignore=C901
       parent_objs = (
           [CustomAttributeDefinitionsFactory().create(
               attribute_type=unicode(ca_type), definition_type=unicode("")) for
-              ca_type in _list_cas_types] + parent_objs)
+              ca_type in _lcas_types] + parent_objs)
     objs = create_objs_rest_used_exta_arrts(
         name=obj_name, factory_params=factory_params, extra_attrs=parent_objs)
   else:
@@ -114,7 +115,6 @@ def generate_common_fixtures(*fixtures):  # noqa: ignore=C901
   'new_cas_for_controls').
   """
   global dict_executed_fixtures
-  _list_cas_types = element.AdminWidgetCustomAttributes.ALL_CA_TYPES
 
   def new_rest_fixture(fixture, factory_params=None):
     """Extract arguments of 'new_rest_fixture' fixture from fixture name,
@@ -126,7 +126,7 @@ def generate_common_fixtures(*fixtures):  # noqa: ignore=C901
       factory_cas_for_objs = [CustomAttributeDefinitionsFactory().create(
           attribute_type=unicode(ca_type),
           definition_type=unicode(objects.get_singular(fixture_params)))
-          for ca_type in _list_cas_types]
+          for ca_type in _gcas_types]
       new_objs = [
           _new_objs_rest(obj_name=obj_name, obj_count=1, factory_params=dict(
               attribute_type=unicode(ca.attribute_type),
