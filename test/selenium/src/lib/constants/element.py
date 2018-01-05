@@ -97,19 +97,32 @@ class AdminWidgetEvents(object):
       r"(\d{2}/\d{2}/\d{4}\s\d{2}:\d{2}:\d{2}\s[A,P]M)"
 
 
-class AdminWidgetCustomAttributes(object):
-  """Elements' labels (custom attributes scopes) for Custom Attributes
- widget at Admin Dashboard.
- """
-  WIDGET_HEADER = "Custom Attributes"
-  # possible types of custom attributes
+class GlobalCustomAttributesTypes(object):
+  """Possible types of Global Custom Attributes' types."""
   TEXT = "Text"
   RICH_TEXT = "Rich Text"
   DATE = "Date"
   CHECKBOX = "Checkbox"
   DROPDOWN = "Dropdown"
+  GCAS_TYPES = (TEXT, RICH_TEXT, DATE, CHECKBOX, DROPDOWN)
+
+
+class LocalCustomAttributesTypes(GlobalCustomAttributesTypes):
+  """Possible types of Local Custom Attributes' types."""
   PERSON = "Map:Person"
-  ALL_CA_TYPES = (TEXT, RICH_TEXT, DATE, CHECKBOX, DROPDOWN, PERSON)
+  LCAS_TYPES = GlobalCustomAttributesTypes.GCAS_TYPES + (PERSON, )
+
+
+class CustomAttributesTypes(LocalCustomAttributesTypes):
+  """All possible types of custom attributes."""
+  CAS_TYPES = LocalCustomAttributesTypes.LCAS_TYPES
+
+
+class AdminWidgetCustomAttributes(object):
+  """Elements' labels (global custom attributes scopes) for Custom Attributes
+  widget at Admin Dashboard.
+  """
+  WIDGET_HEADER = "Custom Attributes"
 
 
 class Base(object):
