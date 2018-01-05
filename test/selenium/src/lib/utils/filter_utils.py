@@ -5,7 +5,7 @@
 from dateutil import parser
 
 from lib.constants import value_aliases as alias
-from lib.constants.element import AdminWidgetCustomAttributes
+from lib.constants.element import CustomAttributesTypes
 from lib.entities.entity import Entity
 from lib.utils.string_utils import StringMethods
 
@@ -61,18 +61,18 @@ class FilterUtils(object):
 
   def get_filter_exprs_by_ca(self, ca_title, ca_val, ca_type, operator):
     """Return all possible filter expressions for CA according to CA type"""
-    if ca_type == AdminWidgetCustomAttributes.CHECKBOX:
+    if ca_type == CustomAttributesTypes.CHECKBOX:
       values_to_filter = (
           StringMethods.get_list_of_all_cases(alias.YES_VAL) if
           StringMethods.get_bool_value_from_arg(ca_val)
           else StringMethods.get_list_of_all_cases(alias.NO_VAL))
-    elif ca_type == AdminWidgetCustomAttributes.PERSON:
+    elif ca_type == CustomAttributesTypes.PERSON:
       from lib.service import rest_service
       person = rest_service.ObjectsInfoService().get_obj(
           obj=Entity.convert_dict_to_obj_repr(
               dict(zip(["type", "id"], ca_val.split(":")))))
       values_to_filter = [person.name, person.email]
-    elif ca_type == AdminWidgetCustomAttributes.DATE:
+    elif ca_type == CustomAttributesTypes.DATE:
       date_formats = ["%m/%d/%Y", "%m/%Y", "%Y-%m-%d", "%Y-%m", "%Y"]
       date = parser.parse(ca_val).date()
       values_to_filter = [date.strftime(_format) for _format in date_formats]
