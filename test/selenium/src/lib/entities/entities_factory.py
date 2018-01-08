@@ -528,7 +528,8 @@ class AssessmentsFactory(EntitiesFactory):
     asmts_objs = [cls.create(
         title=obj_under_asmt.title + " assessment for " + audit.title,
         audit=audit.title, objects_under_assessment=[obj_under_asmt],
-        custom_attribute_definitions=cas_def) for
+        custom_attribute_definitions=cas_def,
+        verifier=[audit.contact["name"]]) for
         obj_under_asmt in objs_under_asmt]
     return [Entity.update_objs_attrs_values_by_entered_data(
         obj_or_objs=asmt_obj, slug=None) for asmt_obj in asmts_objs]
