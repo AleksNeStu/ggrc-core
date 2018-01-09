@@ -71,11 +71,7 @@
         {{/if}}
         {{{render '/static/mustache/base_objects/description.mustache' instance=object}}}
         {{{render '/static/mustache/base_objects/notes.mustache' instance=object}}}
-        {{#if_equals object.class.title_singular 'Program'}}
-          {{{render '/static/mustache/base_objects/contacts.mustache' is_program=true instance=object}}}
-        {{else}}
-          {{{render '/static/mustache/base_objects/contacts.mustache' instance=object}}}
-        {{/if_equals}}
+        {{{render '/static/mustache/base_objects/contacts.mustache' instance=object}}}
       </div>
     </section>
   {{/using}}

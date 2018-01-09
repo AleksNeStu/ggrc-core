@@ -42,22 +42,6 @@
         <textarea tabindex="3" id="program_description" class="span12 triple wysihtml5" name="description" placeholder="Enter Description">{{{description}}}</textarea>
       </div>
     </div>
-
-    <div class="span6 hide-wrap hidable">
-      <div class="row-fluid inner-hide">
-        <div class="span12 hidable">
-          <label>
-            {{#if_multi_owner instance modal_title}}Managers{{else}}Manager{{/if_multi_owner}}
-            <i class="fa fa-question-circle" rel="tooltip" title="Program Managers are managed in the People widget."></i>
-            <a href="javascript://" class="field-hide" tabindex="-1">hide</a>
-          </label>
-          <div tabindex="4">
-            <input class="input-block-level" name="owners.0.instance.email" data-lookup="Person" placeholder="Enter email address" type="hidden" value="" />
-            <input class="input-block-level" readonly="true" disabled="true" placeholder="Enter email address" type="text" value="{{private_program_owner instance modal_title}}" />
-          </div>
-        </div>
-      </div>
-    </div>
   </div>
   <div class="row">
     <div class="span12 hide-wrap hidable">

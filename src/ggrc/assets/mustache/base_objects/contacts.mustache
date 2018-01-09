@@ -6,28 +6,6 @@
 {{#instance}}
 <div class="row-fluid wrap-row">
   <div data-test-id="title_manager_7a906d2e">
-    {{#if is_program}}
-      <h6>Manager</h6>
-      <p class="oneline">
-        {{#with_mapping 'authorizations' instance}}
-          {{#if authorizations.length}}
-            {{#each authorizations}}
-              <span>
-                {{#using role=instance.role}}
-                  {{#if_equals role.name 'ProgramOwner'}}
-                    {{#using contact=instance.person}}
-                      {{{renderLive '/static/mustache/people/popover.mustache' person=contact}}}
-                    {{/using}}
-                  {{/if_equals}}
-                {{/using}}
-              </span>
-            {{/each}}
-          {{else}}
-            <span class="empty-message">None</span>
-          {{/if}}
-        {{/with_mapping}}
-      </p>
-    {{/if}}
     <custom-roles {instance}="."></custom-roles>
   </div>
 </div>
