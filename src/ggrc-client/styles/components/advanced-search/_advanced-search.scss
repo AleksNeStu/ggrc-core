@@ -239,6 +239,10 @@
     margin-right: 16px;
     select {
       width: 150px;
+
+      &:disabled {
+        opacity: 0.6;
+      }
     }
   }
   &__remove {
