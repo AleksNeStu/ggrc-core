@@ -22,7 +22,6 @@ from ggrc.query import autocast
 from ggrc.query import my_objects
 from ggrc.query.exceptions import BadQueryException
 from ggrc.snapshotter import rules
-from ggrc_basic_permissions import UserRole
 
 
 GETATTR_WHITELIST = {
@@ -145,7 +144,7 @@ def related_people(exp, object_class, target_class, query):
   """
   if "Person" not in [object_class.__name__, exp['object_name']]:
     return sqlalchemy.sql.false()
-  model = inflector.get_model(exp['object_name'])
+
   res = []
   res.extend(relationship_helper.person_object(
       object_class.__name__,
@@ -159,24 +158,6 @@ def related_people(exp, object_class, target_class, query):
           AccessControlList.object_type == exp['object_name'])
   ))
 
-  if exp['object_name'] == 'Program':
-    res.extend(
-        db.session.query(UserRole.person_id).join(model, sqlalchemy.and_(
-            UserRole.context_id == model.context_id,
-            model.id.in_(exp['ids']),
-        ))
-    )
-
-  if exp['object_name'] == "Audit":
-    res.extend(
-        db.session.query(UserRole.person_id).join(
-            models.Program,
-            UserRole.context_id == models.Program.context_id,
-        ).join(model, sqlalchemy.and_(
-            models.Program.id == model.program_id,
-            model.id.in_(exp['ids']),
-        ))
-    )
   if "Workflow" in (object_class.__name__, exp['object_name']):
     try:
       from ggrc_workflows.models import (relationship_helper as
