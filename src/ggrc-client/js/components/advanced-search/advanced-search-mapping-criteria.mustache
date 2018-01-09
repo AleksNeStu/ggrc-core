@@ -7,7 +7,7 @@
   <h6>{{title}}</h6>
   <div class="mapping-criteria__content flex-box flex-box-multi">
     <div class="mapping-criteria__type">
-      <select {($value)}="criteria.objectName">
+      <select {($value)}="criteria.objectName" {{#if isClone}}disabled{{/if}}>
       {{#mappingTypes}}
         <option value="{{model_singular}}"
                 label="{{title_singular}}">
@@ -28,7 +28,7 @@
         {{#if showPopover}}
           <simple-popover {button-text}="'+ Add''" extra-css-class="advanced-search">
             <button class="mapping-criteria__action-button" ($click)="addRelevant()">Map Condition</button>
-            <button class="mapping-criteria__action-button" ($click)="createGroup()">Group Expression</button>
+            {{^if isClone}}<button class="mapping-criteria__action-button" ($click)="createGroup()">Group Expression</button>{{/if}}
           </simple-popover>
         {{else}}
           {{#if canAddMapping}}
@@ -67,6 +67,3 @@
   </div>
   {{/if}}
 </div>
-
-
-

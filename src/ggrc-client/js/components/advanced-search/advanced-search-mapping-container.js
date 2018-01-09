@@ -55,6 +55,11 @@ let viewModel = AdvancedSearchContainer.extend({
     type: 'boolean',
     value: true,
   },
+  /**
+   * Indicates that it is in assessment-template-clone-modal
+   * @type {boolean}
+   */
+  isClone: false,
 });
 
 /**
