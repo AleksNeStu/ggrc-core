@@ -25,6 +25,7 @@ import './tree-people-with-role-list-field';
 import '../advanced-search/advanced-search-filter-container';
 import '../advanced-search/advanced-search-mapping-container';
 import '../bulk-update-button/bulk-update-button';
+import '../assessment-template-clone-button/assessment-template-clone-button';
 import '../dropdown/multiselect-dropdown';
 import '../assessment_generator';
 import '../three-dots-menu/three-dots-menu';
