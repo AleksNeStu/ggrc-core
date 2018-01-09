@@ -91,6 +91,11 @@ let viewModel = can.Map.extend({
    */
   extendable: false,
   /**
+   * Indicates that it is in assessment-template-clone-modal
+   * @type {boolean}
+   */
+  isClone: false,
+  /**
    * Returns a list of available attributes for specific model.
    * @return {can.List} - List of available attributes.
    */
@@ -106,9 +111,19 @@ let viewModel = can.Map.extend({
    * @return {Array} - List of available mapping types.
    */
   mappingTypes: function () {
-    let mappings = GGRC.Mappings
+    let mappings;
+    let types;
+
+    if (this.attr('isClone')) {
+      let modelName = this.attr('modelName');
+
+      this.attr('criteria.objectName', modelName);
+      return [CMS.Models[modelName]];
+    }
+
+    mappings = GGRC.Mappings
       .get_canonical_mappings_for(this.attr('modelName'));
-    let types = _.chain(mappings)
+    types = _.chain(mappings)
       .keys()
       .map(function (mapping) {
         return CMS.Models[mapping];
