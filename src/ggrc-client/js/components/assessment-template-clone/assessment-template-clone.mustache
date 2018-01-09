@@ -1,0 +1,133 @@
+{{!
+    Copyright (C) 2018 Google Inc.
+    Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
+}}
+
+<div class="modal-header">
+  <a class="modal-dismiss pull-right" href="javascript://" data-dismiss="modal">
+    <i class="fa fa-times black"></i>
+  </a>
+  <h2>
+    Create Assessment Template
+  </h2>
+  <div class="create-new-object">
+    Clone from existing template or <a href="javascript://"
+       class="btn btn-link create-control"
+       rel="tooltip"
+       data-placement="bottom"
+       data-toggle="modal-ajax-form"
+       data-original-title="Define Assessment template"
+       data-modal-reset="reset"
+       data-modal-class="modal-wide"
+       data-object-singular="{{model_info 'AssessmentTemplate' 'model_singular'}}"
+       data-object-plural="{{model_info 'AssessmentTemplate' 'root_collection'}}"
+       data-object-params='{
+          "audit": {
+            "id": {{parentInstance.id}},
+            "type": "{{json_escape parentInstance.type}}"
+          },
+          "context": {
+            "id": {{parentInstance.context.id}},
+            "type": "{{json_escape parentInstance.context.type}}"
+          }
+        }'
+      >Create new assessment template</a>
+  </div>
+</div>
+<div class="modal-filter modal-body">
+  <collapsible-panel {soft-mode}="true" {title-text}="'filter'" {(expanded)}="showSearch">
+    <advanced-search-wrapper
+      {model-name}="object"
+      {model-display-name}="object"
+      {^mapping-items}="*mappingItems"
+      {^filter-items}="*filterItems"
+      {^status-item}="*statusItem"
+      ($enter)="onSubmit()">
+      <div class="object-controls">
+        <div class="object-controls__row">
+          <div class="object-controls__state">
+            <advanced-search-filter-state
+              {model-name}="type"
+              {(state-model)}="statusItem.value"
+              {show-operator}="false">
+            </advanced-search-filter-state>
+          </div>
+        </div>
+        <div class="object-controls__filters">
+          <advanced-search-filter-container
+            {(items)}="filterItems"
+            {available-attributes}="availableAttributes"
+            {model-name}="modelName"
+            {default-status-filter}="false"
+            {show-add-button}="mappingItems.length">
+          </advanced-search-filter-container>
+        </div>
+
+        {{#if mappingItems.length}}
+        <div class="object-controls__mappings">
+          <advanced-search-mapping-container
+            {(items)}="mappingItems"
+            {model-name}="modelName"
+            {is-clone}="true"
+            {show-add-button}="false">
+          </advanced-search-mapping-container>
+        </div>
+        {{/if}}
+
+          <div class="filter-container__footer">
+            {{^if mappingItems.length}}
+              <button class="btn btn-small btn-white" ($click)="addFilterAttribute">Add Attribute</button>
+            {{/if}}
+            <button class="btn btn-small btn-white" ($click)="addMappingFilter">Add Mapping Filter</button>
+          </div>
+
+          <div class="object-controls__actions--right">
+            <button type="reset" class="btn btn-small btn-white" {{#if is_loading}}disabled="disabled"{{/if}} ($click)="resetFilters()">Reset</button>
+            <button type="submit" class="btn btn-small btn-lightBlue" {{#if is_loading}}disabled="disabled"{{/if}} ($click)="onSubmit()">Search</button>
+          </div>
+
+      </div>
+    </advanced-search-wrapper>
+  </collapsible-panel>
+</div>
+
+<div class="modal-footer modal-footer--trailed">
+  <collapsible-panel {soft-mode}="true" {title-text}="'Search Results ({{*totalObjects}})'" {(expanded)}="showResults">
+    <div class="search-results">
+      <mapper-results
+        base-instance="parentInstance"
+        {(is-loading)}="is_loading"
+        object="object"
+        type="type"
+        selected="selected"
+        submit-cbs="submitCbs"
+        {^paging.total}="*totalObjects"
+        {(entries)}="entries"
+        {filter-items}="*filterItems"
+        {mapping-items}="*mappingItems"
+        {status-item}="*statusItem">
+      </mapper-results>
+    </div>
+
+    <div class="control-buttons">
+      <div class="confirm-buttons">
+        <span class="confirm-buttons__objects-count">
+          {{selected.length}}
+          object(s) selected
+        </span>
+        <button class="btn btn-small btn-white btn-cancel">
+          Cancel
+        </button>
+        <button class="btn-clone btn btn-small btn-green preventdoubleclick"
+          {{^if selected.length}}disabled="disabled"{{/if}}>
+          {{#if is_saving}}
+            Saving, please wait...
+          {{else}}
+            Clone
+          {{/if}}
+        </button>
+        <spinner toggle="is_saving"></spinner>
+      </div>
+    </div>
+  </collapsible-panel>
+</div>
