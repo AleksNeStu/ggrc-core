@@ -41,28 +41,8 @@ class Program(HasObjectState,
   _aliases = {
       "document_url": None,
       "document_evidence": None,
-      "owners": None,
-      "program_owner": {
-          "display_name": "Manager",
-          "mandatory": True,
-          "type": reflection.AttributeInfo.Type.USER_ROLE,
-          "filter_by": "_filter_by_program_owner",
-      },
-      "program_editor": {
-          "display_name": "Editor",
-          "type": reflection.AttributeInfo.Type.USER_ROLE,
-          "filter_by": "_filter_by_program_editor",
-      },
-      "program_reader": {
-          "display_name": "Reader",
-          "type": reflection.AttributeInfo.Type.USER_ROLE,
-          "filter_by": "_filter_by_program_reader",
-      },
+      "owners": None
   }
-
-  @classmethod
-  def _filter_by_program_owner(cls, predicate):
-    return cls._filter_by_role("ProgramOwner", predicate)
 
   @classmethod
   def _filter_by_program_editor(cls, predicate):
