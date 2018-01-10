@@ -11,8 +11,8 @@ import sqlalchemy as sa
 
 from sqlalchemy.orm import load_only
 from sqlalchemy.orm.session import Session
+from sqlalchemy.sql.expression import true
 
-from ggrc import db
 from ggrc.models import all_models
 from ggrc.models.relationship import Stub, RelationshipsCache
 from ggrc.models.hooks.relationship import related
@@ -29,22 +29,15 @@ def _get_cache(expr, name):
   return result
 
 
-def _get_program_editor_role():
-  """Cache captain and auditor roles"""
-  return _get_cache(lambda: db.session.query(all_models.Role).options(
-      load_only("id", "name")).filter(
-      all_models.Role.name == "ProgramEditor").first(),
-      "acl_program_editor")
-
-
 def _get_acl_audit_roles():
   """Cache captain and auditor roles"""
   return _get_cache(lambda: {
-      role.name: role.id for role in all_models.AccessControlRole.query.filter(
-          # Using like `Audit%` because all audit roles start with `Audit`
-          # e.g. Auditors, Audit Captains, Audit Captains Mapped
-          all_models.AccessControlRole.name.like("Audit%")
-      ).options(load_only("id", "name")).all()
+      role.name: role.id for role in
+      all_models.AccessControlRole.query.filter(
+          # We only load system roles and skip the ones created by users
+          all_models.AccessControlRole.non_editable == true()
+      ).options(
+          load_only("id", "name")).all()
   }, "acl_audit_roles")
 
 
@@ -140,17 +133,10 @@ class AuditRolesHandler(object):
 
     # Add program editor to program
     program = audit.program
-    if not any(ur for ur in program.context.user_roles
-               if ur.person_id == acl.person_id):
-      program_editor = _get_program_editor_role()
-      db.session.add(
-          all_models.UserRole(
-              role=program_editor,
-              context=program.context,
-              person=acl.person,
-              person_id=acl.person_id
-          )
-      )
+    if not any(pacl for pacl in program.access_control_list
+               if pacl.person == acl.person):
+      acl_cache = self.caches["access_control_list_cache"]
+      acl_cache.add(program, acl, acl.person, audit_roles["Program Editors"])
 
     role_map = defaultdict(lambda: audit_roles['Audit Captains Mapped'])
     self._create_mapped_acls(acl, role_map)
