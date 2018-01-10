@@ -8,7 +8,7 @@ Not Launched
 In Scope
 Not in Scope
 Deprecated",MM/DD/YYYY,MM/DD/YYYY,,,,,,,,,
-program,code*,title*,description,Manager,state,effective date,last deprecated date,notes,reference url,editor,reader,,,,,
+program,code*,title*,description,Program Managers,state,effective date,last deprecated date,notes,reference url,Program Editors,Program Readers,,,,,
 ,prog-1,program 1,test,user1@ggrc.com,Draft,7/1/2015,7/15/2015,this is a note,google.com,user10@example.com,user12@example.com,,,,,
 ,prog-2,program 2,test,user1@ggrc.com,Active,7/1/2015,7/15/2015,this is a note,google.com,user11@example.com,user12@example.com,,,,,
 ,prog-3,program 3,test,user1@ggrc.com,Active,7/1/2015,7/15/2015,this is a note,google.com,user10@example.com,user12@example.com,,,,,

@@ -1,6 +1,6 @@
 ,,,,,,
 Object Type,,,,,,
-program,Title,Manager,Code,map:policy,map:contract,map: control
+program,Title,Program Managers,Code,map:policy,map:contract,map: control
 ,Cat ipsum 1,user@example.com,prog-1,"policy-1
 policy-2
 policy-3

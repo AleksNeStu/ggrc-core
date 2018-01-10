@@ -1,5 +1,5 @@
 Object type,"Must be unique. Can be left empty for autogeneration. If updating or deleting, code is required",,,,,,,,,,,,,,,,,,,
-Program,Code*,Title*,Description,Notes,Manager*,Editor,Reader,Effective Date,State,,,,,map:control,map:person,,,,,
+Program,Code*,Title*,Description,Notes,Program Managers*,Program Editors,Program Readers,Effective Date,State,,,,,map:control,map:person,,,,,
 ,PMRBACPROGRAM-1,Program Manager Audit RBAC Test,,,"user@example.com
 creatorpm@test.com
 readerpm@test.com

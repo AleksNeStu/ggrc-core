@@ -5,7 +5,7 @@ Audit,code,title,Audit Captains,status,program,Auditors,
 ,,,,,,,
 ,,,,,,,
 Object type,,,,,,,
-Program,code,title,manager,,,,
+Program,code,title,Program Managers,,,,
 ,program,program,"Creator_and_ProgramManager@example.com
 Reader_and_ProgramManager@example.com",,,,
 ,,,,,,,

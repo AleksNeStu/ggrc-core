@@ -1,6 +1,6 @@
 ,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 Object type,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-Program,Code*,Title*,Description,Notes,Manager*,Editor,Reader,
+Program,Code*,Title*,Description,Notes,Program Managers*,Program Editors,Program Readers,
 ,PROGRAM-1,program1,,,turing@example.com,"user@1.com
 user@2.com
 terminator@example.com

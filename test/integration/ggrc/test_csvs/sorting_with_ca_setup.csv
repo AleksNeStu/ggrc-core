@@ -1,5 +1,5 @@
 Object type,,,,,,,,,,,,,,
-program,code*,title*,description,Manager,state,,effective date,notes,reference url,editor,CA text,CA date,CA dropdown,CA person
+program,code*,title*,description,Program Managers,state,,effective date,notes,reference url,Program Editors,CA text,CA date,CA dropdown,CA person
 ,prog-1,F,2,"anze@example.com
 albert@example.com
 tommy@example.com",Draft,,1/6/2016,3,http://google.com/_1,"anze@example.com

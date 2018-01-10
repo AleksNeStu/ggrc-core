@@ -1,5 +1,5 @@
 Object type,"Must be unique. Can be left empty for autogeneration. If updating or deleting, code is required",,,,,,,,,,,,,,,,,,,,,,,
-Program,Code*,Title*,Description,Notes,Manager*,Editor,Reader,Effective Date,State,,,,,,,,,,,,,,,
+Program,Code*,Title*,Description,Notes,Program Managers*,Program Editors,Program Readers,Effective Date,State,,,,,,,,,,,,,,,
 ,PCI Program,PCI-DSS 3.1 Security Program (Reference Program),"
 The PCI Data Security Standard specifies 12 requirements for compliance, organized into six logically related groups called ""control objectives.""  Each version of PCI DSS has divided these 12 requirements into a number of sub-requirements differently, but the 12 high level requirements have not changed since the inception of the standard.
 

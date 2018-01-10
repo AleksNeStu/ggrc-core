@@ -1,7 +1,7 @@
 Object type,,,,,,"This program should have all objects mapped to it
 according to this
 https://reciprocitylabs.atlassian.net/browse/CORE-1765"
-program,code*,title*,Manager,state,Privacy*,
+program,code*,title*,Program Managers,state,Privacy*,
 ,prog-1,program 1,user@example.com,Draft,no,
 ,prog-2,program 2,user@example.com,Draft,no,
 ,prog-3,program 3,user@example.com,Draft,no,

@@ -56,7 +56,7 @@ a
 b
 c
 d",MM/DD/YYYY,,,
-program,code*,title*,description ,Manager,state,,my_text*,my_dropdown,my_date,my_checkbox,non-existent-attribute,
+program,code*,title*,description ,Program Managers,state,,my_text*,my_dropdown,my_date,my_checkbox,non-existent-attribute,
 ,prog-1,program 1,test,user1@ggrc.com,Draft,,test,,12/12/2015,yes,,
 ,prog-2,program 2,test,user1@ggrc.com,Draft,,test,,12/12/2015,no,,
 ,prog-3,program 3,test,user1@ggrc.com,Draft,FALSE,test,,12/12/2015,yes,,

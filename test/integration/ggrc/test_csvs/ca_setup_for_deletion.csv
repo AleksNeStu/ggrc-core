@@ -13,5 +13,5 @@ Audit,Code*,Program*,Title*,Audit Captains*,Status
 ,a,p,a,user@example.com,Planned
 ,,,,,
 Object type,,,,,
-Program,Code*,Title*,Manager,,
+Program,Code*,Title*,Program Managers,,
 ,p,p,user@example.com,,
