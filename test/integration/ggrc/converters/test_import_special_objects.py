@@ -4,7 +4,7 @@
 from ggrc.models import Audit
 from ggrc.models import Program
 from ggrc.models import Person
-from ggrc_basic_permissions.models import UserRole
+from ggrc.models import all_models
 from integration.ggrc import TestCase
 
 
@@ -18,7 +18,6 @@ class TestSpecialObjects(TestCase):
   def setUp(self):
     super(TestSpecialObjects, self).setUp()
     self.client.get("/login")
-    pass
 
   def tearDown(self):
     pass
@@ -40,13 +39,18 @@ class TestSpecialObjects(TestCase):
     self.import_file(filename)
     self.assertEqual(2, Program.query.count())
     program = Program.query.filter(Program.slug == "prog-1").first()
-    p1_roles = UserRole.query.filter_by(context_id=program.context_id).all()
+    p1_roles = all_models.AccessControlList.query.filter(
+        all_models.AccessControlList.object_id == program.id,
+        all_models.AccessControlList.object_type == "Program").all()
     self.assertEqual(4, len(p1_roles))
-    owner_ids = [r.person_id for r in p1_roles if r.role_id == 1]
-    editor_ids = [r.person_id for r in p1_roles if r.role_id == 2]
-    reader_ids = [r.person_id for r in p1_roles if r.role_id == 3]
-    owner_emails = [p.email for p in
-                    Person.query.filter(Person.id.in_(owner_ids)).all()]
+    manager_ids = [r.person_id for r in p1_roles if
+                   r.ac_role.name == "Program Managers"]
+    editor_ids = [r.person_id for r in p1_roles if
+                  r.ac_role.name == "Program Editors"]
+    reader_ids = [r.person_id for r in p1_roles if
+                  r.ac_role.name == "Program Readers"]
+    manager_emails = [p.email for p in
+                      Person.query.filter(Person.id.in_(manager_ids)).all()]
     editor_emails = [p.email for p in
                      Person.query.filter(Person.id.in_(editor_ids)).all()]
     reader_emails = [p.email for p in
@@ -54,6 +58,6 @@ class TestSpecialObjects(TestCase):
     expected_owners = set(["user1@example.com", "user11@example.com"])
     expected_editors = set(["user11@example.com"])
     expected_readers = set(["user12@example.com"])
-    self.assertEqual(set(owner_emails), expected_owners)
+    self.assertEqual(set(manager_emails), expected_owners)
     self.assertEqual(set(editor_emails), expected_editors)
     self.assertEqual(set(reader_emails), expected_readers)

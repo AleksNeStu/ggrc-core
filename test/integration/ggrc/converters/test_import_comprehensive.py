@@ -235,7 +235,8 @@ class TestComprehensiveSheets(TestCase):
         },
         "Program": {
             "row_warnings": {
-                errors.OWNER_MISSING.format(line=7, column_name="Manager"),
+                errors.OWNER_MISSING.format(
+                    line=7, column_name="Program Managers"),
                 errors.EXPORT_ONLY_WARNING.format(
                     line=7, column_name="Last Deprecated Date"),
                 errors.EXPORT_ONLY_WARNING.format(
