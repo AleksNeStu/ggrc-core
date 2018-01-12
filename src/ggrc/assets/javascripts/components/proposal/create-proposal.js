@@ -5,7 +5,10 @@
 
 import Proposal from '../../models/proposal';
 import template from './templates/create-proposal.mustache';
-import {REFRESH_TAB_CONTENT} from '../../events/eventTypes';
+import {
+  REFRESH_TAB_CONTENT,
+  REFRESH_COMMENTS,
+} from '../../events/eventTypes';
 const tag = 'create-proposal';
 
 export default can.Component.extend({
@@ -53,6 +56,8 @@ export default can.Component.extend({
               ...REFRESH_TAB_CONTENT,
               tabId: 'tab-related-proposals',
             });
+
+            instance.dispatch(REFRESH_COMMENTS);
           });
           this.closeModal(element);
         }, (error) => {

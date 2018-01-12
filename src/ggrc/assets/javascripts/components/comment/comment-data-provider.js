@@ -4,6 +4,7 @@
  */
 
 import * as QueryAPI from '../../plugins/utils/query-api-utils';
+import {REFRESH_COMMENTS} from '../../events/eventTypes';
 
 export default GGRC.Components('commentDataProvider', {
   tag: 'comment-data-provider',
@@ -78,5 +79,10 @@ export default GGRC.Components('commentDataProvider', {
   },
   init() {
     this.viewModel.loadComments();
+  },
+  events: {
+    [`{viewModel.instance} ${REFRESH_COMMENTS.type}`]() {
+      this.viewModel.loadComments();
+    },
   },
 });

@@ -104,6 +104,15 @@ const NAVIGATE_TO_TAB = {
   type: 'navigateToTab',
 };
 
+/**
+ * Refreshes comments of instance
+ * @event refreshProposalDiff
+ * @type {object}
+ * @property {string} type - Event name.
+ */
+const REFRESH_COMMENTS = {
+  type: 'refreshComments',
+};
 
 export {
   REFRESH_RELATED,
@@ -116,4 +125,5 @@ export {
   REFRESH_TAB_CONTENT,
   NAVIGATE_TO_TAB,
   REFRESH_PROPOSAL_DIFF,
+  REFRESH_COMMENTS,
 };
