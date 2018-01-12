@@ -17,12 +17,16 @@ export default can.Component.extend({
     buttonView: null,
     modalConfirm: null,
     modalTitle: null,
+    displayDescriptions: false,
+    leftRevisionDescription: '',
+    rightRevisionDescription: '',
     compareIt: function () {
       const view = this.attr('instance.view');
       const that = this;
       const currentRevisionID = this.attr('leftRevisionId');
       const rightRevision = this.attr('rightRevision');
       const newRevisionID = rightRevision.id;
+      const displayDescriptions = that.attr('displayDescriptions');
       confirm({
         modal_title: this.attr('modalTitle'),
         modal_description: 'Loading...',
@@ -34,7 +38,9 @@ export default can.Component.extend({
         button_view: this.attr('buttonView'),
         instance: this.attr('instance'),
         rightRevision: rightRevision,
+        displayDescriptions: displayDescriptions,
         afterFetch: function (target) {
+          let confirmSelf = this;
           that.getRevisions(currentRevisionID, newRevisionID)
             .then(function (data) {
               var revisions = that.prepareInstances(data);
@@ -44,6 +50,19 @@ export default can.Component.extend({
                 that.isContainsAttachments(that.instance) ?
                 that.getAttachmentsDfds(revisions) :
                 [];
+
+              if (displayDescriptions) {
+                confirmSelf.attr('leftRevisionData', {
+                  updatedAt: data[0].updated_at,
+                  modifiedBy: data[0].modified_by,
+                  description: that.attr('leftRevisionDescription'),
+                });
+                confirmSelf.attr('rightRevisionData', {
+                  updatedAt: data[1].updated_at,
+                  modifiedBy: data[1].modified_by,
+                  description: that.attr('rightRevisionDescription'),
+                });
+              }
 
               // people should be preloaded before highlighting differences
               // to avoid breaking UI markup as highlightDifference

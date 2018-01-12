@@ -700,64 +700,91 @@
     }
   }
 
- &.compare-modal {
-   width: 1000px;
-   margin-left: -500px;
-   .modal-header{
-     .legend{
-       margin-top: 15px;
-       font-size: 12px;
-       font-weight: normal;
-       .removed,
-       .added{
-         vertical-align: middle;
-         display: inline-block;
-         width: 20px;
-         height: 20px;
-         margin-left: 15px;
-       }
-       .removed{
-         background-color: $pastelRed;
-       }
-       .added{
-         background-color: $pastelGreen;
-       }
-     }
-   }
-   .modal-body{
-     display: flex;
-     .info{
-       border: 1px solid $warmGray;
-       padding: 20px 15px;
-       width: calc(50% - 30px);
-       box-shadow: none;
-       &:first-child{
-         border-right: none;
-       }
-       .inner-count-list{
-         li:last-child{
-           margin-bottom: 0;
-         }
-       }
-       ul.diff-highlighted {
-         margin: 0;
-         padding: 0 0 0 30px;
-       }
-       .diff-highlighted{
-         display: block;
-         width: 100%;
-         max-width: 100%;
-         position: relative;
-         padding-left: 5px;
-         padding-right: 5px;
-         background-color: $pastelRed;
-         &.inline-edit__content,
-         &.inline-edit__title{
-           padding-left: 19px;
-           padding-right: 11px;
-           box-sizing: content-box;
-         }
-       }
+  &.compare-modal {
+    width: 1000px;
+    margin-left: -500px;
+    .modal-header{
+      padding-bottom: 0;
+      .columns-description {
+        display: flex;
+        .left-column {
+          width: 50%;
+          padding-right: 8px;
+        }
+
+        .column-content {
+          display: flex;
+          flex-wrap: wrap;
+          line-height: 16px;
+          color: $gray;
+          font-size: 12px;
+          font-style: italic;
+          padding: 0 0 4px 10px;
+          .person-name {
+            font-size: 12px;
+            color: $gray;
+            line-height: 16px;
+          }
+          > * {
+            padding: 0 2px;
+          }
+        }
+      }
+      .legend{
+        margin: 15px 0;
+        font-size: 12px;
+        font-weight: normal;
+        .removed,
+        .added{
+          vertical-align: middle;
+          display: inline-block;
+          width: 20px;
+          height: 20px;
+          margin-left: 15px;
+        }
+        .removed{
+          background-color: $pastelRed;
+        }
+        .added{
+          background-color: $pastelGreen;
+        }
+      }
+    }
+    .modal-body{
+      padding-top: 0;
+      display: flex;
+      .info{
+        border: 1px solid $warmGray;
+        padding: 20px 15px;
+        width: calc(50% - 30px);
+        box-shadow: none;
+        &:first-child{
+          border-right: none;
+        }
+        .inner-count-list{
+          li:last-child{
+            margin-bottom: 0;
+          }
+        }
+        ul.diff-highlighted {
+          margin: 0;
+          padding: 0 0 0 30px;
+        }
+        .diff-highlighted{
+          display: block;
+          width: 100%;
+          max-width: 100%;
+          position: relative;
+          padding-left: 5px;
+          padding-right: 5px;
+          background-color: $pastelRed;
+          &.inline-edit__content,
+          &.inline-edit__title{
+            padding-left: 19px;
+            padding-right: 11px;
+            box-sizing: content-box;
+          }
+        }
        & ~ .info{
          width: calc(50% - 30px);
 

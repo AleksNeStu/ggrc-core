@@ -13,5 +13,7 @@ export default can.Component.extend({
     leftRevisionId: '@',
     modalTitle: 'Restore Version: Compare to Current',
     buttonView: `${GGRC.mustache_path}/modals/restore_revision.mustache`,
+    leftRevisionDescription: 'Current version:',
+    rightRevisionDescription: 'Revision:',
   },
 });

@@ -7,3 +7,30 @@
   <span class="removed"></span> - removed
   <span class="added"></span> - added
 </div>
+
+{{#if displayDescriptions}}
+  <div class="columns-description">
+    <div class="left-column">
+      <div class="column-content">
+        <div>
+          {{leftRevisionData.description}}
+        </div>
+        <person-list-item with-details="false" {person}="leftRevisionData.modifiedBy">
+        </person-list-item>
+        <div>
+          {{date leftRevisionData.updatedAt}}
+        </div>
+      </div>
+    </div>
+    <div class="column-content">
+      <div>
+        {{rightRevisionData.description}}
+      </div>
+      <person-list-item with-details="false" {person}="rightRevisionData.modifiedBy">
+      </person-list-item>
+      <div>
+        {{date rightRevisionData.updatedAt}}
+      </div>
+    </div>
+  </div>
+{{/if}}
