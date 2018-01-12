@@ -1147,7 +1147,7 @@ class CommentsPanel(object):
 class CommentItem(object):
   """Locators for single item in comments' panel."""
   AUTHOR_CSS = (By.CSS_SELECTOR, ".person-holder")
-  DATETIME_CSS = (By.CSS_SELECTOR, ".comment-object-item__author_info")
+  DATETIME_CSS = (By.CSS_SELECTOR, ".comment-object-item__header-author-info")
   CONTENT_CSS = (By.CSS_SELECTOR, ".comment-object-item__text")
 
 
