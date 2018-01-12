@@ -3,6 +3,7 @@
     Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
 */
 
+import '../../components/assessment-template-clone/assessment-template-clone';
 import '../../components/object-bulk-update/object-bulk-update';
 import '../../components/object-mapper/object-mapper';
 import '../../components/object-generator/object-generator';
@@ -10,6 +11,7 @@ import '../../components/object-search/object-search';
 import {
   isInScopeModel,
 } from '../../plugins/utils/snapshot-utils';
+import assessmentTemplateCloneTemplate from './assessment-template-clone-modal.mustache';
 import objectGeneratorTemplate from './object-generator-modal.mustache';
 import objectMapperTemplate from './object-mapper-modal.mustache';
 import objectSearchTemplate from './object-search-modal.mustache';
@@ -204,9 +206,16 @@ const ObjectBulkUpdate = ObjectMapper.extend({
     },
   }, {});
 
+const AssessmentTemplateClone = ObjectMapper.extend({
+    defaults: {
+      component: assessmentTemplateCloneTemplate,
+    },
+  }, {});
+
 export {
   ObjectMapper,
   ObjectGenerator,
   ObjectSearch,
   ObjectBulkUpdate,
+  AssessmentTemplateClone,
 };
