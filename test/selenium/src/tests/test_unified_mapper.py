@@ -10,7 +10,7 @@ import pytest
 from lib import base
 from lib.entities.entity import Representation
 from lib.service import webui_service
-
+from lib.constants import objects
 
 class TestProgramPage(base.Test):
   """Tests of unified mapper."""
@@ -39,3 +39,31 @@ class TestProgramPage(base.Test):
     self.general_equal_assert(
         sorted(expected_controls), sorted(actual_controls),
         *Representation.tree_view_attrs_to_exclude)
+
+  @pytest.mark.smoke_tests
+  def test_per_dfgdfg(
+      self, new_program_rest, new_control_rest,
+      map_new_program_rest_to_new_control_rest, new_audit_rest,
+      new_assessment_rest
+  ):
+    assert 1
+    print new_assessment_rest
+    f = 2
+    g =1
+
+
+  @pytest.yield_fixture(scope="function")
+  def dynamic_new_gcas_for_entities(self, request):
+    import conftest
+    yield conftest._common_fixtures(request.param) if request.param else None
+
+  @pytest.mark.smoke_tests
+  @pytest.mark.parametrize(
+    "dynamic_new_gcas_for_entities",
+    ["new_cas_for_{obj}_rest".format(obj=obj) for obj in objects.ALL_CA_OBJS],
+    indirect=["dynamic_new_gcas_for_entities"])
+  def test_add_6gcas_for_all_entities(self, dynamic_new_gcas_for_entities):
+    # for gcas in dynamic_new_gcas_for_entities:
+    #   print gcas
+    #   print "\n"
+   assert 1 == 1

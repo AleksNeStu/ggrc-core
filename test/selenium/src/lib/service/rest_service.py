@@ -9,8 +9,8 @@ import requests
 from lib import environment, factory
 from lib.constants import url, objects, messages
 from lib.entities.entities_factory import (
-    ObjectPersonsFactory, EntitiesFactory, CustomAttributeDefinitionsFactory)
-from lib.entities.entity import Entity
+  PeopleFactory, EntitiesFactory, CustomAttributeDefinitionsFactory)
+from lib.entities.entity import Entity, Representation
 from lib.service.rest import client, query
 from lib.utils import help_utils
 
@@ -149,8 +149,8 @@ class BaseRestService(object):
         entity_factory=self.entities_factory_cls(), count=count,
         attrs_to_factory=factory_params, **attrs_for_template)
     return Entity.filter_objs_attrs(
-        obj_or_objs=list_objs,
-        attrs_to_include=self.entities_factory_cls().obj_attrs_names)
+        objs=list_objs,
+        attrs_to_include=Representation.all_attrs_names())
 
   def update_objs(self, objs, factory_params=None, **attrs_for_template):
     """Update existing objects via REST API and return list of updated objects
@@ -161,8 +161,8 @@ class BaseRestService(object):
         list_objs_to_update=help_utils.convert_to_list(objs),
         attrs_to_factory=factory_params, **attrs_for_template)
     return Entity.filter_objs_attrs(
-        obj_or_objs=list_objs,
-        attrs_to_include=self.entities_factory_cls().obj_attrs_names)
+        objs=list_objs,
+        attrs_to_include=Representation.all_attrs_names())
 
   def delete_objs(self, objs):
     """Delete existing objects via REST API."""
@@ -229,7 +229,7 @@ class CustomAttributeDefinitionsService(BaseRestService):
     """Create 'Dashboard' CAs via rest according to passed obj_type and count.
     """
     return [self.create_objs(1, CustomAttributeDefinitionsFactory().
-            create_dashboard_ca(obj_type.lower()).__dict__)[0]
+                             create_dashboard_ca(obj_type.lower()).__dict__)[0]
             for _ in xrange(count)]
 
 
@@ -253,7 +253,7 @@ class ObjectsOwnersService(HelpRestService):
   def __init__(self):
     super(ObjectsOwnersService, self).__init__(url.OBJECT_OWNERS)
 
-  def assign_owner_to_objs(self, objs, owner=ObjectPersonsFactory().default()):
+  def assign_owner_to_objs(self, objs, owner=PeopleFactory.default_user):
     """Assign of an owner to objects."""
     return [self.client.create_object(
         type=objects.get_singular(self.endpoint), ownable=obj.__dict__,
@@ -276,7 +276,7 @@ class ObjectsInfoService(HelpRestService):
                 obj_type=origin_obj.type, obj_id=origin_obj.id,
                 parent_type=paren_obj.type,
                 parent_id=paren_obj.id))).get("values")[0])
-    return Entity.convert_dict_to_obj_repr(snapshoted_obj_dict)
+    return Entity.repr_dict_to_obj(snapshoted_obj_dict)
 
   def get_obj(self, obj):
     """Get and return object according to 'obj.type' and 'obj.id'."""
@@ -284,7 +284,7 @@ class ObjectsInfoService(HelpRestService):
         type=self.endpoint, object_name=unicode(obj.type),
         filters=query.Query.expression_get_obj_by_id(obj.id))).get(
         "values")[0])
-    return Entity.convert_dict_to_obj_repr(obj_dict)
+    return Entity.repr_dict_to_obj(obj_dict)
 
   def get_comment_obj(self, paren_obj, comment_description):
     """Get and return comment object according to 'paren_obj' type) and
@@ -299,4 +299,4 @@ class ObjectsInfoService(HelpRestService):
                 parent_type=paren_obj.type, parent_id=paren_obj.id,
                 comment_desc=comment_description),
             order_by=[{"name": "created_at", "desc": True}])).get("values")[0])
-    return Entity.convert_dict_to_obj_repr(comment_obj_dict)
+    return Entity.repr_dict_to_obj(comment_obj_dict)

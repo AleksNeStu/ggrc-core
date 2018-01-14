@@ -69,7 +69,7 @@ class FilterUtils(object):
     elif ca_type == AdminWidgetCustomAttributes.PERSON:
       from lib.service import rest_service
       person = rest_service.ObjectsInfoService().get_obj(
-          obj=Entity.convert_dict_to_obj_repr(
+          obj=Entity.repr_dict_to_obj(
               dict(zip(["type", "id"], ca_val.split(":")))))
       values_to_filter = [person.name, person.email]
     elif ca_type == AdminWidgetCustomAttributes.DATE:

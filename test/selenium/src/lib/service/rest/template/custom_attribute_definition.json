@@ -1,11 +1,11 @@
 {
+  "mandatory": false,
   "title": null,
+  "context": null,
   "attribute_type": null,
   "definition_type": null,
-  "mandatory": false,
-  "helptext": "",
-  "placeholder": null,
-  "multi_choice_options": null,
+  "modal_title": null,
   "custom_attributes": {},
-  "context": null
+  "helptext": "",
+  "placeholder": ""
 }

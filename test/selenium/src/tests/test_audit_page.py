@@ -91,7 +91,7 @@ class TestAuditPage(base.Test):
     - Audit created under Program via REST API.
     """
     expected_asmt = (entities_factory.AssessmentsFactory().
-                     create().repr_ui())
+                     create(is_add_rest_attrs=False).repr_ui())
     asmts_ui_service = webui_service.AssessmentsService(selenium)
     asmts_ui_service.create_obj_via_tree_view(
         src_obj=new_audit_rest, obj=expected_asmt)
@@ -126,7 +126,7 @@ class TestAuditPage(base.Test):
     """
     expected_asmt = (
         entities_factory.AssessmentsFactory().create(
-            objects_under_assessment=[dynamic_objects]))
+            mapped_objects=[dynamic_objects]))
     expected_titles = [dynamic_objects.title]
     asmts_ui_service = webui_service.AssessmentsService(selenium)
     actual_titles = (
@@ -143,7 +143,7 @@ class TestAuditPage(base.Test):
   @pytest.mark.smoke_tests
   @pytest.mark.parametrize(
       "dynamic_objects",
-      [None, "new_assessment_template_rest",
+      ["new_assessment_template_rest", "new_assessment_template_rest",
        "new_assessment_template_with_cas_rest"],
       ids=["Assessments generation without Assessment Template",
            "Assessments generation based on Assessment Template without LCAs",
@@ -164,7 +164,7 @@ class TestAuditPage(base.Test):
     - 'dynamic_objects'.
     """
     expected_asmts = (entities_factory.AssessmentsFactory().generate(
-        objs_under_asmt=new_controls_rest, audit=new_audit_rest,
+        mapped_objects=new_controls_rest, audit=new_audit_rest,
         asmt_tmpl=dynamic_objects))
     expected_asmts = [
         expected_asmt.repr_ui() for expected_asmt in expected_asmts]

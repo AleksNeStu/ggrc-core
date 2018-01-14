@@ -50,7 +50,7 @@ class TestAssessmentsWorkflow(base.Test):
             comment_description=expected_comment.description).created_at
     ).repr_ui() for expected_comment in expected_asmt_comments]
     # 'expected_asmt': updated_at (outdated)
-    expected_asmt = expected_asmt.update_attrs(
+    expected_asmt.update_attrs(
         updated_at=self.info_service.get_obj(obj=expected_asmt).updated_at,
         comments=expected_asmt_comments,
         status=AssessmentStates.IN_PROGRESS).repr_ui()
@@ -190,13 +190,13 @@ class TestAssessmentsWorkflow(base.Test):
       getattr(asmts_ui_service, "complete_assessment")(expected_asmt)
     getattr(asmts_ui_service, action)(expected_asmt)
     # 'expected_asmt': updated_at (outdated)
-    expected_asmt = (expected_asmt.update_attrs(
+    expected_asmt.update_attrs(
         title=(element.AssessmentInfoWidget.TITLE_EDITED_PART +
                expected_asmt.title if "edit" in action
                else expected_asmt.title),
         status=expected_final_state.title(), verified=expected_verified,
         updated_at=self.info_service.get_obj(
-            obj=expected_asmt).updated_at).repr_ui())
+            obj=expected_asmt).updated_at).repr_ui()
     actual_asmt = asmts_ui_service.get_obj_from_info_page(expected_asmt)
     self.general_equal_assert(expected_asmt, actual_asmt)
 
@@ -283,16 +283,15 @@ class TestAssessmentsWorkflow(base.Test):
     - 'dynamic_relationships'.
     """
     expected_asmt = (new_assessment_rest.update_attrs(
-        objects_under_assessment=[dynamic_objects]))
+        mapped_objects=[dynamic_objects]))
     expected_titles = [dynamic_objects.title]
     asmts_ui_service = webui_service.AssessmentsService(selenium)
     actual_titles = (
         asmts_ui_service.map_objs_and_get_mapped_titles_from_edit_modal(
-            expected_asmt, expected_asmt.objects_under_assessment))
+            expected_asmt, expected_asmt.mapped_objects))
     assert expected_titles == actual_titles
     # 'expected_asmt': updated_at (outdated)
-    expected_asmt = (
-        expected_asmt.update_attrs(updated_at=self.info_service.get_obj(
-            obj=expected_asmt).updated_at).repr_ui())
+    expected_asmt.update_attrs(updated_at=self.info_service.get_obj(
+            obj=expected_asmt).updated_at).repr_ui()
     actual_asmt = asmts_ui_service.get_obj_from_info_page(expected_asmt)
     self.general_equal_assert(expected_asmt, actual_asmt)

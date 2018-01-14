@@ -30,8 +30,8 @@ def _get_fixture_from_dict_fixtures(fixture):
         fixture.replace("_snapshot", ""))
     parent_obj = _get_fixture_from_dict_fixtures("new_audit_rest")[0]
     dict_executed_fixtures.update(
-        {fixture: Entity.convert_objs_repr_to_snapshot(
-            obj_or_objs=origin_obj, parent_obj=parent_obj)})
+        {fixture: Entity.convert_repr_to_snapshot(
+            objs=origin_obj, parent_obj=parent_obj)})
   return {k: v for k, v in dict_executed_fixtures.iteritems()
           if k == fixture}[fixture]
 
@@ -64,7 +64,7 @@ def _new_objs_rest(obj_name, obj_count,  # noqa: ignore=C901
       if name == objects.ASSESSMENT_TEMPLATES:
         return factory.get_cls_rest_service(object_name=name)().create_objs(
             count=1, factory_params=factory_params,
-            custom_attribute_definitions=CustomAttributeDefinitionsFactory().
+            custom_attribute_definitions=CustomAttributeDefinitionsFactory.
             generate_ca_defenitions_for_asmt_tmpls(
                 list_ca_definitions=extra_attrs[:len(_list_cas_types)]),
             audit=extra_attrs[len(_list_cas_types):][0].__dict__)

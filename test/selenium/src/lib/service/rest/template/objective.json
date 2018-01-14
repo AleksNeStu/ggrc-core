@@ -1,14 +1,14 @@
 {
-  "contact": null,
+  "send_by_default": true,
+  "title": null,
+  "slug": null,
+  "status": null,
+  "recipients": null,
   "context": null,
   "custom_attribute_definitions": [],
   "custom_attributes": {},
+  "access_control_list": [],
+  "test_plan": "",
   "description": "",
-  "notes": "",
-  "owners": [],
-  "reference_url": "",
-  "slug": null,
-  "status": null,
-  "title": null,
-  "url": ""
+  "notes": ""
 }

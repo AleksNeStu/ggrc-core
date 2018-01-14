@@ -7,7 +7,7 @@
 
 from lib import base, decorator, environment
 from lib.constants import locator, url, objects
-from lib.entities.entity import CustomAttributeEntity
+from lib.entities.entity import CustomAttributeDefinitionEntity
 from lib.utils import selenium_utils
 from lib.utils.string_utils import StringMethods
 
@@ -75,7 +75,7 @@ class CustomAttributesItemContent(base.Component):
       attrs = [i.text for i in row.find_elements(
           *self._locators.CELL_IN_ROW_CSS)]
       self.custom_attributes_list.append(
-          CustomAttributeEntity(
+          CustomAttributeDefinitionEntity(
               title=attrs[0],
               type=objects.get_singular(objects.CUSTOM_ATTRIBUTES),
               attribute_type=attrs[1],
