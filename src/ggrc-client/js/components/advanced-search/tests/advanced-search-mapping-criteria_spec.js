@@ -131,6 +131,32 @@ describe('GGRC.Components.advancedSearchMappingCriteria', function () {
       CMS.Models = cmsModels;
     });
 
+    describe('if it is in clone modal', () => {
+      let modelName;
+
+      beforeEach(() => {
+        viewModel.attr('isClone', true);
+      });
+
+      it('returns only model with name as modelName attribute', () => {
+        modelName = 'Audit';
+
+        viewModel.attr('modelName', modelName);
+
+        expect(viewModel.mappingTypes()).toEqual([CMS.Models[modelName]]);
+      });
+
+      it('sets modelName attribute to criteria.objectName', () => {
+        modelName = 'Audit';
+
+        viewModel.attr('criteria', new can.Map());
+        viewModel.attr('modelName', modelName);
+        viewModel.mappingTypes();
+
+        expect(viewModel.attr('criteria.objectName')).toBe(modelName);
+      });
+    });
+
     it('retrieves canonical mappings for correct model', function () {
       viewModel.attr('modelName', 'testModel');
 
