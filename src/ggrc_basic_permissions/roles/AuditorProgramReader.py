@@ -8,13 +8,7 @@ description = """
   information and mappings required to perform the audit.
   """
 permissions = {
-    "read": [
-        "ObjectPerson",
-        "Program",
-        "Relationship",
-        "Context",
-        "UserRole"
-    ],
+    "read": [],
     "create": [],
     "update": [],
     "delete": []

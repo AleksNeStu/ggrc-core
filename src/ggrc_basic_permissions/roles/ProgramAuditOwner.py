@@ -12,73 +12,9 @@ description = """
   role in the audit context for any audit created for that program.
   """
 permissions = {
-    "read": [
-        "Assessment",
-        "AssessmentTemplate",
-        "Issue",
-        "UserRole",
-        "Audit",
-        "Snapshot",
-        "AuditObject",
-        "ObjectControl",
-        "ObjectPerson",
-        "Relationship",
-        "Document",
-        "Context",
-    ],
-    "create": [
-        "Assessment",
-        "AssessmentTemplate",
-        "Issue",
-        "UserRole",
-        "Audit",
-        "Snapshot",
-        "AuditObject",
-        "ObjectControl",
-        "ObjectPerson",
-        "Relationship",
-        "Document",
-    ],
-    "view_object_page": [
-        "__GGRC_ALL__"
-    ],
-    "update": [
-        "Assessment",
-        "AssessmentTemplate",
-        "Issue",
-        "UserRole",
-        {
-            "type": "Audit",
-            "terms": {
-                "property_name": "archived",
-                "prevent_if": False
-            },
-            "condition": "has_changed"
-        },
-        "Snapshot",
-        "AuditObject",
-        "ObjectControl",
-        "ObjectPerson",
-        "Relationship",
-        "Document",
-    ],
-    "delete": [
-        "UserRole",
-        "Assessment",
-        "AssessmentTemplate",
-        "Issue",
-        "ObjectControl",
-        "ObjectPerson",
-        "Relationship",
-        "Document",
-        "AuditObject",
-        {
-            "type": "Audit",
-            "terms": {
-                "property_name": "archived",
-                "prevent_if": False
-            },
-            "condition": "has_changed"
-        },
-    ]
+    "read": [],
+    "create": [],
+    "view_object_page": [],
+    "update": [],
+    "delete": []
 }

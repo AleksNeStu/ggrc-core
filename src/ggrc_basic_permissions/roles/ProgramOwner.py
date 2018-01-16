@@ -11,41 +11,9 @@ description = """
   ProgramOwner is the most powerful role.
   """
 permissions = {
-    "read": [
-        "Document",
-        "ObjectPerson",
-        "Program",
-        "ProgramControl",
-        "Relationship",
-        "UserRole",
-        "Context",
-    ],
-    "create": [
-        "Document",
-        "ObjectPerson",
-        "ProgramControl",
-        "Relationship",
-        "UserRole",
-        "Audit",
-        "Snapshot",
-    ],
-    "view_object_page": [
-        "__GGRC_ALL__"
-    ],
-    "update": [
-        "Document",
-        "ObjectPerson",
-        "Program",
-        "ProgramControl",
-        "Relationship",
-        "UserRole"
-    ],
-    "delete": [
-        "Document",
-        "ObjectPerson",
-        "Program",
-        "ProgramControl",
-        "Relationship",
-        "UserRole",
-    ]
+    "read": [],
+    "create": [],
+    "view_object_page": [],
+    "update": [],
+    "delete": []
 }

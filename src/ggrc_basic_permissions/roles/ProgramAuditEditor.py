@@ -7,69 +7,9 @@ description = """
   role in the audit context for any audit created for that program.
   """
 permissions = {
-    "read": [
-        "Comment",
-        "Assessment",
-        "AssessmentTemplate",
-        "Issue",
-        "Audit",
-        "Snapshot",
-        "AuditObject",
-        "ObjectControl",
-        "ObjectPerson",
-        "Relationship",
-        "Document",
-        "UserRole",
-        "Context",
-    ],
-    "create": [
-        "Snapshot",
-        "Comment",
-        "Assessment",
-        "AssessmentTemplate",
-        "Issue",
-        "ObjectControl",
-        "ObjectPerson",
-        "Relationship",
-        "Document",
-        "AuditObject"
-    ],
-    "view_object_page": [
-        "__GGRC_ALL__"
-    ],
-    "update": [
-        {
-            "type": "Audit",
-            "terms": {
-                "property_name": "archived",
-                "prevent_if": True
-            },
-            "condition": "has_not_changed"
-        },
-        "Assessment",
-        "AssessmentTemplate",
-        "Issue",
-        "Snapshot",
-        "AuditObject",
-        "ObjectControl",
-        "ObjectPerson",
-        "Relationship",
-        "Document",
-    ],
-    "delete": [
-        "AssessmentTemplate",
-        "ObjectControl",
-        "ObjectPerson",
-        "Relationship",
-        "Document",
-        {
-            "type": "Audit",
-            "terms": {
-                "property_name": "archived",
-                "prevent_if": False
-            },
-            "condition": "has_changed"
-        },
-        "AuditObject"
-    ]
+    "read": [],
+    "create": [],
+    "view_object_page": [],
+    "update": [],
+    "delete": []
 }

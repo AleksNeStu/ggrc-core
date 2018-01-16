@@ -9,34 +9,9 @@ description = """
   for that Program.
   """
 permissions = {
-    "read": [
-        "Document",
-        "ObjectPerson",
-        "ObjectSection",
-        "Program",
-        "Relationship",
-        "UserRole",
-        "Context",
-    ],
-    "create": [
-        "Document",
-        "ObjectPerson",
-        "ObjectSection",
-        "Relationship",
-    ],
-    "view_object_page": [
-        "__GGRC_ALL__"
-    ],
-    "update": [
-        "Document",
-        "ObjectPerson",
-        "ObjectSection",
-        "Relationship"
-    ],
-    "delete": [
-        "Document",
-        "ObjectPerson",
-        "ObjectSection",
-        "Relationship",
-    ]
+    "read": [],
+    "create": [],
+    "view_object_page": [],
+    "update": [],
+    "delete": []
 }

@@ -7,23 +7,9 @@ description = """
   role in the audit context for any audit created for that program.
   """
 permissions = {
-    "read": [
-        "Snapshot",
-        "Comment",
-        "Assessment",
-        "Issue",
-        "Audit",
-        "AuditObject",
-        "ObjectPerson",
-        "Relationship",
-        "Document",
-        "UserRole",
-        "Context",
-    ],
+    "read": [],
     "create": [],
-    "view_object_page": [
-        "__GGRC_ALL__"
-    ],
+    "view_object_page": [],
     "update": [],
     "delete": []
 }

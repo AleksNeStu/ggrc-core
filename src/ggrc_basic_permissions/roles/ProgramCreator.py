@@ -6,17 +6,9 @@ description = """
   This role grants a user the permission to create public and private programs.
   """
 permissions = {
-    "read": [
-        "Program",
-    ],
-    "create": [
-        "Program",
-    ],
-    "view_object_page": [
-        "__GGRC_ALL__"
-    ],
-    "update": [
-    ],
-    "delete": [
-    ]
+    "read": [],
+    "create": [],
+    "view_object_page": [],
+    "update": [],
+    "delete": []
 }

@@ -9,39 +9,9 @@ description = """
   to delete the Program or assign other people roles for that program.
   """
 permissions = {
-    "read": [
-        "Document",
-        "ObjectObjective",
-        "ObjectPerson",
-        "Program",
-        "Relationship",
-        "UserRole",
-        "Context",
-    ],
-    "create": [
-        "Audit",
-        "Snapshot",
-        "Document",
-        "ObjectObjective",
-        "ObjectPerson",
-        "Relationship",
-    ],
-    "view_object_page": [
-        "__GGRC_ALL__"
-    ],
-    "update": [
-        "Snapshot",
-        "Document",
-        "ObjectObjective",
-        "ObjectPerson",
-        "Program",
-        "Relationship"
-    ],
-    "delete": [
-        "Program",
-        "Document",
-        "ObjectObjective",
-        "ObjectPerson",
-        "Relationship",
-    ]
+    "read": [],
+    "create": [],
+    "view_object_page": [],
+    "update": [],
+    "delete": []
 }

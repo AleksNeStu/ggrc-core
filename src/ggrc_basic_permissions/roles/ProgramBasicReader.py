@@ -7,23 +7,7 @@ description = """
   resources.
   """
 permissions = {
-    "read": [
-        "Category",
-        "ControlCategory",
-        "ControlAssertion",
-        "Option",
-        "Role",
-        "Person",
-        "Context",
-        {
-            "type": "BackgroundTask",
-            "terms": {
-                "property_name": "modified_by",
-                "value": "$current_user"
-            },
-            "condition": "is"
-        },
-    ],
+    "read": [],
     "create": [],
     "update": [],
     "delete": []
