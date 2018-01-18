@@ -20,6 +20,7 @@ from lib.page import dashboard
 from lib.service import webui_service
 from lib.utils import selenium_utils
 from lib.utils.filter_utils import FilterUtils
+from lib.utils.string_utils import StringMethods
 
 
 class TestSnapshots(base.Test):
@@ -104,14 +105,16 @@ class TestSnapshots(base.Test):
   @pytest.mark.smoke_tests
   @pytest.mark.parametrize(
       ("dynamic_create_audit_with_control", "expected_control", "is_openable"),
-      [("create_audit_with_control_and_update_control",
-        "new_control_rest", True),
-       ("create_audit_with_control_and_delete_control",
-        "new_control_rest", False),
+      [
        ("create_audit_with_control_with_cas_and_update_control_with_cas",
         "new_control_with_cas_rest", True),
        ("create_audit_with_control_with_cas_and_delete_cas_for_controls",
-        "new_control_with_cas_rest", True)],
+        "new_control_with_cas_rest", True),
+
+        ("create_audit_with_control_and_update_control",
+         "new_control_rest", True),
+        ("create_audit_with_control_and_delete_control",
+         "new_control_rest", False)      ],
       ids=["Audit contains snapshotable Control after updating Control",
            "Audit contains snapshotable Control after deleting Control",
            "Audit contains snapshotable Control "
@@ -138,7 +141,8 @@ class TestSnapshots(base.Test):
     """
     audit_with_one_control = dynamic_create_audit_with_control
     audit = audit_with_one_control["new_audit_rest"][0]
-    expected_control = audit_with_one_control[expected_control][0].repr_ui()
+    expected_control = (
+        audit_with_one_control[expected_control][0].repr_ui(is_snapshot=True))
     controls_ui_service = webui_service.ControlsService(selenium)
     actual_controls_tab_count = controls_ui_service.get_count_objs_from_tab(
         src_obj=audit)
@@ -155,10 +159,7 @@ class TestSnapshots(base.Test):
     # 'actual_control': created_at, updated_at, modified_by (None)
     self.general_equal_assert(
         expected_control, actual_control,
-        "created_at", "updated_at", "modified_by", "custom_attributes")
-    self.xfail_equal_assert(
-        expected_control, actual_control,
-        "Issue in app GGRC-2344", "custom_attributes")
+        "created_at", "updated_at", "modified_by")
 
   @pytest.mark.smoke_tests
   @pytest.mark.parametrize(

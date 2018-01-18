@@ -165,7 +165,8 @@ class CustomAttributeDefinitionsFactory(EntitiesFactory):
                               AdminWidgetCustomAttributes.RICH_TEXT):
             ca_value = cls.generate_string(ca_attr_type)
           if ca_attr_type == AdminWidgetCustomAttributes.DATE:
-            ca_value = unicode(ca["created_at"][:10])
+            ca_value = unicode(ca["updated_at"][:8] +
+                               str(random.randint(10, 28)))
           if ca_attr_type == AdminWidgetCustomAttributes.CHECKBOX:
             ca_value = random.choice((True, False))
           if ca_attr_type == AdminWidgetCustomAttributes.DROPDOWN:

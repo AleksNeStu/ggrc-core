@@ -110,16 +110,18 @@ class Representation(object):
     [setattr(entity, k, v) for k, v in dic.iteritems()]
     return entity
 
-  def repr_ui(self):
+  def repr_ui(self, is_snapshot=False):
     """Convert entity's attributes values from REST like to UI like
-    representation.
+    representation. If 'is_snapshot' then add extra conversion accordingly.
     """
-    return self.convert_objs_repr_from_rest_to_ui(obj_or_objs=self)
+    return self.convert_objs_repr_from_rest_to_ui(
+        obj_or_objs=self, is_snapshot=is_snapshot)
 
   @classmethod  # noqa: ignore=C901
-  def convert_objs_repr_from_rest_to_ui(cls, obj_or_objs):
+  def convert_objs_repr_from_rest_to_ui(cls, obj_or_objs, is_snapshot=False):
     """Convert object's or objects' attributes values from REST like
     (dict or list of dict) representation to UI like with unicode.
+    If 'is_snapshot' then add extra conversion accordingly.
     Examples:
     None to None, u'Ex' to u'Ex', [u'Ex1', u'Ex2', ...] to u'Ex1, Ex2',
     {'name': u'Ex', ...} to u'Ex',
@@ -232,7 +234,10 @@ class Representation(object):
              all(isinstance(_def, dict)
                  for _def in cas_def)) else {None: None})
         cas = StringMethods.merge_dicts_by_same_key(cas_def_dict, cas_val_dict)
-        setattr(obj, "custom_attributes", cas)
+        if is_snapshot:
+          cas = StringMethods.delete_dict_items(
+              dic=cas, values_to_exclude=["0", None])
+        setattr(obj, "custom_attributes", cas if cas else {None: None})
       return obj
     return help_utils.execute_method_according_to_plurality(
         obj_or_objs=obj_or_objs, types=Entity.all_entities_classes(),

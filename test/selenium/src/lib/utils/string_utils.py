@@ -207,3 +207,16 @@ class StringMethods(object):
         cls.update_dicts_values(val, old_values_list, new_value)
       elif val in old_values_list:
         dic[key] = new_value
+
+  @staticmethod
+  def delete_dict_items(dic, keys_to_exclude=None, values_to_exclude=None):
+    """Delete dictionary's items which are corresponding:
+    if 'keys_to_exclude' to keys, if 'vals_to_exclude' to values."""
+    if isinstance(dic, dict) and dic:
+      for els_type, els_to_exclude in {"keys": keys_to_exclude,
+                                       "values": values_to_exclude}.items():
+        if isinstance(els_to_exclude, (list, tuple)) and els_to_exclude:
+          dic = (dict((k, v) for k, v in dic.iteritems() if
+                   (k if els_type == "keys" else v if els_type == "values" else
+                   None) not in els_to_exclude))
+    return dic
