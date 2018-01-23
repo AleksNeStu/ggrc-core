@@ -330,6 +330,7 @@ class Programs(InfoWidget):
   """Model for program object Info pages and Info panels."""
   # pylint: disable=too-many-instance-attributes
   _locators = locator.WidgetInfoProgram
+  _elements = element.ProgramInfoWidget
   dropdown_settings_cls = widget_info.Programs
 
   def __init__(self, driver):
@@ -349,9 +350,9 @@ class Programs(InfoWidget):
     self.notes = base.Label(self.info_widget_elem, self._locators.NOTES)
     self.notes_entered = base.Label(
         self.info_widget_elem, self._locators.NOTES_ENTERED)
-    self.manager = base.Label(self.info_widget_elem, self._locators.MANAGER)
-    self.manager_entered = base.Label(
-        self.info_widget_elem, self._locators.MANAGER_ENTERED)
+    self.manager, self.manager_entered = (
+        self.get_header_and_value_txt_from_people_scopes(
+            self._elements.PROGRAM_MANAGERS.upper()))
     self.ref_url = base.MultiInputField(
         self.info_widget_elem, self._locators.REF_URL_CSS)
     self.code = base.Label(self.info_widget_elem, self._locators.CODE)

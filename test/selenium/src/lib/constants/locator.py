@@ -732,11 +732,6 @@ class WidgetInfoProgram(WidgetInfoPanel):
   NOTES_ENTERED = (
       By.CSS_SELECTOR,
       '{} [data-test-id="title_notes_content_ef5bc3a71e88"]'.format(WIDGET))
-  MANAGER = (By.CSS_SELECTOR,
-             '{} [data-test-id="title_manager_7a906d2e"] h6'.format(WIDGET))
-  MANAGER_ENTERED = (By.CSS_SELECTOR,
-                     '{} [data-test-id="title_manager_7a906d2e"] '
-                     '[data-test-id="text_manager_7a906d2e"]'.format(WIDGET))
   REF_URL_CSS = (
       By.CSS_SELECTOR,
       '{} [data-test-id="title_reference_url_aa7d1a65"]'.format(WIDGET))

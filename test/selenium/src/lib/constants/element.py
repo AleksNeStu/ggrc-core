@@ -182,6 +182,7 @@ class CommonProgram(Common):
   NOTES = "Notes"
   EFFECTIVE_DATE = Base.EFFECTIVE_DATE
   STATE = Base.STATE
+  PROGRAM_MANAGERS = roles.PROGRAM_MANAGER + "s"
 
 
 class CommonAudit(Common):
