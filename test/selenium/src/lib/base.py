@@ -16,7 +16,7 @@ from lib.constants import messages, objects, url
 from lib.constants.element import MappingStatusAttrs
 from lib.constants.locator import CommonDropdownMenu
 from lib.decorator import lazy_property
-from lib.entities.entity import Entity
+from lib.entities.entity import Representation
 from lib.utils import selenium_utils, help_utils
 
 
@@ -56,9 +56,9 @@ class Test(InstanceRepresentation):
     names (compare objects' collections w/ attributes' values set to None).
     """
     expected_objs_wo_excluded_attrs, actual_objs_wo_excluded_attrs = (
-        Entity.extract_objs(help_utils.convert_to_list(expected_objs),
-                            help_utils.convert_to_list(actual_objs),
-                            *exclude_attrs))
+        Representation.extract_objs(
+            help_utils.convert_to_list(expected_objs),
+            help_utils.convert_to_list(actual_objs), *exclude_attrs))
     assert (expected_objs_wo_excluded_attrs ==
             actual_objs_wo_excluded_attrs), (
         messages.AssertionMessages.format_err_msg_equal(
@@ -71,10 +71,12 @@ class Test(InstanceRepresentation):
     attributes' names
     (compare objects' collections w/ attributes' values set to None).
     """
-    expected_obj_wo_excluded_attrs = Entity.extract_objs_wo_excluded_attrs(
-        help_utils.convert_to_list(expected_obj), *exclude_attrs)[0]
-    actual_objs_wo_excluded_attrs = Entity.extract_objs_wo_excluded_attrs(
-        help_utils.convert_to_list(actual_objs), *exclude_attrs)
+    expected_obj_wo_excluded_attrs = (
+        Representation.extract_objs_wo_excluded_attrs(
+            help_utils.convert_to_list(expected_obj), *exclude_attrs)[0])
+    actual_objs_wo_excluded_attrs = (
+        Representation.extract_objs_wo_excluded_attrs(
+            help_utils.convert_to_list(actual_objs), *exclude_attrs))
     assert (expected_obj_wo_excluded_attrs in
             actual_objs_wo_excluded_attrs), (
         messages.AssertionMessages.format_err_msg_contains(
@@ -90,13 +92,13 @@ class Test(InstanceRepresentation):
     pytest's xfail, else pytest's fail.
     """
     expected_excluded_attrs, actual_excluded_attrs = (
-        Entity.extract_simple_collections(
+        Representation.extract_simple_collections(
             help_utils.convert_to_list(expected_objs),
             help_utils.convert_to_list(actual_objs), *exclude_attrs))
     assert_msg = messages.AssertionMessages.format_err_msg_equal(
         expected_excluded_attrs, actual_excluded_attrs)
     is_list_excluded_attrs_equal = (
-        Entity.is_list_of_attrs_equal(
+        Representation.is_list_of_attrs_equal(
             expected_excluded_attrs, actual_excluded_attrs))
     Test.check_xfail_or_fail(
         is_condition=is_list_excluded_attrs_equal, issue_msg=issue_msg,
