@@ -17,6 +17,7 @@ ADMIN_DASHBOARD = "admin"
 AUDIT = AUDITS + "/{0}"
 RELATIONSHIPS = "relationships"
 OBJECT_OWNERS = "object_owners"
+USER_ROLES = "user_roles"
 CONTACTS = "contacts"
 QUERY = "query"
 
