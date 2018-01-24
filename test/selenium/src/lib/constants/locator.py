@@ -812,6 +812,7 @@ class WidgetInfoAssessment(WidgetInfoPanel, CommonAssessment):
       [_ASMT_PANEL, "related-objects[related-items-type='Assessment']"]))
   RELATED_ISSUES_CSS = (By.CSS_SELECTOR, " ".join(
       [_ASMT_PANEL, "related-objects[related-items-type='Issue']"]))
+  ASMT_TYPE_CSS = (By.CSS_SELECTOR, ".action-toolbar__content-item")
   # state section
   _PNL_STATE = ".pane-header__toolbar"
   BUTTON_COMPLETE = (By.CSS_SELECTOR, _PNL_STATE + " button.btn-darkBlue")
