@@ -6,8 +6,8 @@
 # pylint: disable=too-few-public-methods
 
 from lib import base, decorator, environment
-from lib.constants import locator, url, objects
-from lib.entities.entity import CustomAttributeEntity
+from lib.constants import locator, url
+from lib.entities.entities_factory import CustomAttributeDefinitionsFactory
 from lib.utils import selenium_utils
 from lib.utils.string_utils import StringMethods
 
@@ -18,7 +18,8 @@ class _Modal(base.Modal):
 
   def __init__(self, driver):
     super(_Modal, self).__init__(driver)
-    self.modal_window = self._driver.find_element(*self._locators.MODAL_CSS)
+    self.modal_window = selenium_utils.get_when_visible(
+        self._driver, self._locators.MODAL_CSS)
     self.attr_title_ui = base.TextInputField(
         self.modal_window, self._locators.ATTR_TITLE_UI_CSS)
     self.submit_btn = base.Button(
@@ -74,13 +75,12 @@ class CustomAttributesItemContent(base.Component):
                                                    self._locators.ROW_CSS):
       attrs = [i.text for i in row.find_elements(
           *self._locators.CELL_IN_ROW_CSS)]
+      # todo: add PO and getting 'multi_choice_options' via 'Edit' btn
       self.custom_attributes_list.append(
-          CustomAttributeEntity(
-              title=attrs[0],
-              type=objects.get_singular(objects.CUSTOM_ATTRIBUTES),
-              attribute_type=attrs[1],
+          CustomAttributeDefinitionsFactory().create(
+              title=attrs[0], attribute_type=attrs[1],
               mandatory=StringMethods.get_bool_value_from_arg(attrs[2]),
-              definition_type=self._item_name))
+              definition_type=self._item_name, multi_choice_options=None))
 
   def get_ca_list_from_group(self):
     """Return list of Custom Attribute objects."""
