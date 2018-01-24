@@ -46,9 +46,9 @@ class TestAuditPage(base.Test):
           fixture = locals().get(fixture)
           (get_cls_rest_service(objects.get_plural(fixture.type))().
            update_obj(obj=fixture, **params_to_update))
-    expected_audit = entities_factory.AuditsFactory().clone(
+    expected_audit = entities_factory.AuditsFactory.clone(
         audit=new_audit_rest)[0]
-    expected_asmt_tmpl = entities_factory.AssessmentTemplatesFactory().clone(
+    expected_asmt_tmpl = entities_factory.AssessmentTemplatesFactory.clone(
         asmt_tmpl=new_assessment_template_rest)[0]
     actual_audit = (webui_service.AuditsService(selenium).
                     clone_via_info_page_and_get_obj(audit_obj=new_audit_rest))
@@ -69,8 +69,8 @@ class TestAuditPage(base.Test):
     Preconditions:
     - Audit created under Program via REST API.
     """
-    expected_asmt_tmpl = (entities_factory.AssessmentTemplatesFactory().
-                          create().repr_ui())
+    expected_asmt_tmpl = (
+        entities_factory.AssessmentTemplatesFactory().create())
     asmt_tmpls_ui_service = webui_service.AssessmentTemplatesService(selenium)
     asmt_tmpls_ui_service.create_obj_via_tree_view(
         src_obj=new_audit_rest, obj=expected_asmt_tmpl)
@@ -79,9 +79,11 @@ class TestAuditPage(base.Test):
     assert len([expected_asmt_tmpl]) == actual_asmt_tmpls_tab_count
     actual_asmt_tmpls = asmt_tmpls_ui_service.get_list_objs_from_tree_view(
         src_obj=new_audit_rest)
-    # 'expected_asmt_tmpl': modified_by (None) *factory
+    # 'expected_asmt_tmpls': modified_by (None) *factory
+    # 'actual_asmt_tmpls': assignees, verifiers, template_object_type (None)
     self.general_equal_assert(
-        [expected_asmt_tmpl], actual_asmt_tmpls, "modified_by")
+        [expected_asmt_tmpl], actual_asmt_tmpls,
+        "modified_by", "assignees", "verifiers", "template_object_type")
 
   @pytest.mark.smoke_tests
   def test_asmt_creation(self, new_program_rest, new_audit_rest, selenium):
@@ -90,8 +92,8 @@ class TestAuditPage(base.Test):
     Preconditions:
     - Audit created under Program via REST API.
     """
-    expected_asmt = (entities_factory.AssessmentsFactory().
-                     create().repr_ui())
+    expected_asmt = (
+        entities_factory.AssessmentsFactory().create())
     asmts_ui_service = webui_service.AssessmentsService(selenium)
     asmts_ui_service.create_obj_via_tree_view(
         src_obj=new_audit_rest, obj=expected_asmt)
@@ -100,8 +102,11 @@ class TestAuditPage(base.Test):
     assert len([expected_asmt]) == actual_asmts_tab_count
     actual_asmts = asmts_ui_service.get_list_objs_from_tree_view(
         src_obj=new_audit_rest)
-    # 'expected_asmt': modified_by (None) *factory
-    self.general_equal_assert([expected_asmt], actual_asmts, "modified_by")
+    # 'expected_asmts': modified_by (None) *factory
+    # 'actual_asmts': os_state (None)
+    self.general_equal_assert(
+        [expected_asmt], actual_asmts,
+        "modified_by", "os_state", "assessment_type")
 
   @pytest.mark.smoke_tests
   @pytest.mark.parametrize(
@@ -126,7 +131,7 @@ class TestAuditPage(base.Test):
     """
     expected_asmt = (
         entities_factory.AssessmentsFactory().create(
-            objects_under_assessment=[dynamic_objects]))
+            mapped_objects=[dynamic_objects]))
     expected_titles = [dynamic_objects.title]
     asmts_ui_service = webui_service.AssessmentsService(selenium)
     actual_titles = (
@@ -164,7 +169,7 @@ class TestAuditPage(base.Test):
     - 'dynamic_objects'.
     """
     expected_asmts = (entities_factory.AssessmentsFactory().generate(
-        objs_under_asmt=new_controls_rest, audit=new_audit_rest,
+        mapped_objects=new_controls_rest, audit=new_audit_rest,
         asmt_tmpl=dynamic_objects))
     expected_asmts = [
         expected_asmt.repr_ui() for expected_asmt in expected_asmts]
@@ -178,8 +183,9 @@ class TestAuditPage(base.Test):
     actual_asmts = asmts_ui_service.get_list_objs_from_info_panels(
         src_obj=new_audit_rest, objs=expected_asmts)
     # 'expected_asmt': slug, custom_attributes (None) *factory
+    # 'actual_asmt': audit (None)
     self.general_equal_assert(
-        expected_asmts, actual_asmts, "slug", "custom_attributes")
+        expected_asmts, actual_asmts, "slug", "custom_attributes", "audit")
 
   @pytest.mark.smoke_tests
   @pytest.mark.cloning
@@ -210,8 +216,10 @@ class TestAuditPage(base.Test):
         update_attrs(status=AuditStates.PLANNED).repr_ui())
     actual_audit = create_and_clone_audit_w_params_to_update["actual_audit"]
     # 'expected_audit': created_at, updated_at, slug (None) *factory
+    # 'actual_audit': program (None)
     self.general_equal_assert(
-        expected_audit, actual_audit, "created_at", "updated_at", "slug")
+        expected_audit, actual_audit,
+        "created_at", "updated_at", "slug", "program")
 
   @pytest.mark.smoke_tests
   @pytest.mark.cloning
@@ -261,6 +269,7 @@ class TestAuditPage(base.Test):
     - 'create_and_clone_audit_w_params_to_update' which contains params to
     update asmt tmpl status via REST API.
     """
+    # todo: add getting objects from Assessment Template's Info Widget
     actual_audit = create_and_clone_audit_w_params_to_update["actual_audit"]
     expected_asmt_tmpl = (
         create_and_clone_audit_w_params_to_update[
@@ -269,10 +278,13 @@ class TestAuditPage(base.Test):
                          get_list_objs_from_tree_view(src_obj=actual_audit))
     # 'expected_asmt_tmpl': slug, updated_at (None) *factory
     # 'actual_asmt_tmpls': created_at, updated_at, custom_attributes,
-    #                      modified_by (None)
+    #                      modified_by, audit, assignees, verifiers,
+    #                      template_object_type (None)
     is_expect_ggrc_3423 = (expected_asmt_tmpl.status != ObjectStates.DRAFT)
     exclude_attrs = (
-        Representation.tree_view_attrs_to_exclude + ("slug", "modified_by"))
+        Representation.tree_view_attrs_to_exclude +
+        ("slug", "modified_by", "audit", "assignees", "verifiers",
+         "template_object_type"))
     self.general_equal_assert(
         expected_asmt_tmpl, actual_asmt_tmpls,
         *(exclude_attrs if not is_expect_ggrc_3423 else

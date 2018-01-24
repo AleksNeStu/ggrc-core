@@ -10,10 +10,11 @@
 import pytest
 
 from lib import base
-from lib.constants import messages, roles, element, value_aliases as alias
+from lib.constants import messages, element, value_aliases as alias
 from lib.constants.element import AssessmentStates
-from lib.entities import entities_factory, entity
-from lib.entities.entities_factory import CustomAttributeDefinitionsFactory
+from lib.entities import entities_factory
+from lib.entities.entities_factory import (
+    CustomAttributeDefinitionsFactory, PeopleFactory)
 from lib.entities.entity import Representation
 from lib.service import rest_service, webui_service
 from lib.utils.filter_utils import FilterUtils
@@ -50,12 +51,13 @@ class TestAssessmentsWorkflow(base.Test):
             comment_description=expected_comment.description).created_at
     ).repr_ui() for expected_comment in expected_asmt_comments]
     # 'expected_asmt': updated_at (outdated)
-    expected_asmt = expected_asmt.update_attrs(
+    expected_asmt.update_attrs(
         updated_at=self.info_service.get_obj(obj=expected_asmt).updated_at,
         comments=expected_asmt_comments,
         status=AssessmentStates.IN_PROGRESS).repr_ui()
     actual_asmt = asmts_ui_service.get_obj_from_info_page(obj=expected_asmt)
-    self.general_equal_assert(expected_asmt, actual_asmt, "comments")
+    # 'actual_asmt': audit (None)
+    self.general_equal_assert(expected_asmt, actual_asmt, "audit", "comments")
     self.xfail_equal_assert(
         expected_asmt, actual_asmt, "Issue in app GGRC-3094", "comments")
 
@@ -121,43 +123,43 @@ class TestAssessmentsWorkflow(base.Test):
         "edit_obj_via_edit_modal_from_info_page",
         AssessmentStates.NOT_STARTED, False),
        (("new_assessment_rest", {"status": AssessmentStates.NOT_STARTED,
-                                 "verifier": [roles.DEFAULT_USER]}),
+                                 "verifiers": [PeopleFactory().default_user]}),
         "edit_obj_via_edit_modal_from_info_page",
         AssessmentStates.NOT_STARTED, False),
        (("new_assessment_rest", {"status": AssessmentStates.IN_PROGRESS}),
         "edit_obj_via_edit_modal_from_info_page",
         AssessmentStates.IN_PROGRESS, False),
        (("new_assessment_rest", {"status": AssessmentStates.IN_PROGRESS,
-                                 "verifier": [roles.DEFAULT_USER]}),
+                                 "verifiers": [PeopleFactory().default_user]}),
         "edit_obj_via_edit_modal_from_info_page",
         AssessmentStates.IN_PROGRESS, False),
        (("new_assessment_rest", {"status": AssessmentStates.COMPLETED}),
         "edit_obj_via_edit_modal_from_info_page",
         AssessmentStates.IN_PROGRESS, False),
        (("new_assessment_rest", {"status": AssessmentStates.COMPLETED,
-                                 "verifier": [roles.DEFAULT_USER]}),
+                                 "verifiers": [PeopleFactory().default_user]}),
         "edit_obj_via_edit_modal_from_info_page",
         AssessmentStates.IN_PROGRESS, False),
        (("new_assessment_rest", {"status": AssessmentStates.NOT_STARTED}),
         "complete_assessment",
         AssessmentStates.COMPLETED, False),
        (("new_assessment_rest", {"status": AssessmentStates.NOT_STARTED,
-                                 "verifier": [roles.DEFAULT_USER]}),
+                                 "verifiers": [PeopleFactory().default_user]}),
         "complete_assessment",
         AssessmentStates.READY_FOR_REVIEW, False),
        (("new_assessment_rest", {"status": AssessmentStates.IN_PROGRESS}),
         "complete_assessment",
         AssessmentStates.COMPLETED, False),
        (("new_assessment_rest", {"status": AssessmentStates.IN_PROGRESS,
-                                 "verifier": [roles.DEFAULT_USER]}),
+                                 "verifiers": [PeopleFactory().default_user]}),
         "complete_assessment",
         AssessmentStates.READY_FOR_REVIEW, False),
        (("new_assessment_rest", {"status": AssessmentStates.NOT_STARTED,
-                                 "verifier": [roles.DEFAULT_USER]}),
+                                 "verifiers": [PeopleFactory().default_user]}),
         "verify_assessment",
         AssessmentStates.COMPLETED, True),
        (("new_assessment_rest", {"status": AssessmentStates.NOT_STARTED,
-                                 "verifier": [roles.DEFAULT_USER]}),
+                                 "verifiers": [PeopleFactory().default_user]}),
         "reject_assessment",
         AssessmentStates.REWORK_NEEDED, False)],
       ids=["Edit asmt's title w'o verifier 'Not Started' - 'Not Started'",
@@ -190,15 +192,16 @@ class TestAssessmentsWorkflow(base.Test):
       getattr(asmts_ui_service, "complete_assessment")(expected_asmt)
     getattr(asmts_ui_service, action)(expected_asmt)
     # 'expected_asmt': updated_at (outdated)
-    expected_asmt = (expected_asmt.update_attrs(
+    expected_asmt.update_attrs(
         title=(element.AssessmentInfoWidget.TITLE_EDITED_PART +
                expected_asmt.title if "edit" in action
                else expected_asmt.title),
         status=expected_final_state.title(), verified=expected_verified,
         updated_at=self.info_service.get_obj(
-            obj=expected_asmt).updated_at).repr_ui())
+            obj=expected_asmt).updated_at).repr_ui()
     actual_asmt = asmts_ui_service.get_obj_from_info_page(expected_asmt)
-    self.general_equal_assert(expected_asmt, actual_asmt)
+    # 'actual_asmt': audit (None)
+    self.general_equal_assert(expected_asmt, actual_asmt, "audit")
 
   @pytest.mark.smoke_tests
   @pytest.mark.parametrize("operator", [alias.EQUAL_OP, alias.CONTAINS_OP])
@@ -219,7 +222,7 @@ class TestAssessmentsWorkflow(base.Test):
     custom_attr_values = (
         CustomAttributeDefinitionsFactory().generate_ca_values(
             list_ca_def_objs=new_cas_for_assessments_rest))
-    checkbox_id = entity.Entity.filter_objs_by_attrs(
+    checkbox_id = Representation.filter_objs_by_attrs(
         objs=new_cas_for_assessments_rest,
         attribute_type=element.AdminWidgetCustomAttributes.CHECKBOX).id
     expected_asmt = new_assessments_rest[0]
@@ -233,21 +236,20 @@ class TestAssessmentsWorkflow(base.Test):
         expected_asmt.custom_attribute_definitions, custom_attr_values,
         operator)
     # 'expected_asmt': updated_at (outdated)
-    # 'actual_asmts': created_at, updated_at, custom_attributes (None)
-    expected_asmt = entity.Entity.extract_objs_wo_excluded_attrs(
+    # 'actual_asmts': created_at, updated_at, custom_attributes, audit
+    #                 assessment_type, modified_by (None)
+    expected_asmt = Representation.extract_objs_wo_excluded_attrs(
         [expected_asmt.repr_ui()],
-        *Representation.tree_view_attrs_to_exclude)[0]
+        *(Representation.tree_view_attrs_to_exclude + (
+            "audit", "assessment_type", "modified_by")))[0]
     expected_results = [{"filter": filter_expr,
                          "objs": [expected_asmt]}
                         for filter_expr in filter_exprs]
     actual_results = [
         {"filter": filter_expr,
-         "objs": entity.Entity.extract_objs_wo_excluded_attrs(
-             webui_service.AssessmentsService(
-                 selenium).filter_and_get_list_objs_from_tree_view(
-                 new_audit_rest, filter_expr),
-             *("updated_at", "custom_attributes"))
-         } for filter_expr in filter_exprs]
+         "objs": webui_service.AssessmentsService(
+             selenium).filter_and_get_list_objs_from_tree_view(
+             new_audit_rest, filter_expr)} for filter_expr in filter_exprs]
     assert expected_results == actual_results, (
         messages.AssertionMessages.format_err_msg_equal(
             [{exp_res["filter"]: [exp_obj.title for exp_obj in exp_res["objs"]]
@@ -283,16 +285,16 @@ class TestAssessmentsWorkflow(base.Test):
     - 'dynamic_relationships'.
     """
     expected_asmt = (new_assessment_rest.update_attrs(
-        objects_under_assessment=[dynamic_objects]))
+        mapped_objects=[dynamic_objects]))
     expected_titles = [dynamic_objects.title]
     asmts_ui_service = webui_service.AssessmentsService(selenium)
     actual_titles = (
         asmts_ui_service.map_objs_and_get_mapped_titles_from_edit_modal(
-            expected_asmt, expected_asmt.objects_under_assessment))
+            expected_asmt, expected_asmt.mapped_objects))
     assert expected_titles == actual_titles
     # 'expected_asmt': updated_at (outdated)
-    expected_asmt = (
-        expected_asmt.update_attrs(updated_at=self.info_service.get_obj(
-            obj=expected_asmt).updated_at).repr_ui())
+    expected_asmt.update_attrs(updated_at=self.info_service.get_obj(
+        obj=expected_asmt).updated_at).repr_ui()
     actual_asmt = asmts_ui_service.get_obj_from_info_page(expected_asmt)
-    self.general_equal_assert(expected_asmt, actual_asmt)
+    # 'actual_asmts': audit (None)
+    self.general_equal_assert(expected_asmt, actual_asmt, "audit")

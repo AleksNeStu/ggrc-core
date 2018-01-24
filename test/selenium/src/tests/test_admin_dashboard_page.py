@@ -7,9 +7,9 @@
 # pylint: disable=protected-access
 
 import random
+import re
 
 import pytest
-import re
 
 from lib import base, constants
 from lib.constants import objects, messages
@@ -82,5 +82,7 @@ class TestAdminDashboardPage(base.Test):
         attribute_type=ca_type, definition_type=def_type)
     ca_tab = admin_dashboard.select_custom_attributes()
     ca_tab.add_custom_attribute(ca_obj=expected_ca)
-    list_actual_ca = ca_tab.get_custom_attributes_list(ca_group=expected_ca)
-    self.general_contain_assert(expected_ca, list_actual_ca)
+    actual_cas = ca_tab.get_custom_attributes_list(ca_group=expected_ca)
+    # 'actual_ca': multi_choice_options (None)
+    self.general_contain_assert(expected_ca, actual_cas,
+                                "multi_choice_options")

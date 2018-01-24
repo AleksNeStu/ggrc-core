@@ -13,7 +13,6 @@ from lib import base
 from lib.constants import messages, objects, element
 from lib.constants.element import AssessmentStates, ObjectStates
 from lib.constants.element import Lhn, MappingStatusAttrs
-from lib.entities import entities_factory, entity
 from lib.entities.entity import Representation
 from lib.factory import get_cls_webui_service, get_cls_rest_service
 from lib.page import dashboard
@@ -320,7 +319,7 @@ class TestSnapshots(base.Test):
                        filter_and_get_list_objs_from_tree_view(
                            src_obj=audit, filter_exp=filter_exp))
     # 'actual_controls': created_at, updated_at, custom_attributes (None)
-    expected_controls, actual_controls = entity.Entity.extract_objs(
+    expected_controls, actual_controls = Representation.extract_objs(
         [expected_control], actual_controls,
         *Representation.tree_view_attrs_to_exclude)
     expected_control = expected_controls[0]
@@ -390,13 +389,13 @@ class TestSnapshots(base.Test):
         controls_ui_service.get_list_objs_from_tree_view(src_obj=source_obj))
     # 'actual_controls': created_at, updated_at, custom_attributes (None)
     expected_controls_from_mapper, actual_controls_from_mapper = (
-        entity.Entity.extract_objs(
+        Representation.extract_objs(
             [expected_control_from_mapper], actual_controls_from_mapper,
             *Representation.tree_view_attrs_to_exclude))
     expected_controls_from_tree_view = []
     if expected_control_from_tree_view:
       expected_controls_from_tree_view, actual_controls_from_tree_view = (
-          entity.Entity.extract_objs(
+          Representation.extract_objs(
               [expected_control_from_tree_view],
               actual_controls_from_tree_view,
               *Representation.tree_view_attrs_to_exclude))
@@ -429,7 +428,7 @@ class TestSnapshots(base.Test):
     - Audit and program, and different control created via REST API
     """
     # 'actual_controls': created_at, updated_at, custom_attributes (None)
-    expected_control = entity.Entity.extract_objs_wo_excluded_attrs(
+    expected_control = Representation.extract_objs_wo_excluded_attrs(
         [new_control_rest.repr_ui()],
         *Representation.tree_view_attrs_to_exclude)[0]
     controls_ui_service = webui_service.ControlsService(selenium)
@@ -631,8 +630,10 @@ class TestSnapshots(base.Test):
     actual_objs = (get_cls_webui_service(
         objects.get_plural(expected_obj.type))(selenium).
         get_list_objs_from_tree_view(src_obj=origin_control))
-    # 'actual_controls': created_at, updated_at, custom_attributes (None)
-    exclude_attrs = Representation.tree_view_attrs_to_exclude
+    # 'actual_controls': created_at, updated_at, custom_attributes, audit
+    #                    assessment_type, modified_by (None)
+    exclude_attrs = (Representation.tree_view_attrs_to_exclude +
+                     ("audit", "assessment_type", "modified_by"))
     if is_issue_flow:
       exclude_attrs += ("objects_under_assessment", )
     self.general_equal_assert([expected_obj], actual_objs, *exclude_attrs)
@@ -704,7 +705,7 @@ class TestSnapshots(base.Test):
     """
     expected_objs_names_from_mapper = (
         objects.ALL_SNAPSHOTABLE_OBJS + (objects.ISSUES, ))
-    if dynamic_objects.type == entities_factory.EntitiesFactory.obj_issue:
+    if dynamic_objects.type == objects.get_obj_type(objects.ISSUES):
       expected_objs_names_from_mapper = expected_objs_names_from_mapper + (
           objects.PROGRAMS, objects.PROJECTS)
     expected_objs_names_from_add_widget = expected_objs_names_from_mapper
