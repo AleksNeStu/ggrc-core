@@ -105,13 +105,25 @@ def get_cls_entity_factory(object_name):
   from lib.entities import entities_factory
   cls_name = object_name + constants.cls_name.FACTORY
   base_cls = entities_factory.EntitiesFactory
-  return _factory(cls_name=cls_name, parent_cls=base_cls)
+  return _factory(cls_name=cls_name, parent_cls=base_cls,
+                  search_nested_subclasses=True)
+
+
+def get_cls_obj_entity(object_name):
+  """Get and return class of object factory."""
+  from lib.entities import entity
+  cls_name = (
+      objects.get_singular(object_name, title=True) +
+      constants.cls_name.ENTITY)
+  base_cls = entity.Representation
+  return _factory(cls_name=cls_name, parent_cls=base_cls,
+                  search_nested_subclasses=True)
 
 
 def get_cls_rest_service(object_name):
   """Get and return class of rest service."""
   from lib.service import rest_service
-  cls_name = object_name + constants.cls_name.SERVICE
+  cls_name = object_name.title() + constants.cls_name.SERVICE
   base_cls = rest_service.BaseRestService
   return _factory(cls_name=cls_name, parent_cls=base_cls)
 
