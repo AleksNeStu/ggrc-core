@@ -10,7 +10,7 @@ from dateutil import parser, tz
 from lib import factory
 from lib.constants import objects, url, messages, element, regex
 from lib.element.tab_containers import DashboardWidget
-from lib.entities.entity import Entity
+from lib.entities.entity import Representation
 from lib.page import dashboard
 from lib.page.widget.info_widget import SnapshotedInfoPanel
 from lib.utils import selenium_utils, file_utils
@@ -44,11 +44,11 @@ class BaseWebUiService(object):
     Return list of created objects.
     """
     list_factory_objs = [
-        entity_factory.create_empty() for _ in xrange(len(list_scopes))]
+        entity_factory().obj_inst() for _ in xrange(len(list_scopes))]
     list_scopes_with_upper_keys = [
         StringMethods.dict_keys_to_upper_case(scope) for scope in list_scopes]
     list_scopes_to_convert = StringMethods.exchange_dicts_items(
-        transform_dict=Entity.items_of_remap_keys(),
+        transform_dict=Representation.remap_collection(),
         dicts=list_scopes_with_upper_keys, is_keys_not_values=True)
     # convert and represent values in scopes
     for scope in list_scopes_to_convert:
@@ -81,7 +81,7 @@ class BaseWebUiService(object):
                      if k == "created_at" else v)
                  for k, v in comment.iteritems()} for comment in val]
           # convert multiple values to list of strings and split if need it
-          if (key in ["owners", "assignee", "creator", "verifier"] and
+          if (key in Representation.people_attrs_names and
              not isinstance(val, list)):
             # split Tree View values if need 'Ex1, Ex2 F' to ['Ex1', 'Ex2 F']
             # Info Widget values will be represent by internal methods
@@ -92,8 +92,7 @@ class BaseWebUiService(object):
                   Symbols.STAR in val):
             scope[key] = val.replace(Symbols.STAR, Symbols.BLANK)
     return [
-        Entity.update_objs_attrs_values_by_entered_data(
-            obj_or_objs=factory_obj, is_allow_none_values=False, **scope) for
+        factory_obj.update_attrs(is_allow_none=False, **scope) for
         scope, factory_obj in zip(list_scopes_to_convert, list_factory_objs)]
 
   def open_widget_of_mapped_objs(self, src_obj):
@@ -464,7 +463,7 @@ class AuditsService(BaseWebUiService):
     audit_info_page = self.open_info_page_of_obj(audit_obj)
     (audit_info_page.
      open_info_3bbs().select_clone().confirm_clone(is_full=True))
-    cloned_audit_obj = self.entities_factory_cls().create_empty().update_attrs(
+    cloned_audit_obj = self.entities_factory_cls().obj_inst().update_attrs(
         url=url.Utils.get_src_obj_url(self.driver.current_url))
     actual_cloned_audit_obj = self.get_obj_from_info_page(obj=cloned_audit_obj)
     self.driver.refresh()
@@ -614,14 +613,14 @@ class AssessmentsService(BaseWebUiService):
     modal_create = (self.open_widget_of_mapped_objs(src_obj).
                     tree_view.open_create())
     modal_create.fill_minimal_data(title=obj.title, code=obj.slug)
-    if obj.objects_under_assessment:
-      modal_create.map_controls(obj.objects_under_assessment)
+    if obj.mapped_objects:
+      modal_create.map_controls(obj.mapped_objects)
     return modal_create
 
   def map_objs_and_get_mapped_titles_from_edit_modal(self, src_obj,
                                                      objs_to_map):
     """Open ModalEdit from InfoPage of object. Open 3BBS. Select 'Edit' button
-    and map snapshots from objects_under_assessment attribute of passed object.
+    and map snapshots from mapped_objects attribute of passed object.
       - Return: list of str. Titles of mapped Snapshots from Modal Edit.
     """
     # pylint: disable=invalid-name
