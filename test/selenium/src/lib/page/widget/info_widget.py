@@ -413,6 +413,10 @@ class Assessments(InfoWidget):
     self.is_verified_lbl_txt = self._elements.VERIFIED.upper()
     self.is_verified = selenium_utils.is_element_exist(
         self.info_widget_elem, self._locators.ICON_VERIFIED)
+    self.asmt_type_lbl_txt = self._elements.ASMT_TYPE.upper()
+    self.asmt_type = base.Label(
+        self.info_widget_elem, self._locators.ASMT_TYPE_CSS)
+    self.asmt_type_txt = objects.get_obj_type(self.asmt_type.text)
     self.mapped_objects_lbl_txt = self._elements.MAPPED_OBJECTS.upper()
     self.mapped_objects_titles_txt = self._get_mapped_objs_titles_txt()
     self.lcas_scope_txt = self.get_headers_and_values_dict_from_cas_scopes(
@@ -435,10 +439,11 @@ class Assessments(InfoWidget):
     self._extend_list_all_scopes(
         [self.is_verified_lbl_txt, self.creators_lbl_txt,
          self.assignees_lbl_txt, self.verifiers_lbl_txt,
-         self.mapped_objects_lbl_txt, self.comments_lbl_txt],
+         self.mapped_objects_lbl_txt, self.comments_lbl_txt,
+         self.asmt_type_lbl_txt],
         [self.is_verified, self.creators_txt, self.assignees_txt,
          self.verifiers_txt, self.mapped_objects_titles_txt,
-         self.comments_scopes_txt])
+         self.comments_scopes_txt, self.asmt_type_txt])
 
   def get_title_lbl_txt(self):
     """Get title's label element from Assessment's Info Widget."""
