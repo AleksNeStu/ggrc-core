@@ -4,13 +4,14 @@
 # pylint: disable=too-few-public-methods
 
 import json
+
 import requests
 
 from lib import environment, factory
 from lib.constants import url, objects, messages
 from lib.entities.entities_factory import (
-    ObjectPersonsFactory, EntitiesFactory, CustomAttributeDefinitionsFactory)
-from lib.entities.entity import Entity
+    PeopleFactory, CustomAttributeDefinitionsFactory)
+from lib.entities.entity import Representation
 from lib.service.rest import client, query
 from lib.utils import help_utils
 
@@ -31,15 +32,15 @@ class BaseRestService(object):
     if 'attrs_for_factory' is not None then factory is generating objects
     according to 'attrs_for_factory' (dictionary of attributes).
     """
-    list_factory_objs = [entity_factory.create() for _ in xrange(count)]
-    if attrs_to_factory:
-      list_factory_objs = [
-          entity_factory.create(**attrs_to_factory) for _ in xrange(count)]
+    list_factory_objs = [entity_factory().create(
+        is_add_rest_attrs=True,
+        **(attrs_to_factory if attrs_to_factory else {}))
+        for _ in xrange(count)]
     list_attrs = [self.get_items_from_resp(self.client.create_object(
         **dict(factory_obj.__dict__.items() + attrs_for_template.items())))
         for factory_obj in list_factory_objs]
     return [
-        self.set_obj_attrs(attrs=attrs, obj=factory_obj, **attrs_for_template)
+        self.set_obj_attrs(obj=factory_obj, attrs=attrs, **attrs_for_template)
         for attrs, factory_obj in zip(list_attrs, list_factory_objs)]
 
   def update_list_objs(self, entity_factory, list_objs_to_update,
@@ -50,11 +51,10 @@ class BaseRestService(object):
     if 'attrs_for_factory' is not None then factory is generating objects
     according to 'attrs_for_factory' (dictionary of attributes).
     """
-    list_new_objs = [entity_factory.create() for _ in
-                     xrange(len(list_objs_to_update))]
-    if attrs_to_factory:
-      list_new_objs = [entity_factory.create(**attrs_to_factory) for _ in
-                       xrange(len(list_objs_to_update))]
+    list_new_objs = [entity_factory().create(
+        is_add_rest_attrs=True,
+        **(attrs_to_factory if attrs_to_factory else {}))
+        for _ in xrange(len(list_objs_to_update))]
     list_new_attrs = [
         self.get_items_from_resp(
             self.client.update_object(
@@ -62,13 +62,14 @@ class BaseRestService(object):
                 **dict({k: v for k, v in new_obj.__dict__.iteritems() if
                         k != "href"}.items() + attrs_for_template.items()))
         ) for old_obj, new_obj in zip(list_objs_to_update, list_new_objs)]
-    return [self.set_obj_attrs(attrs=new_attrs, obj=new_obj) for
-            new_attrs, new_obj in zip(list_new_attrs, list_new_objs)]
+    return [
+        self.set_obj_attrs(obj=new_obj, attrs=new_attrs, **new_obj.__dict__)
+        for new_attrs, new_obj in zip(list_new_attrs, list_new_objs)]
 
   def update_obj(self, obj, **attrs):
     """Update attributes values of existing object via REST API."""
     return self.set_obj_attrs(obj=obj, attrs=self.get_items_from_resp(
-        self.client.update_object(href=obj.href, **attrs)))
+        self.client.update_object(href=obj.href, **attrs)), **obj.__dict__)
 
   @staticmethod  # noqa: ignore=C901
   def get_items_from_resp(resp):
@@ -124,14 +125,14 @@ class BaseRestService(object):
           messages.ExceptionsMessages.err_server_resp.format(resp))
 
   @staticmethod
-  def set_obj_attrs(attrs, obj, **kwargs):
-    """Update object according to new attributes exclude "type", "contact",
-    "owners" due of objects assertion specific, and keyword arguments -
+  def set_obj_attrs(obj, attrs, **kwargs):
+    """Update object according to new attributes exclude "type" due of objects
+    assertion specific, and keyword arguments -
     attributes witch used to make JSON template to request and witch contain
     fully objects descriptions as dictionary.
     """
     obj.__dict__.update({k: v for k, v in attrs.iteritems()
-                         if v and k not in ("type", "contact", "owners")})
+                         if v and k not in ["type", ]})
     if kwargs:
       # for Audit objects
       if kwargs.get("program"):
@@ -146,23 +147,23 @@ class BaseRestService(object):
     filtered attributes.
     """
     list_objs = self.create_list_objs(
-        entity_factory=self.entities_factory_cls(), count=count,
+        entity_factory=self.entities_factory_cls, count=count,
         attrs_to_factory=factory_params, **attrs_for_template)
-    return Entity.filter_objs_attrs(
-        obj_or_objs=list_objs,
-        attrs_to_include=self.entities_factory_cls().obj_attrs_names)
+    return Representation.filter_objs_attrs(
+        objs=list_objs,
+        attrs_to_include=Representation.all_attrs_names())
 
   def update_objs(self, objs, factory_params=None, **attrs_for_template):
     """Update existing objects via REST API and return list of updated objects
     with filtered attributes.
     """
     list_objs = self.update_list_objs(
-        entity_factory=self.entities_factory_cls(),
+        entity_factory=self.entities_factory_cls,
         list_objs_to_update=help_utils.convert_to_list(objs),
         attrs_to_factory=factory_params, **attrs_for_template)
-    return Entity.filter_objs_attrs(
-        obj_or_objs=list_objs,
-        attrs_to_include=self.entities_factory_cls().obj_attrs_names)
+    return Representation.filter_objs_attrs(
+        objs=list_objs,
+        attrs_to_include=Representation.all_attrs_names())
 
   def delete_objs(self, objs):
     """Delete existing objects via REST API."""
@@ -229,7 +230,7 @@ class CustomAttributeDefinitionsService(BaseRestService):
     """Create 'Dashboard' CAs via rest according to passed obj_type and count.
     """
     return [self.create_objs(1, CustomAttributeDefinitionsFactory().
-            create_dashboard_ca(obj_type.lower()).__dict__)[0]
+                             create_dashboard_ca(obj_type.lower()).__dict__)[0]
             for _ in xrange(count)]
 
 
@@ -253,7 +254,7 @@ class ObjectsOwnersService(HelpRestService):
   def __init__(self):
     super(ObjectsOwnersService, self).__init__(url.OBJECT_OWNERS)
 
-  def assign_owner_to_objs(self, objs, owner=ObjectPersonsFactory().default()):
+  def assign_owner_to_objs(self, objs, owner=PeopleFactory.default_user):
     """Assign of an owner to objects."""
     return [self.client.create_object(
         type=objects.get_singular(self.endpoint), ownable=obj.__dict__,
@@ -271,12 +272,13 @@ class ObjectsInfoService(HelpRestService):
     """
     snapshoted_obj_dict = (
         BaseRestService.get_items_from_resp(self.client.create_object(
-            type=self.endpoint, object_name=EntitiesFactory.obj_snapshot,
+            type=self.endpoint,
+            object_name=objects.get_obj_type(objects.SNAPSHOTS),
             filters=query.Query.expression_get_snapshoted_obj(
                 obj_type=origin_obj.type, obj_id=origin_obj.id,
                 parent_type=paren_obj.type,
                 parent_id=paren_obj.id))).get("values")[0])
-    return Entity.convert_dict_to_obj_repr(snapshoted_obj_dict)
+    return Representation.repr_dict_to_obj(snapshoted_obj_dict)
 
   def get_obj(self, obj):
     """Get and return object according to 'obj.type' and 'obj.id'."""
@@ -284,7 +286,7 @@ class ObjectsInfoService(HelpRestService):
         type=self.endpoint, object_name=unicode(obj.type),
         filters=query.Query.expression_get_obj_by_id(obj.id))).get(
         "values")[0])
-    return Entity.convert_dict_to_obj_repr(obj_dict)
+    return Representation.repr_dict_to_obj(obj_dict)
 
   def get_comment_obj(self, paren_obj, comment_description):
     """Get and return comment object according to 'paren_obj' type) and
@@ -294,9 +296,10 @@ class ObjectsInfoService(HelpRestService):
     """
     comment_obj_dict = (
         BaseRestService.get_items_from_resp(self.client.create_object(
-            type=self.endpoint, object_name=EntitiesFactory.obj_comment,
+            type=self.endpoint,
+            object_name=objects.get_obj_type(objects.COMMENTS),
             filters=query.Query.expression_get_comment_by_desc(
                 parent_type=paren_obj.type, parent_id=paren_obj.id,
                 comment_desc=comment_description),
             order_by=[{"name": "created_at", "desc": True}])).get("values")[0])
-    return Entity.convert_dict_to_obj_repr(comment_obj_dict)
+    return Representation.repr_dict_to_obj(comment_obj_dict)
