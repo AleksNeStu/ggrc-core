@@ -132,6 +132,11 @@ class Common(object):
   MODIFIED_BY = "Last updated by"
   CREATED_AT = "Created date"
   UPDATED_AT = "Updated at"
+  # roles
+  OBJECT_ADMINS = "Object Admins"
+  PRIMARY_CONTACTS = roles.PRIMARY_CONTACTS
+  SECONDARY_CONTACTS = roles.SECONDARY_CONTACTS
+  OTHERS = "Others"
 
 
 class CommonModalCreate(object):
@@ -168,9 +173,9 @@ class TransformationSetVisibleFields(CommonModalSetVisibleFields):
   MANAGER = "Manager"
   MAPPED_OBJECTS = "Mapped Objects"
   REVIEW_STATE = "Review State"
-  CREATORS = "Creators"
-  ASSIGNEES = "Assignees"
-  VERIFIERS = "Verifiers"
+  CREATORS = roles.CREATORS
+  ASSIGNEES = roles.ASSIGNEES
+  VERIFIERS = roles.VERIFIERS
 
 
 class CommonProgram(Common):
@@ -192,12 +197,16 @@ class CommonAudit(Common):
   PLANNED_START_DATE = "Planned Start Date"
   PLANNED_END_DATE = "Planned End Date"
   PLANNED_REPORT_PERIOD = "Report Period"
-  AUDIT_CAPTAINS = "Audit Captains"
   AUDIT_FIRM = " Audit Firm"
-  AUDITORS = "Auditors"
   ADD_AUDITOR = "+ Add Auditor"
   AUDIT_FOLDER = "Audit Folder"
   ASSIGN_FOLDER = "Assign folder"
+  # roles
+  AUDIT_CAPTAIN = "Audit Captain"
+  AUDIT_CAPTAINS = AUDIT_CAPTAIN + "s"
+  AUDITORS = roles.AUDITORS
+  PRINCIPAL_ASSIGNEES = roles.PRINCIPAL_ASSIGNEES
+  SECONDARY_ASSIGNEES = roles.SECONDARY_ASSIGNEES
 
 
 class CommonControl(Common):
@@ -206,8 +215,8 @@ class CommonControl(Common):
   STATE = Base.STATE
   ADMIN = roles.ADMIN
   PRIMARY_CONTACTS = roles.PRIMARY_CONTACTS
-  CREATORS = "Creators"
-  MAPPED_OBJECTS = "Mapped Objects"
+  CREATORS = roles.CREATORS
+  MAPPED_OBJECTS = TransformationSetVisibleFields.MAPPED_OBJECTS
 
 
 class CommonObjective(Common):
@@ -216,19 +225,20 @@ class CommonObjective(Common):
   STATE = Base.STATE
   ADMIN = roles.ADMIN
   PRIMARY_CONTACTS = roles.PRIMARY_CONTACTS
-  CREATORS = "Creators"
-  MAPPED_OBJECTS = "Mapped Objects"
+  CREATORS = roles.CREATORS
+  MAPPED_OBJECTS = TransformationSetVisibleFields.MAPPED_OBJECTS
 
 
 class CommonAssessment(Common):
   """Common elements' labels and properties for Assessments objects."""
   ASMT = objects.get_normal_form(objects.get_singular(objects.ASSESSMENTS))
   STATE = Base.STATE
-  CREATORS = "Creators"
+  CREATORS = roles.CREATORS
   COMMENTS = "Comments"
-  ASSIGNEES = "Assignees"
-  VERIFIERS = "Verifiers"
+  ASSIGNEES = roles.ASSIGNEES
+  VERIFIERS = roles.VERIFIERS
   MAPPED_OBJECTS = TransformationSetVisibleFields.MAPPED_OBJECTS
+  ASMT_TYPE = "Assessment Type"
   VERIFIED = TransformationSetVisibleFields.VERIFIED
 
 
@@ -305,7 +315,6 @@ class AssessmentInfoWidget(CommonAssessment):
   """Elements' labels and properties for Assessments Info widgets."""
   WIDGET_HEADER = Base.WIDGET_INFO_HEADER_FORMAT.format(CommonAssessment.ASMT)
   TITLE_EDITED_PART = "[EDITED]"
-  COMMENTS_HEADER = "RESPONSES/COMMENTS"
 
 
 class IssueInfoWidget(CommonIssue):
@@ -335,6 +344,7 @@ class AssessmentModalSetVisibleFields(CommonModalSetVisibleFields):
       CommonAssessment.ASMT)
   CREATORS = TransformationSetVisibleFields.CREATORS
   ASSIGNEES = TransformationSetVisibleFields.ASSIGNEES
+  VERIFIERS = TransformationSetVisibleFields.VERIFIERS
   VERIFIED = TransformationSetVisibleFields.VERIFIED
   CONCLUSION_DESIGN = "Conclusion: Design"
   CONCLUSION_OPERATION = "Conclusion: Operation"
@@ -344,7 +354,7 @@ class AssessmentModalSetVisibleFields(CommonModalSetVisibleFields):
   DEFAULT_SET_FIELDS = (
       CommonModalSetVisibleFields.TITLE, CommonModalSetVisibleFields.STATE,
       VERIFIED, CommonModalSetVisibleFields.CODE, CREATORS, ASSIGNEES,
-      CommonModalSetVisibleFields.LAST_UPDATED_BY)
+      VERIFIERS)
 
 
 class ControlModalSetVisibleFields(CommonModalSetVisibleFields):
@@ -448,6 +458,7 @@ class TransformationElements(TransformationSetVisibleFields, CommonAssessment):
   convert UI attributes to entities attributes.
   """
   OBJECT_REVIEW = ReviewStates.OBJECT_REVIEW
+  COMMENTS_HEADER = "RESPONSES/COMMENTS"
 
 
 class TabContainer(object):
