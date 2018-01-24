@@ -8,31 +8,51 @@
 import copy
 import random
 
+from lib import factory
 from lib.constants import (element, objects, roles, value_aliases,
-                           url as const_url)
+                           url as const_url, messages)
 from lib.constants.element import AdminWidgetCustomAttributes
 from lib.entities.entity import (
-    Entity, PersonEntity, CustomAttributeEntity, ProgramEntity, ControlEntity,
-    ObjectiveEntity, AuditEntity, AssessmentTemplateEntity, AssessmentEntity,
-    IssueEntity, CommentEntity)
+    PersonEntity, CustomAttributeDefinitionEntity, CommentEntity)
+from lib.utils import help_utils, string_utils
 from lib.utils.string_utils import StringMethods
 
 
 class EntitiesFactory(object):
   """Common factory class for entities."""
   # pylint: disable=too-few-public-methods
-  obj_person = unicode(objects.get_singular(objects.PEOPLE, title=True))
-  obj_program = unicode(objects.get_singular(objects.PROGRAMS, title=True))
-  obj_control = unicode(objects.get_singular(objects.CONTROLS, title=True))
-  obj_objective = unicode(objects.get_singular(objects.OBJECTIVES, title=True))
-  obj_audit = unicode(objects.get_singular(objects.AUDITS, title=True))
-  obj_asmt_tmpl = unicode(objects.get_singular(
-      objects.ASSESSMENT_TEMPLATES, title=True))
-  obj_asmt = unicode(objects.get_singular(objects.ASSESSMENTS, title=True))
-  obj_issue = unicode(objects.get_singular(objects.ISSUES, title=True))
-  obj_ca = unicode(objects.get_singular(objects.CUSTOM_ATTRIBUTES))
-  obj_comment = unicode(objects.get_singular(objects.COMMENTS, title=True))
-  obj_snapshot = unicode(objects.get_singular(objects.SNAPSHOTS, title=True))
+
+  def __init__(self, obj_name, obj_creator):
+    self.child_cls = self.__class__
+    self.obj_name = obj_name
+    self.obj_creator = obj_creator
+    self.obj_type = objects.get_obj_type(self.obj_name)
+    self.obj_title = self.generate_string(self.obj_type)
+    self.obj_entity_cls = factory.get_cls_obj_entity(object_name=self.obj_name)
+    if self.child_cls not in [CustomAttributeDefinitionEntity, PersonEntity,
+                              CommentEntity]:
+      self.obj_slug = self.generate_slug()
+
+  def obj_inst(self):
+    """Create object's instance and set value for attribute type."""
+    return self.obj_entity_cls().update_attrs(
+        is_allow_none=False, type=self.obj_type)
+
+  def _create_random_obj(self, is_add_rest_attrs):
+    """Create object's instance with random and predictable attributes' values.
+    (method for overriding).
+    """
+    pass
+
+  def create(self, is_add_rest_attrs=False, **attrs):
+    """Create random object's instance, if 'is_add_rest_attrs' then add
+    attributes for REST, if 'attrs' then update attributes accordingly.
+    """
+    # pylint: disable=too-many-locals
+    # pylint: disable=too-many-function-args
+    return self._create_random_obj(
+        is_add_rest_attrs=is_add_rest_attrs).update_attrs(
+        is_allow_none=False, **attrs)
 
   @classmethod
   def generate_string(cls, first_part):
@@ -54,90 +74,95 @@ class EntitiesFactory(object):
         mail_name=StringMethods.random_uuid(), domain=domain))
 
 
-class ObjectPersonsFactory(EntitiesFactory):
+class RolesFactory(EntitiesFactory):
+  """Factory class for Roles."""
+  # todo: class's description, relationships w/ PeopleFactory, ACLs, user_roles
+
+
+class PeopleFactory(EntitiesFactory):
   """Factory class for Persons entities."""
 
-  obj_attrs_names = Entity.get_attrs_names_for_entities(PersonEntity)
+  def __init__(self, obj_name=objects.PEOPLE, obj_creator=None):
+    super(PeopleFactory, self).__init__(obj_name, self.default_user)
+    if self.child_cls not in [AssessmentTemplatesFactory,
+                              CustomAttributeDefinitionsFactory]:
+      if self.child_cls == ProgramsFactory:
+        self.manager = self.obj_creator
+      else:
+        self.admins = [self.obj_creator]
+        self.admins_emails = self.extract_people_emails(self.admins)
+      if self.child_cls == AssessmentsFactory:
+        self.assignees = [self.default_user]
 
-  @classmethod
-  def default(cls):
-    """Create default system Person object."""
-    return cls.create(
+  @staticmethod
+  def extract_people_emails(people):
+    """Extract values for person's email attributes."""
+    return [
+        person.email for person in help_utils.convert_to_list(people)
+        if isinstance(person, PersonEntity)]
+
+  @property
+  def default_user(self):
+    """Create object's instance for default system superuser."""
+    return PersonEntity().update_attrs(
+        type=unicode(objects.get_singular(objects.PEOPLE, title=True)),
         name=roles.DEFAULT_USER, id=1, href=const_url.DEFAULT_USER_HREF,
         email=const_url.DEFAULT_USER_EMAIL, system_wide_role=roles.SUPERUSER)
 
   @classmethod
-  def create(cls, **attrs):
-    """Create Person object.
-    Random values will be used for name.
-    Predictable values will be used for type, email and system_wide_role.
+  def get_acl_members(cls, role_id, people):
+    """Return ACL the same members as list of dicts:
+    [{ac_role_id: *, person: {id: *}, ...]
     """
-    person_entity = cls._create_random_person()
-    person_entity = Entity.update_objs_attrs_values_by_entered_data(
-        obj_or_objs=person_entity, is_allow_none_values=False, **attrs)
-    return person_entity
+    return [cls.get_acl_member(role_id, person)
+            for person in help_utils.convert_to_list(people)]
 
-  @classmethod
-  def get_acl_member(cls, role_id, person):
-    """Return ACL member as dict."""
-    value = person
+  @staticmethod
+  def get_acl_member(role_id, person):
+    """Return ACL member as dict: {ac_role_id: *, person: {id: *}.
+    """
     if isinstance(person, PersonEntity):
-      value = {"id": person.id}
-    return {"ac_role_id": role_id, "person": value}
+      return {"ac_role_id": role_id, "person": person.repr_min_dict()}
+    else:
+      raise ValueError(messages.CommonMessages.err_common.format(
+          PersonEntity, person))
 
-  @classmethod
-  def _create_random_person(cls):
-    """Create Person entity with randomly filled fields."""
-    random_person = PersonEntity()
-    random_person.type = cls.obj_person
-    random_person.name = cls.generate_string(cls.obj_person)
-    random_person.email = cls.generate_email()
-    random_person.system_wide_role = unicode(roles.SUPERUSER)
-    return random_person
+  def _create_random_obj(self, is_add_rest_attrs):
+    """Create Person entity with randomly and predictably filled fields, if
+    'is_add_rest_attrs' then add attributes for REST."""
+    person_obj = self.obj_inst().update_attrs(
+        name=self.obj_title, email=self.generate_email(),
+        system_wide_role=unicode(random.choice(roles.GLOBAL_ROLES)))
+    if is_add_rest_attrs:
+      pass  # todo: add 'user_roles' logic
+    return person_obj
 
 
-class CommentsFactory(EntitiesFactory):
+class CommentsFactory(PeopleFactory):
   """Factory class for Comments entities."""
-  # pylint: disable=too-many-locals
 
-  obj_attrs_names = Entity.get_attrs_names_for_entities(CommentEntity)
+  def __init__(self):
+    super(CommentsFactory, self).__init__(objects.COMMENTS, self.default_user)
 
-  @classmethod
-  def create_empty(cls):
-    """Create blank Comment object."""
-    empty_comment = CommentEntity()
-    empty_comment.type = cls.obj_comment
-    return empty_comment
-
-  @classmethod
-  def create(cls, type=None, id=None, href=None, modified_by=None,
-             created_at=None, description=None):
-    """Create Comment object.
-    Random values will be used for description.
-    Predictable values will be used for type, owners, modified_by.
-    """
-    comment_entity = cls._create_random_comment()
-    comment_entity = Entity.update_objs_attrs_values_by_entered_data(
-        obj_or_objs=comment_entity, is_allow_none_values=False, type=type,
-        id=id, href=href, modified_by=modified_by, created_at=created_at,
-        description=description)
-    return comment_entity
-
-  @classmethod
-  def _create_random_comment(cls):
-    """Create Comment entity with randomly and predictably filled fields."""
-    random_comment = CommentEntity()
-    random_comment.type = cls.obj_comment
-    random_comment.modified_by = ObjectPersonsFactory().default().__dict__
-    random_comment.description = cls.generate_string(cls.obj_comment)
-    return random_comment
+  def _create_random_obj(self, is_add_rest_attrs):
+    """Create Comment entity with randomly and predictably filled fields, if
+    'is_add_rest_attrs' then add attributes for REST."""
+    comment_obj = self.obj_inst().update_attrs(
+        description=self.obj_title, modified_by=self.obj_creator.name)
+    if is_add_rest_attrs:
+      comment_obj.update_attrs(
+          assignee_type=",".join((
+              unicode(roles.PRIMARY_CONTACTS),
+              unicode(roles.SECONDARY_CONTACTS))))
+    return comment_obj
 
 
-class CustomAttributeDefinitionsFactory(EntitiesFactory):
+class CustomAttributeDefinitionsFactory(PeopleFactory):
   """Factory class for entities."""
 
-  obj_attrs_names = Entity.get_attrs_names_for_entities(
-      CustomAttributeEntity)
+  def __init__(self):
+    super(CustomAttributeDefinitionsFactory, self).__init__(
+        objects.CUSTOM_ATTRIBUTES, self.default_user)
 
   @classmethod
   def generate_ca_values(cls, list_ca_def_objs, is_none_values=False):
@@ -151,7 +176,7 @@ class CustomAttributeDefinitionsFactory(EntitiesFactory):
     {'attribute_type': 'Dropdown', 'id': 2, 'multi_choice_options': 'a,b,c'}]
     :return {"1": "text_example", "2": "b"}
     """
-    def generate_ca_value(ca):
+    def generate_ca_value(cls, ca):
       """Generate CA value according to CA 'id', 'attribute_type' and
       'multi_choice_options' for Dropdown.
       """
@@ -179,11 +204,12 @@ class CustomAttributeDefinitionsFactory(EntitiesFactory):
               None if ca_attr_type != AdminWidgetCustomAttributes.CHECKBOX
               else u"0")
       return {ca["id"]: ca_value}
-    return {k: v for _ in [generate_ca_value(ca) for ca in list_ca_def_objs]
-            for k, v in _.items()}
+    return {
+        k: v for _ in [generate_ca_value(cls, ca) for ca in list_ca_def_objs]
+        for k, v in _.items()}
 
-  @classmethod
-  def generate_ca_defenitions_for_asmt_tmpls(cls, list_ca_definitions):
+  @staticmethod
+  def generate_ca_defenitions_for_asmt_tmpls(list_ca_definitions):
     """Generate list of dictionaries of CA random values from exist list CA
     definitions according to CA 'title', 'attribute_type' and
     'multi_choice_options' for Dropdown. Return list of dictionaries of CA
@@ -197,37 +223,44 @@ class CustomAttributeDefinitionsFactory(EntitiesFactory):
              if k in ("title", "attribute_type", "multi_choice_options")}
             for ca_def in list_ca_definitions]
 
-  @classmethod
-  def create(cls, **attrs):
-    """Create Custom Attribute object. CA object attribute 'definition_type'
-    is used as default for REST operations e.g. 'risk_assessment', for UI
-    operations need convert to normal form used method objects.get_normal_form
-    e.q. 'Risk Assessments'.
-    Random values will be used for title, attribute_type, definition_type and
-    multi_choice_options if randomly generated attribute_type is 'Dropdown'.
+  def create_dashboard_ca(self, definition_type):
+    """Create and return CA entity with valid filled fields for creating
+    N'Dashboard'.
     """
-    ca_entity = cls._create_random_ca()
-    ca_entity = cls._update_ca_attrs_values(
-        obj=ca_entity, is_allow_none_values=False, **attrs)
-    return ca_entity
+    return self.obj_inst().update_attrs(
+        title=self.generate_string(value_aliases.DASHBOARD),
+        attribute_type=AdminWidgetCustomAttributes.TEXT,
+        definition_type=definition_type, mandatory=False)
 
-  @classmethod
-  def _create_random_ca(cls):
-    """Create CustomAttribute entity with randomly filled fields."""
-    random_ca = CustomAttributeEntity()
-    random_ca.type = cls.obj_ca
-    random_ca.attribute_type = unicode(random.choice(
+  def create(self, is_add_rest_attrs=False, **attrs):
+    """Create random Custom Attribute object's instance, if
+    'is_add_rest_attrs' then add attributes for REST, if 'attrs' then update
+    attributes accordingly.
+    """
+    ca_obj = self._create_random_obj(is_add_rest_attrs=is_add_rest_attrs)
+    return self._update_ca_attrs_values(obj=ca_obj, **attrs)
+
+  def _create_random_obj(self, is_add_rest_attrs):
+    """Create Custom Attribute entity with randomly and predictably filled
+    fields, if 'is_add_rest_attrs' then add attributes for REST."""
+    ca_obj_attr_type = unicode(random.choice(
         AdminWidgetCustomAttributes.ALL_CA_TYPES))
-    random_ca.title = cls.generate_string(random_ca.attribute_type)
-    if random_ca.attribute_type == AdminWidgetCustomAttributes.DROPDOWN:
-      random_ca.multi_choice_options = StringMethods.random_list_strings()
-    random_ca.definition_type = unicode(objects.get_singular(
-        random.choice(objects.ALL_CA_OBJS)))
-    random_ca.mandatory = False
-    return random_ca
+    ca_obj = self.obj_inst().update_attrs(
+        title=self.generate_string(ca_obj_attr_type),
+        attribute_type=ca_obj_attr_type,
+        multi_choice_options=(
+            StringMethods.random_list_strings()
+            if ca_obj_attr_type == AdminWidgetCustomAttributes.DROPDOWN
+            else None),
+        definition_type=unicode(objects.get_singular(
+            random.choice(objects.ALL_CA_OBJS))), mandatory=False)
+    if is_add_rest_attrs:
+      ca_obj.update_attrs(
+          modal_title="Add Attribute to type {}".format(
+              ca_obj.definition_type.title()))
+    return ca_obj
 
-  @classmethod
-  def _update_ca_attrs_values(cls, obj, **attrs):
+  def _update_ca_attrs_values(self, obj, **attrs):
     """Update CA's (obj) attributes values according to dictionary of
     arguments (key = value). Restrictions: 'multi_choice_options' is a
     mandatory attribute for Dropdown CA and 'placeholder' is a attribute that
@@ -236,7 +269,7 @@ class CustomAttributeDefinitionsFactory(EntitiesFactory):
     """
     # fix generated data
     if attrs.get("attribute_type"):
-      obj.title = cls.generate_string(attrs["attribute_type"])
+      obj.title = self.generate_string(attrs["attribute_type"])
     if (obj.multi_choice_options and
             obj.attribute_type == AdminWidgetCustomAttributes.DROPDOWN and
             attrs.get("attribute_type") !=
@@ -256,377 +289,285 @@ class CustomAttributeDefinitionsFactory(EntitiesFactory):
             AdminWidgetCustomAttributes.DROPDOWN and not
             obj.multi_choice_options):
       obj.multi_choice_options = StringMethods.random_list_strings()
-    return Entity.update_objs_attrs_values_by_entered_data(
-        obj_or_objs=obj, **attrs)
-
-  @classmethod
-  def create_dashboard_ca(cls, definition_type):
-    """Create and return CA entity with valid filled fields for
-    creating N'Dashboard'.
-    """
-    dashboard_ca = CustomAttributeEntity()
-    dashboard_ca.type = cls.obj_ca
-    dashboard_ca.attribute_type = AdminWidgetCustomAttributes.TEXT
-    dashboard_ca.title = cls.generate_string(value_aliases.DASHBOARD)
-    dashboard_ca.mandatory = False
-    dashboard_ca.definition_type = definition_type
-    return dashboard_ca
+    return obj.update_attrs(**attrs)
 
 
-class ProgramsFactory(EntitiesFactory):
+class ProgramsFactory(PeopleFactory):
   """Factory class for Programs entities."""
-  # pylint: disable=too-many-locals
 
-  obj_attrs_names = Entity.get_attrs_names_for_entities(ProgramEntity)
-  default_person = ObjectPersonsFactory().default()
+  def __init__(self):
+    super(ProgramsFactory, self).__init__(objects.PROGRAMS, self.default_user)
 
-  @classmethod
-  def create_empty(cls):
-    """Create blank Program object."""
-    empty_program = ProgramEntity()
-    empty_program.type = cls.obj_program
-    empty_program.custom_attributes = {None: None}
-    return empty_program
-
-  @classmethod
-  def create(cls, **attrs):
-    """Create Program object.
-    Random values will be used for title and slug.
-    Predictable values will be used for type, status, manager, contact.
-    """
-    program_entity = cls._create_random_program()
-    program_entity = Entity.update_objs_attrs_values_by_entered_data(
-        obj_or_objs=program_entity, is_allow_none_values=False, **attrs)
-    return program_entity
-
-  @classmethod
-  def _create_random_program(cls):
-    """Create Program entity with randomly and predictably filled fields."""
-    random_program = ProgramEntity()
-    random_program.type = cls.obj_program
-    random_program.title = cls.generate_string(cls.obj_program)
-    random_program.slug = cls.generate_slug()
-    random_program.status = unicode(element.ObjectStates.DRAFT)
-    random_program.manager = cls.default_person.__dict__
-    random_program.contact = cls.default_person.__dict__
-    random_program.os_state = unicode(element.ReviewStates.UNREVIEWED)
-    return random_program
+  def _create_random_obj(self, is_add_rest_attrs):
+    """Create Program entity with randomly and predictably filled fields, if
+    'is_add_rest_attrs' then add attributes for REST."""
+    issue_obj = self.obj_inst().update_attrs(
+        title=self.obj_title, slug=self.obj_slug,
+        status=unicode(element.ObjectStates.DRAFT),
+        manager=self.manager.email,
+        os_state=unicode(element.ReviewStates.UNREVIEWED))
+    if is_add_rest_attrs:
+      issue_obj.update_attrs(
+          recipients=",".join((
+              unicode(roles.ADMIN), unicode(roles.PRIMARY_CONTACTS),
+              unicode(roles.SECONDARY_CONTACTS))))
+    return issue_obj
 
 
-class ControlsFactory(EntitiesFactory):
+class ControlsFactory(PeopleFactory):
   """Factory class for Controls entities."""
-  # pylint: disable=too-many-locals
+  admins_acl_id = 49
 
-  obj_attrs_names = Entity.get_attrs_names_for_entities(ControlEntity)
-  default_person = ObjectPersonsFactory().default()
+  def __init__(self):
+    super(ControlsFactory, self).__init__(objects.CONTROLS, self.default_user)
 
-  @classmethod
-  def create_empty(cls):
-    """Create blank Control object."""
-    empty_control = ControlEntity()
-    empty_control.type = cls.obj_control
-    empty_control.custom_attributes = {None: None}
-    empty_control.access_control_list = []
-    return empty_control
-
-  @classmethod
-  def create(cls, **attrs):
-    """Create Control object.
-    Random values will be used for title and slug.
-    Predictable values will be used for type, status, owners and contact.
-    """
-    control_entity = cls._create_random_control()
-    control_entity = Entity.update_objs_attrs_values_by_entered_data(
-        obj_or_objs=control_entity, is_allow_none_values=False, **attrs)
-    return control_entity
-
-  @classmethod
-  def _create_random_control(cls):
-    """Create Control entity with randomly and predictably filled fields."""
-    random_control = ControlEntity()
-    random_control.type = cls.obj_control
-    random_control.title = cls.generate_string(cls.obj_control)
-    random_control.slug = cls.generate_slug()
-    random_control.status = unicode(element.ObjectStates.DRAFT)
-    random_control.contact = cls.default_person.__dict__
-    random_control.owners = [cls.default_person.__dict__]
-    random_control.access_control_list = [
-        ObjectPersonsFactory().get_acl_member(
-            roles.CONTROL_ADMIN_ID, random_control.owners[0]),
-        ObjectPersonsFactory().get_acl_member(
-            roles.CONTROL_PRIMARY_CONTACT_ID, random_control.contact)]
-    random_control.os_state = unicode(element.ReviewStates.UNREVIEWED)
-    return random_control
+  def _create_random_obj(self, is_add_rest_attrs):
+    """Create Control entity with randomly and predictably filled fields, if
+    'is_add_rest_attrs' then add attributes for REST."""
+    control_obj = self.obj_inst().update_attrs(
+        title=self.obj_title, slug=self.obj_slug,
+        status=unicode(element.ObjectStates.DRAFT),
+        admins=self.admins_emails,
+        os_state=unicode(element.ReviewStates.UNREVIEWED))
+    if is_add_rest_attrs:
+      control_obj.update_attrs(
+          recipients=",".join((
+              unicode(roles.ADMIN), unicode(roles.PRIMARY_CONTACTS),
+              unicode(roles.SECONDARY_CONTACTS))),
+          access_control_list=string_utils.StringMethods.
+          convert_list_elements_to_list(
+              [self.get_acl_members(self.admins_acl_id, self.admins)]))
+    return control_obj
 
 
-class ObjectivesFactory(EntitiesFactory):
+class ObjectivesFactory(PeopleFactory):
   """Factory class for Objectives entities."""
-  # pylint: disable=too-many-locals
+  admins_acl_id = 55
 
-  obj_attrs_names = Entity.get_attrs_names_for_entities(ObjectiveEntity)
-  default_person = ObjectPersonsFactory().default()
+  def __init__(self):
+    super(ObjectivesFactory, self).__init__(
+        objects.OBJECTIVES, self.default_user)
 
-  @classmethod
-  def create_empty(cls):
-    """Create blank Objective object."""
-    empty_objective = ObjectiveEntity()
-    empty_objective.type = cls.obj_objective
-    empty_objective.custom_attributes = {None: None}
-    return empty_objective
-
-  @classmethod
-  def create(cls, **attrs):
-    """Create Objective object.
-    Random values will be used for title and slug.
-    Predictable values will be used for type, status, owners.
-    """
-    objective_entity = cls._create_random_objective()
-    objective_entity = Entity.update_objs_attrs_values_by_entered_data(
-        obj_or_objs=objective_entity, is_allow_none_values=False, **attrs)
-    return objective_entity
-
-  @classmethod
-  def _create_random_objective(cls):
-    """Create Objective entity with randomly and predictably filled fields."""
-    random_objective = ObjectiveEntity()
-    random_objective.type = cls.obj_objective
-    random_objective.title = cls.generate_string(cls.obj_objective)
-    random_objective.slug = cls.generate_slug()
-    random_objective.status = unicode(element.ObjectStates.DRAFT)
-    random_objective.owners = [cls.default_person.__dict__]
-    random_objective.os_state = unicode(element.ReviewStates.UNREVIEWED)
-    return random_objective
+  def _create_random_obj(self, is_add_rest_attrs):
+    """Create Objective entity with randomly and predictably filled fields, if
+    'is_add_rest_attrs' then add attributes for REST."""
+    objective_obj = self.obj_inst().update_attrs(
+        title=self.obj_title, slug=self.obj_slug,
+        status=unicode(element.ObjectStates.DRAFT),
+        admins=self.admins_emails,
+        os_state=unicode(element.ReviewStates.UNREVIEWED))
+    if is_add_rest_attrs:
+      objective_obj.update_attrs(
+          recipients=",".join((
+              unicode(roles.ADMIN), unicode(roles.PRIMARY_CONTACTS),
+              unicode(roles.SECONDARY_CONTACTS))),
+          access_control_list=string_utils.StringMethods.
+          convert_list_elements_to_list(
+              [self.get_acl_members(self.admins_acl_id, self.admins)]))
+    return objective_obj
 
 
-class AuditsFactory(EntitiesFactory):
+class AuditsFactory(PeopleFactory):
   """Factory class for Audit entity."""
+  audit_captains_acl_id = 82
+  auditors_acl_id = 81
 
-  obj_attrs_names = Entity.get_attrs_names_for_entities(AuditEntity)
-  default_person = ObjectPersonsFactory().default()
+  def __init__(self):
+    super(AuditsFactory, self).__init__(objects.AUDITS, self.default_user)
 
-  @classmethod
-  def clone(cls, audit, count_to_clone=1):
-    """Clone Audit object.
-    Predictable values will be used for type, title.
+  @staticmethod
+  def clone(audit, count_to_clone=1):
+    """Clone Audit entity (count depends on 'count_to_clone')
+    and set attributes' values related to parallelization to None, title will
+    be predicted.
     """
     # pylint: disable=anomalous-backslash-in-string
-    return [Entity.update_objs_attrs_values_by_entered_data(
-        obj_or_objs=copy.deepcopy(audit),
-        title=audit.title + " - copy " + str(num), slug=None, created_at=None,
-        updated_at=None, href=None, url=None, id=None)
+    return [copy.deepcopy(audit).update_attrs(
+        title=unicode(audit.title + " - copy " + str(num)), slug=None,
+        created_at=None, updated_at=None, href=None, url=None, id=None)
         for num in xrange(1, count_to_clone + 1)]
 
-  @classmethod
-  def create_empty(cls):
-    """Create blank Audit object."""
-    empty_audit = AuditEntity()
-    empty_audit.type = cls.obj_audit
-    empty_audit.custom_attributes = {None: None}
-    empty_audit.access_control_list = []
-    return empty_audit
-
-  @classmethod
-  def create(cls, **attrs):
-    """Create Audit object.
-    Random values will be used for title and slug.
-    Predictable values will be used for type, status, contact.
-    """
-    # pylint: disable=too-many-locals
-    audit_entity = cls._create_random_audit()
-    audit_entity = Entity.update_objs_attrs_values_by_entered_data(
-        obj_or_objs=audit_entity, is_allow_none_values=False, **attrs)
-    return audit_entity
-
-  @classmethod
-  def _create_random_audit(cls):
-    """Create Audit entity with randomly and predictably filled fields."""
-    random_audit = AuditEntity()
-    random_audit.type = cls.obj_audit
-    random_audit.title = cls.generate_string(cls.obj_audit)
-    random_audit.slug = cls.generate_slug()
-    random_audit.status = unicode(element.AuditStates().PLANNED)
-    random_audit.contact = cls.default_person.__dict__
-    random_audit.access_control_list = [
-        ObjectPersonsFactory.get_acl_member(
-            roles.AUDIT_CAPTAIN_ID, cls.default_person)]
-    return random_audit
+  def _create_random_obj(self, is_add_rest_attrs):
+    """Create Audit entity with randomly and predictably filled fields, if
+    'is_add_rest_attrs' then add attributes for REST."""
+    asmt_obj = self.obj_inst().update_attrs(
+        title=self.obj_title, slug=self.obj_slug,
+        audit_captains=self.admins_emails,
+        os_state=unicode(element.AuditStates.PLANNED))
+    if is_add_rest_attrs:
+      asmt_obj.update_attrs(
+          access_control_list=string_utils.StringMethods.
+          convert_list_elements_to_list(
+              [self.get_acl_members(self.audit_captains_acl_id, self.admins)]))
+    return asmt_obj
 
 
-class AssessmentTemplatesFactory(EntitiesFactory):
+class AssessmentTemplatesFactory(PeopleFactory):
   """Factory class for Assessment Templates entities."""
 
-  obj_attrs_names = Entity.get_attrs_names_for_entities(
-      AssessmentTemplateEntity)
+  def __init__(self):
+    super(AssessmentTemplatesFactory, self).__init__(
+        objects.ASSESSMENT_TEMPLATES, self.default_user)
 
-  @classmethod
-  def clone(cls, asmt_tmpl, count_to_clone=1):
-    """Clone Assessment Template object.
-    Predictable values will be used for type, title.
+  @staticmethod
+  def clone(asmt_tmpl, count_to_clone=1):
+    """Clone Assessment Template entity (count depends on 'count_to_clone')
+    and set attributes' values related to parallelization to None.
     """
-    # pylint: disable=anomalous-backslash-in-string
-    return [Entity.update_objs_attrs_values_by_entered_data(
-        obj_or_objs=copy.deepcopy(asmt_tmpl), slug=None, updated_at=None,
-        href=None, url=None, id=None) for _ in xrange(1, count_to_clone + 1)]
+    return [copy.deepcopy(asmt_tmpl).update_attrs(
+        slug=None, updated_at=None, href=None, url=None, id=None)
+        for _ in xrange(1, count_to_clone + 1)]
 
-  @classmethod
-  def create_empty(cls):
-    """Create blank Assessment Template object."""
-    empty_asmt_tmpl = AssessmentTemplateEntity()
-    empty_asmt_tmpl.type = cls.obj_asmt_tmpl
-    empty_asmt_tmpl.custom_attributes = {None: None}
-    return empty_asmt_tmpl
-
-  @classmethod
-  def create(cls, **attrs):
-    """Create Assessment Template object.
-    Random values will be used for title and slug.
-    Predictable values will be used for type, template_object_type and
-    default_people {"verifiers": *, "assignees": *}.
-    """
-    # pylint: disable=too-many-locals
-    asmt_tmpl_entity = cls._create_random_asmt_tmpl()
-    asmt_tmpl_entity = Entity.update_objs_attrs_values_by_entered_data(
-        obj_or_objs=asmt_tmpl_entity, is_allow_none_values=False, **attrs)
-    return asmt_tmpl_entity
-
-  @classmethod
-  def _create_random_asmt_tmpl(cls):
-    """Create Assessment Template entity with randomly and predictably
-    filled fields.
-    """
-    random_asmt_tmpl = AssessmentTemplateEntity()
-    random_asmt_tmpl.type = cls.obj_asmt_tmpl
-    random_asmt_tmpl.title = cls.generate_string(cls.obj_asmt_tmpl)
-    random_asmt_tmpl.assignees = unicode(roles.AUDIT_LEAD)
-    random_asmt_tmpl.slug = cls.generate_slug()
-    random_asmt_tmpl.template_object_type = cls.obj_control.title()
-    random_asmt_tmpl.status = unicode(element.ObjectStates.DRAFT)
-    random_asmt_tmpl.default_people = {"verifiers": unicode(roles.AUDITORS),
-                                       "assignees": unicode(roles.AUDIT_LEAD)}
-    return random_asmt_tmpl
+  def _create_random_obj(self, is_add_rest_attrs):
+    """Create Assessment Template entity with randomly and predictably filled
+    fields, if 'is_add_rest_attrs' then add attributes for REST."""
+    asmt_tmpl_obj = self.obj_inst().update_attrs(
+        title=self.obj_title, slug=self.obj_slug,
+        assignees=unicode(roles.PRINCIPAL_ASSIGNEES),
+        verifiers=unicode(roles.AUDITORS),
+        status=unicode(element.ObjectStates.DRAFT),
+        template_object_type=objects.get_obj_type(objects.CONTROLS))
+    if is_add_rest_attrs:
+      elements = element.CommonAudit
+      asmt_tmpl_obj.update_attrs(
+          default_people={
+              "assignees": asmt_tmpl_obj.assignees,
+              "verifiers": asmt_tmpl_obj.verifiers},
+          people_values=[{"value": v, "title": t} for v, t in [
+              (roles.ADMIN, elements.OBJECT_ADMINS),
+              (roles.AUDIT_LEAD, elements.AUDIT_CAPTAIN),
+              (roles.AUDITORS, elements.AUDITORS),
+              (roles.PRINCIPAL_ASSIGNEES, elements.PRINCIPAL_ASSIGNEES),
+              (roles.SECONDARY_ASSIGNEES, elements.SECONDARY_ASSIGNEES),
+              (roles.PRIMARY_CONTACTS, elements.PRIMARY_CONTACTS),
+              (roles.SECONDARY_CONTACTS, elements.SECONDARY_CONTACTS),
+              (roles.OTHER, elements.OTHERS)]])
+    return asmt_tmpl_obj
 
 
-class AssessmentsFactory(EntitiesFactory):
+class AssessmentsFactory(PeopleFactory):
   """Factory class for Assessments entities."""
+  creators_acl_id = 76
+  assignees_acl_id = 72
+  verifiers_acl_id = 73
 
-  obj_attrs_names = Entity.get_attrs_names_for_entities(AssessmentEntity)
-  default_person = ObjectPersonsFactory().default()
+  def __init__(self):
+    super(AssessmentsFactory, self).__init__(
+        objects.ASSESSMENTS, self.default_user)
 
-  @classmethod
-  def generate(cls, objs_under_asmt, audit, asmt_tmpl=None):
-    """Generate Assessment objects according to objects under Assessment,
-    Audit, Assessment Template.
-    If 'asmt_tmpl' then generate with Assessment Template, if not 'asmt_tmpl'
-    then generate without Assessment Template. Slug will not be predicted to
-    avoid of rising errors in case of tests parallel running. Predictable
-    values will be used for type, title, audit, objects_under_assessment
-    custom_attribute_definitions and custom_attribute_values.
+  def obj_inst(self):
+    """Create Assessment object's instance and set values for attributes:
+    type, verified, status.
     """
-    # pylint: disable=too-many-locals
-    cas_def = asmt_tmpl.custom_attribute_definitions if asmt_tmpl and getattr(
-        asmt_tmpl, "custom_attribute_definitions") else None
-    asmts_objs = [cls.create(
-        title=obj_under_asmt.title + " assessment for " + audit.title,
-        audit=audit.title, objects_under_assessment=[obj_under_asmt],
-        custom_attribute_definitions=cas_def,
-        verifier=[audit.contact["name"]]) for
-        obj_under_asmt in objs_under_asmt]
-    return [Entity.update_objs_attrs_values_by_entered_data(
-        obj_or_objs=asmt_obj, slug=None) for asmt_obj in asmts_objs]
+    return self.obj_entity_cls().update_attrs(
+        is_allow_none=False, type=self.obj_type, verified=False,
+        status=unicode(element.AssessmentStates.NOT_STARTED))
 
-  @classmethod
-  def create_empty(cls):
-    """Create blank Assessment object."""
-    empty_asmt = AssessmentEntity()
-    empty_asmt.type = cls.obj_asmt
-    empty_asmt.verified = False
-    empty_asmt.custom_attributes = {None: None}
-    empty_asmt.access_control_list = []
-    return empty_asmt
-
-  @classmethod
-  def create(cls, **attrs):
-    """Create Assessment object.
-    Random values will be used for title and slug.
-    Predictable values will be used for type, status, recipients,
-    verified, owners.
+  def generate(self, mapped_objects, audit, asmt_tmpl=None):
+    """Generate Assessment objects' instances under 'audit' based on info
+    about 'mapped_objects' and 'asmt_tmpl' use generation logic accordingly.
     """
-    # pylint: disable=too-many-locals
-    asmt_entity = cls._create_random_asmt()
-    asmt_entity = Entity.update_objs_attrs_values_by_entered_data(
-        obj_or_objs=asmt_entity, is_allow_none_values=False, **attrs)
-    if attrs.get("verifier"):
-      asmt_entity.access_control_list.append(
-          ObjectPersonsFactory.get_acl_member(roles.ASMT_VERIFIER_ID,
-                                              cls.default_person))
-    return asmt_entity
+    mapped_objects = help_utils.convert_to_list(mapped_objects)
+    asmts_creators = self.admins_emails
+    asmts_assignees = audit.audit_captains
+    asmts_verifiers = (
+        audit.auditors if audit.auditors else audit.audit_captains)
+    asmts_cas_def = None
+    asmts_type = (
+        mapped_objects[0].type
+        if all(getattr(mapped_obj, "type") for mapped_obj in mapped_objects)
+        else None)
+    if asmt_tmpl:
+      if asmts_type != asmt_tmpl.template_object_type:
+        raise ValueError(
+            "Mapped objects' type: {} have to be the same with Assessment "
+            "Template's type: {}".format(
+                asmts_type, asmt_tmpl.template_object_type))
+      # if assignees or verifiers are ids (int not str related attrs)
+      # todo add logic to converts ids (int) repr to users' names
+      if any(all(isinstance(user, int) for user in asmts_users)
+             for asmts_users in
+             [asmts_users for asmts_users in asmts_assignees, asmts_verifiers
+              if isinstance(asmts_users, list)]):
+        raise NotImplementedError
+      if asmt_tmpl.assignees == unicode(roles.AUDITORS):
+        asmts_assignees = audit.auditors
+      if asmt_tmpl.verifiers != unicode(roles.AUDITORS):
+        asmts_verifiers = audit.audit_captains
 
-  @classmethod
-  def _create_random_asmt(cls):
-    """Create Assessment entity with randomly and predictably filled fields."""
-    random_asmt = AssessmentEntity()
-    random_asmt.type = cls.obj_asmt
-    random_asmt.title = cls.generate_string(cls.obj_asmt)
-    random_asmt.slug = cls.generate_slug()
-    random_asmt.status = unicode(element.AssessmentStates.NOT_STARTED)
-    random_asmt.recipients = ",".join(
-        (unicode(roles.ASSIGNEE), unicode(roles.ASMT_CREATOR),
-         unicode(roles.VERIFIER)))
-    random_asmt.access_control_list = [
-        ObjectPersonsFactory.get_acl_member(
-            roles.ASMT_CREATOR_ID, cls.default_person),
-        ObjectPersonsFactory.get_acl_member(
-            roles.ASMT_ASSIGNEE_ID, cls.default_person)]
-    random_asmt.verified = False
-    random_asmt.assignee = [unicode(cls.default_person.name)]
-    random_asmt.creator = [unicode(cls.default_person.name)]
-    random_asmt.assignees = {
-        "Assignee": [cls.default_person.__dict__],
-        "Creator": [cls.default_person.__dict__]}
-    return random_asmt
+      if getattr(asmt_tmpl, "custom_attribute_definitions"):
+        asmts_cas_def = asmt_tmpl.custom_attribute_definitions
+    asmts_objs = [
+        empty_asmt.update_attrs(
+            title=mapped_object.title + " assessment for " + audit.title,
+            audit=audit.title, mapped_objects=[mapped_object],
+            creators=asmts_creators, assignees=asmts_assignees,
+            verifiers=asmts_verifiers, assessment_type=asmts_type,
+            custom_attribute_definitions=asmts_cas_def
+        ) for empty_asmt, mapped_object
+        in zip([self.obj_inst() for _ in xrange(len(mapped_objects))],
+               mapped_objects)]
+    return asmts_objs
+
+  def create(self, is_add_rest_attrs=False, **attrs):
+    """Create random Assessment object's instance, if 'is_add_rest_attrs' then
+    add attributes for REST, if 'attrs' then update attributes accordingly.
+    """
+    asmt_obj = self._create_random_obj(
+        is_add_rest_attrs=is_add_rest_attrs).update_attrs(
+        is_allow_none=False, **attrs)
+    # todo: add global logic to update attrs 'ACLs to People', 'People to ACLs'
+    if getattr(asmt_obj, "verifiers"):
+      asmt_obj.update_attrs(
+          verifiers=self.extract_people_emails(attrs["verifiers"]),
+          access_control_list=string_utils.StringMethods.
+          convert_list_elements_to_list(
+              asmt_obj.access_control_list + [self.get_acl_members(
+                  self.verifiers_acl_id, attrs["verifiers"])]))
+    return asmt_obj
+
+  def _create_random_obj(self, is_add_rest_attrs):
+    """Create Assessment entity with randomly and predictably filled fields, if
+    'is_add_rest_attrs' then add attributes for REST."""
+    asmt_obj = self.obj_inst().update_attrs(
+        title=self.obj_title, slug=self.obj_slug,
+        status=unicode(element.AssessmentStates.NOT_STARTED),
+        creators=self.admins_emails,
+        assignees=self.extract_people_emails(self.assignees),
+        assessment_type=objects.get_obj_type(objects.CONTROLS), verified=False)
+    if is_add_rest_attrs:
+      asmt_obj.update_attrs(
+          recipients=",".join((
+              unicode(roles.ASSIGNEES), unicode(roles.CREATORS),
+              unicode(roles.VERIFIERS))),
+          access_control_list=string_utils.StringMethods.
+          convert_list_elements_to_list(
+              [self.get_acl_members(self.creators_acl_id, self.admins),
+               self.get_acl_members(self.assignees_acl_id, self.assignees)]))
+    return asmt_obj
 
 
-class IssuesFactory(EntitiesFactory):
+class IssuesFactory(PeopleFactory):
   """Factory class for Issues entities."""
+  admins_acl_id = 53
 
-  obj_attrs_names = Entity.get_attrs_names_for_entities(IssueEntity)
-  default_person = ObjectPersonsFactory().default()
+  def __init__(self):
+    super(IssuesFactory, self).__init__(objects.ISSUES, self.default_user)
 
-  @classmethod
-  def create_empty(cls):
-    """Create blank Issue object."""
-    empty_issue = IssueEntity()
-    empty_issue.type = cls.obj_issue
-    empty_issue.custom_attributes = {None: None}
-    empty_issue.access_control_list = []
-    return empty_issue
-
-  @classmethod
-  def create(cls, **attrs):
-    """Create Issue object.
-    Random values will be used for title and slug.
-    Predictable values will be used for type, status, owners and contact.
-    """
-    # pylint: disable=too-many-locals
-    issue_entity = cls._create_random_issue()
-    issue_entity = Entity.update_objs_attrs_values_by_entered_data(
-        obj_or_objs=issue_entity, is_allow_none_values=False, **attrs)
-    return issue_entity
-
-  @classmethod
-  def _create_random_issue(cls):
-    """Create Issue entity with randomly and predictably filled fields."""
-    random_issue = IssueEntity()
-    random_issue.type = cls.obj_issue
-    random_issue.title = cls.generate_string(cls.obj_issue)
-    random_issue.slug = cls.generate_slug()
-    random_issue.status = unicode(element.IssueStates.DRAFT)
-    random_issue.owners = [ObjectPersonsFactory().default().__dict__]
-    random_issue.contact = ObjectPersonsFactory().default().__dict__
-    random_issue.access_control_list = [
-        ObjectPersonsFactory().get_acl_member(
-            roles.ISSUE_ADMIN_ID, random_issue.owners[0]),
-        ObjectPersonsFactory().get_acl_member(
-            roles.ISSUE_PRIMARY_CONTACT_ID, random_issue.contact)]
-    random_issue.os_state = unicode(element.ReviewStates.UNREVIEWED)
-    return random_issue
+  def _create_random_obj(self, is_add_rest_attrs):
+    """Create Issue entity with randomly and predictably filled fields, if
+    'is_add_rest_attrs' then add attributes for REST."""
+    issue_obj = self.obj_inst().update_attrs(
+        title=self.obj_title, slug=self.obj_slug,
+        status=unicode(element.IssueStates.DRAFT),
+        admins=self.admins_emails,
+        os_state=unicode(element.ReviewStates.UNREVIEWED))
+    if is_add_rest_attrs:
+      issue_obj.update_attrs(
+          recipients=",".join((
+              unicode(roles.ADMIN), unicode(roles.PRIMARY_CONTACTS),
+              unicode(roles.SECONDARY_CONTACTS))),
+          access_control_list=string_utils.StringMethods.
+          convert_list_elements_to_list(
+              [self.get_acl_members(self.admins_acl_id, self.admins)]))
+    return issue_obj
