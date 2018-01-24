@@ -10,10 +10,10 @@ CREATOR = "Creator"
 READER = "Reader"
 EDITOR = "Editor"
 ADMINISTRATOR = "Administrator"
+GLOBAL_ROLES = (CREATOR, EDITOR, ADMINISTRATOR)
 # assessment roles
-ASMT_CREATOR = CREATOR + "s"
-ASSIGNEE = "Assignees"
-VERIFIER = "Verifiers"
+ASSIGNEES = "Assignees"
+VERIFIERS = "Verifiers"
 # program roles
 PROGRAM_EDITOR = "Program Editor"
 PROGRAM_MANAGER = "Program Manager"
@@ -22,11 +22,13 @@ PROGRAM_READER = "Program Reader"
 WORKFLOW_MEMBER = "Workflow Member"
 WORKFLOW_MANAGER = "Workflow Manager"
 # other roles
+OTHER = "other"
+CREATORS = CREATOR + "s"
 OBJECT_OWNERS = "Object Owners"
 AUDIT_LEAD = "Audit Lead"
 AUDITORS = "Auditors"
-PRINCIPAL_ASSIGNEE = "Principal Assignee"
-SECONDARY_ASSIGNEE = "Secondary Assignee"
+PRINCIPAL_ASSIGNEES = "Principal " + ASSIGNEES
+SECONDARY_ASSIGNEES = "Secondary " + ASSIGNEES
 PRIMARY_CONTACTS = "Primary Contacts"
 SECONDARY_CONTACTS = "Secondary Contacts"
 
@@ -42,14 +44,3 @@ PRIVATE_PROGRAM = "Private Program"
 WORKFLOW = "Workflow"
 SUPERUSER = "Superuser"
 NO_ACCESS = "No Access"
-
-# todo: implement service to get actual ACL's info via api/access_control_roles
-# Access control role ID
-CONTROL_ADMIN_ID = 49
-CONTROL_PRIMARY_CONTACT_ID = 9
-ISSUE_ADMIN_ID = 53
-ISSUE_PRIMARY_CONTACT_ID = 17
-ASMT_CREATOR_ID = 76
-ASMT_ASSIGNEE_ID = 72
-ASMT_VERIFIER_ID = 73
-AUDIT_CAPTAIN_ID = 82
