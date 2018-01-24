@@ -14,20 +14,41 @@ from lib.utils.string_utils import StringMethods
 
 
 class Representation(object):
-  """Class that contains methods to update Entity."""
-  # pylint: disable=import-error
+  """Class to operate with entities' representation."""
   # pylint: disable=too-many-public-methods
   diff_info = None  # {"equal": {"atr7": val7, ...}, "diff": {"atr3": val3}}
-  attrs_names_to_compare = None
-  attrs_names_to_repr = None
-  core_attrs_names_to_repr = [
-      "type", "title", "id", "href", "url", "slug", "created_at"]
   tree_view_attrs_to_exclude = (
       "created_at", "updated_at", "custom_attributes")
+  people_attrs_names = [
+      "creators", "assignees", "verifiers", "admins", "primary_contacts",
+      "secondary_contacts", "audit_captains", "auditors",
+      "principal_assignees", "secondary_assignees"]  # multiply
+
+  @property
+  def attrs_names(self):
+    """Entity instance's attributes names w/o REST."""
+    return self.get_attrs_names(self.__class__)
+
+  @property
+  def attrs_names_to_repr(self):
+    """Entity instance's attributes names w/o REST and exclude
+    'custom_attribute_definitions', 'custom_attribute_values'.
+    """
+    # todo: add logic to getting 'url', 'id' via UI services
+    return [attr_name for attr_name in self.attrs_names if attr_name not in [
+        "custom_attribute_definitions", "custom_attribute_values", "href",
+        "url", "id"]]
 
   @classmethod
-  def get_attrs_names_for_entities(cls, entity=None):
-    """Get list unique attributes names for entities. If 'entity' then get
+  def all_attrs_names(cls):
+    """All possible entities' attributes names w/ REST."""
+    return list(set(cls.get_attrs_names() + [
+        "access_control_list", "recipients", "people_values", "default_people",
+        "modal_title", "assignee_type", "user_roles"]))
+
+  @classmethod
+  def get_attrs_names(cls, entity=None):
+    """Get list unique entities attributes' names. If 'entity' then get
     attributes of one entered entity, else get attributes of all entities.
     """
     all_entities_cls = (help_utils.convert_to_list(entity) if entity
@@ -37,14 +58,14 @@ class Representation(object):
     return list(set(all_entities_attrs_names))
 
   def __repr__(self):
-    # exclude attributes witch are used for REST interaction forming
-    # pylint: disable=not-an-iterable
-    return str(dict(zip(self.attrs_names_to_repr,
-                        [getattr(self, attr_name_to_repr) for attr_name_to_repr
-                         in self.attrs_names_to_repr])))
+    """Dictionary representation for entity."""
+    return str(dict(
+        zip(self.attrs_names_to_repr,
+            [getattr(self, attr_name_to_repr) for
+             attr_name_to_repr in self.attrs_names_to_repr])))
 
   @staticmethod
-  def items_of_remap_keys():
+  def remap_collection():
     """Get transformation dictionary {'OLD KEY': 'NEW KEY'}, where
     'OLD KEY' - UI elements and CSV fields correspond to
     'NEW KEY' - objects attributes.
@@ -54,7 +75,7 @@ class Representation(object):
     csv = files.TransformationCSVFields
     # common for UI and CSV
     result_remap_items = {
-        els.TITLE: "title", els.ADMIN: "owners",
+        els.TITLE: "title", els.ADMIN: "admins",
         els.CODE: "slug", els.REVIEW_STATE: "os_state",
         els.OBJECT_REVIEW: "os_state",
         els.STATE: "status"
@@ -62,16 +83,12 @@ class Representation(object):
     ui_remap_items = {
         els.MANAGER: "manager", els.VERIFIED: "verified",
         els.STATUS: "status", els.LAST_UPDATED: "updated_at",
-        els.AUDIT_CAPTAINS: "contact", els.CAS: "custom_attributes",
-        els.MAPPED_OBJECTS: "objects_under_assessment",
-        els.ASSIGNEES: "assignee",
-        els.CREATORS: "creator",
-        els.VERIFIERS: "verifier",
-        element.AssessmentInfoWidget.COMMENTS_HEADER: "comments",
-        els.PRIMARY_CONTACTS: "contact", els.CREATED_AT: "created_at",
+        els.AUDIT_CAPTAINS: "audit_captains", els.CAS: "custom_attributes",
+        els.MAPPED_OBJECTS: "mapped_objects", els.ASSIGNEES: "assignees",
+        els.CREATORS: "creators", els.VERIFIERS: "verifiers",
+        els.COMMENTS_HEADER: "comments", els.CREATED_AT: "created_at",
         els.MODIFIED_BY: "modified_by", els.LAST_UPDATED_BY: "modified_by",
-        els.UPDATED_AT: "updated_at"
-
+        els.UPDATED_AT: "updated_at", els.ASMT_TYPE: "assessment_type"
     }
     csv_remap_items = {
         csv.REVISION_DATE: "updated_at"
@@ -81,25 +98,25 @@ class Representation(object):
     return StringMethods.dict_keys_to_upper_case(result_remap_items)
 
   @staticmethod
-  def convert_objs_repr_to_dict(obj_or_objs):
+  def repr_obj_to_dict(objs):
     """Convert objects' representation to dictionary 'obj.attr_name' =
     'attr_value' to dictionary or list of dictionaries with items
     {'attr_name': 'attr_value'}.
     """
-    if obj_or_objs or isinstance(obj_or_objs, bool):
-      if isinstance(obj_or_objs, list):
+    if objs or isinstance(objs, bool):
+      if isinstance(objs, list):
         if (all(not isinstance(_, dict) and
                 not isinstance(_, (str, unicode, int)) and
-                _ for _ in obj_or_objs)):
-          obj_or_objs = [_.__dict__ for _ in obj_or_objs]
+                _ for _ in objs)):
+          objs = [_.__dict__ for _ in objs]
       else:
-        if (not isinstance(obj_or_objs, dict) and
-                not isinstance(obj_or_objs, (str, unicode, int))):
-          obj_or_objs = obj_or_objs.__dict__
-      return obj_or_objs
+        if (not isinstance(objs, dict) and
+                not isinstance(objs, (str, unicode, int))):
+          objs = objs.__dict__
+      return objs
 
   @staticmethod
-  def convert_dict_to_obj_repr(dic):
+  def repr_dict_to_obj(dic):
     """Convert dictionary to Entity representation (dictionary's keys and
     values to attributes names and attributes values).
     """
@@ -114,10 +131,10 @@ class Representation(object):
     """Convert entity's attributes values from REST like to UI like
     representation.
     """
-    return self.convert_objs_repr_from_rest_to_ui(obj_or_objs=self)
+    return self.convert_repr_rest_to_ui(objs=self)
 
   @classmethod  # noqa: ignore=C901
-  def convert_objs_repr_from_rest_to_ui(cls, obj_or_objs):
+  def convert_repr_rest_to_ui(cls, objs):
     """Convert object's or objects' attributes values from REST like
     (dict or list of dict) representation to UI like with unicode.
     Examples:
@@ -128,9 +145,9 @@ class Representation(object):
     # pylint: disable=too-many-locals
     # pylint: disable=undefined-loop-variable
     # pylint: disable=invalid-name
-    def convert_obj_repr_from_rest_to_ui(obj):
+    def convert_repr_rest_to_ui(obj):
       """Convert object's attributes from REST to UI like representation."""
-      def convert_attr_value_from_dict_to_unicode(attr_name, attr_value):
+      def convert_attr_val_repr_dict_to_unicode(attr_name, attr_value):
         """Convert attribute value from dictionary to unicode representation
         (get value by key from dictionary 'attr_value' where key determine
         according to 'attr_name').
@@ -138,13 +155,12 @@ class Representation(object):
         if isinstance(attr_value, dict):
           converted_attr_value = attr_value
           if attr_name in [
-              "contact", "manager", "owners", "assignee", "creator",
-              "verifier", "created_by", "modified_by", "Assignee", "Creator",
-              "Verifier"
+              "manager", "assignees", "creators",
+              "verifiers", "created_by", "modified_by"
           ]:
             converted_attr_value = unicode(attr_value.get("email"))
           if attr_name in ["custom_attribute_definitions", "program", "audit",
-                           "objects_under_assessment"]:
+                           "mapped_objects"]:
             converted_attr_value = (
                 unicode(attr_value.get("title")) if
                 attr_name != "custom_attribute_definitions" else
@@ -163,10 +179,7 @@ class Representation(object):
       origin_obj = copy.deepcopy(obj)
       for obj_attr_name in obj.__dict__.keys():
         # 'Ex', u'Ex', 1, None to 'Ex', u'Ex', 1, None
-        obj_attr_value = (obj.assignees.get(obj_attr_name.title()) if (
-            obj_attr_name in ["assignee", "creator", "verifier"] and
-            "assignees" in obj.__dict__.keys())
-            else getattr(obj, obj_attr_name))
+        obj_attr_value = getattr(obj, obj_attr_name)
         # REST like u'08-20-2017T04:30:45' to date=2017-08-20,
         # timetz=04:30:45+00:00
         if (obj_attr_name in ["updated_at", "created_at"] and
@@ -174,28 +187,21 @@ class Representation(object):
           obj_attr_value = (parser.parse(obj_attr_value).
                             replace(tzinfo=tz.tzutc()))
         if isinstance(obj_attr_value, dict) and obj_attr_value:
-          # to "assignees" = {"Assignee": [], "Creator": [], "Verifier": []}
-          if obj_attr_name == "assignees":
-            obj_attr_value = {
-                k: ([convert_attr_value_from_dict_to_unicode(k, _v)
-                     for _v in v] if isinstance(v, list) else
-                    convert_attr_value_from_dict_to_unicode(k, v))
-                for k, v in obj_attr_value.iteritems()
-                if k in ["Assignee", "Creator", "Verifier"]}
           # "modified_by" {"type": "Person", "id": x} to u'user@example.com'
+          # todo: deprecated?
           if obj_attr_name == "modified_by":
             from lib.service import rest_service
             obj_attr_value = getattr(rest_service.ObjectsInfoService().get_obj(
-                obj=Entity.convert_dict_to_obj_repr(obj_attr_value)), "email")
+                obj=Representation.repr_dict_to_obj(obj_attr_value)), "email")
           # {'name': u'Ex1', 'type': u'Ex2', ...} to u'Ex1'
           else:
-            obj_attr_value = convert_attr_value_from_dict_to_unicode(
+            obj_attr_value = convert_attr_val_repr_dict_to_unicode(
                 obj_attr_name, obj_attr_value)
         # [el1, el2, ...] or [{item1}, {item2}, ...] to [u'Ex1, u'Ex2', ...]
         if (isinstance(obj_attr_value, list) and
                 all(isinstance(item, dict) for item in obj_attr_value)):
           obj_attr_value = [
-              convert_attr_value_from_dict_to_unicode(obj_attr_name, item) for
+              convert_attr_val_repr_dict_to_unicode(obj_attr_name, item) for
               item in obj_attr_value]
         setattr(obj, obj_attr_name, obj_attr_value)
       # merge "custom_attribute_definitions" and "custom_attribute_values"
@@ -225,32 +231,41 @@ class Representation(object):
             dict([_def.iteritems().next() for _def in cas_def]) if
             (isinstance(cas_def, list) and
              all(isinstance(_def, dict)
-                 for _def in cas_def)) else {None: None})
+                 for _def in cas_def)) else None)
         cas_val_dict = (
             dict([_val.iteritems().next() for _val in cas_val]) if
             (isinstance(cas_def, list) and
              all(isinstance(_def, dict)
-                 for _def in cas_def)) else {None: None})
+                 for _def in cas_def)) else None)
         cas = StringMethods.merge_dicts_by_same_key(cas_def_dict, cas_val_dict)
+        if cas in [{None: None}, {}]:
+          cas = None
         setattr(obj, "custom_attributes", cas)
       return obj
     return help_utils.execute_method_according_to_plurality(
-        obj_or_objs=obj_or_objs, types=Entity.all_entities_classes(),
-        method_name=convert_obj_repr_from_rest_to_ui)
+        objs=objs, types=Entity.all_entities_classes(),
+        method_name=convert_repr_rest_to_ui)
 
   def repr_snapshot(self, parent_obj):
     """Convert entity's attributes values to Snapshot representation."""
-    return (self.convert_objs_repr_to_snapshot(
-        obj_or_objs=self, parent_obj=parent_obj))
+    return (self.convert_repr_to_snapshot(
+        objs=self, parent_obj=parent_obj))
+
+  def repr_min_dict(self):
+    """Get and return entity's minimal dictionary representation w/
+    'type', 'id' keys, e.g. {'type': 'Control', 'id': 1}
+    """
+    return {"type": getattr(self, "type"),
+            "id": getattr(self, "id")}
 
   @classmethod  # noqa: ignore=C901
-  def convert_objs_repr_to_snapshot(cls, obj_or_objs, parent_obj):
+  def convert_repr_to_snapshot(cls, objs, parent_obj):
     """Convert object's or objects' attributes values to Snapshot
     representation.
     Retrieved values will be used for: 'id'.
     Set values will be used for: 'title, 'type', 'slug', 'href'.
     """
-    def convert_obj_repr_to_snapshot(origin_obj, parent_obj):
+    def convert_repr_to_snapshot(origin_obj, parent_obj):
       """Convert object's attributes to Snapshot representation."""
       from lib.service import rest_service
       origin_obj = copy.deepcopy(origin_obj)
@@ -261,8 +276,8 @@ class Representation(object):
           {k: v for k, v in snapshoted_obj.__dict__.iteritems()})
       return origin_obj
     return help_utils.execute_method_according_to_plurality(
-        obj_or_objs=obj_or_objs, types=Entity.all_entities_classes(),
-        method_name=convert_obj_repr_to_snapshot, parent_obj=parent_obj)
+        objs=objs, types=Entity.all_entities_classes(),
+        method_name=convert_repr_to_snapshot, parent_obj=parent_obj)
 
   def update_attrs(self, is_replace_attrs=True, is_allow_none=True,
                    is_replace_dicts_values=False, **attrs):
@@ -271,41 +286,55 @@ class Representation(object):
     If 'is_replace_values_of_dicts' then update values of dicts in list which
     is value of particular object's attribute name.
     """
-    return (self.update_objs_attrs_values_by_entered_data(
-        obj_or_objs=self, is_replace_attrs_values=is_replace_attrs,
+    return (self.update_objs_attrs_values(
+        objs=self, is_replace_attrs_values=is_replace_attrs,
         is_allow_none_values=is_allow_none,
         is_replace_values_of_dicts=is_replace_dicts_values, **attrs))
 
+  def delete_attrs(self, *attrs_names):
+    """Delete entity's attributes according to '*attrs_names'."""
+    # pylint: disable=expression-not-assigned
+    [delattr(self, attr_name)
+     for attr_name in attrs_names if hasattr(self, attr_name)]
+
+  def set_attrs(self, *attrs_names, **attrs):
+    """Set entity's attributes according to '**attrs' items if key and value
+    are corresponding, otherwise set values to None where '*attrs_names'
+    is keys.
+    """
+    # pylint: disable=expression-not-assigned
+    [setattr(self, attr_name, attrs.get(attr_name))
+     for attr_name in attrs_names]
+
   @classmethod
-  def update_objs_attrs_values_by_entered_data(
-      cls, obj_or_objs, is_replace_attrs_values=True,
-      is_allow_none_values=True, is_replace_values_of_dicts=False, **arguments
+  def update_objs_attrs_values(
+      cls, objs, is_replace_attrs_values=True,
+      is_allow_none_values=True, is_replace_values_of_dicts=False, **attrs
   ):
-    """Update object or list of objects ('obj_or_objs') attributes values by
+    """Update object or list of objects ('objs') attributes values by
     manually entered data if attribute name exist in 'attrs_names' witch equal
     to 'all_objs_attrs_names' according to dictionary of attributes and values
-    '**arguments'. If 'is_replace_attrs_values' then replace attributes values,
+    '**attrs'. If 'is_replace_attrs_values' then replace attributes values,
     if not 'is_replace_attrs_values' then update (merge) attributes values
     witch should be lists. If 'is_allow_none_values' then allow to set None
     object's attributes values, and vice versa.
     If 'is_replace_values_of_dicts' then update values of dicts in list which
     is value of particular object's attribute name:
-    (**arguments is attr={'key1': 'new_value2', 'key2': 'new_value2'}).
+    (**attrs is attr={'key1': 'new_value2', 'key2': 'new_value2'}).
     """
     # pylint: disable=expression-not-assigned
     # pylint: disable=invalid-name
     def update_obj_attrs_values(obj, is_replace_attrs_values,
-                                is_allow_none_values, **arguments):
+                                is_allow_none_values, **attrs):
       """Update object's attributes values."""
-      for obj_attr_name in arguments:
-        if (obj_attr_name in
-                Entity.get_attrs_names_for_entities(obj.__class__)):
-          _obj_attr_value = arguments.get(obj_attr_name)
-          condition = (True if is_allow_none_values else _obj_attr_value)
-          if condition and not is_replace_values_of_dicts:
+      for obj_attr_name in attrs:
+        obj_attr_value = None
+        if (obj_attr_name in Representation.all_attrs_names()):
+          _obj_attr_value = attrs.get(obj_attr_name)
+          if not is_replace_values_of_dicts:
             # convert repr from objects to dicts exclude datetime objects
             obj_attr_value = (
-                cls.convert_objs_repr_to_dict(_obj_attr_value) if
+                cls.repr_obj_to_dict(_obj_attr_value) if
                 not isinstance(_obj_attr_value, datetime) else _obj_attr_value)
             if not is_replace_attrs_values:
               origin_obj_attr_value = getattr(obj, obj_attr_name)
@@ -314,13 +343,6 @@ class Representation(object):
                   if obj_attr_name == "custom_attributes" else
                   help_utils.convert_to_list(origin_obj_attr_value) +
                   help_utils.convert_to_list(obj_attr_value))
-            setattr(obj, obj_attr_name, obj_attr_value)
-            if obj_attr_name in ["creator", "assignee", "verifier"]:
-              from lib.entities.entities_factory import ObjectPersonsFactory
-              if not isinstance(obj.assignees, dict):
-                obj.assignees = dict()
-              obj.assignees[obj_attr_name.capitalize()] = (
-                  [ObjectPersonsFactory().default().__dict__])
           if is_replace_values_of_dicts and isinstance(_obj_attr_value, dict):
             obj_attr_value = StringMethods.exchange_dicts_items(
                 transform_dict=_obj_attr_value,
@@ -330,16 +352,18 @@ class Representation(object):
             obj_attr_value = (
                 obj_attr_value if isinstance(getattr(obj, obj_attr_name), list)
                 else obj_attr_value[0])
+          if (is_allow_none_values or
+                  (not is_allow_none_values and obj_attr_value)):
             setattr(obj, obj_attr_name, obj_attr_value)
       return obj
     return help_utils.execute_method_according_to_plurality(
-        obj_or_objs=obj_or_objs, types=Entity.all_entities_classes(),
+        objs=objs, types=Entity.all_entities_classes(),
         method_name=update_obj_attrs_values,
         is_replace_attrs_values=is_replace_attrs_values,
-        is_allow_none_values=is_allow_none_values, **arguments)
+        is_allow_none_values=is_allow_none_values, **attrs)
 
   @classmethod
-  def filter_objs_attrs(cls, obj_or_objs, attrs_to_include):
+  def filter_objs_attrs(cls, objs, attrs_to_include):
     """Make objects's copy and filter objects's attributes (delete attributes
     from objects witch not in list'attrs_to_include').
     'objs' can be list of objects or object.
@@ -351,9 +375,9 @@ class Representation(object):
       [delattr(obj, obj_attr) for obj_attr in obj.__dict__.keys()
        if obj_attr not in attrs_to_include]
       return obj
-    return ([filter_obj_attrs(obj, attrs_to_include) for obj in obj_or_objs] if
-            isinstance(obj_or_objs, list) else
-            filter_obj_attrs(obj_or_objs, attrs_to_include))
+    return ([filter_obj_attrs(obj, attrs_to_include) for obj in objs] if
+            isinstance(objs, list) else
+            filter_obj_attrs(objs, attrs_to_include))
 
   def __eq__(self, other):
     """Extended equal procedure fore self and other entities."""
@@ -397,18 +421,25 @@ class Representation(object):
   @staticmethod
   def compare_cas(self_cas, other_cas):
     """Compare entities' 'custom_attributes' attributes."""
-    if isinstance(self_cas and other_cas, dict):
-      return StringMethods.is_subset_of_dicts(self_cas, other_cas)
+    if (isinstance(self_cas, (dict, type(None))) and
+            isinstance(other_cas, (dict, type(None)))):
+      is_equal = False
+      if (isinstance(self_cas, dict) and isinstance(other_cas, dict)):
+        is_equal = StringMethods.is_subset_of_dicts(self_cas, other_cas)
+      else:
+        is_equal = self_cas == other_cas
+      return is_equal
     else:
       Representation.attrs_values_types_error(
           self_attr=self_cas, other_attr=other_cas,
-          expected_types=dict.__name__)
+          expected_types=(dict.__name__, type(None).__name__))
 
   @staticmethod
   def compare_datetime(self_datetime, other_datetime):
     """Compare entities' datetime ('created_at', 'updated_at') attributes."""
     # pylint: disable=superfluous-parens
-    if (isinstance(self_datetime and other_datetime, (datetime, type(None)))):
+    if (isinstance(self_datetime, (datetime, type(None))) and
+            isinstance(other_datetime, (datetime, type(None)))):
       return self_datetime == other_datetime
     else:
       Representation.attrs_values_types_error(
@@ -433,7 +464,8 @@ class Representation(object):
                 all((Representation.compare_datetime(
                     self_comment.get("created_at"),
                     other_comment.get("created_at")
-                ) if isinstance(_self and _other, datetime) else
+                ) if (isinstance(_self, datetime) and
+                      isinstance(_other, datetime))else
                     _self == _other) for _self, _other in zip(
                     self_comment.iteritems(), other_comment.iteritems())))
             # convert datetime to unicode in order to get visible repr
@@ -456,7 +488,7 @@ class Representation(object):
 
   def compare_entities(self, other):
     """Extended compare of entities: 'self_entity' and 'other_entity' according
-    to specific 'attrs_names_to_compare' and return:
+    to specific 'attrs_names_to_repr' and return:
     - 'is_equal' - True if entities equal else False;
     - 'self_diff' - 'equal' and 'diff' parts of 'self_entity' after compare;
     - 'other_diff' - 'equal' and 'diff' parts of 'other_entity' after compare.
@@ -465,8 +497,8 @@ class Representation(object):
     is_equal = False
     self_equal, self_diff, other_equal, other_diff = {}, {}, {}, {}
     if (isinstance(self, other.__class__) and
-            self.attrs_names_to_compare == other.attrs_names_to_compare):
-      for attr_name in self.attrs_names_to_compare:
+            self.attrs_names_to_repr == other.attrs_names_to_repr):
+      for attr_name in self.attrs_names_to_repr:
         self_attr_value = None
         other_attr_value = None
         if (attr_name in self.__dict__.keys() and
@@ -521,8 +553,8 @@ class Representation(object):
     '*exclude_attrs' tuple attributes' names.
     """
     return [expected_obj.update_attrs(
-        **dict([(attr, ({None: None} if attr == "custom_attributes" else None))
-                for attr in exclude_attrs])) for expected_obj in objs]
+        **dict([(attr, None) for attr in exclude_attrs]))
+        for expected_obj in objs]
 
   @staticmethod
   def extract_excluded_attrs_collection(objs, *exclude_attrs):
@@ -567,379 +599,134 @@ class Representation(object):
 
 class Entity(Representation):
   """Class that represent model for base entity."""
-  # pylint: disable=invalid-name
-  # pylint: disable=redefined-builtin
+  __hash__ = None
 
-  def __init__(self, type=None, slug=None, id=None, title=None, href=None,
-               url=None, created_at=None):
-    # REST and UI
-    self.type = type
-    self.slug = slug  # code
-    self.id = id
-    self.title = title
-    self.href = href
-    self.url = url
-    self.created_at = created_at
+  def __init__(self, **attrs):
+    self.set_attrs(
+        "type", "slug", "id", "title", "href", "url", "admins",
+        "primary_contacts", "secondary_contacts", "status", "os_state",
+        "comments", "custom_attribute_definitions", "custom_attribute_values",
+        "custom_attributes", "created_at", "updated_at", "modified_by",
+        **attrs)
 
   @staticmethod
   def all_entities_classes():
     """Explicitly return tuple of all entities' classes."""
     return (
-        PersonEntity, CustomAttributeEntity, ProgramEntity, ControlEntity,
-        AuditEntity, AssessmentEntity, AssessmentTemplateEntity, IssueEntity,
-        CommentEntity, ObjectiveEntity)
+        PersonEntity, CustomAttributeDefinitionEntity, ProgramEntity,
+        ControlEntity, AuditEntity, AssessmentEntity, AssessmentTemplateEntity,
+        IssueEntity, CommentEntity, ObjectiveEntity, RoleEntity)
 
   def __lt__(self, other):
     return self.slug < other.slug
 
 
 class CommentEntity(Representation):
-  """Class that represent model for Comment."""
-  # pylint: disable=invalid-name
-  # pylint: disable=redefined-builtin
+  """Class that represent model for Comment entity."""
   __hash__ = None
 
-  attrs_names_to_compare = ["type", "modified_by", "created_at", "description"]
-  attrs_names_to_repr = [
-      "type", "id", "href", "modified_by", "created_at", "description"]
-
-  def __init__(self, type=None, id=None, href=None, modified_by=None,
-               created_at=None, description=None):
-    super(CommentEntity, self).__init__()
-    # REST and UI
-    self.type = type
-    self.id = id
-    self.href = href
-    self.modified_by = modified_by
-    self.created_at = created_at
-    self.description = description
+  def __init__(self, **attrs):
+    self.set_attrs(
+        "type", "id", "href", "description", "created_at", "modified_by",
+        **attrs)
 
   def __lt__(self, other):
     return self.description < other.description
 
 
-class PersonEntity(Representation):
-  """Class that represent model for Person."""
-  # pylint: disable=invalid-name
-  # pylint: disable=redefined-builtin
-  # pylint: disable=too-many-instance-attributes
-  __hash__ = None
-  attrs_names_to_compare = [
-      "type", "name", "email"]
-  attrs_names_to_repr = [
-      "type", "id", "name", "href", "url", "email", "company",
-      "system_wide_role", "created_at", "updated_at", "ac_role_id"]
+class RoleEntity(Entity):
+  """Class that represent model for Person entity."""
+  # todo: class's description, relationships w/ PesronEntity, ACLs, user_roles
 
-  def __init__(self, type=None, id=None, name=None, href=None, url=None,
-               email=None, company=None, system_wide_role=None,
-               updated_at=None, custom_attribute_definitions=None,
-               custom_attribute_values=None, ac_role_id=None, created_at=None):
+
+class PersonEntity(Entity):
+  """Class that represent model for Person entity."""
+
+  def __init__(self, **attrs):
     super(PersonEntity, self).__init__()
-    # REST and UI
-    self.name = name
-    self.id = id
-    self.href = href
-    self.url = url
-    self.type = type
-    self.email = email
-    self.company = company
-    self.system_wide_role = system_wide_role  # authorizations
-    self.created_at = created_at
-    self.updated_at = updated_at  # last updated datetime
-    # REST
-    self.custom_attribute_definitions = custom_attribute_definitions
-    self.custom_attribute_values = custom_attribute_values
-    self.ac_role_id = ac_role_id
+    self.delete_attrs(
+        "slug", "title", "admins", "primary_contacts", "secondary_contacts",
+        "status", "os_state", "comments")
+    self.set_attrs(
+        "name", "email", "company", "system_wide_role", **attrs)
 
   def __lt__(self, other):
     return self.email < other.email
 
 
-class CustomAttributeEntity(Representation):
-  """Class that represent model for Custom Attribute."""
-  # pylint: disable=invalid-name
-  # pylint: disable=redefined-builtin
-  # pylint: disable=too-many-instance-attributes
+class CustomAttributeDefinitionEntity(Representation):
+  """Class that represent model for Custom Attribute entity."""
   __hash__ = None
-  attrs_names_to_compare = [
-      "type", "title", "definition_type", "attribute_type", "mandatory"]
-  attrs_names_to_repr = [
-      "type", "title", "id", "href", "definition_type", "attribute_type",
-      "helptext", "placeholder", "mandatory", "multi_choice_options",
-      "created_at", "modified_by", "updated_at"]
 
-  def __init__(self, title=None, id=None, href=None, type=None,
-               definition_type=None, attribute_type=None, helptext=None,
-               placeholder=None, mandatory=None, multi_choice_options=None,
-               created_at=None, modified_by=None, updated_at=None):
-    super(CustomAttributeEntity, self).__init__()
-    # REST and UI
-    self.title = title
-    self.id = id
-    self.href = href
-    self.type = type
-    self.definition_type = definition_type
-    self.attribute_type = attribute_type
-    self.helptext = helptext
-    self.placeholder = placeholder
-    self.mandatory = mandatory
-    self.multi_choice_options = multi_choice_options
-    # REST
-    self.created_at = created_at  # to generate same CAs values
-    self.updated_at = updated_at  # last updated datetime
-    self.modified_by = modified_by
+  def __init__(self, **attrs):
+    super(CustomAttributeDefinitionEntity, self).__init__()
+    self.set_attrs(
+        "title", "id", "href", "type", "definition_type", "attribute_type",
+        "helptext", "placeholder", "mandatory", "multi_choice_options",
+        "created_at", "updated_at", "modified_by", **attrs)
 
   def __lt__(self, other):
     return self.title < other.title
 
 
 class ProgramEntity(Entity):
-  """Class that represent model for Program."""
-  # pylint: disable=too-many-instance-attributes
-  __hash__ = None
+  """Class that represent model for Program entity."""
 
-  attrs_names_to_compare = [
-      "custom_attributes", "manager", "os_state", "slug", "status", "title",
-      "type", "created_at", "updated_at", "modified_by"]
-  attrs_names_to_repr = Representation.core_attrs_names_to_repr + [
-      "status", "manager", "contact", "secondary_contact", "updated_at",
-      "custom_attributes", "os_state", "modified_by"]
-
-  def __init__(self, status=None, manager=None, contact=None,
-               secondary_contact=None, updated_at=None, os_state=None,
-               custom_attribute_definitions=None, custom_attribute_values=None,
-               custom_attributes=None, modified_by=None):
+  def __init__(self, **attrs):
     super(ProgramEntity, self).__init__()
-    # REST and UI
-    self.status = status  # state
-    self.manager = manager  # predefined
-    self.contact = contact  # primary contact
-    self.secondary_contact = secondary_contact
-    self.updated_at = updated_at  # last updated datetime
-    self.modified_by = modified_by
-    # REST
-    self.os_state = os_state  # review state (e.g. "Unreviewed")
-    self.custom_attribute_definitions = custom_attribute_definitions
-    self.custom_attribute_values = custom_attribute_values
-    # additional
-    self.custom_attributes = custom_attributes  # map of cas def and values
+    self.delete_attrs("admins")
+    self.set_attrs(
+        "manager", "primary_contacts", "secondary_contacts", **attrs)
 
 
 class ControlEntity(Entity):
-  """Class that represent model for Control."""
-  # pylint: disable=too-many-instance-attributes
+  """Class that represent model for Control entity."""
   __hash__ = None
 
-  attrs_names_to_compare = [
-      "custom_attributes", "os_state", "slug", "status", "title", "type",
-      "owners", "created_at", "updated_at", "modified_by"]
-  attrs_names_to_repr = Representation.core_attrs_names_to_repr + [
-      "status", "contact", "secondary_contact", "updated_at",
-      "os_state", "custom_attributes", "owners",
-      "modified_by"]
-
-  def __init__(self, status=None, owners=None, contact=None,
-               secondary_contact=None, updated_at=None, os_state=None,
-               custom_attribute_definitions=None, custom_attribute_values=None,
-               custom_attributes=None, access_control_list=None,
-               modified_by=None):
+  def __init__(self, **attrs):
     super(ControlEntity, self).__init__()
-    # REST and UI
-    self.status = status  # state (e.g. "Draft")
-    self.contact = contact  # primary contact
-    self.secondary_contact = secondary_contact
-    self.updated_at = updated_at  # last updated datetime
-    self.os_state = os_state  # review state (e.g. "Unreviewed")
-    self.modified_by = modified_by
-    # REST
-    self.owners = owners
-    self.custom_attribute_definitions = custom_attribute_definitions
-    self.custom_attribute_values = custom_attribute_values
-    # ACL [{ac_role_id: *, person: {id: *}, ...]
-    self.access_control_list = access_control_list
-    # additional
-    self.custom_attributes = custom_attributes  # map of cas def and values
+    self.set_attrs(
+        "principal_assignees", "secondary_assignees", "program", **attrs)
 
 
 class ObjectiveEntity(Entity):
-  """Class that represent model for Objective."""
-  # pylint: disable=too-many-instance-attributes
-  __hash__ = None
-
-  attrs_names_to_compare = [
-      "custom_attributes", "os_state", "slug", "status", "title", "type",
-      "created_at", "updated_at", "modified_by"]
-  attrs_names_to_repr = Representation.core_attrs_names_to_repr + [
-      "status", "contact", "secondary_contact", "updated_at",
-      "os_state", "custom_attributes", "modified_by"]
-
-  def __init__(self, status=None, owners=None, contact=None,
-               secondary_contact=None, updated_at=None, os_state=None,
-               custom_attribute_definitions=None, custom_attribute_values=None,
-               custom_attributes=None, access_control_list=None,
-               modified_by=None):
-    super(ObjectiveEntity, self).__init__()
-    # REST and UI
-    self.status = status  # state
-    self.contact = contact  # primary contact
-    self.secondary_contact = secondary_contact
-    self.updated_at = updated_at  # last updated
-    self.os_state = os_state  # review state
-    self.modified_by = modified_by
-    # REST
-    self.owners = owners
-    self.custom_attribute_definitions = custom_attribute_definitions
-    self.custom_attribute_values = custom_attribute_values
-    # ACL [{ac_role_id: *, person: {id: *}, ...]
-    self.access_control_list = access_control_list
-    # additional
-    self.custom_attributes = custom_attributes  # map of cas def and values
+  """Class that represent model for Objective entity."""
 
 
 class AuditEntity(Entity):
-  """Class that represent model for Audit."""
-  # pylint: disable=too-many-instance-attributes
-  __hash__ = None
+  """Class that represent model for Audit enity."""
 
-  attrs_names_to_compare = [
-      "contact", "custom_attributes", "slug", "status", "title", "type",
-      "created_at", "updated_at", "modified_by"]
-  attrs_names_to_repr = Representation.core_attrs_names_to_repr + [
-      "status", "program", "contact", "updated_at", "custom_attributes",
-      "modified_by"]
-
-  def __init__(self, status=None, program=None, contact=None,
-               updated_at=None, custom_attribute_definitions=None,
-               custom_attribute_values=None, custom_attributes=None,
-               created_at=None, modified_by=None, access_control_list=None):
+  def __init__(self, **attrs):
     super(AuditEntity, self).__init__()
-    # REST and UI
-    self.status = status  # status (e.g. "Planned")
-    self.contact = contact  # audit captain
-    self.updated_at = updated_at  # last updated datetime
-    self.modified_by = modified_by
-    # REST
-    self.custom_attribute_definitions = custom_attribute_definitions
-    self.custom_attribute_values = custom_attribute_values
-    # ACL [{ac_role_id: *, person: {id: *}, ...]
-    self.access_control_list = access_control_list
-    # additional
-    self.program = program  # program title
-    self.custom_attributes = custom_attributes  # map of cas def and values
+    self.delete_attrs(
+        "admins", "primary_contacts", "secondary_contacts", "os_state",
+        "comments")
+    self.set_attrs(
+        "audit_captains", "auditors", "program", **attrs)
 
 
 class AssessmentTemplateEntity(Entity):
-  """Class that represent model for Assessment Template."""
-  # pylint: disable=superfluous-parens
-  # pylint: disable=too-many-instance-attributes
-  __hash__ = None
+  """Class that represent model for Assessment Template entity."""
 
-  attrs_names_to_compare = [
-      "custom_attributes", "slug", "title", "type", "created_at", "updated_at",
-      "modified_by", "status"]
-  attrs_names_to_repr = Representation.core_attrs_names_to_repr + [
-      "audit", "template_object_type", "updated_at", "custom_attributes",
-      "modified_by", "status"]
-
-  def __init__(self, audit=None, default_people=None,
-               template_object_type=None, updated_at=None,
-               custom_attribute_definitions=None,
-               custom_attribute_values=None, custom_attributes=None,
-               modified_by=None, status=None):
+  def __init__(self, **attrs):
     super(AssessmentTemplateEntity, self).__init__()
-    # REST and UI
-    self.status = status  # state ("Active", "Draft", "Deprecated")
-    self.default_people = default_people  # {"verifiers": *, "assignees": *}
-    self.template_object_type = template_object_type  # objs under asmt
-    self.updated_at = updated_at  # last updated datetime
-    self.modified_by = modified_by
-    # REST
-    self.custom_attribute_definitions = custom_attribute_definitions
-    self.custom_attribute_values = custom_attribute_values
-    # additional
-    self.audit = audit  # audit title
-    self.custom_attributes = custom_attributes  # map of cas def and values
+    self.delete_attrs(
+        "admins", "primary_contacts", "secondary_contacts", "os_state",
+        "comments")
+    self.set_attrs(
+        "assignees", "verifiers", "template_object_type", "audit", **attrs)
 
 
 class AssessmentEntity(Entity):
-  """Class that represent model for Assessment."""
-  # pylint: disable=too-many-instance-attributes
-  # pylint: disable=redefined-builtin
-  # pylint: disable=too-many-locals
-  # pylint: disable=duplicate-code
-  __hash__ = None
+  """Class that represent model for Assessment entity."""
 
-  attrs_names_to_compare = [
-      "assignee", "creator", "verifier", "custom_attributes",
-      "objects_under_assessment", "slug", "status", "title", "type",
-      "verified", "comments", "created_at", "updated_at", "modified_by"]
-  attrs_names_to_repr = Representation.core_attrs_names_to_repr + [
-      "status", "audit", "assignee", "creator", "verifier", "verified",
-      "updated_at", "objects_under_assessment", "custom_attributes",
-      "comments", "modified_by"]
-
-  def __init__(self, status=None, audit=None, owners=None, recipients=None,
-               assignees=None, assignee=None, creator=None, verifier=None,
-               verified=None, updated_at=None, objects_under_assessment=None,
-               custom_attribute_definitions=None, custom_attribute_values=None,
-               custom_attributes=None, comments=None, modified_by=None,
-               access_control_list=None):
+  def __init__(self, **attrs):
     super(AssessmentEntity, self).__init__()
-    # REST and UI
-    self.status = status  # state (e.g. "Not Started")
-    self.assignee = assignee  # assignees
-    self.creator = creator  # creators
-    self.verifier = verifier  # verifiers
-    self.verified = verified
-    self.updated_at = updated_at  # last updated datetime
-    self.objects_under_assessment = objects_under_assessment  # mapped objs
-    self.modified_by = modified_by
-    # REST
-    # {"Assignee": [{}, {}], "Creator": [{}, {}], "Verifier": [{}, {}]}
-    self.assignees = assignees
-    self.owners = owners
-    self.recipients = recipients  # "Verifiers,Assignees,Creators"
-    self.custom_attribute_definitions = custom_attribute_definitions
-    self.custom_attribute_values = custom_attribute_values
-    # ACL [{ac_role_id: *, person: {id: *}, ...]
-    self.access_control_list = access_control_list
-    # additional
-    self.audit = audit  # audit title
-    self.custom_attributes = custom_attributes  # map of cas def and values
-    # [{"modified_by": *, "created_at": *, "description": *}, {}]
-    self.comments = comments
+    self.delete_attrs("admins", "os_state")
+    self.set_attrs(
+        "creators", "assignees", "verifiers", "assessment_type", "verified",
+        "mapped_objects", "audit", **attrs)
 
 
 class IssueEntity(Entity):
-  """Class that represent model for Issue."""
-  # pylint: disable=too-many-instance-attributes
-  __hash__ = None
-
-  attrs_names_to_compare = [
-      "type", "title", "slug", "status", "contact", "os_state", "created_at",
-      "updated_at", "modified_by"]
-  attrs_names_to_repr = Representation.core_attrs_names_to_repr + [
-      "status", "contact", "secondary_contact", "updated_at",
-      "custom_attributes", "os_state", "modified_by"]
-
-  def __init__(self, status=None, owners=None,
-               contact=None, secondary_contact=None, updated_at=None,
-               custom_attribute_definitions=None, os_state=None,
-               custom_attribute_values=None, custom_attributes=None,
-               access_control_list=None, modified_by=None):
-    super(IssueEntity, self).__init__()
-    # REST and UI
-    self.status = status  # state
-    self.contact = contact  # primary contact
-    self.secondary_contact = secondary_contact
-    self.updated_at = updated_at  # last updated datetime
-    self.modified_by = modified_by
-    # REST
-    self.owners = owners
-    self.os_state = os_state  # review state (e.g. "Unreviewed")
-    self.custom_attribute_definitions = custom_attribute_definitions
-    self.custom_attribute_values = custom_attribute_values
-    # ACL [{ac_role_id: *, person: {id: *}, ...]
-    self.access_control_list = access_control_list
-    # additional
-    self.custom_attributes = custom_attributes  # map of cas def and values
+  """Class that represent model for Issue entity."""
