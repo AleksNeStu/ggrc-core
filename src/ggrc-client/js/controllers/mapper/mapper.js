@@ -31,8 +31,8 @@ const ObjectMapper = can.Control.extend({
       $trigger.attr('data-href') || $trigger.attr('href') :
       '';
     let modalId = 'ajax-modal-' + (href || '')
-        .replace(/[\/\?=\&#%]/g, '-')
-        .replace(/^-/, '');
+      .replace(/[\/\?=\&#%]/g, '-')
+      .replace(/^-/, '');
     let $target =
       $('<div id="' + modalId +
       '" class="modal modal-selector object-modal hide"></div>');
@@ -65,10 +65,8 @@ const ObjectMapper = can.Control.extend({
       return;
     }
 
-    if (
-        _.isUndefined(data.join_object_type) ||
-        _.isNull(data.join_object_type)
-    ) {
+    if (_.isUndefined(data.join_object_type) ||
+      _.isNull(data.join_object_type)) {
       throw new Error(OBJECT_REQUIRED_MESSAGE);
     }
 
@@ -142,7 +140,7 @@ const ObjectMapper = can.Control.extend({
 
         self.launch(btn, can.extend(config, data));
       })
-      .always(() => self.isLoading = false);
+        .always(() => self.isLoading = false);
     }
 
     function openForCommonObjects(data, isSearch) {
@@ -201,16 +199,16 @@ const ObjectGenerator = ObjectMapper.extend({
 }, {});
 
 const ObjectBulkUpdate = ObjectMapper.extend({
-    defaults: {
-      component: objectBulkUpdateTemplate,
-    },
-  }, {});
+  defaults: {
+    component: objectBulkUpdateTemplate,
+  },
+}, {});
 
 const AssessmentTemplateClone = ObjectMapper.extend({
-    defaults: {
-      component: assessmentTemplateCloneTemplate,
-    },
-  }, {});
+  defaults: {
+    component: assessmentTemplateCloneTemplate,
+  },
+}, {});
 
 export {
   ObjectMapper,
