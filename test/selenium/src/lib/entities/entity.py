@@ -352,8 +352,9 @@ class Representation(object):
             obj_attr_value = (
                 obj_attr_value if isinstance(getattr(obj, obj_attr_name), list)
                 else obj_attr_value[0])
-          if (is_allow_none_values or
-                  (not is_allow_none_values and obj_attr_value)):
+          if (is_allow_none_values is True or
+                  (is_allow_none_values is False and
+                   obj_attr_value is not None)):
             setattr(obj, obj_attr_name, obj_attr_value)
       return obj
     return help_utils.execute_method_according_to_plurality(
