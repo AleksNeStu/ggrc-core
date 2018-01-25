@@ -143,14 +143,17 @@
 < test/selenium/src/lib/service/rest/template/assessment.json
 < test/selenium/src/lib/service/rest/template/assessment_template.json
 < test/selenium/src/lib/service/rest/template/audit.json
+< test/selenium/src/lib/service/rest/template/comment.json
 < test/selenium/src/lib/service/rest/template/control.json
 < test/selenium/src/lib/service/rest/template/custom_attribute_definition.json
 < test/selenium/src/lib/service/rest/template/issue.json
 < test/selenium/src/lib/service/rest/template/objective.json
 < test/selenium/src/lib/service/rest/template/object_owner.json
+< test/selenium/src/lib/service/rest/template/people.json
 < test/selenium/src/lib/service/rest/template/program.json
 < test/selenium/src/lib/service/rest/template/query.json
 < test/selenium/src/lib/service/rest/template/relationship.json
+< test/selenium/src/lib/service/rest/template/user_role.json
 < test/unit/appengine/__init__.py
 < test/unit/ggrc/automapper/__init__.py
 < test/unit/ggrc/integrations/__init__.py
