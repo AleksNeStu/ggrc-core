@@ -92,7 +92,7 @@ class BaseWebUiService(object):
                   Symbols.STAR in val):
             scope[key] = val.replace(Symbols.STAR, Symbols.BLANK)
     return [
-        factory_obj.update_attrs(is_allow_none=False, **scope) for
+        factory_obj.update_attrs(is_allow_none=True, **scope) for
         scope, factory_obj in zip(list_scopes_to_convert, list_factory_objs)]
 
   def open_widget_of_mapped_objs(self, src_obj):
