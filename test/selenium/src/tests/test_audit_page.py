@@ -155,9 +155,9 @@ class TestAuditPage(base.Test):
            "Assessments generation based on Assessment Template with LCAs"],
       indirect=True)
   def test_asmts_generation(
-      self, new_program_rest, new_controls_rest,
-      map_new_program_rest_to_new_controls_rest, new_audit_rest,
-      dynamic_objects, selenium
+      self, new_user_global_admin_rest, new_program_rest,
+      new_controls_rest, map_new_program_rest_to_new_controls_rest,
+      new_audit_rest, dynamic_objects, selenium
   ):
     """Check if Assessments can be generated from Audit page via Assessments
     widget using Assessment template and Controls.

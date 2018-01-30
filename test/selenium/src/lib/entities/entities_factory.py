@@ -16,6 +16,8 @@ from lib.entities.entity import (
     PersonEntity, CustomAttributeDefinitionEntity, CommentEntity)
 from lib.utils import help_utils, string_utils
 from lib.utils.string_utils import StringMethods
+from faker import Factory
+from faker.providers import BaseProvider
 
 
 class EntitiesFactory(object):
@@ -23,10 +25,11 @@ class EntitiesFactory(object):
   # pylint: disable=too-few-public-methods
 
   def __init__(self, obj_name, obj_creator):
+    self.data_generator = Factory.create()
     self.child_cls = self.__class__
     self.obj_name = obj_name
     self.obj_creator = obj_creator
-    self.obj_type = objects.get_obj_type(self.obj_name)
+    self.obj_type = objects.Utils.get_obj_type(self.obj_name)
     self.obj_title = self.generate_string(self.obj_type)
     self.obj_entity_cls = factory.get_cls_obj_entity(object_name=self.obj_name)
     if self.child_cls not in [CustomAttributeDefinitionEntity, PersonEntity,
@@ -67,12 +70,6 @@ class EntitiesFactory(object):
     """Generate slug in unicode format according str part and random data."""
     return unicode("{slug}".format(slug=StringMethods.random_uuid()))
 
-  @classmethod
-  def generate_email(cls, domain=const_url.DEFAULT_EMAIL_DOMAIN):
-    """Generate email in unicode format according to domain."""
-    return unicode("{mail_name}@{domain}".format(
-        mail_name=StringMethods.random_uuid(), domain=domain))
-
 
 class RolesFactory(EntitiesFactory):
   """Factory class for Roles."""
@@ -81,6 +78,7 @@ class RolesFactory(EntitiesFactory):
 
 class PeopleFactory(EntitiesFactory):
   """Factory class for Persons entities."""
+  superuser_id = 1
 
   def __init__(self, obj_name=objects.PEOPLE, obj_creator=None):
     super(PeopleFactory, self).__init__(obj_name, self.default_user)
@@ -93,6 +91,13 @@ class PeopleFactory(EntitiesFactory):
         self.admins_emails = self.extract_people_emails(self.admins)
       if self.child_cls == AssessmentsFactory:
         self.assignees = [self.default_user]
+    if self.child_cls not in [
+        AssessmentsFactory, AssessmentTemplatesFactory, AuditsFactory,
+        CustomAttributeDefinitionsFactory, CommentsFactory]:
+      self.recipients = ",".join((
+          unicode(roles.GlobalRoles.ADMIN),
+          unicode(roles.CustomRoles.PRIMARY_CONTACTS),
+          unicode(roles.CustomRoles.SECONDARY_CONTACTS)))
 
   @staticmethod
   def extract_people_emails(people):
@@ -105,9 +110,10 @@ class PeopleFactory(EntitiesFactory):
   def default_user(self):
     """Create object's instance for default system superuser."""
     return PersonEntity().update_attrs(
-        type=unicode(objects.get_singular(objects.PEOPLE, title=True)),
-        name=roles.DEFAULT_USER, id=1, href=const_url.DEFAULT_USER_HREF,
-        email=const_url.DEFAULT_USER_EMAIL, system_wide_role=roles.SUPERUSER)
+        type=unicode(objects.Types.PEOPLE),
+        name=roles.DefaultSuperuser.NAME, id=roles.DefaultSuperuser.ID,
+        href=const_url.DEFAULT_USER_HREF, email=roles.DefaultSuperuser.EMAIL,
+        system_wide_role=roles.RoleScopes.SUPERUSER)
 
   @classmethod
   def get_acl_members(cls, role_id, people):
@@ -131,8 +137,9 @@ class PeopleFactory(EntitiesFactory):
     """Create Person entity with randomly and predictably filled fields, if
     'is_add_rest_attrs' then add attributes for REST."""
     person_obj = self.obj_inst().update_attrs(
-        name=self.obj_title, email=self.generate_email(),
-        system_wide_role=unicode(random.choice(roles.GLOBAL_ROLES)))
+        name=self.data_generator.name(), email=self.data_generator.email(),
+        system_wide_role=unicode(
+            random.choice(roles.GlobalRoles.ALL_W_PERMISSIONS)))
     if is_add_rest_attrs:
       pass  # todo: add 'user_roles' logic
     return person_obj
@@ -152,8 +159,8 @@ class CommentsFactory(PeopleFactory):
     if is_add_rest_attrs:
       comment_obj.update_attrs(
           assignee_type=",".join((
-              unicode(roles.PRIMARY_CONTACTS),
-              unicode(roles.SECONDARY_CONTACTS))))
+              unicode(roles.CustomRoles.PRIMARY_CONTACTS),
+              unicode(roles.CustomRoles.SECONDARY_CONTACTS))))
     return comment_obj
 
 
@@ -253,7 +260,7 @@ class CustomAttributeDefinitionsFactory(PeopleFactory):
             if ca_obj_attr_type == AdminWidgetCustomAttributes.DROPDOWN
             else None),
         definition_type=unicode(objects.get_singular(
-            random.choice(objects.ALL_CA_OBJS))), mandatory=False)
+            random.choice(objects.Names().w_cas_values))), mandatory=False)
     if is_add_rest_attrs:
       ca_obj.update_attrs(
           modal_title="Add Attribute to type {}".format(
@@ -296,7 +303,7 @@ class ProgramsFactory(PeopleFactory):
   """Factory class for Programs entities."""
 
   def __init__(self):
-    super(ProgramsFactory, self).__init__(objects.PROGRAMS, self.default_user)
+    super(ProgramsFactory, self).__init__(objects.Names.PROGRAMS, self.default_user)
 
   def _create_random_obj(self, is_add_rest_attrs):
     """Create Program entity with randomly and predictably filled fields, if
@@ -307,10 +314,7 @@ class ProgramsFactory(PeopleFactory):
         manager=self.manager.email,
         os_state=unicode(element.ReviewStates.UNREVIEWED))
     if is_add_rest_attrs:
-      issue_obj.update_attrs(
-          recipients=",".join((
-              unicode(roles.ADMIN), unicode(roles.PRIMARY_CONTACTS),
-              unicode(roles.SECONDARY_CONTACTS))))
+      issue_obj.update_attrs(recipients=self.recipients)
     return issue_obj
 
 
@@ -331,9 +335,7 @@ class ControlsFactory(PeopleFactory):
         os_state=unicode(element.ReviewStates.UNREVIEWED))
     if is_add_rest_attrs:
       control_obj.update_attrs(
-          recipients=",".join((
-              unicode(roles.ADMIN), unicode(roles.PRIMARY_CONTACTS),
-              unicode(roles.SECONDARY_CONTACTS))),
+          recipients=self.recipients,
           access_control_list=string_utils.StringMethods.
           convert_list_elements_to_list(
               [self.get_acl_members(self.admins_acl_id, self.admins)]))
@@ -358,9 +360,7 @@ class ObjectivesFactory(PeopleFactory):
         os_state=unicode(element.ReviewStates.UNREVIEWED))
     if is_add_rest_attrs:
       objective_obj.update_attrs(
-          recipients=",".join((
-              unicode(roles.ADMIN), unicode(roles.PRIMARY_CONTACTS),
-              unicode(roles.SECONDARY_CONTACTS))),
+          recipients=self.recipients,
           access_control_list=string_utils.StringMethods.
           convert_list_elements_to_list(
               [self.get_acl_members(self.admins_acl_id, self.admins)]))
@@ -423,10 +423,10 @@ class AssessmentTemplatesFactory(PeopleFactory):
     fields, if 'is_add_rest_attrs' then add attributes for REST."""
     asmt_tmpl_obj = self.obj_inst().update_attrs(
         title=self.obj_title, slug=self.obj_slug,
-        assignees=unicode(roles.PRINCIPAL_ASSIGNEES),
-        verifiers=unicode(roles.AUDITORS),
+        assignees=unicode(roles.ControlRoles.PRINCIPAL_ASSIGNEES),
+        verifiers=unicode(roles.AuditRoles.AUDITORS),
         status=unicode(element.ObjectStates.DRAFT),
-        template_object_type=objects.get_obj_type(objects.CONTROLS))
+        template_object_type=objects.Types.CONTROLS)
     if is_add_rest_attrs:
       elements = element.CommonAudit
       asmt_tmpl_obj.update_attrs(
@@ -434,14 +434,17 @@ class AssessmentTemplatesFactory(PeopleFactory):
               "assignees": asmt_tmpl_obj.assignees,
               "verifiers": asmt_tmpl_obj.verifiers},
           people_values=[{"value": v, "title": t} for v, t in [
-              (roles.ADMIN, elements.OBJECT_ADMINS),
-              (roles.AUDIT_LEAD, elements.AUDIT_CAPTAIN),
-              (roles.AUDITORS, elements.AUDITORS),
-              (roles.PRINCIPAL_ASSIGNEES, elements.PRINCIPAL_ASSIGNEES),
-              (roles.SECONDARY_ASSIGNEES, elements.SECONDARY_ASSIGNEES),
-              (roles.PRIMARY_CONTACTS, elements.PRIMARY_CONTACTS),
-              (roles.SECONDARY_CONTACTS, elements.SECONDARY_CONTACTS),
-              (roles.OTHER, elements.OTHERS)]])
+              (roles.GlobalRoles.ADMIN, elements.OBJECT_ADMINS),
+              (roles.AuditRoles.AUDIT_LEAD, elements.AUDIT_CAPTAIN),
+              (roles.AuditRoles.AUDITORS, elements.AUDITORS),
+              (roles.ControlRoles.PRINCIPAL_ASSIGNEES,
+               elements.PRINCIPAL_ASSIGNEES),
+              (roles.ControlRoles.SECONDARY_ASSIGNEES,
+               elements.SECONDARY_ASSIGNEES),
+              (roles.CustomRoles.PRIMARY_CONTACTS, elements.PRIMARY_CONTACTS),
+              (roles.CustomRoles.SECONDARY_CONTACTS,
+               elements.SECONDARY_CONTACTS),
+              (roles.OtherRoles.OTHER, elements.OTHERS)]])
     return asmt_tmpl_obj
 
 
@@ -490,9 +493,9 @@ class AssessmentsFactory(PeopleFactory):
              [asmts_users for asmts_users in asmts_assignees, asmts_verifiers
               if isinstance(asmts_users, list)]):
         raise NotImplementedError
-      if asmt_tmpl.assignees == unicode(roles.AUDITORS):
+      if asmt_tmpl.assignees == unicode(roles.AuditRoles.AUDITORS):
         asmts_assignees = audit.auditors
-      if asmt_tmpl.verifiers != unicode(roles.AUDITORS):
+      if asmt_tmpl.verifiers != unicode(roles.AuditRoles.AUDITORS):
         asmts_verifiers = audit.audit_captains
 
       if getattr(asmt_tmpl, "custom_attribute_definitions"):
@@ -534,12 +537,13 @@ class AssessmentsFactory(PeopleFactory):
         status=unicode(element.AssessmentStates.NOT_STARTED),
         creators=self.admins_emails,
         assignees=self.extract_people_emails(self.assignees),
-        assessment_type=objects.get_obj_type(objects.CONTROLS), verified=False)
+        assessment_type=objects.Types.CONTROLS, verified=False)
     if is_add_rest_attrs:
       asmt_obj.update_attrs(
           recipients=",".join((
-              unicode(roles.ASSIGNEES), unicode(roles.CREATORS),
-              unicode(roles.VERIFIERS))),
+              unicode(roles.AssessmentRoles.ASSIGNEES),
+              unicode(roles.AssessmentRoles.CREATORS),
+              unicode(roles.AssessmentRoles.VERIFIERS))),
           access_control_list=string_utils.StringMethods.
           convert_list_elements_to_list(
               [self.get_acl_members(self.creators_acl_id, self.admins),
@@ -564,10 +568,13 @@ class IssuesFactory(PeopleFactory):
         os_state=unicode(element.ReviewStates.UNREVIEWED))
     if is_add_rest_attrs:
       issue_obj.update_attrs(
-          recipients=",".join((
-              unicode(roles.ADMIN), unicode(roles.PRIMARY_CONTACTS),
-              unicode(roles.SECONDARY_CONTACTS))),
+          recipients=self.recipients,
           access_control_list=string_utils.StringMethods.
           convert_list_elements_to_list(
               [self.get_acl_members(self.admins_acl_id, self.admins)]))
     return issue_obj
+
+
+j = PeopleFactory().create()
+
+h = j

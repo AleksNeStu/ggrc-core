@@ -88,7 +88,7 @@ class BaseWebUiService(object):
             scope[key] = val.split(", ")
           # convert 'slug' from CSV for snapshoted objects u'*23eb72ac-4d9d'
           if (key == "slug" and
-                  (self.obj_name in objects.ALL_SNAPSHOTABLE_OBJS) and
+                  (self.obj_name in objects.Names().snapshotable_values) and
                   Symbols.STAR in val):
             scope[key] = val.replace(Symbols.STAR, Symbols.BLANK)
     return [
@@ -655,4 +655,4 @@ class IssuesService(BaseWebUiService):
 class ProgramsService(BaseWebUiService):
   """Class for Programs business layer's services objects."""
   def __init__(self, driver):
-    super(ProgramsService, self).__init__(driver, objects.PROGRAMS)
+    super(ProgramsService, self).__init__(driver, objects.Names.PROGRAMS)

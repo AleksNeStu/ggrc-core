@@ -13,7 +13,7 @@ class Lhn(object):
   """Elements' labels and properties for LHN menu."""
   class __metaclass__(type):
     def __init__(cls, *args):
-      for object_ in objects.ALL_PLURAL:
+      for object_ in objects.Names().plural_names:
         setattr(cls, object_, object_.lower())
       cls.DIRECTIVES_MEMBERS = (
           cls.REGULATIONS,
@@ -54,7 +54,7 @@ class WidgetBar(object):
 
   class __metaclass__(type):
     def __init__(cls, *args):
-      for object_ in objects.ALL_PLURAL:
+      for object_ in objects.Names().plural_names:
         setattr(cls, object_, object_.lower())
 
 
@@ -62,20 +62,20 @@ class AdminWidgetRoles(object):
   """Elements' labels (role scopes) and properties for Roles widget
  at Admin Dashboard.
  """
-  _ADMIN_SCOPE = roles.ADMIN.upper()
-  _SYS_SCOPE = roles.SYSTEM.upper()
-  _PRG_SCOPE = roles.PRIVATE_PROGRAM.upper()
-  _WF_SCOPE = roles.WORKFLOW.upper()
+  _ADMIN_SCOPE = roles.GlobalRoles.ADMIN.upper()
+  _SYS_SCOPE = roles.RoleScopes.SYSTEM.upper()
+  _PRG_SCOPE = roles.RoleScopes.PRIVATE_PROGRAM.upper()
+  _WF_SCOPE = roles.RoleScopes.WORKFLOW.upper()
   # role scopes
-  ROLE_SCOPE_ADMINISTRATOR = (roles.ADMINISTRATOR, _ADMIN_SCOPE)
-  ROLE_SCOPE_CREATOR = (roles.CREATOR, _SYS_SCOPE)
-  ROLE_SCOPE_EDITOR = (roles.EDITOR, _SYS_SCOPE)
-  ROLE_SCOPE_READER = (roles.READER, _SYS_SCOPE)
-  ROLE_SCOPE_PROGRAM_EDITOR = (roles.PROGRAM_EDITOR, _PRG_SCOPE)
-  ROLE_SCOPE_PROGRAM_MANAGER = (roles.PROGRAM_MANAGER, _PRG_SCOPE)
-  ROLE_SCOPE_PROGRAM_READER = (roles.PROGRAM_READER, _PRG_SCOPE)
-  ROLE_SCOPE_WORKFLOW_MEMBER = (roles.WORKFLOW_MEMBER, _WF_SCOPE)
-  ROLE_SCOPE_WORKFLOW_MANAGER = (roles.WORKFLOW_MANAGER, _WF_SCOPE)
+  ROLE_SCOPE_ADMINISTRATOR = (roles.GlobalRoles.ADMINISTRATOR, _ADMIN_SCOPE)
+  ROLE_SCOPE_CREATOR = (roles.GlobalRoles.CREATOR, _SYS_SCOPE)
+  ROLE_SCOPE_EDITOR = (roles.GlobalRoles.EDITOR, _SYS_SCOPE)
+  ROLE_SCOPE_READER = (roles.GlobalRoles.READER, _SYS_SCOPE)
+  ROLE_SCOPE_PROGRAM_EDITOR = (roles.ProgramRoles.EDITOR, _PRG_SCOPE)
+  ROLE_SCOPE_PROGRAM_MANAGER = (roles.ProgramRoles.MANAGER, _PRG_SCOPE)
+  ROLE_SCOPE_PROGRAM_READER = (roles.ProgramRoles.READER, _PRG_SCOPE)
+  ROLE_SCOPE_WORKFLOW_MEMBER = (roles.WorkflowRoles.MEMBER, _WF_SCOPE)
+  ROLE_SCOPE_WORKFLOW_MANAGER = (roles.WorkflowRoles.MANAGER, _WF_SCOPE)
   ROLE_SCOPES_LIST = [ROLE_SCOPE_ADMINISTRATOR,
                       ROLE_SCOPE_CREATOR,
                       ROLE_SCOPE_EDITOR,
@@ -134,8 +134,8 @@ class Common(object):
   UPDATED_AT = "Updated at"
   # roles
   OBJECT_ADMINS = "Object Admins"
-  PRIMARY_CONTACTS = roles.PRIMARY_CONTACTS
-  SECONDARY_CONTACTS = roles.SECONDARY_CONTACTS
+  PRIMARY_CONTACTS = roles.CustomRoles.PRIMARY_CONTACTS
+  SECONDARY_CONTACTS = roles.CustomRoles.SECONDARY_CONTACTS
   OTHERS = "Others"
 
 
@@ -164,24 +164,24 @@ class TransformationSetVisibleFields(CommonModalSetVisibleFields):
   """To transformation elements' labels and properties for Modal to Set
  visible fields for object as Tree View headers.
  """
-  ADMIN = roles.ADMIN
-  PRIMARY_CONTACTS = roles.PRIMARY_CONTACTS
-  SECONDARY_CONTACTS = roles.SECONDARY_CONTACTS
+  ADMIN = roles.GlobalRoles.ADMIN
+  PRIMARY_CONTACTS = Common.PRIMARY_CONTACTS
+  SECONDARY_CONTACTS = Common.SECONDARY_CONTACTS
   VERIFIED = "Verified"
   STATUS = "Status"
   AUDIT_CAPTAINS = "Audit Captains"
   MANAGER = "Manager"
   MAPPED_OBJECTS = "Mapped Objects"
   REVIEW_STATE = "Review State"
-  CREATORS = roles.CREATORS
-  ASSIGNEES = roles.ASSIGNEES
-  VERIFIERS = roles.VERIFIERS
+  CREATORS = roles.AssessmentRoles.CREATORS
+  ASSIGNEES = roles.AssessmentRoles.ASSIGNEES
+  VERIFIERS = roles.AssessmentRoles.VERIFIERS
 
 
 class CommonProgram(Common):
   """Common elements' labels and properties for Programs objects."""
   # pylint: disable=too-many-instance-attributes
-  PROGRAM = objects.get_normal_form(objects.get_singular(objects.PROGRAMS))
+  PROGRAM = objects.get_normal_form(objects.get_singular(objects.Names.PROGRAMS))
   TITLE = Common.TITLE
   MANAGER = "Manager"
   NOTES = "Notes"
@@ -204,18 +204,17 @@ class CommonAudit(Common):
   # roles
   AUDIT_CAPTAIN = "Audit Captain"
   AUDIT_CAPTAINS = AUDIT_CAPTAIN + "s"
-  AUDITORS = roles.AUDITORS
-  PRINCIPAL_ASSIGNEES = roles.PRINCIPAL_ASSIGNEES
-  SECONDARY_ASSIGNEES = roles.SECONDARY_ASSIGNEES
+  AUDITORS = roles.AuditRoles.AUDITORS
+  PRINCIPAL_ASSIGNEES = roles.ControlRoles.PRINCIPAL_ASSIGNEES
+  SECONDARY_ASSIGNEES = roles.ControlRoles.SECONDARY_ASSIGNEES
 
 
 class CommonControl(Common):
   """Common elements' labels and properties for Controls objects."""
   CONTROL = objects.get_normal_form(objects.get_singular(objects.CONTROLS))
   STATE = Base.STATE
-  ADMIN = roles.ADMIN
-  PRIMARY_CONTACTS = roles.PRIMARY_CONTACTS
-  CREATORS = roles.CREATORS
+  ADMIN = roles.GlobalRoles.ADMIN
+  PRIMARY_CONTACTS = Common.PRIMARY_CONTACTS
   MAPPED_OBJECTS = TransformationSetVisibleFields.MAPPED_OBJECTS
 
 
@@ -223,9 +222,8 @@ class CommonObjective(Common):
   """Common elements' labels and properties for Objective objects."""
   OBJECTIVE = objects.get_normal_form(objects.get_singular(objects.OBJECTIVES))
   STATE = Base.STATE
-  ADMIN = roles.ADMIN
-  PRIMARY_CONTACTS = roles.PRIMARY_CONTACTS
-  CREATORS = roles.CREATORS
+  ADMIN = roles.GlobalRoles.ADMIN
+  PRIMARY_CONTACTS = Common.PRIMARY_CONTACTS
   MAPPED_OBJECTS = TransformationSetVisibleFields.MAPPED_OBJECTS
 
 
@@ -233,10 +231,10 @@ class CommonAssessment(Common):
   """Common elements' labels and properties for Assessments objects."""
   ASMT = objects.get_normal_form(objects.get_singular(objects.ASSESSMENTS))
   STATE = Base.STATE
-  CREATORS = roles.CREATORS
+  CREATORS = roles.AssessmentRoles.CREATORS
   COMMENTS = "Comments"
-  ASSIGNEES = roles.ASSIGNEES
-  VERIFIERS = roles.VERIFIERS
+  ASSIGNEES = roles.AssessmentRoles.ASSIGNEES
+  VERIFIERS = roles.AssessmentRoles.VERIFIERS
   MAPPED_OBJECTS = TransformationSetVisibleFields.MAPPED_OBJECTS
   ASMT_TYPE = "Assessment Type"
   VERIFIED = TransformationSetVisibleFields.VERIFIED

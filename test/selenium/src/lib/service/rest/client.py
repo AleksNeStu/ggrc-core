@@ -24,7 +24,7 @@ class RestClient(object):
                   'FAIL': [400, 404, 500]}
 
   def __init__(self, endpoint):
-    self.is_api = "" if endpoint == url.QUERY else url.API
+    self.is_api = "" if endpoint == url.Parts.QUERY else url.Parts.API
     self.endpoint_url = urlparse.urljoin(
         environment.APP_URL, "/".join([self.is_api, endpoint]))
     self.session_cookie = None

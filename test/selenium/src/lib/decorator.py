@@ -7,7 +7,8 @@ import logging
 import time
 from functools import wraps
 
-from lib import constants, environment, exception, file_ops
+import lib.utils.file_utils
+from lib import constants, environment, exception
 from lib.utils import selenium_utils
 
 LOGGER = logging.getLogger(__name__)
@@ -15,7 +16,7 @@ LOGGER = logging.getLogger(__name__)
 
 def take_screenshot_on_error(fun):
   """Decorate method and make screenshot on any exception."""
-  # todo: replace with pytest-selenium which automagically takes
+  # todo: replace with pytest-selenium which automatically takes
   def wrapper(self, *args):
     "Wrapper."
     try:
@@ -24,7 +25,8 @@ def take_screenshot_on_error(fun):
       LOGGER.error(exception)
       file_path = (environment.LOG_PATH + self.__class__.__name__ + "." +
                    self._driver.title)
-      unique_file_path = file_ops.get_unique_postfix(file_path, ".png")
+      unique_file_path = lib.utils.file_utils.get_unique_postfix(
+          file_path, ".png")
       self._driver.get_screenshot_as_file(unique_file_path)
       raise
   return wrapper

@@ -181,50 +181,51 @@ class HelpRestService(object):
 class ControlsService(BaseRestService):
   """Service for working with Controls entities."""
   def __init__(self):
-    super(ControlsService, self).__init__(url.CONTROLS)
+    super(ControlsService, self).__init__(url.Endpoints.CONTROLS)
 
 
 class ObjectivesService(BaseRestService):
   """Service for working with Objectives entities."""
   def __init__(self):
-    super(ObjectivesService, self).__init__(url.OBJECTIVES)
+    super(ObjectivesService, self).__init__(url.Endpoints.OBJECTIVES)
 
 
 class ProgramsService(BaseRestService):
   """Service for working with Programs entities."""
   def __init__(self):
-    super(ProgramsService, self).__init__(url.PROGRAMS)
+    super(ProgramsService, self).__init__(url.Endpoints.PROGRAMS)
 
 
 class AuditsService(BaseRestService):
   """Service for working with Audits entities."""
   def __init__(self):
-    super(AuditsService, self).__init__(url.AUDITS)
+    super(AuditsService, self).__init__(url.Endpoints.AUDITS)
 
 
 class AssessmentTemplatesService(BaseRestService):
   """Service for working with Assessment Templates entities."""
   def __init__(self):
-    super(AssessmentTemplatesService, self).__init__(url.ASSESSMENT_TEMPLATES)
+    super(AssessmentTemplatesService, self).__init__(
+        url.Endpoints.ASSESSMENT_TEMPLATES)
 
 
 class AssessmentsService(BaseRestService):
   """Service for working with Assessments entities."""
   def __init__(self):
-    super(AssessmentsService, self).__init__(url.ASSESSMENTS)
+    super(AssessmentsService, self).__init__(url.Endpoints.ASSESSMENTS)
 
 
 class IssuesService(BaseRestService):
   """Service for working with Issues entities."""
   def __init__(self):
-    super(IssuesService, self).__init__(url.ISSUES)
+    super(IssuesService, self).__init__(url.Endpoints.ISSUES)
 
 
 class CustomAttributeDefinitionsService(BaseRestService):
   """Service for working with Custom Attributes entities."""
   def __init__(self):
     super(CustomAttributeDefinitionsService, self).__init__(
-        url.CUSTOM_ATTRIBUTES)
+        url.Endpoints.CUSTOM_ATTRIBUTES)
 
   def create_dashboard_gcas(self, obj_type, count=1):
     """Create 'Dashboard' CAs via rest according to passed obj_type and count.
@@ -237,7 +238,7 @@ class CustomAttributeDefinitionsService(BaseRestService):
 class RelationshipsService(HelpRestService):
   """Service for creating relationships between entities."""
   def __init__(self):
-    super(RelationshipsService, self).__init__(url.RELATIONSHIPS)
+    super(RelationshipsService, self).__init__(url.Endpoints.RELATIONSHIPS)
 
   def map_objs(self, src_obj, dest_objs, **attrs_for_template):
     """Create relationship from source to destination objects and
@@ -252,7 +253,7 @@ class RelationshipsService(HelpRestService):
 class ObjectsOwnersService(HelpRestService):
   """Service for assigning owners to entities."""
   def __init__(self):
-    super(ObjectsOwnersService, self).__init__(url.OBJECT_OWNERS)
+    super(ObjectsOwnersService, self).__init__(url.Parts.OBJECT_OWNERS)
 
   def assign_owner_to_objs(self, objs, owner=PeopleFactory.default_user):
     """Assign of an owner to objects."""
@@ -264,7 +265,7 @@ class ObjectsOwnersService(HelpRestService):
 class ObjectsInfoService(HelpRestService):
   """Service for getting information about entities."""
   def __init__(self):
-    super(ObjectsInfoService, self).__init__(url.QUERY)
+    super(ObjectsInfoService, self).__init__(url.Parts.QUERY)
 
   def get_snapshoted_obj(self, origin_obj, paren_obj):
     """Get and return snapshoted object according to 'origin_obj' and
@@ -273,7 +274,7 @@ class ObjectsInfoService(HelpRestService):
     snapshoted_obj_dict = (
         BaseRestService.get_items_from_resp(self.client.create_object(
             type=self.endpoint,
-            object_name=objects.get_obj_type(objects.SNAPSHOTS),
+            object_name=objects.Types.SNAPSHOTS,
             filters=query.Query.expression_get_snapshoted_obj(
                 obj_type=origin_obj.type, obj_id=origin_obj.id,
                 parent_type=paren_obj.type,
@@ -297,7 +298,7 @@ class ObjectsInfoService(HelpRestService):
     comment_obj_dict = (
         BaseRestService.get_items_from_resp(self.client.create_object(
             type=self.endpoint,
-            object_name=objects.get_obj_type(objects.COMMENTS),
+            object_name=objects.Types.COMMENTS,
             filters=query.Query.expression_get_comment_by_desc(
                 parent_type=paren_obj.type, parent_id=paren_obj.id,
                 comment_desc=comment_description),

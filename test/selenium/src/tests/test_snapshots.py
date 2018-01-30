@@ -704,10 +704,10 @@ class TestSnapshots(base.Test):
       - Compare their with constant of expected objects accordingly.
     """
     expected_objs_names_from_mapper = (
-        objects.ALL_SNAPSHOTABLE_OBJS + (objects.ISSUES, ))
-    if dynamic_objects.type == objects.get_obj_type(objects.ISSUES):
+        objects.Names().snapshotable_values + (objects.ISSUES, ))
+    if dynamic_objects.type == objects.Types.ISSUES:
       expected_objs_names_from_mapper = expected_objs_names_from_mapper + (
-          objects.PROGRAMS, objects.PROJECTS)
+        objects.Names.PROGRAMS, objects.PROJECTS)
     expected_objs_names_from_add_widget = expected_objs_names_from_mapper
     expected_objs_types_from_mapper = sorted(
         objects.get_normal_form(obj_name)

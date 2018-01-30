@@ -25,7 +25,7 @@ class Widget(base.Widget):
     self.filter = base.FilterCommon(
         driver, text_box_locator=self._locators_filter.TXTFIELD_TO_FILTER_CSS,
         bt_submit_locator=self._locators_filter.FILTER_BTN_CSS)
-    if self.obj_name not in objects.ALL_OBJS_WO_STATE_FILTERING:
+    if self.obj_name not in objects.Names().wo_state_filtering:
       self.dropdown_states = base.DropdownStatic(
           driver, self._locators_filter.DD_CSS)
     super(Widget, self).__init__(driver)

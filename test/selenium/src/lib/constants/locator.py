@@ -167,8 +167,8 @@ class LhnMenu(object):
 
   class __metaclass__(type):
     def __init__(cls, *args):
-      for object_singular, object_plural in (zip(objects.ALL_SINGULAR,
-                                                 objects.ALL_PLURAL)):
+      for object_singular, object_plural in (
+          zip(objects.Names().singular_names, objects.Names().plural_names)):
         capitalized_name = object_singular.title()
         # handle underscore in object names
         if "_" in capitalized_name:
@@ -553,8 +553,8 @@ class WidgetBar(object):
 
   class __metaclass__(type):
     def __init__(cls, *args):
-      for object_singular, object_plural in (zip(objects.ALL_SINGULAR,
-                                                 objects.ALL_PLURAL)):
+      for object_singular, object_plural in (
+          zip(objects.Names().singular_names, objects.Names().plural_names)):
         name = object_singular.lower()
         setattr(cls, object_plural, cls._Locator.get_widget(name))
   BUTTON_ADD = (
@@ -587,7 +587,7 @@ class WidgetBarButtonAddDropdown(object):
 
   class __metaclass__(type):
     def __init__(cls, *args):
-      for object_ in objects.ALL_PLURAL:
+      for object_ in objects.Names().plural_names:
         name = object_.lower()
         setattr(cls, object_, cls._Locator.get_dropdown_item(name))
   THREAD_ACTORS = _Locator.get_dropdown_item("threat_actor")
@@ -1070,15 +1070,15 @@ class AdminCustomAttributes(object):
   class __metaclass__(type):
     def __init__(cls, *args):
       items = (
-          objects.WORKFLOWS, objects.RISK_ASSESSMENTS, objects.THREATS,
-          objects.RISKS, objects.PROGRAMS, objects.AUDITS,
-          objects.OBJECTIVES, objects.SECTIONS, objects.CONTROLS,
-          objects.ISSUES, objects.ASSESSMENTS, objects.STANDARDS,
-          objects.REGULATIONS, objects.POLICIES, objects.CONTRACTS,
-          objects.CLAUSES, objects.VENDORS, objects.PEOPLE,
-          objects.ACCESS_GROUPS, objects.ORG_GROUPS, objects.PRODUCTS,
-          objects.MARKETS, objects.PROCESSES, objects.FACILITIES,
-          objects.PROJECTS, objects.DATA_ASSETS, objects.SYSTEMS)
+        objects.WORKFLOWS, objects.RISK_ASSESSMENTS, objects.THREATS,
+        objects.RISKS, objects.Names.PROGRAMS, objects.AUDITS,
+        objects.OBJECTIVES, objects.SECTIONS, objects.CONTROLS,
+        objects.ISSUES, objects.ASSESSMENTS, objects.STANDARDS,
+        objects.REGULATIONS, objects.POLICIES, objects.CONTRACTS,
+        objects.CLAUSES, objects.VENDORS, objects.PEOPLE,
+        objects.ACCESS_GROUPS, objects.ORG_GROUPS, objects.PRODUCTS,
+        objects.MARKETS, objects.PROCESSES, objects.FACILITIES,
+        objects.PROJECTS, objects.DATA_ASSETS, objects.SYSTEMS)
       for id_, name in enumerate(items, start=1):
         setattr(cls,
                 Common.TOGGLE + name.upper(),

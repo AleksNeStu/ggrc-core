@@ -80,12 +80,12 @@ def _new_objs_rest(obj_name, obj_count,  # noqa: ignore=C901
                for parent_obj in extra_attrs])
 
   parent_obj_name = None
-  if obj_name == objects.AUDITS:
-    parent_obj_name = (objects.get_singular(objects.PROGRAMS) if obj_count == 1
-                       else objects.PROGRAMS)
+  if obj_name == objects.Names.AUDITS:
+    parent_obj_name = (objects.get_singular(objects.Names.PROGRAMS) if obj_count == 1
+                       else objects.Names.PROGRAMS)
   if obj_name in (objects.ASSESSMENT_TEMPLATES, objects.ASSESSMENTS):
     parent_obj_name = objects.get_singular(objects.AUDITS)
-  if (has_cas and obj_name in objects.ALL_OBJS and
+  if (has_cas and obj_name in objects.Names().plural_values and
           obj_name not in objects.ASSESSMENT_TEMPLATES):
     parent_obj_name = "cas_for_" + obj_name
   if parent_obj_name:
@@ -141,8 +141,12 @@ def generate_common_fixtures(*fixtures):  # noqa: ignore=C901
         fixture_params = fixture_params.replace("_with_cas", "")
       obj_name = fixture_params
       obj_count = counters.BATCH_COUNT
-      if objects.get_plural(obj_name) in objects.ALL_OBJS:
-        obj_name = objects.get_plural(obj_name)
+      # e.g. "program", "programs", "user_global_admin", "users_global_admin"
+      is_singular_user = "user" in obj_name.split("_")
+      if ((objects.get_plural(obj_name) in objects.Names().plural_values) or
+              is_singular_user):
+        obj_name = (obj_name.replace("user", "users") if is_singular_user
+                    else objects.get_plural(obj_name))
         obj_count = 1
       new_objs = _new_objs_rest(obj_name=obj_name, obj_count=obj_count,
                                 has_cas=has_cas, factory_params=factory_params)
@@ -155,18 +159,18 @@ def generate_common_fixtures(*fixtures):  # noqa: ignore=C901
     fixture_params = fixture.replace("new_", "").replace("_ui", "")
     obj_name = fixture_params
     obj_count = counters.BATCH_COUNT
-    if (objects.get_plural(obj_name) in objects.ALL_OBJS and
-            objects.get_plural(obj_name) != objects.PROGRAMS):
+    if (objects.get_plural(obj_name) in objects.Names().plural_values and
+            objects.get_plural(obj_name) != objects.Names.PROGRAMS):
       obj_name = objects.get_plural(obj_name)
       obj_count = 1
       objs_info_pages = [conftest_utils.create_obj_via_lhn(
           web_driver,
           getattr(element.Lhn, obj_name.upper())) for _ in xrange(obj_count)]
       return objs_info_pages
-    elif objects.get_plural(obj_name) == objects.PROGRAMS:
+    elif objects.get_plural(obj_name) == objects.Names.PROGRAMS:
       modal = conftest_utils.get_lhn_accordion(
           web_driver,
-          getattr(element.Lhn, objects.PROGRAMS.upper())).create_new()
+          getattr(element.Lhn, objects.Names.PROGRAMS.upper())).create_new()
       test_utils.ModalNewPrograms.enter_test_data(modal)
       modal.save_and_close()
       program_info_page = info_widget.Programs(web_driver)
@@ -200,7 +204,7 @@ def generate_common_fixtures(*fixtures):  # noqa: ignore=C901
       _objs_to_update = "new_{}_rest".format(objects.get_plural(obj_name))
       objs_to_update = _get_fixture_from_dict_fixtures(
           fixture=_objs_to_update)[0]
-    if objects.get_plural(obj_name) in objects.ALL_OBJS:
+    if objects.get_plural(obj_name) in objects.Names().plural_values:
       obj_name = objects.get_plural(obj_name)
     if "_with_cas" in obj_name:
       has_cas = True
@@ -233,7 +237,7 @@ def generate_common_fixtures(*fixtures):  # noqa: ignore=C901
       _objs_to_delete = "new_{}_rest".format(objects.get_plural(obj_name))
       objs_to_delete = _get_fixture_from_dict_fixtures(
           fixture=_objs_to_delete)[0]
-    if objects.get_plural(obj_name) in objects.ALL_OBJS:
+    if objects.get_plural(obj_name) in objects.Names().plural_values:
       obj_name = objects.get_plural(obj_name)
     if "_with_cas" in obj_name:
       obj_name = objects.get_plural(obj_name.replace("_with_cas", ""))

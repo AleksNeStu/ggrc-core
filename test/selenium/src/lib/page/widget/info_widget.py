@@ -71,7 +71,7 @@ class InfoWidget(base.Widget):
     else:
       self.panel = (
           SnapshotedInfoPanel(self._driver, self.info_widget_elem)
-          if (self.child_cls_name.lower() in objects.ALL_SNAPSHOTABLE_OBJS and
+          if (self.child_cls_name.lower() in objects.Names().snapshotable_values and
               self.is_snapshoted_panel) else
           InfoPanel(self._driver, self.info_widget_elem))
     # for tab controller
@@ -167,7 +167,7 @@ class InfoWidget(base.Widget):
                       _people_header_parts[1]).group(1)))
     # filter: "\nuser@example.com\n(Inactive user)" to 'user@example.com'
     people_value_txt = [person for person in _people_value.splitlines()
-                        if person != roles.NO_ROLE_UI]
+                        if person != roles.OtherRoles.NO_ROLE_UI]
     # if counters are same or None
     if not ((people_count_from_header == len(people_value_txt)) or
        (people_count_from_header == 0 and people_value_txt == ["None"])):
@@ -220,7 +220,7 @@ class InfoWidget(base.Widget):
       for ca_val in _cas_values:
         if ca_val is None:
           cas_values.append(None)
-        elif ca_val == roles.DEFAULT_USER:
+        elif ca_val == roles.DefaultSuperuser.NAME:
           # Example User
           cas_values.append(
               unicode(objects.get_singular(objects.PEOPLE).title()))
@@ -416,7 +416,7 @@ class Assessments(InfoWidget):
     self.asmt_type_lbl_txt = self._elements.ASMT_TYPE.upper()
     self.asmt_type = base.Label(
         self.info_widget_elem, self._locators.ASMT_TYPE_CSS)
-    self.asmt_type_txt = objects.get_obj_type(self.asmt_type.text)
+    self.asmt_type_txt = objects.Utils.get_obj_type(self.asmt_type.text)
     self.mapped_objects_lbl_txt = self._elements.MAPPED_OBJECTS.upper()
     self.mapped_objects_titles_txt = self._get_mapped_objs_titles_txt()
     self.lcas_scope_txt = self.get_headers_and_values_dict_from_cas_scopes(

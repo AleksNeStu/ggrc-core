@@ -256,6 +256,15 @@ def new_assessment_template_with_cas_rest(request):
 
 
 @pytest.fixture(scope="function")
+def new_user_global_administrator_rest(request):
+  """Create new unique (w/ new email) user in global scope w/ 'Administrator'
+  role.
+  Return: lib.entities.entity.PersonEntity
+  """
+  yield _common_fixtures(request.fixturename)
+
+
+@pytest.fixture(scope="function")
 def new_cas_for_assessments_rest(request):
   """New global Custom Attributes for assessments created via REST API.
   Teardown - remove created gCAs.

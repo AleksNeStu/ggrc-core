@@ -2,45 +2,74 @@
 # Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
 """Constants for roles."""
 
-# global roles
-NO_ROLE = "No role"
-NO_ROLE_UI = "(Inactive user)"
-ADMIN = "Admin"
-CREATOR = "Creator"
-READER = "Reader"
-EDITOR = "Editor"
-ADMINISTRATOR = "Administrator"
-GLOBAL_ROLES = (CREATOR, EDITOR, ADMINISTRATOR)
-# assessment roles
-ASSIGNEES = "Assignees"
-VERIFIERS = "Verifiers"
-# program roles
-PROGRAM_EDITOR = "Program Editor"
-PROGRAM_MANAGER = "Program Manager"
-PROGRAM_READER = "Program Reader"
-# workflow roles
-WORKFLOW_MEMBER = "Workflow Member"
-WORKFLOW_MANAGER = "Workflow Manager"
-# other roles
-OTHER = "other"
-CREATORS = CREATOR + "s"
-OBJECT_OWNERS = "Object Owners"
-AUDIT_LEAD = "Audit Lead"
-AUDITORS = "Auditors"
-PRINCIPAL_ASSIGNEES = "Principal " + ASSIGNEES
-SECONDARY_ASSIGNEES = "Secondary " + ASSIGNEES
-PRIMARY_CONTACTS = "Primary Contacts"
-SECONDARY_CONTACTS = "Secondary Contacts"
+class GlobalRoles(object):
+  """Global roles."""
+  ADMIN = "Admin"
+  CREATOR = "Creator"
+  READER = "Reader"
+  EDITOR = "Editor"
+  ADMINISTRATOR = "Administrator"
+  ALL_W_PERMISSIONS = (CREATOR, READER, EDITOR, ADMINISTRATOR)
 
-# user names
-DEFAULT_USER = "Example User"
 
-# user emails
-DEFAULT_USER_EMAIL = "user@example.com"
+class OtherRoles(object):
+  """Other roles."""
+  NO_ROLE = "No role"
+  NO_ROLE_UI = "(Inactive user)"
+  OTHER = "other"
 
-# role scopes
-SYSTEM = "System"
-PRIVATE_PROGRAM = "Private Program"
-WORKFLOW = "Workflow"
-SUPERUSER = "Superuser"
-NO_ACCESS = "No Access"
+
+class CustomRoles(object):
+  """Common custom roles."""
+  PRIMARY_CONTACTS = "Primary Contacts"
+  SECONDARY_CONTACTS = "Secondary Contacts"
+
+
+class AssessmentRoles(CustomRoles):
+  """Assessment's specific roles."""
+  CREATORS = GlobalRoles.CREATOR + "s"
+  ASSIGNEES = "Assignees"
+  VERIFIERS = "Verifiers"
+
+
+class AssessmentTemplateRoles(object):
+  """Assessment Template's specific roles."""
+
+
+class ControlRoles(CustomRoles):
+  """Control's specific roles."""
+  PRINCIPAL_ASSIGNEES = "Principal Assignees"
+  SECONDARY_ASSIGNEES = "Secondary Assignees"
+
+class ProgramRoles(CustomRoles):
+  """Program's specific roles."""
+  MANAGER = "Program Manager"
+  READER = "Program Reader"
+  EDITOR = "Program Editor"
+
+
+class AuditRoles(CustomRoles):
+  """Audit's specific roles."""
+  AUDIT_LEAD = "Audit Lead"
+  AUDITORS = "Auditors"
+
+
+class WorkflowRoles(object):
+  """Workflow's specific roles."""
+  MEMBER = "Workflow Member"
+  MANAGER = "Workflow Manager"
+
+
+class DefaultSuperuser(object):
+  """Default system user w/ superuser permissions."""
+  ID = 1
+  NAME = "Example User"
+  EMAIL = "user@example.com"
+
+class RoleScopes(object):
+  """Role scopes."""
+  SYSTEM = "System"
+  PRIVATE_PROGRAM = "Private Program"
+  WORKFLOW = "Workflow"
+  SUPERUSER = "Superuser"
+  NO_ACCESS = "No Access"

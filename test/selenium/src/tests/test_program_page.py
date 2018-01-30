@@ -36,7 +36,7 @@ class TestProgramPage(base.Test):
     """
     _, program_info_page = new_program_ui
     expected_url = (
-        url.PROGRAMS + "/" + program_info_page.source_obj_id_from_url)
+      url.All.PROGRAMS + "/" + program_info_page.source_obj_id_from_url)
     actual_url = program_info_page.url
     assert expected_url in actual_url
 
