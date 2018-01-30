@@ -68,7 +68,7 @@ class TabContainer(base.AbstractTabContainer):
               "orignal_value_is_valid": orignal_value_is_valid,
               "new_value_is_valid": new_value_is_valid,
               "person_is_valid": (
-                  person_element.text == roles.DEFAULT_USER_EMAIL)
+                  person_element.text == roles.DefaultSuperuser.EMAIL)
               }
     selenium_utils.wait_until_not_present(
         _driver, locator.Common.SPINNER_CSS)

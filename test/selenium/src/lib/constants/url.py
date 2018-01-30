@@ -7,24 +7,33 @@
 import re
 from urlparse import urldefrag
 
-from lib.constants import regex
-from lib.constants.objects import *  # noqa; the names are later exported
+from lib.constants import regex, objects
 
-# URL's parts for work with objects and REST API queries
-API = "api"
-DASHBOARD = "dashboard"
-ADMIN_DASHBOARD = "admin"
-AUDIT = AUDITS + "/{0}"
-RELATIONSHIPS = "relationships"
-OBJECT_OWNERS = "object_owners"
-USER_ROLES = "user_roles"
-CONTACTS = "contacts"
-QUERY = "query"
 
-# url path for user
-DEFAULT_EMAIL_DOMAIN = "example.com"
-DEFAULT_USER_EMAIL = "user@" + DEFAULT_EMAIL_DOMAIN
-DEFAULT_USER_HREF = "/".join([API, PEOPLE, str(1)])
+class Endpoints(object):
+  """URLs' parts of API endpoints."""
+  class __metaclass__(type):
+    def __init__(cls, *args):
+      for name_, value_ in objects.Names().consts.items():
+          setattr(cls, name_, value_)
+  RELATIONSHIPS = "relationships"
+  ACCESS_CTRL_ROLES = "access_control_roles"
+  USER_ROLES = "user_roles"
+  ROLES = "roles"
+
+
+class Parts(object):
+  """URLs' parts for API calls."""
+  API = "api"
+  OBJECT_OWNERS = "object_owners"
+  QUERY = "query"
+
+
+class All(Endpoints, Parts):
+  """All URLs' parts."""
+  DASHBOARD = "dashboard"
+  ADMIN_DASHBOARD = "admin"
+  AUDIT = "audits" + "/{0}"
 
 
 class Widget(object):
@@ -71,8 +80,9 @@ class Utils(object):
     based on object name. If 'is_versions_widget' then destinations objects's
     widget will be snapshots' versions.
     """
-    middle_part = (get_singular(obj_name) if not is_versions_widget else
-                   get_singular(obj_name, title=True) + "_versions")
+    middle_part = (
+        objects.Utils.get_singular(obj_name) if not is_versions_widget else
+        objects.Utils.get_singular(obj_name, title=True) + "_versions")
     return "#!" + middle_part + "_widget"
 
   @staticmethod

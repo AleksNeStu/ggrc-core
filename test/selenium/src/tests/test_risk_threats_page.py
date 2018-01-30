@@ -24,6 +24,6 @@ class TestRiskThreatPage(base.Test):
     """
     # pylint: disable=unused-argument
     expected_url = (
-        url.RISKS + "/" + new_risk_ui.source_obj_id_from_url)
+        url.All.RISKS + "/" + new_risk_ui.source_obj_id_from_url)
     actual_url = new_risk_ui.url
     assert expected_url in actual_url

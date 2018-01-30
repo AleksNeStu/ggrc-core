@@ -17,7 +17,7 @@ class Events(Widget):
   """Event widget on Admin Dashboard."""
   _locators = locator.WidgetAdminEvents
 
-  URL = environment.APP_URL + url.ADMIN_DASHBOARD + url.Widget.EVENTS
+  URL = environment.APP_URL + url.All.ADMIN_DASHBOARD + url.Widget.EVENTS
 
   def __init__(self, driver):
     super(Events, self).__init__(driver)
@@ -32,13 +32,13 @@ class Events(Widget):
 
 class People(Widget):
   """People widget on Admin Dashboard."""
-  URL = environment.APP_URL + url.ADMIN_DASHBOARD + url.Widget.PEOPLE
+  URL = environment.APP_URL + url.All.ADMIN_DASHBOARD + url.Widget.PEOPLE
 
 
 class Roles(Widget):
   """Admin roles widget on Admin Dashboard."""
 
-  URL = environment.APP_URL + url.ADMIN_DASHBOARD + url.Widget.ROLES
+  URL = environment.APP_URL + url.All.ADMIN_DASHBOARD + url.Widget.ROLES
 
   def __init__(self, driver):
     super(Roles, self).__init__(driver)
@@ -54,7 +54,7 @@ class Roles(Widget):
 class CustomAttributes(widget_base.WidgetAdminCustomAttributes):
   """Custom attributes widget on Admin Dashboard page."""
 
-  URL = (environment.APP_URL + url.ADMIN_DASHBOARD +
+  URL = (environment.APP_URL + url.All.ADMIN_DASHBOARD +
          url.Widget.CUSTOM_ATTRIBUTES)
 
   def __init__(self, driver):
@@ -79,17 +79,17 @@ class CustomAttributes(widget_base.WidgetAdminCustomAttributes):
   def add_custom_attribute(self, ca_obj):
     """Add custom attribute from custom attribute object given."""
     ca_item_content = self.expand_collapse_group(
-        objects.get_normal_form(ca_obj.definition_type), expand=True)
+        objects.Utils.get_normal_form(ca_obj.definition_type), expand=True)
     ca_item_content.add_new_custom_attribute(ca_obj)
     self.expand_collapse_group(
-        objects.get_normal_form(ca_obj.definition_type), expand=False)
+        objects.Utils.get_normal_form(ca_obj.definition_type), expand=False)
 
   def get_custom_attributes_list(self, ca_group):
     """Collect custom attributes from expanded custom attribute group
     Tree View.
     """
     ca_item_content = self.expand_collapse_group(
-        objects.get_normal_form(ca_group.definition_type), expand=True)
+        objects.Utils.get_normal_form(ca_group.definition_type), expand=True)
     return ca_item_content.get_ca_list_from_group()
 
 

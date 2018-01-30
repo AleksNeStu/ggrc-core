@@ -24,6 +24,6 @@ class TestOrgGroupPage(base.Test):
     """
     # pylint: disable=unused-argument
     expected_url = (
-        url.ORG_GROUPS + "/" + new_org_group_ui.source_obj_id_from_url)
+      url.All.ORG_GROUPS + "/" + new_org_group_ui.source_obj_id_from_url)
     actual_url = new_org_group_ui.url
     assert expected_url in actual_url

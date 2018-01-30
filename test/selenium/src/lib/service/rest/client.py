@@ -24,9 +24,10 @@ class RestClient(object):
                   'FAIL': [400, 404, 500]}
 
   def __init__(self, endpoint):
-    self.is_api = "" if endpoint == url.QUERY else url.API
-    self.endpoint_url = urlparse.urljoin(
-        environment.APP_URL, "/".join([self.is_api, endpoint]))
+    self.endpoint = "/".join([url.Parts.API, endpoint])
+    if endpoint == url.Parts.QUERY:
+      self.endpoint = "/".join([endpoint])
+    self.endpoint_url = urlparse.urljoin(environment.APP_URL, self.endpoint)
     self.session_cookie = None
 
   def get_session_cookie(self):
@@ -64,40 +65,38 @@ class RestClient(object):
         url=self.endpoint_url, data=create_obj_req_body, headers=req_headers)
     return create_obj_resp
 
-  def update_object(self, href, **kwargs):
+  def update_object(self, endpoint_url, **kwargs):
     """Update object used GET, POST requests and return raw response."""
-    href_url = urlparse.urljoin(environment.APP_URL, href)
-    obj_resp = self.get_object(href_url)
+    obj_resp = self.get_object(endpoint_url)
     obj_resp_headers = obj_resp.headers
     obj_resp_body = obj_resp.text
     update_obj_req_headers = self.generate_req_headers(
         resp_headers=obj_resp_headers)
     update_obj_req_body = self.update_body(body=obj_resp_body, **kwargs)
     update_obj_resp = requests.put(
-        url=href_url, data=update_obj_req_body, headers=update_obj_req_headers)
+        url=endpoint_url, data=update_obj_req_body, headers=update_obj_req_headers)
     return update_obj_resp
 
-  def delete_object(self, href):
+  def delete_object(self, endpoint_url):
     """Delete object used GET, POST requests and return raw response."""
-    href_url = urlparse.urljoin(environment.APP_URL, href)
-    obj_resp_headers = self.get_object(href_url).headers
+    obj_resp_headers = self.get_object(endpoint_url).headers
     del_obj_req_headers = self.generate_req_headers(
         resp_headers=obj_resp_headers)
-    del_obj_resp = requests.delete(url=href_url, headers=del_obj_req_headers)
+    del_obj_resp = requests.delete(url=endpoint_url, headers=del_obj_req_headers)
     return del_obj_resp
 
-  def get_object(self, href):
+  def get_object(self, endpoint_url=None):
     """Get object used GET request and return raw response."""
-    href_url = urlparse.urljoin(environment.APP_URL, href)
+    endpoint_url = endpoint_url if endpoint_url else self.endpoint_url
     req_headers = self.generate_req_headers()
-    get_obj_resp = requests.get(url=href_url, headers=req_headers)
+    get_obj_resp = requests.get(url=endpoint_url, headers=req_headers)
     return get_obj_resp
 
   def generate_body(self, type_name, **kwargs):
     """Generate body of HTTP request based on JSON representation."""
     body = TemplateProvider.generate_template_as_dict(
         json_tmpl_name=type_name, **kwargs)
-    if not self.is_api:
+    if not url.Parts.API in self.endpoint_url:
       body = body[type_name]
     return json.dumps([body]).encode("string-escape")
 

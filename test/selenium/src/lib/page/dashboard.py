@@ -132,7 +132,7 @@ class Header(GenericHeader):
 class Dashboard(widget_bar.Dashboard, Header):
   """Main dashboard page."""
   # pylint: disable=abstract-method
-  URL = environment.APP_URL + url.DASHBOARD
+  URL = environment.APP_URL + url.All.DASHBOARD
 
   def __init__(self, driver):
     super(Dashboard, self).__init__(driver)
@@ -141,7 +141,7 @@ class Dashboard(widget_bar.Dashboard, Header):
 class AdminDashboard(widget_bar.AdminDashboard, GenericHeader):
   """Admin Dashboard page model."""
   # pylint: disable=abstract-method
-  URL = environment.APP_URL + url.ADMIN_DASHBOARD
+  URL = environment.APP_URL + url.All.ADMIN_DASHBOARD
 
   def __init__(self, driver):
     super(AdminDashboard, self).__init__(driver)

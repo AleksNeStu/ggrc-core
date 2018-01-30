@@ -63,7 +63,7 @@ def get_fields_to_set(object_name):
   """Get and return of constant DEFAULT_SET_FIELDS (tuple of default visible
   fields to setup) from lib.constants.element module.
   """
-  cls_name = objects.get_singular(object_name) + "ModalSetVisibleFields"
+  cls_name = objects.Utils.get_singular(object_name) + "ModalSetVisibleFields"
   base_cls = element.CommonModalSetVisibleFields
   set_fields_modal_cls = _factory(cls_name=cls_name, parent_cls=base_cls)
   return set_fields_modal_cls().DEFAULT_SET_FIELDS
@@ -87,11 +87,11 @@ def get_cls_widget(object_name, is_info=False, is_admin=False):
   from lib.page.widget import admin_widget, generic_widget, info_widget
   base_cls = None
   if is_info:
-    if object_name not in objects.ALL_SNAPSHOTABLE_OBJS:
+    if object_name not in objects.Names().snapshotable_values:
       base_cls = info_widget.InfoWidget
-    elif object_name in objects.ALL_SNAPSHOTABLE_OBJS:
+    elif object_name in objects.Names().snapshotable_values:
       base_cls = info_widget.InfoWidget
-    elif object_name == objects.PEOPLE:
+    elif object_name == objects.Names.PEOPLE:
       base_cls = info_widget.base.Widget
   elif is_admin:
     base_cls = admin_widget.Widget
@@ -113,7 +113,7 @@ def get_cls_obj_entity(object_name):
   """Get and return class of object factory."""
   from lib.entities import entity
   cls_name = (
-      objects.get_singular(object_name, title=True) +
+      objects.Utils.get_obj_type(object_name) +
       constants.cls_name.ENTITY)
   base_cls = entity.Representation
   return _factory(cls_name=cls_name, parent_cls=base_cls,
@@ -161,7 +161,7 @@ def get_cls_dropdown_tree_view_item(object_name):
   snapshotability
   """
   base_cls = tree_view_item.CommonDropdownTreeViewItem
-  if object_name in objects.ALL_SNAPSHOTABLE_OBJS:
+  if object_name in objects.Names().snapshotable_values:
     base_cls = tree_view_item.SnapshotsDropdownTreeViewItem
   return _factory(cls_name=object_name, parent_cls=base_cls)
 

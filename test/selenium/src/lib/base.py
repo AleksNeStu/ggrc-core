@@ -11,7 +11,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.remote import webelement
 from selenium.common import exceptions
 
-from lib import constants, exception, mixin
+from lib import constants, exception
 from lib.constants import messages, objects, url
 from lib.constants.element import MappingStatusAttrs
 from lib.constants.locator import CommonDropdownMenu
@@ -47,7 +47,6 @@ class CustomDriver(webdriver.Chrome):
 
 class Test(InstanceRepresentation):
   """Base test class."""
-  __metaclass__ = mixin.MetaTestDecorator
 
   @staticmethod
   def general_equal_assert(expected_objs, actual_objs, *exclude_attrs):
@@ -573,7 +572,7 @@ class Widget(AbstractPage):
         self._driver, (By.XPATH, constants.locator.Common.INFO_PAGE_XPATH)
     ):
       if ((self.widget_name_from_url in url.Widget.INFO) or
-          ((objects.get_singular(self.source_obj_from_url) ==
+          ((objects.Utils.get_singular(self.source_obj_from_url) ==
            self.mapped_obj_from_url) and
           (self.source_obj_id_from_url == self.mapped_obj_id_from_url)) or
           (self.widget_name_from_url == self.mapped_obj_from_url ==
@@ -585,10 +584,10 @@ class Widget(AbstractPage):
   def is_snapshoted_panel(self):
     """Check is the current page is Info Panel of snapshoted object."""
     return (not self.is_info_page and
-            (self.source_obj_from_url in (objects.AUDITS, objects.ASSESSMENTS,
-                                          objects.ISSUES)) and
-            (objects.get_plural(self.widget_name_from_url.lower())
-             in objects.ALL_SNAPSHOTABLE_OBJS))
+            (self.source_obj_from_url in (objects.Names.AUDITS, objects.Names.ASSESSMENTS,
+                                          objects.Names.ISSUES)) and
+            (objects.Utils.get_plural(self.widget_name_from_url.lower())
+             in objects.Names().snapshotable_values))
 
 
 class TreeView(Component):

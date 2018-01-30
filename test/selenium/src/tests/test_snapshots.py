@@ -517,7 +517,7 @@ class TestSnapshots(base.Test):
     obj_for_map = (destination_obj_for_map if is_via_tw_map_btn_not_item else
                    source_obj_for_map)
     objs_ui_service = (
-        get_cls_webui_service(objects.get_plural(obj_for_map.type))(selenium))
+        get_cls_webui_service(objects.Utils.get_plural(obj_for_map.type))(selenium))
     ui_action = ("map_objs_via_tree_view" if is_via_tw_map_btn_not_item else
                  "map_objs_via_tree_view_item")
     getattr(objs_ui_service, ui_action)(
@@ -628,7 +628,7 @@ class TestSnapshots(base.Test):
     ui_mapping_service.map_objs_via_tree_view(
         src_obj=src_obj, dest_objs=dest_objs)
     actual_objs = (get_cls_webui_service(
-        objects.get_plural(expected_obj.type))(selenium).
+        objects.Utils.get_plural(expected_obj.type))(selenium).
         get_list_objs_from_tree_view(src_obj=origin_control))
     # 'actual_controls': created_at, updated_at, custom_attributes, audit
     #                    assessment_type, modified_by (None)
@@ -668,7 +668,7 @@ class TestSnapshots(base.Test):
     control = audit_with_one_control["new_control_rest"][0].repr_ui()
     audit = audit_with_one_control["new_audit_rest"][0]
     existing_obj = dynamic_objects
-    existing_obj_name = objects.get_plural(existing_obj.type)
+    existing_obj_name = objects.Utils.get_plural(existing_obj.type)
     (get_cls_webui_service(existing_obj_name)(selenium).
         map_objs_via_tree_view_item(src_obj=audit, dest_objs=[control]))
     controls_ui_service = webui_service.ControlsService(selenium)
@@ -704,21 +704,21 @@ class TestSnapshots(base.Test):
       - Compare their with constant of expected objects accordingly.
     """
     expected_objs_names_from_mapper = (
-        objects.ALL_SNAPSHOTABLE_OBJS + (objects.ISSUES, ))
-    if dynamic_objects.type == objects.get_obj_type(objects.ISSUES):
+        objects.Names().snapshotable_values + (objects.Names.ISSUES, ))
+    if dynamic_objects.type == objects.Types.ISSUES:
       expected_objs_names_from_mapper = expected_objs_names_from_mapper + (
-          objects.PROGRAMS, objects.PROJECTS)
+        objects.Names.PROGRAMS, objects.Names.PROJECTS)
     expected_objs_names_from_add_widget = expected_objs_names_from_mapper
     expected_objs_types_from_mapper = sorted(
-        objects.get_normal_form(obj_name)
+        objects.Utils.get_normal_form(obj_name)
         for obj_name in expected_objs_names_from_mapper)
     expected_objs_types_from_add_widget = sorted(
-        objects.get_normal_form(obj_name)
+        objects.Utils.get_normal_form(obj_name)
         for obj_name in expected_objs_names_from_add_widget)
     mapped_audit = create_audit_with_control_and_update_control[
         "new_audit_rest"][0]
     obj_ui_service = get_cls_webui_service(
-        objects.get_plural(dynamic_objects.type))(selenium)
+        objects.Utils.get_plural(dynamic_objects.type))(selenium)
     actual_objs_types_from_mapper = (
         obj_ui_service.get_objs_available_to_map_via_mapper(
             src_obj=mapped_audit))

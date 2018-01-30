@@ -263,7 +263,7 @@ class AsmtsModal(BaseModal):
     """
     base.Button(self._driver, self._locators.MAP_OBJS_BTN_CSS).click()
     mapper = unified_mapper.AssessmentCreationMapperModal(
-        self._driver, objects.ASSESSMENTS)
+        self._driver, objects.Names.ASSESSMENTS)
     mapper.map_dest_objs(
         dest_objs_type=objs[0]["type"],
         dest_objs_titles=[obj["title"] for obj in objs])

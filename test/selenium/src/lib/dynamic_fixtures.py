@@ -60,8 +60,8 @@ def _new_objs_rest(obj_name, obj_count,  # noqa: ignore=C901
     and list extra attributes.
     Return: [lib.entities.entity.*Entity, ...]
     """
-    if extra_attrs[0].type == objects.get_singular(objects.CUSTOM_ATTRIBUTES):
-      if name == objects.ASSESSMENT_TEMPLATES:
+    if extra_attrs[0].type == objects.Utils.get_singular(objects.Names.CUSTOM_ATTRIBUTES):
+      if name == objects.Names.ASSESSMENT_TEMPLATES:
         return factory.get_cls_rest_service(object_name=name)().create_objs(
             count=1, factory_params=factory_params,
             custom_attribute_definitions=CustomAttributeDefinitionsFactory.
@@ -80,20 +80,21 @@ def _new_objs_rest(obj_name, obj_count,  # noqa: ignore=C901
                for parent_obj in extra_attrs])
 
   parent_obj_name = None
-  if obj_name == objects.AUDITS:
-    parent_obj_name = (objects.get_singular(objects.PROGRAMS) if obj_count == 1
-                       else objects.PROGRAMS)
-  if obj_name in (objects.ASSESSMENT_TEMPLATES, objects.ASSESSMENTS):
-    parent_obj_name = objects.get_singular(objects.AUDITS)
-  if (has_cas and obj_name in objects.ALL_OBJS and
-          obj_name not in objects.ASSESSMENT_TEMPLATES):
+  if obj_name == objects.Names.AUDITS:
+    parent_obj_name = (
+        objects.Utils.get_singular(objects.Names.PROGRAMS)if obj_count == 1
+        else objects.Names.PROGRAMS)
+  if obj_name in (objects.Names.ASSESSMENT_TEMPLATES, objects.Names.ASSESSMENTS):
+    parent_obj_name = objects.Utils.get_singular(objects.Names.AUDITS)
+  if (has_cas and obj_name in objects.Names().plural_values and
+          obj_name not in objects.Names.ASSESSMENT_TEMPLATES):
     parent_obj_name = "cas_for_" + obj_name
   if parent_obj_name:
     parent_objs = _get_fixture_from_dict_fixtures(
         fixture="new_{}_rest".format(parent_obj_name))
     if "new_{}_rest".format(parent_obj_name) == "new_audit_rest":
       parent_objs *= obj_count
-    if has_cas and obj_name in objects.ASSESSMENT_TEMPLATES:
+    if has_cas and obj_name in objects.Names.ASSESSMENT_TEMPLATES:
       parent_objs = (
           [CustomAttributeDefinitionsFactory().create(
               attribute_type=unicode(ca_type), definition_type=unicode("")) for
@@ -122,10 +123,10 @@ def generate_common_fixtures(*fixtures):  # noqa: ignore=C901
     """
     if "new_cas_for_" in fixture:
       fixture_params = fixture.replace("new_cas_for_", "").replace("_rest", "")
-      obj_name = objects.CUSTOM_ATTRIBUTES
+      obj_name = objects.Names.CUSTOM_ATTRIBUTES
       factory_cas_for_objs = [CustomAttributeDefinitionsFactory().create(
           attribute_type=unicode(ca_type),
-          definition_type=unicode(objects.get_singular(fixture_params)))
+          definition_type=unicode(objects.Utils.get_singular(fixture_params)))
           for ca_type in _list_cas_types]
       new_objs = [
           _new_objs_rest(obj_name=obj_name, obj_count=1, factory_params=dict(
@@ -141,8 +142,12 @@ def generate_common_fixtures(*fixtures):  # noqa: ignore=C901
         fixture_params = fixture_params.replace("_with_cas", "")
       obj_name = fixture_params
       obj_count = counters.BATCH_COUNT
-      if objects.get_plural(obj_name) in objects.ALL_OBJS:
-        obj_name = objects.get_plural(obj_name)
+      # e.g. "program", "programs", "user_global_admin", "users_global_admin"
+      is_singular_user = "user" in obj_name.split("_")
+      if ((objects.Utils.get_plural(obj_name) in objects.Names().plural_values) or
+              is_singular_user):
+        obj_name = (obj_name.replace("user", "users") if is_singular_user
+                    else objects.Utils.get_plural(obj_name))
         obj_count = 1
       new_objs = _new_objs_rest(obj_name=obj_name, obj_count=obj_count,
                                 has_cas=has_cas, factory_params=factory_params)
@@ -155,18 +160,18 @@ def generate_common_fixtures(*fixtures):  # noqa: ignore=C901
     fixture_params = fixture.replace("new_", "").replace("_ui", "")
     obj_name = fixture_params
     obj_count = counters.BATCH_COUNT
-    if (objects.get_plural(obj_name) in objects.ALL_OBJS and
-            objects.get_plural(obj_name) != objects.PROGRAMS):
-      obj_name = objects.get_plural(obj_name)
+    if (objects.Utils.get_plural(obj_name) in objects.Names().plural_values and
+            objects.Utils.get_plural(obj_name) != objects.Names.PROGRAMS):
+      obj_name = objects.Utils.get_plural(obj_name)
       obj_count = 1
       objs_info_pages = [conftest_utils.create_obj_via_lhn(
           web_driver,
           getattr(element.Lhn, obj_name.upper())) for _ in xrange(obj_count)]
       return objs_info_pages
-    elif objects.get_plural(obj_name) == objects.PROGRAMS:
+    elif objects.Utils.get_plural(obj_name) == objects.Names.PROGRAMS:
       modal = conftest_utils.get_lhn_accordion(
           web_driver,
-          getattr(element.Lhn, objects.PROGRAMS.upper())).create_new()
+          getattr(element.Lhn, objects.Names.PROGRAMS.upper())).create_new()
       test_utils.ModalNewPrograms.enter_test_data(modal)
       modal.save_and_close()
       program_info_page = info_widget.Programs(web_driver)
@@ -197,14 +202,14 @@ def generate_common_fixtures(*fixtures):  # noqa: ignore=C901
     try:
       objs_to_update = _get_fixture_from_dict_fixtures(fixture=_objs_to_update)
     except KeyError:
-      _objs_to_update = "new_{}_rest".format(objects.get_plural(obj_name))
+      _objs_to_update = "new_{}_rest".format(objects.Utils.get_plural(obj_name))
       objs_to_update = _get_fixture_from_dict_fixtures(
           fixture=_objs_to_update)[0]
-    if objects.get_plural(obj_name) in objects.ALL_OBJS:
-      obj_name = objects.get_plural(obj_name)
+    if objects.Utils.get_plural(obj_name) in objects.Names().plural_values:
+      obj_name = objects.Utils.get_plural(obj_name)
     if "_with_cas" in obj_name:
       has_cas = True
-      obj_name = objects.get_plural(obj_name.replace("_with_cas", ""))
+      obj_name = objects.Utils.get_plural(obj_name.replace("_with_cas", ""))
       parent_objs = _get_fixture_from_dict_fixtures(
           fixture="new_{}_rest".format("cas_for_" + obj_name))
     if objs_to_update:
@@ -230,15 +235,15 @@ def generate_common_fixtures(*fixtures):  # noqa: ignore=C901
     try:
       objs_to_delete = _get_fixture_from_dict_fixtures(fixture=_objs_to_delete)
     except KeyError:
-      _objs_to_delete = "new_{}_rest".format(objects.get_plural(obj_name))
+      _objs_to_delete = "new_{}_rest".format(objects.Utils.get_plural(obj_name))
       objs_to_delete = _get_fixture_from_dict_fixtures(
           fixture=_objs_to_delete)[0]
-    if objects.get_plural(obj_name) in objects.ALL_OBJS:
-      obj_name = objects.get_plural(obj_name)
+    if objects.Utils.get_plural(obj_name) in objects.Names().plural_values:
+      obj_name = objects.Utils.get_plural(obj_name)
     if "_with_cas" in obj_name:
-      obj_name = objects.get_plural(obj_name.replace("_with_cas", ""))
+      obj_name = objects.Utils.get_plural(obj_name.replace("_with_cas", ""))
     if "cas_for_" in obj_name:
-      obj_name = objects.CUSTOM_ATTRIBUTES
+      obj_name = objects.Names.CUSTOM_ATTRIBUTES
     if objs_to_delete:
       deleted_objs = factory.get_cls_rest_service(
           object_name=obj_name)().delete_objs(objs=objs_to_delete)
@@ -296,7 +301,7 @@ def generate_snapshots_fixtures(fixture):
       _creation_params = fixture_params
     creation_params = StringMethods.convert_list_elements_to_list([
         "new_{}_rest".format(param) if "_with_cas" not in param else
-        ["new_cas_for_{}_rest".format(objects.get_plural(param.split("_")[0])),
+        ["new_cas_for_{}_rest".format(objects.Utils.get_plural(param.split("_")[0])),
          "new_{}_rest".format(param)]
         for param in _creation_params.split("__")])
     mapping_params = [

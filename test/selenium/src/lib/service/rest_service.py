@@ -4,13 +4,14 @@
 # pylint: disable=too-few-public-methods
 
 import json
+import urlparse
 
 import requests
 
 from lib import environment, factory
 from lib.constants import url, objects, messages
 from lib.entities.entities_factory import (
-    PeopleFactory, CustomAttributeDefinitionsFactory)
+  PeopleFactory, CustomAttributeDefinitionsFactory)
 from lib.entities.entity import Representation
 from lib.service.rest import client, query
 from lib.utils import help_utils
@@ -58,7 +59,8 @@ class BaseRestService(object):
     list_new_attrs = [
         self.get_items_from_resp(
             self.client.update_object(
-                href=old_obj.href,
+                endpoint_url=urlparse.urljoin(
+                    environment.APP_URL, old_obj.href),
                 **dict({k: v for k, v in new_obj.__dict__.iteritems() if
                         k != "href"}.items() + attrs_for_template.items()))
         ) for old_obj, new_obj in zip(list_objs_to_update, list_new_objs)]
@@ -82,7 +84,8 @@ class BaseRestService(object):
         extra.update({"href": resp_dict.get("selfLink")})
       if resp_dict.get("viewLink"):
         extra.update(
-            {"url": environment.APP_URL + resp_dict.get("viewLink")[1:]})
+            {"url": urlparse.urljoin(environment.APP_URL,
+                                     resp_dict.get("viewLink")[1:])})
       return extra
     if isinstance(resp, requests.models.Response):
       try:
@@ -167,7 +170,7 @@ class BaseRestService(object):
 
   def delete_objs(self, objs):
     """Delete existing objects via REST API."""
-    return [self.client.delete_object(href=obj.href) for
+    return [self.client.delete_object(endpoint_url=obj.href) for
             obj in help_utils.convert_to_list(objs)]
 
 
@@ -181,50 +184,51 @@ class HelpRestService(object):
 class ControlsService(BaseRestService):
   """Service for working with Controls entities."""
   def __init__(self):
-    super(ControlsService, self).__init__(url.CONTROLS)
+    super(ControlsService, self).__init__(url.Endpoints.CONTROLS)
 
 
 class ObjectivesService(BaseRestService):
   """Service for working with Objectives entities."""
   def __init__(self):
-    super(ObjectivesService, self).__init__(url.OBJECTIVES)
+    super(ObjectivesService, self).__init__(url.Endpoints.OBJECTIVES)
 
 
 class ProgramsService(BaseRestService):
   """Service for working with Programs entities."""
   def __init__(self):
-    super(ProgramsService, self).__init__(url.PROGRAMS)
+    super(ProgramsService, self).__init__(url.Endpoints.PROGRAMS)
 
 
 class AuditsService(BaseRestService):
   """Service for working with Audits entities."""
   def __init__(self):
-    super(AuditsService, self).__init__(url.AUDITS)
+    super(AuditsService, self).__init__(url.Endpoints.AUDITS)
 
 
 class AssessmentTemplatesService(BaseRestService):
   """Service for working with Assessment Templates entities."""
   def __init__(self):
-    super(AssessmentTemplatesService, self).__init__(url.ASSESSMENT_TEMPLATES)
+    super(AssessmentTemplatesService, self).__init__(
+        url.Endpoints.ASSESSMENT_TEMPLATES)
 
 
 class AssessmentsService(BaseRestService):
   """Service for working with Assessments entities."""
   def __init__(self):
-    super(AssessmentsService, self).__init__(url.ASSESSMENTS)
+    super(AssessmentsService, self).__init__(url.Endpoints.ASSESSMENTS)
 
 
 class IssuesService(BaseRestService):
   """Service for working with Issues entities."""
   def __init__(self):
-    super(IssuesService, self).__init__(url.ISSUES)
+    super(IssuesService, self).__init__(url.Endpoints.ISSUES)
 
 
 class CustomAttributeDefinitionsService(BaseRestService):
   """Service for working with Custom Attributes entities."""
   def __init__(self):
     super(CustomAttributeDefinitionsService, self).__init__(
-        url.CUSTOM_ATTRIBUTES)
+        url.Endpoints.CUSTOM_ATTRIBUTES)
 
   def create_dashboard_gcas(self, obj_type, count=1):
     """Create 'Dashboard' CAs via rest according to passed obj_type and count.
@@ -237,14 +241,14 @@ class CustomAttributeDefinitionsService(BaseRestService):
 class RelationshipsService(HelpRestService):
   """Service for creating relationships between entities."""
   def __init__(self):
-    super(RelationshipsService, self).__init__(url.RELATIONSHIPS)
+    super(RelationshipsService, self).__init__(url.Endpoints.RELATIONSHIPS)
 
   def map_objs(self, src_obj, dest_objs, **attrs_for_template):
     """Create relationship from source to destination objects and
     return created.
     """
     return [self.client.create_object(
-        type=objects.get_singular(self.endpoint), source=src_obj.__dict__,
+        type=objects.Utils.get_singular(self.endpoint), source=src_obj.__dict__,
         destination=dest_obj.__dict__, **attrs_for_template) for
         dest_obj in help_utils.convert_to_list(dest_objs)]
 
@@ -252,19 +256,19 @@ class RelationshipsService(HelpRestService):
 class ObjectsOwnersService(HelpRestService):
   """Service for assigning owners to entities."""
   def __init__(self):
-    super(ObjectsOwnersService, self).__init__(url.OBJECT_OWNERS)
+    super(ObjectsOwnersService, self).__init__(url.Parts.OBJECT_OWNERS)
 
   def assign_owner_to_objs(self, objs, owner=PeopleFactory.default_user):
     """Assign of an owner to objects."""
     return [self.client.create_object(
-        type=objects.get_singular(self.endpoint), ownable=obj.__dict__,
+        type=objects.Utils.get_singular(self.endpoint), ownable=obj.__dict__,
         person=owner.__dict__) for obj in help_utils.convert_to_list(objs)]
 
 
 class ObjectsInfoService(HelpRestService):
   """Service for getting information about entities."""
   def __init__(self):
-    super(ObjectsInfoService, self).__init__(url.QUERY)
+    super(ObjectsInfoService, self).__init__(url.Parts.QUERY)
 
   def get_snapshoted_obj(self, origin_obj, paren_obj):
     """Get and return snapshoted object according to 'origin_obj' and
@@ -273,7 +277,7 @@ class ObjectsInfoService(HelpRestService):
     snapshoted_obj_dict = (
         BaseRestService.get_items_from_resp(self.client.create_object(
             type=self.endpoint,
-            object_name=objects.get_obj_type(objects.SNAPSHOTS),
+            object_name=objects.Types.SNAPSHOTS,
             filters=query.Query.expression_get_snapshoted_obj(
                 obj_type=origin_obj.type, obj_id=origin_obj.id,
                 parent_type=paren_obj.type,
@@ -297,9 +301,39 @@ class ObjectsInfoService(HelpRestService):
     comment_obj_dict = (
         BaseRestService.get_items_from_resp(self.client.create_object(
             type=self.endpoint,
-            object_name=objects.get_obj_type(objects.COMMENTS),
+            object_name=objects.Types.COMMENTS,
             filters=query.Query.expression_get_comment_by_desc(
                 parent_type=paren_obj.type, parent_id=paren_obj.id,
                 comment_desc=comment_description),
             order_by=[{"name": "created_at", "desc": True}])).get("values")[0])
     return Representation.repr_dict_to_obj(comment_obj_dict)
+
+
+class AccessControlRolesService(HelpRestService):
+  """Service for getting information about roles ids."""
+  def __init__(self):
+    super(AccessControlRolesService, self).__init__(
+        url.Endpoints.ACCESS_CTRL_ROLES)
+
+  def get_acl_roles(self):
+    """Return ACL roles dict of dictionaries w/ object type keys and values
+    (role names as keys and role ids as values).
+    Return:
+    {{obj_type: {role_name: role_id, ...}}, ...}
+    dict[object_type][role_name] = role_id
+    """
+    raw_roles_dict = BaseRestService.get_items_from_resp(
+        self.client.get_object())
+    res_dict = {}
+    for acl_dict in raw_roles_dict[url.Endpoints.ACCESS_CTRL_ROLES]:
+      obj_type = acl_dict["object_type"]
+      role_name = acl_dict["name"]
+      role_id = acl_dict["id"]
+      if res_dict.has_key(obj_type):
+        res_dict[obj_type].update({role_name: role_id})
+      else:
+        res_dict[obj_type] = {role_name: role_id}
+    return res_dict
+
+
+ll = AccessControlRolesService().get_acl_roles()

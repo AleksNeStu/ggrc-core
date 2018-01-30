@@ -24,7 +24,7 @@ class BaseWebUiService(object):
   def __init__(self, driver, obj_name):
     self.driver = driver
     self.obj_name = obj_name
-    self.obj_type = objects.get_singular(self.obj_name, title=True)
+    self.obj_type = objects.Utils.get_obj_type(self.obj_name)
     self.snapshot_obj_type = None
     self.generic_widget_cls = factory.get_cls_widget(object_name=self.obj_name)
     self.info_widget_cls = factory.get_cls_widget(
@@ -88,7 +88,7 @@ class BaseWebUiService(object):
             scope[key] = val.split(", ")
           # convert 'slug' from CSV for snapshoted objects u'*23eb72ac-4d9d'
           if (key == "slug" and
-                  (self.obj_name in objects.ALL_SNAPSHOTABLE_OBJS) and
+                  (self.obj_name in objects.Names().snapshotable_values) and
                   Symbols.STAR in val):
             scope[key] = val.replace(Symbols.STAR, Symbols.BLANK)
     return [
@@ -169,7 +169,7 @@ class BaseWebUiService(object):
         path_to_csv=path_to_exported_file)
     dict_key = dict_list_objs_scopes.iterkeys().next()
     # 'Control' to 'controls', 'Control Snapshot' to 'controls'
-    obj_name_from_dict = objects.get_plural(
+    obj_name_from_dict = objects.Utils.get_plural(
         StringMethods.get_first_word_from_str(dict_key))
     if self.obj_name == obj_name_from_dict:
       return self._create_list_objs(
@@ -423,8 +423,7 @@ class SnapshotsWebUiService(BaseWebUiService):
   def __init__(self, driver, obj_name, is_versions_widget):
     super(SnapshotsWebUiService, self).__init__(driver, obj_name)
     self.is_versions_widget = is_versions_widget
-    self.snapshot_obj_type = objects.get_singular(
-        objects.SNAPSHOTS, title=True)
+    self.snapshot_obj_type = objects.Types.SNAPSHOTS
     if self.is_versions_widget:
       self.url_mapped_objs = (
           "{src_obj_url}" + url.Utils.get_widget_name_of_mapped_objs(
@@ -453,7 +452,7 @@ class SnapshotsWebUiService(BaseWebUiService):
 class AuditsService(BaseWebUiService):
   """Class for Audits business layer's services objects."""
   def __init__(self, driver):
-    super(AuditsService, self).__init__(driver, objects.AUDITS)
+    super(AuditsService, self).__init__(driver, objects.Names.AUDITS)
 
   def clone_via_info_page_and_get_obj(self, audit_obj):
     """Open Info page of Audit object and clone it including Assessment
@@ -481,7 +480,7 @@ class AssessmentTemplatesService(BaseWebUiService):
   """Class for AssessmentTemplates business layer's services objects."""
   def __init__(self, driver):
     super(AssessmentTemplatesService, self).__init__(
-        driver, objects.ASSESSMENT_TEMPLATES)
+        driver, objects.Names.ASSESSMENT_TEMPLATES)
 
   def create_obj_via_tree_view(self, src_obj, obj):
     """Open generic widget of mapped objects, open creation modal from
@@ -495,7 +494,7 @@ class AssessmentsService(BaseWebUiService):
   """Class for Assessments business layer's services objects."""
   def __init__(self, driver):
     super(AssessmentsService, self).__init__(
-        driver, objects.ASSESSMENTS)
+        driver, objects.Names.ASSESSMENTS)
 
   def add_comments(self, src_obj, obj, comment_objs):
     """Open Info Panel of 'obj' navigate by object's title, maximize it and
@@ -636,23 +635,23 @@ class ControlsService(SnapshotsWebUiService):
   """Class for Controls business layer's services objects."""
   def __init__(self, driver, is_versions_widget=False):
     super(ControlsService, self).__init__(
-        driver, objects.CONTROLS, is_versions_widget)
+        driver, objects.Names.CONTROLS, is_versions_widget)
 
 
 class ObjectivesService(SnapshotsWebUiService):
   """Class for Objectives business layer's services objects."""
   def __init__(self, driver, is_versions_widget=False):
     super(ObjectivesService, self).__init__(
-        driver, objects.OBJECTIVES, is_versions_widget)
+        driver, objects.Names.OBJECTIVES, is_versions_widget)
 
 
 class IssuesService(BaseWebUiService):
   """Class for Issues business layer's services objects."""
   def __init__(self, driver):
-    super(IssuesService, self).__init__(driver, objects.ISSUES)
+    super(IssuesService, self).__init__(driver, objects.Names.ISSUES)
 
 
 class ProgramsService(BaseWebUiService):
   """Class for Programs business layer's services objects."""
   def __init__(self, driver):
-    super(ProgramsService, self).__init__(driver, objects.PROGRAMS)
+    super(ProgramsService, self).__init__(driver, objects.Names.PROGRAMS)

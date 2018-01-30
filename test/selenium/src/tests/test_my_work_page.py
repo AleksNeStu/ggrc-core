@@ -32,7 +32,7 @@ class TestMyWorkPage(base.Test):
        open_info_3bbs().select_delete().confirm_delete())
       controls_tab.wait_member_deleted(counter)
     controls_generic_widget = generic_widget.Controls(
-        selenium, objects.CONTROLS)
+        selenium, objects.Names.CONTROLS)
     expected_widget_members = []
     actual_widget_members = controls_generic_widget.members_listed
     assert expected_widget_members == actual_widget_members

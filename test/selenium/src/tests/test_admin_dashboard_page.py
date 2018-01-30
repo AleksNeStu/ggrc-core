@@ -63,8 +63,8 @@ class TestAdminDashboardPage(base.Test):
     on Admin Dashboard panel.
     """
     ca_tab = admin_dashboard.select_custom_attributes()
-    expected_ca_groups_set = set(
-        [objects.get_normal_form(item) for item in objects.ALL_CA_OBJS])
+    expected_ca_groups_set = set([objects.Utils.get_normal_form(item)
+                                  for item in objects.Names().w_cas_values])
     actual_ca_groups_set = set(
         [item.text for item in ca_tab.get_items_list()])
     assert expected_ca_groups_set == actual_ca_groups_set
@@ -73,8 +73,9 @@ class TestAdminDashboardPage(base.Test):
   @pytest.mark.parametrize(
       "ca_type, def_type",
       [(ca_type_item,
-        objects.get_normal_form(random.choice(objects.ALL_CA_OBJS))) for
-       ca_type_item in AdminWidgetCustomAttributes.ALL_CA_TYPES]
+        objects.Utils.get_normal_form(
+            random.choice(objects.Names().w_cas_values)))
+       for ca_type_item in AdminWidgetCustomAttributes.ALL_CA_TYPES]
   )
   def test_add_global_ca(self, admin_dashboard, ca_type, def_type):
     """Create different types of Custom Attribute on Admin Dashboard."""

@@ -172,5 +172,5 @@ class DynamicTreeToggle(base.Toggle):
 class WidgetAdminCustomAttributes(base.Widget):
   """Base model for custom attributes on Admin Dashboard page."""
   _locators = locator.AdminCustomAttributes
-  URL = (environment.APP_URL + url.ADMIN_DASHBOARD +
+  URL = (environment.APP_URL + url.All.ADMIN_DASHBOARD +
          url.Widget.CUSTOM_ATTRIBUTES)

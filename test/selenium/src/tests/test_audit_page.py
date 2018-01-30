@@ -44,7 +44,7 @@ class TestAuditPage(base.Test):
         # fixtures which are objects
         if fixture in request.fixturenames and fixture.startswith("new_"):
           fixture = locals().get(fixture)
-          (get_cls_rest_service(objects.get_plural(fixture.type))().
+          (get_cls_rest_service(objects.Utils.get_plural(fixture.type))().
            update_obj(obj=fixture, **params_to_update))
     expected_audit = entities_factory.AuditsFactory.clone(
         audit=new_audit_rest)[0]
@@ -155,9 +155,9 @@ class TestAuditPage(base.Test):
            "Assessments generation based on Assessment Template with LCAs"],
       indirect=True)
   def test_asmts_generation(
-      self, new_program_rest, new_controls_rest,
-      map_new_program_rest_to_new_controls_rest, new_audit_rest,
-      dynamic_objects, selenium
+      self, new_user_global_admin_rest, new_program_rest,
+      new_controls_rest, map_new_program_rest_to_new_controls_rest,
+      new_audit_rest, dynamic_objects, selenium
   ):
     """Check if Assessments can be generated from Audit page via Assessments
     widget using Assessment template and Controls.
