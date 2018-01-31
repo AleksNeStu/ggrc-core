@@ -4,6 +4,16 @@
 }}
 
 {{#is_allowed 'create' singular context=instance.context}}
+  {{#if_equals singular "AssessmentTemplate"}}
+    <assessment-template-clone-button
+      {class}="linkclass"
+      {button-title}="content"
+      {text}="text"
+      {object-type}="singular"
+      {parent-id}="instance.id"
+      {parent-type}="instance.class.shortName">
+    </assessment-template-clone-button>
+  {{else}}
     <a href="javascript://" class="{{linkclass}}"
         {{#if text}}
         rel="tooltip"
@@ -18,6 +28,7 @@
         {{^if noparams}} data-object-params='{ "{{instance.class.table_singular}}": {"id" : {{instance.id}}, "type" : "{{instance.class.model_singular}}" }, "context": { "id" : {{firstnonempty instance.context.id "null"}}, "href" : "{{instance.context.href}}", "type" : "{{instance.context.type}}" } }'{{/if}}>
             {{content}}
     </a>
+  {{/if_equals}}
 {{else}}
   {{#if_equals singular "Assessment"}}
     {{#is_allowed 'update' parent_instance context="for"}}
