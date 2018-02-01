@@ -4,6 +4,7 @@
  */
 
 import template from './assessment-template-clone-button.mustache';
+import router from '../../router';
 
 export default can.Component.extend({
   tag: 'assessment-template-clone-button',
@@ -29,7 +30,16 @@ export default can.Component.extend({
         });
     },
     refreshTreeView(el) {
-      can.trigger(el.closest('tree-widget-container'), 'refreshTree');
+      const $container = el.closest('tree-widget-container');
+
+      if ($container.length) {
+        can.trigger($container, 'refreshTree');
+      } else {
+        router.attr({
+          widget: 'assessment_template_widget',
+          refetch: true,
+        });
+      }
     },
   },
   events: {
