@@ -23,6 +23,7 @@
         data-toggle="modal-ajax-form"
         data-modal-reset="reset"
         data-modal-class="modal-wide"
+        data-update-hash="true"
         data-object-singular="{{singular}}"
         data-object-plural="{{plural}}"
         {{^if noparams}} data-object-params='{ "{{instance.class.table_singular}}": {"id" : {{instance.id}}, "type" : "{{instance.class.model_singular}}" }, "context": { "id" : {{firstnonempty instance.context.id "null"}}, "href" : "{{instance.context.href}}", "type" : "{{instance.context.type}}" } }'{{/if}}>
@@ -38,6 +39,7 @@
           data-placement="bottom"
           data-original-title="{{text}}"
           {{/if}}
+          data-update-hash="true"
           data-toggle="modal-ajax-form"
           data-modal-reset="reset"
           data-modal-class="modal-wide"
@@ -54,6 +56,7 @@
             data-placement="bottom"
             data-original-title="{{text}}"
             {{/if}}
+            data-update-hash="true"
             data-toggle="modal-ajax-form"
             data-modal-reset="reset"
             data-modal-class="modal-wide"
