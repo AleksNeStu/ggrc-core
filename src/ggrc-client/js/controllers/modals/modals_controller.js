@@ -1222,7 +1222,8 @@ export default can.Control({
     if (!$trigger) {
       return false;
     }
-    return !$trigger.closest('.modal, .cms_controllers_info_pin').length;
+    return $trigger.data('updateHash') ||
+      !$trigger.closest('.modal, .cms_controllers_info_pin').length;
   },
 
   update_hash_fragment: function () {
