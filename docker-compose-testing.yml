@@ -5,7 +5,7 @@ services:
       context: .
       dockerfile: Dockerfile
       args:
-        CHROME_DRIVER_VERSION: "2.33"
+        CHROME_DRIVER_VERSION: "latest"
     volumes:
      - ".:/vagrant"
      - ".:/vagrant_bind"
