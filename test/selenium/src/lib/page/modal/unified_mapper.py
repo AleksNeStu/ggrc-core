@@ -3,30 +3,35 @@
 """Modals for map objects."""
 
 from lib import base, decorator
-from lib.constants import element, locator, value_aliases as alias
+from lib.constants import element, locator, value_aliases as alias, objects
 from lib.utils import selenium_utils
 
 
 class CommonUnifiedMapperModal(base.Modal):
   """Common unified mapper modal."""
+  # pylint: disable=too-many-instance-attributes
   _locators = locator.ModalMapObjects
   _elements = element.UnifiedMapperModal
 
   def __init__(self, driver, obj_name):
     super(CommonUnifiedMapperModal, self).__init__(driver)
+    self.obj_name = obj_name
     # labels
+    self.modal_elem = selenium_utils.get_when_visible(
+        self._driver, self._locators.MODAL_CSS)
     self.filter_toggle = base.Toggle(
-        self._driver, self._locators.FILTER_TOGGLE_CSS)
+        self.modal_elem, self._locators.FILTER_TOGGLE_CSS)
     self.filter_toggle.is_activated = True
-    self.title_modal = base.Label(self._driver, self._locators.MODAL_TITLE)
-    self.obj_type = base.Label(self._driver, self._locators.OBJ_TYPE)
+    self.title_modal = base.Label(self.modal_elem, self._locators.MODAL_TITLE)
+    if self.obj_name != objects.ASSESSMENT_TEMPLATES:
+      self.obj_type = base.Label(self.modal_elem, self._locators.OBJ_TYPE)
     # user input elements
     self.tree_view = base.UnifiedMapperTreeView(
-        self._driver, obj_name=obj_name)
+        self._driver, obj_name=self.obj_name)
     self._add_attr_btn = None
     self.search_result_toggle = base.Toggle(
-        self._driver, self._locators.RESULT_TOGGLE_CSS)
-    self.close_btn = base.Button(self._driver, self._locators.CLOSE_BTN_CSS)
+        self.modal_elem, self._locators.RESULT_TOGGLE_CSS)
+    self.close_btn = base.Button(self.modal_elem, self._locators.CLOSE_BTN_CSS)
 
   def get_available_to_map_obj_aliases(self):
     """Return texts of all objects available to map via UnifiedMapper."""
@@ -36,7 +41,8 @@ class CommonUnifiedMapperModal(base.Modal):
 
   @decorator.lazy_property
   def obj_type_dropdown(self):
-    return base.DropdownStatic(self._driver, self._locators.OBJ_TYPE_DROPDOWN)
+    return base.DropdownStatic(
+        self.modal_elem, self._locators.OBJ_TYPE_DROPDOWN)
 
   def _select_dest_obj_type(self, obj_name, is_asmts_generation=False):
     """Open dropdown and select element according to destination object name.
@@ -44,11 +50,11 @@ class CommonUnifiedMapperModal(base.Modal):
     """
     if obj_name:
       obj_type_dropdown = base.DropdownStatic(
-          self._driver, self._locators.OBJ_TYPE_DROPDOWN)
+          self.modal_elem, self._locators.OBJ_TYPE_DROPDOWN)
       obj_type_dropdown.select(obj_name)
       if is_asmts_generation:
         asmt_tmpl_dropdown = base.DropdownStatic(
-            self._driver, self._locators.OBJ_TYPE_DROPDOWN,)
+            self.modal_elem, self._locators.OBJ_TYPE_DROPDOWN,)
         asmt_tmpl_dropdown.select_by_label(obj_name)
 
   def add_filter_attr(self, attr_name, value,
@@ -56,7 +62,7 @@ class CommonUnifiedMapperModal(base.Modal):
     """Add filter attribute according to passed parameters. """
     if not self._add_attr_btn:
       self._add_attr_btn = selenium_utils.get_when_visible(
-          self._driver, self._locators.FILTER_ADD_ATTRIBUTE_BTN)
+          self.modal_elem, self._locators.FILTER_ADD_ATTRIBUTE_BTN)
     self._add_attr_btn.click()
     last_filter_param = self._get_latest_filter_elements()
     last_filter_param['name'].select(attr_name)
@@ -79,13 +85,13 @@ class CommonUnifiedMapperModal(base.Modal):
         "operator": None}
     if len(latest_filter_elem) > 1:
       latest_filter["operator"] = base.DropdownStatic(
-          self._driver, selenium_utils.get_when_all_visible(
-              self._driver, self._locators.FILTER_OPERATOR)[-1])
+          self.modal_elem, selenium_utils.get_when_all_visible(
+              self.modal_elem, self._locators.FILTER_OPERATOR)[-1])
     return latest_filter
 
   def _select_search_dest_objs(self):
     """Click Search button to search objects according set filters."""
-    base.Button(self._driver, self._locators.BUTTON_SEARCH).click()
+    base.Button(self.modal_elem, self._locators.BUTTON_SEARCH).click()
     selenium_utils.wait_for_js_to_load(self._driver)
 
   def _select_dest_objs_to_map(self, objs_titles):
@@ -93,7 +99,7 @@ class CommonUnifiedMapperModal(base.Modal):
     according to destinations objects titles.
     """
     dest_objs = base.ListCheckboxes(
-        self._driver, self._locators.FOUND_OBJECTS_TITLES,
+        self.modal_elem, self._locators.FOUND_OBJECTS_TITLES,
         self._locators.FOUND_OBJECTS_CHECKBOXES)
     dest_objs.select_by_titles(objs_titles)
 
@@ -102,7 +108,7 @@ class CommonUnifiedMapperModal(base.Modal):
        (selected and disabled or not).
     """
     dest_objs = base.ListCheckboxes(
-        self._driver, self._locators.FOUND_OBJECTS_TITLES,
+        self.modal_elem, self._locators.FOUND_OBJECTS_TITLES,
         self._locators.FOUND_OBJECTS_CHECKBOXES)
     return (
         dest_objs.get_mapping_statuses() if
@@ -112,9 +118,9 @@ class CommonUnifiedMapperModal(base.Modal):
     """Select Map Selected button to confirm map selected objects to
     source object.
     """
-    base.Button(self._driver, self._locators.BUTTON_MAP_SELECTED).click()
+    base.Button(self.modal_elem, self._locators.BUTTON_MAP_SELECTED).click()
     selenium_utils.get_when_invisible(
-        self._driver, self._locators.BUTTON_MAP_SELECTED)
+        self.modal_elem, self._locators.BUTTON_MAP_SELECTED)
 
   def _confirm_items_added(self):
     """Wait until items shown on Tree View."""
@@ -156,7 +162,7 @@ class CommonUnifiedMapperModal(base.Modal):
     """Close Unified Mapper's modal window."""
     self.close_btn.click()
     selenium_utils.wait_until_not_present(
-        self._driver, self._locators.MODAL_CSS)
+        self.modal_elem, self._locators.MODAL_CSS)
 
 
 class MapObjectsModal(CommonUnifiedMapperModal):
@@ -168,7 +174,7 @@ class SearchObjectsModal(CommonUnifiedMapperModal):
 
 
 class GenerateAssessmentsModal(CommonUnifiedMapperModal):
-  """Modal for map objects."""
+  """Modal for generate Assessments objects."""
   _locators = locator.ModalGenerateAssessments
 
   def generate_asmts(self, objs_under_asmt_titles, asmt_tmpl_title=None):
@@ -181,6 +187,22 @@ class GenerateAssessmentsModal(CommonUnifiedMapperModal):
     self.map_dest_objs(
         dest_objs_type=asmt_tmpl_title,
         dest_objs_titles=objs_under_asmt_titles, is_asmts_generation=True)
+
+
+class CloneOrCreateAssessmentTemplatesModal(CommonUnifiedMapperModal):
+  """Modal for Clone Assessments or open Create Assessment objects."""
+  _locators = locator.ModalCloneOrCreateAssessmentTemplates
+
+  def __init__(self, driver, obj_name):
+    super(CloneOrCreateAssessmentTemplatesModal, self).__init__(
+        driver, obj_name)
+    self.create_asmt_tmpl_btn = base.Element(
+        self.modal_elem, self._locators.CREATE_ASMT_TMPL_BTN_CSS)
+
+  def clone_asmt_tmpls(self, *args, **kwargs):
+    """Clone Assessments Templates based using Unify Mapper."""
+    # todo: implement Assessments Templates cloning functionality
+    raise NotImplementedError
 
 
 class AssessmentCreationMapperModal(CommonUnifiedMapperModal):
