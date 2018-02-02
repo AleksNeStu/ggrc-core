@@ -295,6 +295,14 @@ class ModalGenerateAssessments(CommonModalUnifiedMapper):
   MODAL = Common.MODAL_MAPPER
 
 
+class ModalCloneOrCreateAssessmentTemplates(CommonModalUnifiedMapper):
+  """Locators for clone or create Assessment Templates modal."""
+  MODAL = Common.MODAL_MAPPER
+  CREATE_ASMT_TMPL_BTN_CSS = (By.CSS_SELECTOR, MODAL + " .create-control")
+  RESULT_TOGGLE_CSS = (By.CSS_SELECTOR, MODAL +
+                       " .modal-footer--trailed collapse-panel-click-area")
+
+
 class BaseModalCreateNew(object):
   """Locators for Create new object modals."""
   MODAL = Common.MODAL_CREATE
