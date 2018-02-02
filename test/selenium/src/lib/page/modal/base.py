@@ -11,15 +11,21 @@ from lib.utils import selenium_utils
 
 class BaseModal(base.Modal):
   """Base class for creation and edition modals."""
+  _locators = locator.BaseModalCreateNew
   _locator_ui_title = locator.ModalCreateNewObject.UI_TITLE
   _locator_ui_code = locator.ModalCreateNewObject.UI_CODE
   _locator_button_save = locator.ModalCreateNewObject.BUTTON_SAVE_AND_CLOSE
 
   def __init__(self, driver):
     super(BaseModal, self).__init__(driver)
-    self.button_save_and_close = base.Button(driver, self._locator_button_save)
-    self.ui_title = base.TextInputField(self._driver, self._locator_ui_title)
-    self.ui_code = base.TextInputField(self._driver, self._locator_ui_code)
+    self.modal_elem = selenium_utils.get_when_visible(
+        self._driver, self._locators.MODAL_CSS)
+    self.button_save_and_close = base.Button(
+        self.modal_elem, self._locator_button_save)
+    self.ui_title = base.TextInputField(
+        self.modal_elem, self._locator_ui_title)
+    self.ui_code = base.TextInputField(
+        self.modal_elem, self._locator_ui_code)
 
   def enter_title(self, text):
     """Enter title to modal."""
@@ -50,21 +56,24 @@ class ProgramsModal(BaseModal):
     super(ProgramsModal, self).__init__(driver)
     # user input elements
     self.ui_description = base.Iframe(
-        self._driver, self._locators.UI_DESCRIPTION)
-    self.ui_notes = base.Iframe(self._driver, self._locators.UI_NOTES)
-    self.ui_code = base.TextInputField(self._driver, self._locators.UI_CODE)
-    self.ui_state = base.Dropdown(self._driver, self._locators.UI_STATE)
+        self.modal_elem.parent, self._locators.UI_DESCRIPTION)
+    self.ui_notes = base.Iframe(
+        self.modal_elem.parent, self._locators.UI_NOTES)
+    self.ui_code = base.TextInputField(
+        self.modal_elem, self._locators.UI_CODE)
+    self.ui_state = base.Dropdown(
+        self.modal_elem, self._locators.UI_STATE)
     self.ui_show_optional_fields = base.Toggle(
-        self._driver, self._locators.BUTTON_SHOW_ALL_OPTIONAL_FIELDS)
+        self.modal_elem, self._locators.BUTTON_SHOW_ALL_OPTIONAL_FIELDS)
     self.ref_url = base.MultiInputField(
-        self._driver, self._locators.REF_URL_CSS
-    )
+        self.modal_elem, self._locators.REF_URL_CSS)
     self.ui_effective_date = base.DatePicker(
-        self._driver, self._locators.EFFECTIVE_DATE_DATEPICKER,
+        self.modal_elem, self._locators.EFFECTIVE_DATE_DATEPICKER,
         self._locators.UI_EFFECTIVE_DATE)
     # static elements
-    self.title = base.Label(self._driver, self._locators.TITLE)
-    self.description = base.Label(self._driver, self._locators.DESCRIPTION)
+    self.title = base.Label(self.modal_elem, self._locators.TITLE)
+    self.description = base.Label(
+        self.modal_elem, self._locators.DESCRIPTION)
 
   def enter_description(self, description):
     """Enter text into description element.
@@ -114,51 +123,66 @@ class ControlsModal(BaseModal):
   def __init__(self, driver):
     super(ControlsModal, self).__init__(driver)
     # labels
-    self.modal_title = base.Label(driver, self._locators.MODAL_TITLE)
-    self.title = base.Label(driver, self._locators.TITLE)
-    self.description = base.Label(driver, self._locators.DESCRIPTION)
-    self.test_plan = base.Label(driver, self._locators.TEST_PLAN)
-    self.notes = base.Label(driver, self._locators.NOTES)
-    self.code = base.Label(driver, self._locators.CODE)
-    self.kind_or_nature = base.Label(driver, self._locators.KIND_OR_NATURE)
-    self.fraud_related = base.Label(driver, self._locators.FRAUD_RELATED)
-    self.frequency = base.Label(driver, self._locators.FREQUENCY)
-    self.assertions = base.Label(driver, self._locators.ASSERTIONS)
-    self.admin = base.Label(driver, self._locators.ADMIN)
-    self.significance = base.Label(driver, self._locators.SIGNIFICANCE)
-    self.type_or_means = base.Label(driver, self._locators.TYPE_OR_MEANS)
-    self.categories = base.Label(driver, self._locators.CATEGORIES)
-    self.state = base.Label(driver, self._locators.STATE)
-    self.ui_description = base.Iframe(driver, self._locators.UI_DESCRIPTION)
-    self.ui_test_plan = base.Iframe(driver, self._locators.UI_TEST_PLAN)
-    self.ui_notes = base.Iframe(driver, self._locators.UI_NOTES)
-    self.ui_code = base.TextInputField(driver, self._locators.UI_CODE)
+    self.modal_title = base.Label(
+        self.modal_elem, self._locators.MODAL_TITLE)
+    self.title = base.Label(
+        self.modal_elem, self._locators.TITLE)
+    self.description = base.Label(
+        self.modal_elem, self._locators.DESCRIPTION)
+    self.test_plan = base.Label(
+        self.modal_elem, self._locators.TEST_PLAN)
+    self.notes = base.Label(self.modal_elem, self._locators.NOTES)
+    self.code = base.Label(self.modal_elem, self._locators.CODE)
+    self.kind_or_nature = base.Label(
+        self.modal_elem, self._locators.KIND_OR_NATURE)
+    self.fraud_related = base.Label(
+        self.modal_elem, self._locators.FRAUD_RELATED)
+    self.frequency = base.Label(
+        self.modal_elem, self._locators.FREQUENCY)
+    self.assertions = base.Label(
+        self.modal_elem, self._locators.ASSERTIONS)
+    self.admin = base.Label(self.modal_elem, self._locators.ADMIN)
+    self.significance = base.Label(
+        self.modal_elem, self._locators.SIGNIFICANCE)
+    self.type_or_means = base.Label(
+        self.modal_elem, self._locators.TYPE_OR_MEANS)
+    self.categories = base.Label(
+        self.modal_elem, self._locators.CATEGORIES)
+    self.state = base.Label(self.modal_elem, self._locators.STATE)
+    self.ui_description = base.Iframe(
+        self.modal_elem, self._locators.UI_DESCRIPTION)
+    self.ui_test_plan = base.Iframe(
+        self.modal_elem, self._locators.UI_TEST_PLAN)
+    self.ui_notes = base.Iframe(
+        self.modal_elem, self._locators.UI_NOTES)
+    self.ui_code = base.TextInputField(
+        self.modal_elem, self._locators.UI_CODE)
     # multi input fields
     self.ref_url = base.MultiInputField(
-        driver, self._locators.REF_URL_CSS)
+        self.modal_elem, self._locators.REF_URL_CSS)
     # datepickers
     self.ui_effective_date = base.DatePicker(
-        driver, self._locators.EFFECTIVE_DATE,
+        self.modal_elem, self._locators.EFFECTIVE_DATE,
         self._locators.DATEPICKER_EFFECTIVE_DATE)
     # dropdowns
     self.ui_kind_or_nature = base.Dropdown(
-        driver, self._locators.DROPDOWN_KIND_OR_NATURE)
+        self.modal_elem, self._locators.DROPDOWN_KIND_OR_NATURE)
     self.ui_fraud_related = base.Dropdown(
-        driver, self._locators.DROPDOWN_FRAUD_RELATED)
+        self.modal_elem, self._locators.DROPDOWN_FRAUD_RELATED)
     self.ui_type_or_means = base.Dropdown(
-        driver, self._locators.DROPDOWN_TYPE_OR_MEANS)
+        self.modal_elem, self._locators.DROPDOWN_TYPE_OR_MEANS)
     self.ui_frequency = base.Dropdown(
-        driver, self._locators.DROPDOWN_FREQUENCY)
+        self.modal_elem, self._locators.DROPDOWN_FREQUENCY)
     # selectable lists
     self.selectable_assertions = base.Selectable(
-        driver, self._locators.SELECTABLE_ASSERTIONS)
+        self.modal_elem, self._locators.SELECTABLE_ASSERTIONS)
     self.selectable_categories = base.Selectable(
-        driver, self._locators.SELECTABLE_CATEGORIES)
+        self.modal_elem, self._locators.SELECTABLE_CATEGORIES)
     # buttons
     self.button_add_owner = base.Button(
-        driver, self._locators.BUTTON_ADD_OWNER)
+        self.modal_elem, self._locators.BUTTON_ADD_OWNER)
     self.button_hide_all_optional_fields = base.Button(
-        driver, self._locators.BUTTON_HIDE_ALL_OPTIONAL_FIELDS)
+        self.modal_elem, self._locators.BUTTON_HIDE_ALL_OPTIONAL_FIELDS)
 
   def enter_description(self, text):
     """
@@ -197,7 +221,8 @@ class RisksModal(BaseModal):
 
   def __init__(self, driver):
     super(RisksModal, self).__init__(driver)
-    self.ui_description = base.Iframe(driver, self._locators.UI_DESCRIPTION)
+    self.ui_description = base.Iframe(
+        self.modal_elem, self._locators.UI_DESCRIPTION)
 
   def enter_description(self, text):
     self.ui_description.find_iframe_and_enter_data(text)
@@ -244,12 +269,12 @@ class AsmtTmplModal(BaseModal):
 
   def __init__(self, driver):
     super(AsmtTmplModal, self).__init__(driver)
-    self.ui_assignees = base.DropdownStatic(
-        driver, locator.ModalCreateNewAsmtTmpl.ASSIGNEE_DROPDOWN)
+    self.assignees_dd = base.DropdownStatic(
+        self.modal_elem, self._locators.ASSIGNEE_DROPDOWN)
 
   def select_assignee(self, assignee):
     """Select 'Default Assignee' from drop down list."""
-    self.ui_assignees.select(assignee)
+    self.assignees_dd.select(assignee)
     return self.__class__(self._driver)
 
 
@@ -261,7 +286,8 @@ class AsmtsModal(BaseModal):
     """Open Unified Mapper on modal and map objs.
     Return: self
     """
-    base.Button(self._driver, self._locators.MAP_OBJS_BTN_CSS).click()
+    base.Button(
+        self.modal_elem, self._locators.MAP_OBJS_BTN_CSS).click()
     mapper = unified_mapper.AssessmentCreationMapperModal(
         self._driver, objects.ASSESSMENTS)
     mapper.map_dest_objs(
@@ -276,4 +302,4 @@ class AsmtsModal(BaseModal):
     return [base.Label(self._driver, el.find_element(
             *self._locators.MAPPED_SNAPSHOT_TITLE_CSS)).text
             for el in selenium_utils.get_when_all_visible(
-            self._driver, self._locators.MAPPED_SNAPSHOTS_CSS)]
+            self.modal_elem, self._locators.MAPPED_SNAPSHOTS_CSS)]
