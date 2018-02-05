@@ -99,7 +99,7 @@ class CommonUnifiedMapperModal(base.Modal):
     according to destinations objects titles.
     """
     dest_objs = base.ListCheckboxes(
-        self.modal_elem, self._locators.FOUND_OBJECTS_TITLES,
+        self.modal_elem.parent, self._locators.FOUND_OBJECTS_TITLES,
         self._locators.FOUND_OBJECTS_CHECKBOXES)
     dest_objs.select_by_titles(objs_titles)
 
@@ -108,7 +108,7 @@ class CommonUnifiedMapperModal(base.Modal):
        (selected and disabled or not).
     """
     dest_objs = base.ListCheckboxes(
-        self.modal_elem, self._locators.FOUND_OBJECTS_TITLES,
+        self.modal_elem.parent, self._locators.FOUND_OBJECTS_TITLES,
         self._locators.FOUND_OBJECTS_CHECKBOXES)
     return (
         dest_objs.get_mapping_statuses() if
