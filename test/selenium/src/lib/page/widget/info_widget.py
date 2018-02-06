@@ -354,7 +354,7 @@ class Programs(InfoWidget):
         self.get_header_and_value_txt_from_people_scopes(
             self._elements.PROGRAM_MANAGERS.upper()))
     self.ref_url = base.MultiInputField(
-        self.info_widget_elem, self._locators.REF_URL_CSS)
+        self.info_widget_elem.parent, self._locators.REF_URL_CSS)
     self.code = base.Label(self.info_widget_elem, self._locators.CODE)
     self.code_entered = base.Label(
         self.info_widget_elem, self._locators.CODE_ENTERED)

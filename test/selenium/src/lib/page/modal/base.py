@@ -66,7 +66,7 @@ class ProgramsModal(BaseModal):
     self.ui_show_optional_fields = base.Toggle(
         self.modal_elem, self._locators.BUTTON_SHOW_ALL_OPTIONAL_FIELDS)
     self.ref_url = base.MultiInputField(
-        self.modal_elem, self._locators.REF_URL_CSS)
+        self.modal_elem.parent, self._locators.REF_URL_CSS)
     self.ui_effective_date = base.DatePicker(
         self.modal_elem, self._locators.EFFECTIVE_DATE_DATEPICKER,
         self._locators.UI_EFFECTIVE_DATE)
@@ -150,16 +150,16 @@ class ControlsModal(BaseModal):
         self.modal_elem, self._locators.CATEGORIES)
     self.state = base.Label(self.modal_elem, self._locators.STATE)
     self.ui_description = base.Iframe(
-        self.modal_elem, self._locators.UI_DESCRIPTION)
+        self.modal_elem.parent, self._locators.UI_DESCRIPTION)
     self.ui_test_plan = base.Iframe(
-        self.modal_elem, self._locators.UI_TEST_PLAN)
+        self.modal_elem.parent, self._locators.UI_TEST_PLAN)
     self.ui_notes = base.Iframe(
-        self.modal_elem, self._locators.UI_NOTES)
+        self.modal_elem.parent, self._locators.UI_NOTES)
     self.ui_code = base.TextInputField(
         self.modal_elem, self._locators.UI_CODE)
     # multi input fields
     self.ref_url = base.MultiInputField(
-        self.modal_elem, self._locators.REF_URL_CSS)
+        self.modal_elem.parent, self._locators.REF_URL_CSS)
     # datepickers
     self.ui_effective_date = base.DatePicker(
         self.modal_elem, self._locators.EFFECTIVE_DATE,
@@ -222,7 +222,7 @@ class RisksModal(BaseModal):
   def __init__(self, driver):
     super(RisksModal, self).__init__(driver)
     self.ui_description = base.Iframe(
-        self.modal_elem, self._locators.UI_DESCRIPTION)
+        self.modal_elem.parent, self._locators.UI_DESCRIPTION)
 
   def enter_description(self, text):
     self.ui_description.find_iframe_and_enter_data(text)
