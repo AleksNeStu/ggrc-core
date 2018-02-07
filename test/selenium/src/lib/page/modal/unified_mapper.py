@@ -162,7 +162,7 @@ class CommonUnifiedMapperModal(base.Modal):
     """Close Unified Mapper's modal window."""
     self.close_btn.click()
     selenium_utils.wait_until_not_present(
-        self.modal_elem, self._locators.MODAL_CSS)
+        self._driver, self._locators.MODAL_CSS)
 
 
 class MapObjectsModal(CommonUnifiedMapperModal):
