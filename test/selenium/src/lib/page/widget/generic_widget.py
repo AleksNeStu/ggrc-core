@@ -157,7 +157,7 @@ class TreeView(base.TreeView):
     """Click to Create button on Tree View to open new object creation modal.
 
     Return: If obj_name == 'assessment_templates' then
-    lib.page.modal.create_new_object."create_obj_cls else
+    lib.page.modal.unified_mapper."CloneOrCreateAssessmentTemplatesModal" else
     lib.page.modal.create_new_object."create_obj_cls
     """
     base.Button(self._driver, self._locators.CREATE_BTN_CSS).click()

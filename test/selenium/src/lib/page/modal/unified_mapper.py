@@ -15,7 +15,6 @@ class CommonUnifiedMapperModal(base.Modal):
 
   def __init__(self, driver, obj_name):
     super(CommonUnifiedMapperModal, self).__init__(driver)
-    self.obj_name = obj_name
     # labels
     self.modal_elem = selenium_utils.get_when_visible(
         self._driver, self._locators.MODAL_CSS)
@@ -23,11 +22,11 @@ class CommonUnifiedMapperModal(base.Modal):
         self.modal_elem, self._locators.FILTER_TOGGLE_CSS)
     self.filter_toggle.is_activated = True
     self.title_modal = base.Label(self.modal_elem, self._locators.MODAL_TITLE)
-    if self.obj_name != objects.ASSESSMENT_TEMPLATES:
+    if obj_name != objects.ASSESSMENT_TEMPLATES:
       self.obj_type = base.Label(self.modal_elem, self._locators.OBJ_TYPE)
     # user input elements
     self.tree_view = base.UnifiedMapperTreeView(
-        self._driver, obj_name=self.obj_name)
+        self._driver, obj_name=obj_name)
     self._add_attr_btn = None
     self.search_result_toggle = base.Toggle(
         self.modal_elem, self._locators.RESULT_TOGGLE_CSS)
